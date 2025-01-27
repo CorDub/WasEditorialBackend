@@ -5,14 +5,14 @@ function Example () {
   const [users, setUsers] = useState([]);
 
   useEffect(()=>{
-    fetch('api/message')
+    fetch('/api/message')
       .then((response) => response.json())
       .then((data) => setMessage(data.message))
   }, []);
 
   async function fetchUsers() {
     try {
-      const response = await fetch('api/users');
+      const response = await fetch('/api/users');
       const data = await response.json();
       console.log(data);
       setUsers(data);

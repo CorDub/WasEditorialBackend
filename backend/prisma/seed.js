@@ -7,6 +7,7 @@ async function main() {
     data: {
       name: "Trying McTryPherson",
       email: 'trying@tocheckifitworks.com',
+      password: "yesthisisapassword",
     },
   });
 }

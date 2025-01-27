@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
+import session from 'express-session';
+import userRoutes from './routes/userRoutes.js';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -8,19 +10,20 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: false
+  }
+}));
+app.use('/api', userRoutes);
 
 // Example API endpoint
-app.get('/api/message', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
-});
-
-app.get('/api/users', async (req,res) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-  }
+app.get('/', (req, res) => {
+  res.send("woo front page of the api!");
 });
 
 // Start the server

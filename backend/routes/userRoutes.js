@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
     const user = await prisma.user.findUnique({where: {email: email}});
     if (user.email === email && user.password === password) {
       req.session.user = { id: user.id, name: user.name };
-      res.status(200).json({message:"Welcome"});
+      res.status(200).json({is_admin: user.is_admin});
     } else {
       res.status(401).send("Wrong password or email address");
     }

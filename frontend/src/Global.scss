@@ -10,4 +10,29 @@ $global-second-font: 'Roboto Slab';
 html, body {
   background: $bg-second-color;
   font-family: $global-font;
+  height: 100%;
+  margin: 0;
+
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blue-button {
+  border-radius: 15px;
+  border: none;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  background-color: $second-color;
+  color: white;
+}
+
+.blue-button:hover {
+  cursor: pointer;
 }

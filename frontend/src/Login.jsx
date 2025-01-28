@@ -28,10 +28,11 @@ function LoginPage() {
       }
 
       const data = await response.json();
-      if (data.is_admin === false) {
-        navigate('/author');
+      if (data.is_admin === true) {
+
+        navigate('/admin');
       } else {
-        navigate('/example');
+        navigate('/author');
       }
 
     } catch(error) {

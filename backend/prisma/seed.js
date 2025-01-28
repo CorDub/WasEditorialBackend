@@ -19,6 +19,14 @@ async function main() {
       is_admin: true
     },
   });
+
+  await prisma.user.create({
+    data: {
+      name: "Writer McBook",
+      email: "booking@alltheway.com",
+      password: "writerwriting"
+    },
+  });
 }
 
 main()

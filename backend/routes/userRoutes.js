@@ -10,7 +10,7 @@ router.get('/message', (req, res) => {
 
 router.get('/users', async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({where: {is_admin: false}});
     res.json(users);
   } catch (error) {
     console.error(error);

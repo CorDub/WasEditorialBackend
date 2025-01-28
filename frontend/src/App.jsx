@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Example from './Example.jsx';
+import AdminPage from './AdminPage.jsx';
 import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorPage from './AuthorPage.jsx';
+import AuthorsList from './AuthorsList.jsx';
 
 function App() {
 
@@ -10,8 +11,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage/>} />
-        <Route path='/example' element={<Example />} />
+        <Route path='/admin' element={<AdminPage />} />
         <Route path='/author' element={<AuthorPage />} />
+        <Route path='/authors' element={<AuthorsList />} />
       </Routes>
     </Router>
   )

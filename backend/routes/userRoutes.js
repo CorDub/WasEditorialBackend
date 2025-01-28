@@ -8,7 +8,7 @@ router.get('/message', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
-router.get('/users', async (req,res) => {
+router.get('/users', async (req, res) => {
   try {
     const users = await prisma.user.findMany();
     res.json(users);

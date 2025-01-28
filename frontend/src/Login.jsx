@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   async function handleSubmit (e) {
     e.preventDefault();
@@ -25,6 +27,8 @@ function LoginPage() {
 
       const data = await response.json();
       console.log(data);
+      navigate('/example');
+      
     } catch(error) {
       console.error(error);
     }

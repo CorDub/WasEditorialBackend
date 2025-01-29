@@ -23,13 +23,12 @@ function LoginPage() {
         }),
       });
 
-      if (!response.ok) {
+      if (response.ok === false) {
         console.log(response.status);
       }
 
       const data = await response.json();
       if (data.is_admin === true) {
-
         navigate('/admin');
       } else {
         navigate('/author');

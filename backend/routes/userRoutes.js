@@ -1,12 +1,10 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import createRandomPassword from './utils.js';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 const router = express.Router();
-
-router.get('/message', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
-});
 
 router.get('/users', async (req, res) => {
   try {
@@ -31,5 +29,24 @@ router.post('/login', async (req, res) => {
     console.error(error);
   }
 })
+
+router.post('/user', async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const password = createRandomPassword();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const new_author =  await prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+        password: hashedPassword
+      },
+    });
+    res.status(201).json({name: new_author.name, email: new_author.email});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ error: 'A server error occured while creating the user'});
+  }
+});
 
 export default router;

@@ -10,6 +10,23 @@ async function main() {
       password: "yesthisisapassword",
     },
   });
+
+  await prisma.user.create({
+    data: {
+      name: "Administrator McLibro",
+      email: "Imake@books.com",
+      password: "bookboi",
+      is_admin: true
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      name: "Writer McBook",
+      email: "booking@alltheway.com",
+      password: "writerwriting"
+    },
+  });
 }
 
 main()

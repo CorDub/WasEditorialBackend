@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
 import session from 'express-session';
 import userRoutes from './routes/userRoutes.js';
 
-const prisma = new PrismaClient();
 const app = express();
 
 // Middleware

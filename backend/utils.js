@@ -36,7 +36,10 @@ export async function matchConfirmationCode(confirmation_code, email) {
       throw new Error('No user found.')
     };
 
-    if (user.reset_password_code === confirmation_code) {
+    if (
+      user.reset_password_code === confirmation_code &&
+      user.reset_password_code !== null
+    ) {
       await prisma.user.update({
         where: {email: email},
         data: {reset_password_code: null},

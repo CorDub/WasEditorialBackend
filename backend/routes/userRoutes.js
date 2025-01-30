@@ -57,11 +57,12 @@ router.post('/confirmation_code', async (req, res) => {
     const { confirmation_code, email } = req.body;
     console.log(email);
     const matched = await matchConfirmationCode(confirmation_code, email);
+    console.log(matched);
 
     if (matched === true) {
-      res.status(200);
+      res.status(200).json({message: "All good"});
     } else {
-      res.status(401);
+      res.status(401).json({error: "Unauthorized"});
     }
   } catch(error) {
     console.error("Error confirming code:", error);

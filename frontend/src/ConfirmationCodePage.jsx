@@ -30,10 +30,9 @@ function ConfirmationCodePage() {
 
       if (response.ok === false) {
         console.log(response.status);
-      }
-
-      if (response.ok === true) {
-        console.log("all good");
+        alert('El codigo que ingreso no esta correcto');
+      } else {
+        navigate("/change-password");
       }
 
     } catch(error) {

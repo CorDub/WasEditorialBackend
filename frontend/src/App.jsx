@@ -7,9 +7,10 @@ import AuthorsList from './AuthorsList.jsx';
 import NewAuthorPage from './NewAuthorPage.jsx';
 import EditAuthorPage from './EditAuthorPage.jsx';
 import DeleteAuthorPage from './DeleteAuthorPage.jsx';
+import ConfirmationCodePage from './ConfirmationCodePage.jsx';
+import ChangePasswordPage from './ChangePasswordPage.jsx';
 
 function App() {
-
   return (
     <Router>
       <Routes>
@@ -20,6 +21,8 @@ function App() {
         <Route path='/new-author' element={<NewAuthorPage />} />
         <Route path='/edit-author' element={<EditAuthorPage />} />
         <Route path='/delete-author' element={<DeleteAuthorPage />} />
+        <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
+        <Route path='/change-password' element={<ChangePasswordPage />} />
       </Routes>
     </Router>
   )

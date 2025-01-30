@@ -23,7 +23,7 @@ function NewAuthorPage() {
 
       const data = await response.json();
       alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña le ha sido enviado por correo.`);
+        Su contraseña se ha sido enviado por correo.`);
 
     } catch(error) {
       console.error(error);

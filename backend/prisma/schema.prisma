@@ -15,10 +15,11 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  name String ?
+  name String
   email String @unique
   password String
   is_admin Boolean @default(false)
+  reset_password_code Int ?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -8,17 +8,17 @@ export function createRandomPassword() {
   return pw
 }
 
-export async function setResetPasswordCode(email, code) {
+export async function setResetPasswordCode(user_id, code) {
   try {
     const set_code = await prisma.user.update({
-      where : {email: email},
+      where : {id: user_id},
       data: {reset_password_code: code},
     })
     console.log(set_code);
 
     setTimeout(() => {
       const invalidate_code = prisma.user.update({
-        where: {email: email},
+        where: {id: user_id},
         data: {reset_password_code: null},
       });
       console.log(invalidate_code);
@@ -29,9 +29,9 @@ export async function setResetPasswordCode(email, code) {
   }
 }
 
-export async function matchConfirmationCode(confirmation_code, email) {
+export async function matchConfirmationCode(confirmation_code, user_id) {
   try {
-    const user = await prisma.user.findUnique({where: {email: email}});
+    const user = await prisma.user.findUnique({where: {id: user_id}});
     if (user === false) {
       throw new Error('No user found.')
     };
@@ -41,7 +41,7 @@ export async function matchConfirmationCode(confirmation_code, email) {
       user.reset_password_code !== null
     ) {
       await prisma.user.update({
-        where: {email: email},
+        where: {id: user_id},
         data: {reset_password_code: null},
       });
       return true;

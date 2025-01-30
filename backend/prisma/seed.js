@@ -5,15 +5,20 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.user.create({
     data: {
-      name: "Trying McTryPherson",
+      first_name: "Trying",
+      last_name: "McTryPherson",
+      country: "Estados Unidos",
       email: 'trying@tocheckifitworks.com',
       password: "yesthisisapassword",
+      category: 2
     },
   });
 
   await prisma.user.create({
     data: {
-      name: "Administrator McLibro",
+      first_name: "Administrator",
+      last_name: "McLibro",
+      country: "Mexico",
       email: "Imake@books.com",
       password: "bookboi",
       is_admin: true
@@ -22,7 +27,9 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      name: "Writer McBook",
+      first_name: "Writer",
+      last_name: "McBook",
+      country: "Reino Unido",
       email: "booking@alltheway.com",
       password: "writerwriting"
     },

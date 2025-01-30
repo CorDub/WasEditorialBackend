@@ -31,13 +31,16 @@ export async function setResetPasswordCode(email, code) {
 
 export async function matchConfirmationCode(confirmation_code, email) {
   try {
-    console.log("in match confirmation code");
     const user = await prisma.user.findUnique({where: {email: email}});
     if (user === false) {
       throw new Error('No user found.')
     };
 
     if (user.reset_password_code === confirmation_code) {
+      await prisma.user.update({
+        where: {email: email},
+        data: {reset_password_code: null},
+      });
       return true;
     } else {
       return false;

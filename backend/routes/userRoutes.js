@@ -55,9 +55,7 @@ router.post('/user', async (req, res) => {
 router.post('/confirmation_code', async (req, res) => {
   try {
     const { confirmation_code, email } = req.body;
-    console.log(email);
     const matched = await matchConfirmationCode(confirmation_code, email);
-    console.log(matched);
 
     if (matched === true) {
       res.status(200).json({message: "All good"});

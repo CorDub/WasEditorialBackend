@@ -4,7 +4,9 @@ function NewAuthorPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
+    e.preventDefault();
+
     try {
       const response = await fetch('/api/user', {
         method: "POST",

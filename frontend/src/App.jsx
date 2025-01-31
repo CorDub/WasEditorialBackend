@@ -17,6 +17,7 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
         <Route path='/admin' element={<AdminPage />} />
         <Route path='/author' element={<AuthorPage />} />
+        <Route path="/author/:id" element={<AuthorPage />} />
         <Route path='/authors' element={<AuthorsList />} />
         <Route path='/new-author' element={<NewAuthorPage />} />
         <Route path='/edit-author' element={<EditAuthorPage />} />

@@ -54,18 +54,37 @@ router.post('/user', async (req, res) => {
 
 router.post('/confirmation_code', async (req, res) => {
   try {
-    const { confirmation_code, email } = req.body;
-    console.log(email);
-    const matched = await matchConfirmationCode(confirmation_code, email);
+    const { confirmation_code, user_id } = req.body;
+    const matched = await matchConfirmationCode(confirmation_code, user_id);
 
     if (matched === true) {
-      res.status(200);
+      res.status(200).json({message: "All good"});
     } else {
-      res.status(401);
+      res.status(401).json({error: "Unauthorized"});
     }
   } catch(error) {
     console.error("Error confirming code:", error);
     res.status(500).json({error: 'A server ocurred while confirming the code'});
+  }
+})
+
+router.patch('/change_password', async (req, res) => {
+  try {
+    const { user_id, password } = req.body;
+    const update = await prisma.user.update({
+      where: {id: user_id},
+      data: {password: password}
+    });
+
+    console.log(update);
+    if (update) {
+      res.status(200).json({message: "Successfully updated password"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the password."});
+    }
+
+  } catch(error) {
+    console.error("Error at the change_password route:", error);
   }
 })
 

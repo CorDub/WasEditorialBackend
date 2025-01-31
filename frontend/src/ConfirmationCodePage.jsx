@@ -9,7 +9,8 @@ function ConfirmationCodePage() {
   const [cc5, setConfirmationCode5] = useState(null);
   const [cc6, setConfirmationCode6] = useState(null);
   const [searchParams] = useSearchParams();
-  const email = searchParams.get('email');
+  const id = parseInt(searchParams.get('id'));
+  console.log(id);
   const navigate = useNavigate();
   const finalConfirmationCode = parseInt(cc1 + cc2 + cc3 + cc4 + cc5 + cc6);
 
@@ -24,16 +25,15 @@ function ConfirmationCodePage() {
         },
         body: JSON.stringify({
           confirmation_code: finalConfirmationCode,
-          email: email
+          user_id: id
         })
       });
 
       if (response.ok === false) {
         console.log(response.status);
-      }
-
-      if (response.ok === true) {
-        console.log("all good");
+        alert('El codigo que ingreso no esta correcto');
+      } else {
+        navigate("/change-password", { state: { user_id: id }});
       }
 
     } catch(error) {

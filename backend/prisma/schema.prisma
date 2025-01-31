@@ -14,16 +14,74 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  first_name String
-  last_name String
-  country String 
-  referido String ?
-  email String @unique
-  password String
-  category Int @default(1)
-  is_admin Boolean @default(false)
-  reset_password_code Int ?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  country             String
+  referido            String?
+  email               String   @unique
+  password            String
+  category            Category? @relation(fields: [categoryId], references: [id])
+  categoryId          Int?
+  books               Book[]
+  is_admin            Boolean  @default(false)
+  reset_password_code Int?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Book {
+  id            Int         @id @default(autoincrement())
+  title         String
+  pasta         String
+  price         Float
+  inventory_mex Int
+  inventory_usa Int
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  inventories   Inventory[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Category {
+  id                           Int      @id @default(autoincrement())
+  percentage_royalties         Int
+  percentage_management_stores Int
+  management_min               Float
+  users                        User[]
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+}
+
+model Bookstore {
+  id              Int         @id @default(autoincrement())
+  name            String
+  deal_percentage Int
+  contact_name    String
+  contact_phone   Int
+  contact_email   String
+  inventories     Inventory[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Inventory {
+  id          Int       @id @default(autoincrement())
+  book        Book      @relation(fields: [bookId], references: [id])
+  bookId      Int
+  bookstore   Bookstore @relation(fields: [bookstoreId], references: [id])
+  bookstoreId Int
+  initial     Int
+  sales       Sale[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Sale {
+  id          Int       @id @default(autoincrement())
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

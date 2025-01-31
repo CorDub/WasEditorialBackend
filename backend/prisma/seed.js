@@ -10,7 +10,6 @@ async function main() {
       country: "Estados Unidos",
       email: 'trying@tocheckifitworks.com',
       password: "yesthisisapassword",
-      category: 2
     },
   });
 

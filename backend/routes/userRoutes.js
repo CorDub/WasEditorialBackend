@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { createRandomPassword, matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
-import { json } from 'stream/consumers';
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -34,18 +33,29 @@ router.post('/login', async (req, res) => {
 
 router.post('/user', async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const {
+      firstName,
+      lastName,
+      country,
+      referido,
+      email,
+      category } = req.body;
     const password = createRandomPassword();
     // const hashedPassword = await bcrypt.hash(password, 10);
     const new_author =  await prisma.user.create({
       data: {
-        name: name,
+        first_name: firstName,
+        last_name: lastName,
+        country: country,
+        referido: referido,
         email: email,
-        password: password
+        password: password,
+        categoryId: parseInt(category)
       },
     });
+
     res.status(201).json({name: new_author.name, email: new_author.email});
-    sendSetPasswordMail(email, name);
+    sendSetPasswordMail(email, firstName);
   } catch(error) {
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the user'});

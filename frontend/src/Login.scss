@@ -13,10 +13,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .login-label, .login-input {
   margin-right: 0.5rem;
 }
 
+.login-forgotten-password {
+  color: #4E6CB3;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
+.login-forgotten-password:hover {
+  opacity: 1;
+}

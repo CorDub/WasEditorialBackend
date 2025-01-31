@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function ConfirmationCodePage() {
   const [cc1, setConfirmationCode1] = useState(null);
@@ -8,11 +8,11 @@ function ConfirmationCodePage() {
   const [cc4, setConfirmationCode4] = useState(null);
   const [cc5, setConfirmationCode5] = useState(null);
   const [cc6, setConfirmationCode6] = useState(null);
-  const [searchParams] = useSearchParams();
-  const id = parseInt(searchParams.get('id'));
-  console.log(id);
+  const location = useLocation();
+  const id = location.state.user_id;
   const navigate = useNavigate();
   const finalConfirmationCode = parseInt(cc1 + cc2 + cc3 + cc4 + cc5 + cc6);
+  console.log(id);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,7 +33,7 @@ function ConfirmationCodePage() {
         console.log(response.status);
         alert('El codigo que ingreso no esta correcto');
       } else {
-        navigate("/change-password", { state: { user_id: id }});
+        navigate("/change-password", {state: { user_id: id }});
       }
 
     } catch(error) {

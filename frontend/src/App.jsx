@@ -9,6 +9,7 @@ import EditAuthorPage from './EditAuthorPage.jsx';
 import DeleteAuthorPage from './DeleteAuthorPage.jsx';
 import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
+import ForgottenPasswordPage from './ForgottenPasswordPage.jsx';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path='/new-author' element={<NewAuthorPage />} />
         <Route path='/edit-author' element={<EditAuthorPage />} />
         <Route path='/delete-author' element={<DeleteAuthorPage />} />
+        <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
         <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
         <Route path='/change-password' element={<ChangePasswordPage />} />
       </Routes>

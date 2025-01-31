@@ -33,6 +33,14 @@ async function main() {
       password: "writerwriting"
     },
   });
+
+  await prisma.category.create({
+    data: {
+      percentage_royalties: 100,
+      percentage_management_stores: 50,
+      management_min: 180.00
+    }
+  })
 }
 
 main()

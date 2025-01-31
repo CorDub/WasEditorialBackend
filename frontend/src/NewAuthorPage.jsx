@@ -1,8 +1,12 @@
 import { useState } from 'react';
 
 function NewAuthorPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState(null);
+  const [lastName, setLastName] = useState(null);
+  const [country, setCountry] = useState(null);
+  const [referido, setReferido] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [category, setCategory] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -14,18 +18,22 @@ function NewAuthorPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: name,
+          firstName: firstName,
+          lastName: lastName,
+          country: country,
+          referido: referido,
           email: email,
+          category: category
         }),
       });
 
       if (response.ok === false) {
         console.log(response.status);
-      }
-
-      const data = await response.json();
-      alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
+      } else {
+        const data = await response.json();
+        alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`);
+      }
 
     } catch(error) {
       console.error(error);
@@ -35,10 +43,18 @@ function NewAuthorPage() {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <label>Name</label>
-        <input type='text' onChange={(e) => setName(e.target.value)}></input>
-        <label>Email</label>
-        <input type='text' onChange={(e) => setEmail(e.target.value)}></input>
+        <input type='text' placeholder="Nombre"
+          onChange={(e) => setFirstName(e.target.value)}></input>
+        <input type='text' placeholder="Apellido"
+          onChange={(e) => setLastName(e.target.value)}></input>
+        <input type='text' placeholder="Pais"
+          onChange={(e) => setCountry(e.target.value)}></input>
+        <input type='text' placeholder="Referido (opcional)"
+          onChange={(e) => setReferido(e.target.value)}></input>
+        <input type='text' placeholder="Correo"
+          onChange={(e) => setEmail(e.target.value)}></input>
+        <input type='text' placeholder="Categoria"
+          onChange={(e) => setCategory(e.target.value)}></input>
         <button type='submit'>Añadir nuevo autor</button>
       </form>
     </>

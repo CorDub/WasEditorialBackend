@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ async function main() {
       last_name: "McTryPherson",
       country: "Estados Unidos",
       email: 'trying@tocheckifitworks.com',
-      password: "yesthisisapassword",
+      password: await bcrypt.hash("yesthisisapassword", 10),
     },
   });
 
@@ -19,7 +20,7 @@ async function main() {
       last_name: "McLibro",
       country: "Mexico",
       email: "Imake@books.com",
-      password: "bookboi",
+      password: await bcrypt.hash("bookboi", 10),
       is_admin: true
     },
   });
@@ -30,7 +31,7 @@ async function main() {
       last_name: "McBook",
       country: "Reino Unido",
       email: "booking@alltheway.com",
-      password: "writerwriting"
+      password: await bcrypt.hash("writerwriting", 10),
     },
   });
 

@@ -4,6 +4,7 @@ import { createRandomPassword, matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail, sendResetPasswordMail } from './../mailer.js';
 
+
 const prisma = new PrismaClient();
 const router = express.Router();
 
@@ -29,25 +30,6 @@ router.get('/user', async (req, res) => {
     }
   } catch (error) {
     console.error("Error retrieving the user:", error)
-  }
-})
-
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await prisma.user.findUnique({where: {email: email}});
-    if (user === null) {
-      return res.status(401).send("No tenemos una cuenta registrada con este correo.");
-    }
-
-    if (user.email === email && user.password === password) {
-      req.session.user = { id: user.id, name: user.name };
-      res.status(200).json({is_admin: user.is_admin});
-    } else {
-      res.status(401).send("Wrong password or email address");
-    }
-  } catch(error) {
-    console.error(error);
   }
 })
 

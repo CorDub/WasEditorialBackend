@@ -7,8 +7,20 @@ function AuthorsList() {
   const [data, setData] = useState([]);
   const columns = useMemo(() => [
     {
-      header: "Name",
-      accessorKey: "name"
+      header: "Nombre",
+      accessorKey: "first_name"
+    },
+    {
+      header: "Apellido",
+      accessorKey: "last_name"
+    },
+    {
+      header: "Pais",
+      accessorKey: "country"
+    },
+    {
+      header: "Categoria",
+      accessorKey: "categoryId"
     },
     {
       header: "Email",

@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useMemo, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import './AuthorsList.scss';
+import UserContext from "./UserContext";
 
 function AuthorsList() {
   const [data, setData] = useState([]);
@@ -31,6 +32,14 @@ function AuthorsList() {
     columns,
     data
   });
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user === null) {
+      navigate("/");
+    }
+  }, [])
 
   async function fetchUsers() {
     try {

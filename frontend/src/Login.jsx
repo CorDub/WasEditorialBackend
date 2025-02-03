@@ -31,7 +31,6 @@ function LoginPage() {
 
       const data = await response.json();
       setUser(data);
-      console.log(data);
       if (data.is_admin === true) {
         navigate('/admin');
       } else {

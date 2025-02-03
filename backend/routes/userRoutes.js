@@ -18,7 +18,7 @@ const router = express.Router();
 //   }
 // })
 
-app.post('/api/login', async (req, res) => {
+router.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({where: {email: email}});
@@ -38,7 +38,7 @@ app.post('/api/login', async (req, res) => {
   }
 })
 
-app.get('/api/user', async (req, res) => {
+router.get('/api/user', async (req, res) => {
   try {
     const email = req.query.email;
     const user = await prisma.user.findUnique({where: {email: email}});
@@ -51,6 +51,25 @@ app.get('/api/user', async (req, res) => {
     }
   } catch (error) {
     console.error("Error retrieving the user:", error)
+  }
+})
+
+router.post('/api/confirmation_code', async (req, res) => {
+  try {
+    const { confirmation_code, user_id } = req.body;
+    const matched = await matchConfirmationCode(confirmation_code, user_id);
+
+    if (matched === true) {
+      const user = await prisma.user.findUnique({where: {id: user_id}});
+      req.session.user_id = user.id;
+      console.log("added session user id:", req.session.user_id);
+      res.status(200).json({message: "All good"});
+    } else {
+      res.status(401).json({error: "Unauthorized"});
+    }
+  } catch(error) {
+    console.error("Error confirming code:", error);
+    res.status(500).json({error: 'A server error ocurred while confirming the code'});
   }
 })
 

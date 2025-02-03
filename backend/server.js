@@ -83,6 +83,8 @@ app.post('/api/confirmation_code', async (req, res) => {
   }
 })
 
+// app.use("/api", userRoutes);
+
 async function authenticateUser(req, res, next) {
   if (!req.session.user_id) {
     return res.status(401).json({ error: "Unauthorized"});

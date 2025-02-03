@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.scss';
 import logo from './assets/logo-03-300x110-was.png';
+import UserContext from './UserContext';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   async function handleSubmit (e) {
@@ -28,6 +30,8 @@ function LoginPage() {
       }
 
       const data = await response.json();
+      setUser(data);
+      console.log(data);
       if (data.is_admin === true) {
         navigate('/admin');
       } else {
@@ -54,7 +58,7 @@ function LoginPage() {
         </form>
       </div>
       <Link to="/forgotten-password"
-        className="login-forgotten-password">Olvidaste su contraseña?</Link>
+        className="login-forgotten-password">Olvidó su contraseña?</Link>
     </div>
   )
 }

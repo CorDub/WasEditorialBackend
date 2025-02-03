@@ -45,7 +45,7 @@ app.post('/api/login', async (req, res) => {
 
     if (user.email === email && (await bcrypt.compare(password, user.password))) {
       req.session.user_id =  user.id ;
-      res.status(200).json({is_admin: user.is_admin});
+      res.status(200).send(user);
     } else {
       res.status(401).json({error: "Wrong password or email address"});
     }

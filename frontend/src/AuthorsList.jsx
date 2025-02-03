@@ -34,19 +34,36 @@ function AuthorsList() {
   });
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user === null) {
+    console.log(user);
+    if (data !== undefined && user !== undefined) {
+      setLoading(false);
+    }
+  }, [data, user])
+
+  useEffect(() => {
+    if (user !== undefined && (user === null || user.is_admin === false)) {
       navigate("/");
     }
-  }, [])
+  }, [user])
 
   async function fetchUsers() {
     try {
-      const response = await fetch('/api/users');
-      const data = await response.json();
-      console.log(data);
-      setData(data);
+      const response = await fetch('http://localhost:3000/admin/users', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setData(data);
+      }
+
     } catch (error) {
       console.error(error);
     }
@@ -57,14 +74,20 @@ function AuthorsList() {
   }, []);
 
   return (
-    <div className="authors-list">
-      <div className="authors-links">
-        <Link to='/new-author' className="blue-button">Añadir nuevo autor</Link>
-        <Link to='/edit-author' className="blue-button">Editar</Link>
-        <Link to='/delete-author' className="blue-button">Eliminar</Link>
+    <>
+    {isLoading === false ?
+      <div className="authors-list">
+        <div className="authors-links">
+          <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>
+          <Link to='/admin/edit-author' className="blue-button">Editar</Link>
+          <Link to='/admin/delete-author' className="blue-button">Eliminar</Link>
+        </div>
+        {data && <MaterialReactTable table={table} />}
       </div>
-      {data && <MaterialReactTable table={table} />}
-    </div>
+      :
+      <p>Loading...</p>
+    }
+    </>
   )
 }
 

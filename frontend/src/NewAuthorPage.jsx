@@ -12,11 +12,12 @@ function NewAuthorPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch('http://localhost:3000/admin/user', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include",
         body: JSON.stringify({
           firstName: firstName,
           lastName: lastName,

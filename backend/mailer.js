@@ -18,7 +18,7 @@ export async function sendSetPasswordMail(email, name, password) {
     const user = await prisma.user.findUnique({where: {email: email}});
     const info = await transport.sendMail({
       from: '"Was TEST" <no-reply@wastest.com',
-      to,
+      to: email,
       subject: 'Codigo de confirmacion para su cuenta de Was Editorial - Test',
       text: `Hola ${name}, \n
       Su cuenta de Was Editorial ha sido creado. Encontrara la contrasena aqui abajo:
@@ -30,7 +30,7 @@ export async function sendSetPasswordMail(email, name, password) {
     });
     console.log("Email sent:", info.messageId);
   } catch(error) {
-    console.log("Error while trying to send the password email:", password);
+    console.log("Error while trying to send the password email:", error);
   }
 }
 

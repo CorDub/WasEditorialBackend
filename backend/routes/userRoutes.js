@@ -3,31 +3,42 @@ import { PrismaClient } from '@prisma/client';
 import { createRandomPassword, matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail, sendResetPasswordMail } from './../mailer.js';
-import { authenticateUser } from './../server.js';
+// import { authenticateUser } from './../server.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get('/checkPermissions', async (req, res) => {
+// router.get('/checkPermissions', async (req, res) => {
+//   try {
+//     const response = await authenticateUser(req, res, next);
+//     const data = await response.json();
+//     return data;
+//   } catch(error) {
+//     console.log("Error running checkPermissions in userRoutes:", error);
+//   }
+// })
+
+app.post('/api/login', async (req, res) => {
   try {
-    const response = await authenticateUser(req, res, next);
-    const data = await response.json();
-    return data;
+    const { email, password } = req.body;
+    const user = await prisma.user.findUnique({where: {email: email}});
+    if (user === null) {
+      return res.status(401).send("No tenemos una cuenta registrada con este correo.");
+    }
+
+    if (user.email === email && (await bcrypt.compare(password, user.password))) {
+      req.session.user_id =  user.id ;
+      console.log("created session id with:", req.session.user_id);
+      res.status(200).send(user);
+    } else {
+      res.status(401).json({error: "Wrong password or email address"});
+    }
   } catch(error) {
-    console.log("Error running checkPermissions in userRoutes:", error);
+    console.error(error);
   }
 })
 
-router.get('/users', async (req, res) => {
-  try {
-    const users = await prisma.user.findMany({where: {is_admin: false}});
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-router.get('/user', async (req, res) => {
+app.get('/api/user', async (req, res) => {
   try {
     const email = req.query.email;
     const user = await prisma.user.findUnique({where: {email: email}});
@@ -40,73 +51,6 @@ router.get('/user', async (req, res) => {
     }
   } catch (error) {
     console.error("Error retrieving the user:", error)
-  }
-})
-
-router.post('/user', async (req, res) => {
-  try {
-    const {
-      firstName,
-      lastName,
-      country,
-      referido,
-      email,
-      category } = req.body;
-    const password = createRandomPassword();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const new_author =  await prisma.user.create({
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        country: country,
-        referido: referido,
-        email: email,
-        password: hashedPassword,
-        categoryId: parseInt(category)
-      },
-    });
-
-    res.status(201).json({name: new_author.name, email: new_author.email});
-    sendSetPasswordMail(email, firstName, password);
-  } catch(error) {
-    console.error(error);
-    res.status(500).json({ error: 'A server error occured while creating the user'});
-  }
-});
-
-router.post('/confirmation_code', async (req, res) => {
-  try {
-    const { confirmation_code, user_id } = req.body;
-    const matched = await matchConfirmationCode(confirmation_code, user_id);
-
-    if (matched === true) {
-      res.status(200).json({message: "All good"});
-    } else {
-      res.status(401).json({error: "Unauthorized"});
-    }
-  } catch(error) {
-    console.error("Error confirming code:", error);
-    res.status(500).json({error: 'A server ocurred while confirming the code'});
-  }
-})
-
-router.patch('/change_password', async (req, res) => {
-  try {
-    const { user_id, password } = req.body;
-    const update = await prisma.user.update({
-      where: {id: user_id},
-      data: {password: password}
-    });
-
-    console.log(update);
-    if (update) {
-      res.status(200).json({message: "Successfully updated password"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the password."});
-    }
-
-  } catch(error) {
-    console.error("Error at the change_password route:", error);
   }
 })
 

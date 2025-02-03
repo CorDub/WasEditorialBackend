@@ -18,11 +18,12 @@ function ConfirmationCodePage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/confirmation_code', {
+      const response = await fetch('http://localhost:3000/api/confirmation_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({
           confirmation_code: finalConfirmationCode,
           user_id: id
@@ -33,7 +34,7 @@ function ConfirmationCodePage() {
         console.log(response.status);
         alert('El codigo que ingreso no esta correcto');
       } else {
-        navigate("/change-password", {state: { user_id: id }});
+        navigate("/author/change-password", {state: { user_id: id }});
       }
 
     } catch(error) {

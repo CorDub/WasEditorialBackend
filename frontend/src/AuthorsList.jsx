@@ -44,16 +44,26 @@ function AuthorsList() {
   }, [data, user])
 
   useEffect(() => {
-    if (user !== undefined && user === null) {
+    if (user !== undefined && (user === null || user.is_admin === false)) {
       navigate("/");
     }
   }, [user])
 
   async function fetchUsers() {
     try {
-      const response = await fetch('/api/users');
-      const data = await response.json();
-      setData(data);
+      const response = await fetch('http://localhost:3000/admin/users', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setData(data);
+      }
+
     } catch (error) {
       console.error(error);
     }
@@ -68,9 +78,9 @@ function AuthorsList() {
     {isLoading === false ?
       <div className="authors-list">
         <div className="authors-links">
-          <Link to='/new-author' className="blue-button">Añadir nuevo autor</Link>
-          <Link to='/edit-author' className="blue-button">Editar</Link>
-          <Link to='/delete-author' className="blue-button">Eliminar</Link>
+          <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>
+          <Link to='/admin/edit-author' className="blue-button">Editar</Link>
+          <Link to='/admin/delete-author' className="blue-button">Eliminar</Link>
         </div>
         {data && <MaterialReactTable table={table} />}
       </div>

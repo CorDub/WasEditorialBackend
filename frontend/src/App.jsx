@@ -21,13 +21,13 @@ function App() {
           <Route path='/admin' element={<AdminPage />} />
           <Route path='/author' element={<AuthorPage />} />
           <Route path="/author/:id" element={<AuthorPage />} />
-          <Route path='/authors' element={<AuthorsList />} />
-          <Route path='/new-author' element={<NewAuthorPage />} />
-          <Route path='/edit-author' element={<EditAuthorPage />} />
-          <Route path='/delete-author' element={<DeleteAuthorPage />} />
+          <Route path='/admin/authors' element={<AuthorsList />} />
+          <Route path='/admin/new-author' element={<NewAuthorPage />} />
+          <Route path='/admin/edit-author' element={<EditAuthorPage />} />
+          <Route path='/admin/delete-author' element={<DeleteAuthorPage />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
-          <Route path='/change-password' element={<ChangePasswordPage />} />
+          <Route path='/author/change-password' element={<ChangePasswordPage />} />
         </Routes>
       </Router>
     </UserProvider>

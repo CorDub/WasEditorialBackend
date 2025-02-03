@@ -14,7 +14,7 @@ function ForgottenPasswordPage() {
         return alert("Los correos ingresados no eran los mismos.");
       }
 
-      const response = await fetch(`/api/user?email=${correo1}`, {
+      const response = await fetch(`http://localhost:3000/api/user?email=${correo1}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

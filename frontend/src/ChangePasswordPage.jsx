@@ -17,11 +17,12 @@ function ChangePasswordPage() {
 
     e.preventDefault();
 
-    const response = await fetch('/api/change_password', {
+    const response = await fetch('http://localhost:3000/author/change_password', {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify({
         user_id: user_id,
         password: cs1

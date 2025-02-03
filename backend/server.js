@@ -21,8 +21,8 @@ app.use(session({
   }
 }));
 //Still middleware - user check
-async function authenticateUser(req, res, next) {
-  if (req.session.user_id === false) {
+export async function authenticateUser(req, res, next) {
+  if (!req.session.user_id) {
     return res.status(401).json({ error: "Unauthorized"});
   }
 

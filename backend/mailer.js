@@ -24,7 +24,7 @@ export async function sendSetPasswordMail(email, name, password) {
       Su cuenta de Was Editorial ha sido creado. Encontrara la contrasena aqui abajo:
       ${password}
       \n
-      Le pidemos cambiar su contrasena rapidamente en los parametros de su cuenta para evitar cualquier riesgos:\n
+      Le pidemos cambiar su contrasena rapidamente en los parametros de su cuenta para evitar cualquier riesgos.\n
 
       No comparte esta contrasena con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.`
     });

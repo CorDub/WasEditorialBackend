@@ -3,10 +3,20 @@ import { PrismaClient } from '@prisma/client';
 import { createRandomPassword, matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail, sendResetPasswordMail } from './../mailer.js';
-
+import { authenticateUser } from './../server.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
+
+router.get('/checkPermissions', async (req, res) => {
+  try {
+    const response = await authenticateUser(req, res, next);
+    const data = await response.json();
+    return data;
+  } catch(error) {
+    console.log("Error running checkPermissions in userRoutes:", error);
+  }
+})
 
 router.get('/users', async (req, res) => {
   try {
@@ -23,7 +33,7 @@ router.get('/user', async (req, res) => {
     const user = await prisma.user.findUnique({where: {email: email}});
 
     if (user === null) {
-      res.status(204).send("No user with this email were found");
+      res.status(204).json("No user with this email were found");
     } else {
       sendResetPasswordMail(email, user.first_name)
       res.status(200).json(user);

@@ -40,3 +40,19 @@ a {
 .blue-button:hover {
   cursor: pointer;
 }
+
+.grey-button {
+  border-radius: 15px;
+  border: none;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  background-color: $bg-second-color;
+  color: $prim-color;
+  box-shadow: -1px -1px 1px #4E5981 inset, 1px 1px 1px #fff inset;
+}
+
+.grey-button:hover {
+  cursor: pointer;
+}

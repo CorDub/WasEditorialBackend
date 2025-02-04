@@ -37,7 +37,6 @@ function AuthorsList() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(user);
     if (data !== undefined && user !== undefined) {
       setLoading(false);
     }

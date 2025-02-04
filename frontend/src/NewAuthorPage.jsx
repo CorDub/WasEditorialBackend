@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import UserContext from './UserContext';
 
 function NewAuthorPage() {
   const [firstName, setFirstName] = useState(null);
@@ -7,6 +9,14 @@ function NewAuthorPage() {
   const [referido, setReferido] = useState(null);
   const [email, setEmail] = useState(null);
   const [category, setCategory] = useState(null);
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user !== undefined && (user === null || user.is_admin === false)) {
+      navigate("/");
+    }
+  }, [user]);
 
   async function handleSubmit(e) {
     e.preventDefault();

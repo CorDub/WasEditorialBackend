@@ -50,7 +50,8 @@ function Navbar() {
         <img src={logo} alt="was-editorial-logo" className="navbar-srcLogo"></img>
       </div>
       <div className='navbar-logout'>
-        {(user !== null) &&
+        {(user === null) ?
+          <p className="navbar-welcome">Bienvenido a su cuenta de Was Editorial</p> :
           <p className="grey-button" onClick={logout}>Logout</p>}
       </div>
     </div>

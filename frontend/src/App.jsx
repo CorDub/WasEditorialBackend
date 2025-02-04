@@ -11,11 +11,13 @@ import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
 import ForgottenPasswordPage from './ForgottenPasswordPage.jsx';
 import UserProvider from './UserProvider.jsx';
+import Navbar from './Navbar.jsx';
 
 function App() {
   return (
     <UserProvider>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<LoginPage/>} />
           <Route path='/admin' element={<AdminPage />} />

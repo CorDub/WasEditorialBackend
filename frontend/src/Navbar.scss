@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4E5981;
+  width: 100vw;
+  height: 50px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  box-sizing: border-box;
+}
+
+.navbar-home {
+  color: #E2E2E2;
+}
+
+.navbar-logo {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-srcLogo {
+  height: 80%;
+  margin-top: 4px;
+}

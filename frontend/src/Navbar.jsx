@@ -7,7 +7,7 @@ import "./Navbar.scss"
 import UserContext from "./UserContext";
 
 function Navbar() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   function navigateHome() {
@@ -24,6 +24,23 @@ function Navbar() {
     }
   }
 
+  async function logout() {
+    const response = fetch("htttp://localhost3000/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+    });
+
+    if (response.ok === false) {
+      return alert("Something went wrong when logging out.");
+    } else {
+      setUser(null);
+      navigate('/');
+    }
+  }
+
   return (
     <div className="navbar">
       <div className="navbar-home">
@@ -33,8 +50,9 @@ function Navbar() {
         <img src={logo} alt="was-editorial-logo" className="navbar-srcLogo"></img>
       </div>
       <div className='navbar-logout'>
-        {(user !== null) &&
-          <p className="grey-button">Logout</p>}
+        {(user === null) ?
+          <p className="navbar-welcome">Bienvenido a su cuenta de Was Editorial</p> :
+          <p className="grey-button" onClick={logout}>Logout</p>}
       </div>
     </div>
   )

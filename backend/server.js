@@ -83,7 +83,7 @@ app.post('/api/confirmation_code', async (req, res) => {
   }
 })
 
-app.post('api/logout', async (req, res) => {
+app.post('/api/logout', async (req, res) => {
   try {
     req.session.destroy((err) => {
       if (err) {
@@ -95,6 +95,19 @@ app.post('api/logout', async (req, res) => {
     })
   } catch(error) {
     console.error("Error in logout route from server js:", error);
+  }
+})
+
+app.get('/api/checkPermissions', authenticateUser, async (req, res) => {
+  try {
+    // const response = await authenticateUser(req, res);
+    // const data = await response.json();
+    console.log('data from checkPermissions: ', req.user);
+    res.json({user: req.user})
+    // return data;
+  } catch(error) {
+    console.log("Error running checkPermissions in userRoutes:", error);
+    res.status(500).json({error: "Error in checkPermissions"});
   }
 })
 

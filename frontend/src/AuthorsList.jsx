@@ -12,6 +12,9 @@ function AuthorsList() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [isEditModalOpen, setOpenEditModal] = useState(false);
   const [editModal, setEditModal] = useState(null);
+  const navigate = useNavigate();
+  const { user, fetchUser } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(true);
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -63,21 +66,27 @@ function AuthorsList() {
     setOpenEditModal(true);
   }
 
-  const navigate = useNavigate();
-  const { user } = useContext(UserContext);
-  const [isLoading, setLoading] = useState(true);
-
+  // Hook to set to Loading and not show the page before authenticating user
   useEffect(() => {
     if (data !== undefined && user !== undefined) {
       setLoading(false);
     }
   }, [data, user])
 
+  // Hooks to redirect if user unknown (not authenticated)
   useEffect(() => {
-    if (user !== undefined && (user === null || user.is_admin === false)) {
-      navigate("/");
+    async function fetchUserData() {
+      await fetchUser();
     }
-  }, [user])
+    fetchUserData();
+  }, [])
+
+  useEffect(() => {
+    console.log("Checking user state after fetch:", user);  // Ensure user state is updated
+    if (user === null) {
+      navigate("/"); // Navigate only if user is still null after the update
+    }
+  }, [user, navigate]);
 
   async function fetchUsers() {
     try {

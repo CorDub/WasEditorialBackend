@@ -3,10 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import './AuthorsList.scss';
 import UserContext from "./UserContext";
+import DeleteAuthorModal from './DeleteAuthorModal';
+import EditAuthorModal from './EditAuthorModal';
 
 function AuthorsList() {
   const [data, setData] = useState([]);
+  const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [isEditModalOpen, setOpenEditModal] = useState(false);
+  const [editModal, setEditModal] = useState(null);
   const columns = useMemo(() => [
+    {
+      header: "Acciones",
+      Cell: ({row}) => (
+        <div>
+          <button onClick={()=>openEditModal(row.original)}>Editar</button>
+          <button onClick={()=>openDeleteModal(row.original)}>Eliminar</button>
+        </div>
+      )
+    },
     {
       header: "Nombre",
       accessorKey: "first_name"
@@ -32,6 +47,22 @@ function AuthorsList() {
     columns,
     data
   });
+
+  function openDeleteModal(row) {
+    setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setOpenDeleteModal(true);
+  }
+
+  function closeDeleteModal() {
+    setDeleteModal(null);
+    setOpenDeleteModal(false);
+  }
+
+  function openEditModal(row) {
+    setEditModal(<EditAuthorModal row={row}/>);
+    setOpenEditModal(true);
+  }
+
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
@@ -74,19 +105,24 @@ function AuthorsList() {
 
   return (
     <>
-    {isLoading === false ?
-      <div className="authors-list">
-        <div className="authors-links">
-          <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>
-          <Link to='/admin/edit-author' className="blue-button">Editar</Link>
-          <Link to='/admin/delete-author' className="blue-button">Eliminar</Link>
+    {isLoading === false ? (
+      <>
+        {isDeleteModalOpen && deleteModal}
+        {isEditModalOpen && editModal}
+        <div className="authors-list">
+          <div className="authors-links">
+            <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>
+            <Link to='/admin/edit-author' className="blue-button">Editar</Link>
+            <Link to='/admin/delete-author' className="blue-button">Eliminar</Link>
+          </div>
+          {data && <MaterialReactTable table={table} />}
         </div>
-        {data && <MaterialReactTable table={table} />}
-      </div>
-      :
-      <p>Loading...</p>
-    }
-    </>
+      </>
+
+       ) : (
+        <p>Loading...</p>
+    )}
+  </>
   )
 }
 

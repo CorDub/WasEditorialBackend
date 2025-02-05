@@ -25,7 +25,7 @@ function Navbar() {
   }
 
   async function logout() {
-    const response = fetch("htttp://localhost3000/api/logout", {
+    const response = fetch("http://localhost:3000/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

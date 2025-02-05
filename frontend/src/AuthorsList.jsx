@@ -16,6 +16,7 @@ function AuthorsList() {
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
   useCheckUser();
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -96,7 +97,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [isDeleteModalOpen]);
 
   return (
     <>

@@ -64,8 +64,13 @@ function AuthorsList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditAuthorModal row={row}/>);
+    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}/>);
     setOpenEditModal(true);
+  }
+
+  function closeEditModal() {
+    setEditModal(null);
+    setOpenEditModal(false);
   }
 
   // Hook to set to Loading and not show the page before authenticating user

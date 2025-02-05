@@ -1,24 +1,19 @@
 import "./DeleteAuthorModal.scss"
 
 function DeleteAuthorModal({ row, closeDeleteModal }) {
-  console.log(row.id);
 
   async function deleteAuthor() {
     try {
-      const response = await fetch('http://localhost:3000/admin/user', {
+      const response = await fetch(`http://localhost:3000/admin/user?user_id=${row.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: "include",
-        body: {
-          user_id: row.id
-        }
       });
 
       if (response.ok) {
         closeDeleteModal;
-        alert("User deleted successfully");
       }
 
     } catch (error) {

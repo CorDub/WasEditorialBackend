@@ -47,4 +47,15 @@ router.post('/user', async (req, res) => {
   }
 });
 
+router.delete('/user', async (req, res) => {
+  try {
+    const user_id = req.body;
+    await prisma.user.delete({where: {id: user_id}});
+    res.status(200).json({message: "Deleted successfully"})
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the user'});
+  }
+})
+
 export default router;

@@ -1,4 +1,4 @@
-function EditAuthorPage() {
+function EditAuthorModal() {
   return (
     <>
       <p>edit auhtor page tbd</p>
@@ -6,4 +6,4 @@ function EditAuthorPage() {
   )
 }
 
-export default EditAuthorPage;
+export default EditAuthorModal;

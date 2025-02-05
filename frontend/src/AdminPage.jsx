@@ -1,16 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
-import UserContext from './UserContext';
-import { useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import useCheckUser from './useCheckUser';
 
 function AdminPage () {
-  const { user } = useContext(UserContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user !== undefined && (user === null || user.is_admin === false)) {
-      navigate("/");
-    }
-  }, [user]);
+  useCheckUser();
 
   return (
     <>

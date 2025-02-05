@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import './AuthorsList.scss';
 import UserContext from "./UserContext";
 import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
+import useCheckUser from './useCheckUser';
 
 function AuthorsList() {
   const [data, setData] = useState([]);
@@ -12,9 +13,9 @@ function AuthorsList() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [isEditModalOpen, setOpenEditModal] = useState(false);
   const [editModal, setEditModal] = useState(null);
-  const navigate = useNavigate();
-  const { user, fetchUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
+  useCheckUser();
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -72,21 +73,6 @@ function AuthorsList() {
       setLoading(false);
     }
   }, [data, user])
-
-  // Hooks to redirect if user unknown (not authenticated)
-  useEffect(() => {
-    async function fetchUserData() {
-      await fetchUser();
-    }
-    fetchUserData();
-  }, [])
-
-  useEffect(() => {
-    console.log("Checking user state after fetch:", user);  // Ensure user state is updated
-    if (user === null) {
-      navigate("/"); // Navigate only if user is still null after the update
-    }
-  }, [user, navigate]);
 
   async function fetchUsers() {
     try {

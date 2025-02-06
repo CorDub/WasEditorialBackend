@@ -4,14 +4,12 @@ import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorPage from './AuthorPage.jsx';
 import AuthorsList from './AuthorsList.jsx';
-import NewAuthorPage from './AddingAuthorModal.jsx';
-import EditAuthorPage from './EditAuthorModal.jsx';
-import DeleteAuthorPage from './DeleteAuthorModal.jsx';
 import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
 import ForgottenPasswordPage from './ForgottenPasswordPage.jsx';
 import UserProvider from './UserProvider.jsx';
 import Navbar from './Navbar.jsx';
+import CategoriesList from './CategoriesList.jsx'
 
 function App() {
   return (
@@ -24,9 +22,7 @@ function App() {
           <Route path='/author' element={<AuthorPage />} />
           <Route path="/author/:id" element={<AuthorPage />} />
           <Route path='/admin/authors' element={<AuthorsList />} />
-          {/* <Route path='/admin/new-author' element={<NewAuthorPage />} />
-          {/* <Route path='/admin/edit-author' element={<EditAuthorPage />} />
-          <Route path='/admin/delete-author' element={<DeleteAuthorPage />} /> */} */}
+          <Route path="/admin/categories" element={<CategoriesList />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />

@@ -7,6 +7,8 @@ import { createRandomPassword } from './../utils.js';
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// User routes
+
 router.get('/users', async (req, res) => {
   try {
     const users = await prisma.user.findMany({where: {is_admin: false}});
@@ -89,6 +91,18 @@ router.delete('/user', async (req, res) => {
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});
+  }
+})
+
+//Categories routes
+
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany();
+    res.status(200).json(categories);
+  } catch(error) {
+    console.error("Error in the get categories route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching categories'});
   }
 })
 

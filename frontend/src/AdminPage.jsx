@@ -7,9 +7,9 @@ function AdminPage () {
   return (
     <>
       <Link to='/admin/authors' className="blue-button">Lista de autores</Link>
-      <Link to='/libros' className="blue-button">Lista de libros</Link>
-      <Link to='/librerias' className="blue-button">Lista de librerias</Link>
-      <Link to='/categorias' className="blue-button">Lista de categorias</Link>
+      <Link to='/admin/books' className="blue-button">Lista de libros</Link>
+      <Link to='/admin/bookstores' className="blue-button">Lista de librerias</Link>
+      <Link to='/admin/categories' className="blue-button">Lista de categorias</Link>
     </>
   )
 }

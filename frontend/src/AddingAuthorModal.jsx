@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useCheckUser from './useCheckUser';
 
-function AddingAuthorModal() {
+function AddingAuthorModal({ closeAddingModal }) {
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [country, setCountry] = useState(null);
@@ -33,10 +33,13 @@ function AddingAuthorModal() {
 
       if (response.ok === false) {
         console.log(response.status);
+        alert('No se pude crear un nuevo autor.');
+        closeAddingModal();
       } else {
         const data = await response.json();
         alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`);
+        closeAddingModal();
       }
 
     } catch(error) {
@@ -45,7 +48,8 @@ function AddingAuthorModal() {
   }
 
   return (
-    <>
+    <div className="modal-overlay">
+      <div className="modal-proper">
       <form onSubmit={handleSubmit}>
         <input type='text' placeholder="Nombre"
           onChange={(e) => setFirstName(e.target.value)}></input>
@@ -61,7 +65,8 @@ function AddingAuthorModal() {
           onChange={(e) => setCategory(e.target.value)}></input>
         <button type='submit'>Añadir nuevo autor</button>
       </form>
-    </>
+      </div>
+    </div>
   )
 }
 

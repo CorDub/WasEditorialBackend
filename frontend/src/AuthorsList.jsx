@@ -122,7 +122,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, isEditModalOpen]);
+  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen]);
 
   return (
     <>

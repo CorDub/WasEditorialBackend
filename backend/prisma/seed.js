@@ -42,6 +42,22 @@ async function main() {
       management_min: 180.00
     }
   })
+
+  await prisma.category.create({
+    data: {
+      percentage_royalties: 100,
+      percentage_management_stores: 55,
+      management_min: 150.00
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      percentage_royalties: 20,
+      percentage_management_stores: 20,
+      management_min: 0.00
+    }
+  })
 }
 
 main()

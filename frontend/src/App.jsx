@@ -24,9 +24,9 @@ function App() {
           <Route path='/author' element={<AuthorPage />} />
           <Route path="/author/:id" element={<AuthorPage />} />
           <Route path='/admin/authors' element={<AuthorsList />} />
-          <Route path='/admin/new-author' element={<NewAuthorPage />} />
+          {/* <Route path='/admin/new-author' element={<NewAuthorPage />} />
           {/* <Route path='/admin/edit-author' element={<EditAuthorPage />} />
-          <Route path='/admin/delete-author' element={<DeleteAuthorPage />} /> */}
+          <Route path='/admin/delete-author' element={<DeleteAuthorPage />} /> */} */}
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />

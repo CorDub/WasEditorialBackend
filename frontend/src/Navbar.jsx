@@ -11,15 +11,16 @@ function Navbar() {
   const navigate = useNavigate();
 
   function navigateHome() {
+    console.log(user.user.is_admin);
     if (user === null) {
       navigate('/');
     };
 
-    if (user.is_admin === true) {
+    if (user.user.is_admin === true) {
       navigate('/admin');
     }
 
-    if (user.is_admin === false) {
+    if (user.user.is_admin === false) {
       navigate('/author');
     }
   }

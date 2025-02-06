@@ -24,16 +24,16 @@ function DeleteAuthorModal({ row, closeDeleteModal }) {
   }
 
   return (
-    <div className="delmod-overlay" onClick={closeDeleteModal}>
-      <div className="delmod-proper">
+    <div className="modal-overlay" onClick={closeDeleteModal}>
+      <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar el autor
           ${row.first_name} ${row.last_name}?`}</p>
         </div>
-        <div className="delmod-actions">
-          <button className='blue-button delmod-button'
+        <div className="modal-actions">
+          <button className='blue-button modal-button'
             onClick={closeDeleteModal}>Cancelar</button>
-          <button className='blue-button delmod-button'
+          <button className='blue-button modal-button'
             onClick={deleteAuthor}>Confirmar</button>
         </div>
       </div>

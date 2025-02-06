@@ -4,7 +4,7 @@ import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorPage from './AuthorPage.jsx';
 import AuthorsList from './AuthorsList.jsx';
-import NewAuthorPage from './NewAuthorPage.jsx';
+import NewAuthorPage from './AddingAuthorModal.jsx';
 import EditAuthorPage from './EditAuthorModal.jsx';
 import DeleteAuthorPage from './DeleteAuthorModal.jsx';
 import ConfirmationCodePage from './ConfirmationCodePage.jsx';

@@ -1,6 +1,8 @@
 import "./DeleteAuthorModal.scss"
+import useCheckUser from "./useCheckUser";
 
 function DeleteAuthorModal({ row, closeDeleteModal }) {
+  useCheckUser();
 
   async function deleteAuthor() {
     try {

@@ -90,9 +90,9 @@ app.post('/api/logout', async (req, res) => {
         console.error('Error when destroying session in logout route -server.js', err);
         return res.status(500).json({ message: 'Logout failed' });
       }
-      res.clearCookie('connect.sid');
-      res.json({message: 'Logged out'});
-    })
+    });
+    res.clearCookie('connect.sid');
+    res.json({message: 'Logged out'});
   } catch(error) {
     console.error("Error in logout route from server js:", error);
   }

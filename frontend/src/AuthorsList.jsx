@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import './AuthorsList.scss';
 import UserContext from "./UserContext";
@@ -25,8 +24,10 @@ function AuthorsList() {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          <button onClick={()=>openEditModal(row.original)}>Editar</button>
-          <button onClick={()=>openDeleteModal(row.original)}>Eliminar</button>
+          <button onClick={()=>openEditModal(row.original)}
+            className="blue-button modal-button">Editar</button>
+          <button onClick={()=>openDeleteModal(row.original)}
+            className="blue-button modal-button">Eliminar</button>
         </div>
       )
     },
@@ -59,8 +60,8 @@ function AuthorsList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal}>Añadir nuevo autor</button>
-    )
+      <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
+    ),
   });
 
   function openDeleteModal(row) {

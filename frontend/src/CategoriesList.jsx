@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import useCheckUser from "./useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import DeleteCategoryModal from './DeleteCategoryModal';
+// import EditCategoryModal from './EditCategoryModal';
+// import AddingCategoryModal from './AddingCategoryModal';
 
 function CategoriesList() {
   useCheckUser();
@@ -26,7 +29,7 @@ function CategoriesList() {
     },
     {
       header: "Tipo",
-      accessorKey: "id"
+      accessorKey: "type"
     },
     {
       header: "Regalias de venta",
@@ -76,7 +79,7 @@ function CategoriesList() {
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}/>);
     setOpenDeleteModal(true);
   }
 
@@ -86,7 +89,7 @@ function CategoriesList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}/>);
     setOpenEditModal(true);
   }
 
@@ -96,7 +99,7 @@ function CategoriesList() {
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal} />);
     setOpenAddingModal(true);
   }
 

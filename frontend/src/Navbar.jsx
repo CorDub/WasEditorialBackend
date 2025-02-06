@@ -50,7 +50,7 @@ function Navbar() {
         <img src={logo} alt="was-editorial-logo" className="navbar-srcLogo"></img>
       </div>
       <div className='navbar-logout'>
-        {(user !== null) &&
+        {(user !== '') &&
           <p className="grey-button" onClick={logout}>Logout</p>}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useCheckUser from './useCheckUser';
 
-function AddingCategoryModal( closeAddingModal ) {
+function AddingCategoryModal({ closeAddingModal }) {
   useCheckUser();
 
   const [tipo, setTipo] = useState(null);

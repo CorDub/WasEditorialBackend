@@ -108,8 +108,8 @@ router.get('/categories', async (req, res) => {
 
 router.delete('/category', async (req, res) => {
   try {
-    const category_id = parseInt(req.query.user_id);
-    await prisma.user.delete({where: {id: category_id}});
+    const category_id = parseInt(req.query.category_id);
+    await prisma.category.delete({where: {id: category_id}});
     res.status(200).json({message: "Deleted successfully"})
   } catch(error) {
     console.error(error);

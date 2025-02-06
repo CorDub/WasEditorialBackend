@@ -131,16 +131,8 @@ function AuthorsList() {
         {isDeleteModalOpen && deleteModal}
         {isEditModalOpen && editModal}
         {isAddingModalOpen && addingModal}
-        <div className="authors-list">
-          <div className="authors-links">
-            <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>
-            <Link to='/admin/edit-author' className="blue-button">Editar</Link>
-            <Link to='/admin/delete-author' className="blue-button">Eliminar</Link>
-          </div>
-          {data && <MaterialReactTable table={table} />}
-        </div>
+        {data && <MaterialReactTable table={table} />}
       </>
-
        ) : (
         <p>Loading...</p>
     )}

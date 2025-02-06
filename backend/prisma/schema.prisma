@@ -46,6 +46,7 @@ model Book {
 
 model Category {
   id                           Int      @id @default(autoincrement())
+  type                         Int?
   percentage_royalties         Int
   percentage_management_stores Int
   management_min               Float

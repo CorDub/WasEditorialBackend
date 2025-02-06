@@ -7,6 +7,8 @@ import { createRandomPassword } from './../utils.js';
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// User routes
+
 router.get('/users', async (req, res) => {
   try {
     const users = await prisma.user.findMany({where: {is_admin: false}});
@@ -91,5 +93,51 @@ router.delete('/user', async (req, res) => {
     res.status(500).json({error: 'A server error occurred while deleting the user'});
   }
 })
+
+//Categories routes
+
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany();
+    res.status(200).json(categories);
+  } catch(error) {
+    console.error("Error in the get categories route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching categories'});
+  }
+})
+
+router.delete('/category', async (req, res) => {
+  try {
+    const category_id = parseInt(req.query.category_id);
+    await prisma.category.delete({where: {id: category_id}});
+    res.status(200).json({message: "Deleted successfully"})
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the category'});
+  }
+})
+
+router.post('/category', async (req, res) => {
+  try {
+    const {
+      tipo,
+      regalias,
+      gestionTiendas,
+      gestionMinima } = req.body;
+    const new_category =  await prisma.category.create({
+      data: {
+        type: parseInt(tipo),
+        percentage_royalties: parseInt(regalias),
+        percentage_management_stores: parseInt(gestionTiendas),
+        management_min: parseInt(gestionMinima),
+      },
+    });
+
+    res.status(201).json({name: new_category.type});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ error: 'A server error occured while creating the category'});
+  }
+});
 
 export default router;

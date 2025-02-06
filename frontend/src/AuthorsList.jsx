@@ -6,6 +6,7 @@ import UserContext from "./UserContext";
 import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
+import AddingAuthorModal from './AddingAuthorModal';
 
 function AuthorsList() {
   useCheckUser();
@@ -14,9 +15,10 @@ function AuthorsList() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [isEditModalOpen, setOpenEditModal] = useState(false);
   const [editModal, setEditModal] = useState(null);
+  const [isAddingModalOpen, setOpenAddingModal] = useState(false);
+  const [addingModal, setAddingModal] = useState(null);
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
-  console.log(data);
 
   const columns = useMemo(() => [
     {
@@ -55,7 +57,10 @@ function AuthorsList() {
   ], []);
   const table = useMaterialReactTable({
     columns,
-    data
+    data,
+    renderTopToolbarCustomActions: () => (
+      <button onClick={openAddingModal}>Añadir nuevo autor</button>
+    )
   });
 
   function openDeleteModal(row) {
@@ -76,6 +81,16 @@ function AuthorsList() {
   function closeEditModal() {
     setEditModal(null);
     setOpenEditModal(false);
+  }
+
+  function openAddingModal() {
+    setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal} />);
+    setOpenAddingModal(true);
+  }
+
+  function closeAddingModal() {
+    setAddingModal(null);
+    setOpenAddingModal(false);
   }
 
   // Hook to set to Loading and not show the page before authenticating user
@@ -115,6 +130,7 @@ function AuthorsList() {
       <>
         {isDeleteModalOpen && deleteModal}
         {isEditModalOpen && editModal}
+        {isAddingModalOpen && addingModal}
         <div className="authors-list">
           <div className="authors-links">
             <Link to='/admin/new-author' className="blue-button">Añadir nuevo autor</Link>

@@ -41,8 +41,8 @@ function EditAuthorModal({ row, closeEditModal }) {
   }
 
   return (
-    <div className="delmod-overlay">
-      <div className="delmod-proper">
+    <div className="modal-overlay">
+      <div className="modal-proper">
         <form>
           <input type="text" placeholder={`${row.first_name}`}
             onChange={(e)=>setFirstName(e.target.value)}></input>
@@ -57,10 +57,10 @@ function EditAuthorModal({ row, closeEditModal }) {
           <input type="text" placeholder={`${row.category}`}
             onChange={(e)=>setCategory(e.target.value)}></input>
         </form>
-        <div className="delmod-actions">
-          <button className='blue-button delmod-button'
+        <div className="modal-actions">
+          <button className='blue-button modal-button'
               onClick={closeEditModal}>Cancelar</button>
-          <button className='blue-button delmod-button'
+          <button className='blue-button modal-button'
             onClick={editAuthor}>Confirmar</button>
         </div>
       </div>

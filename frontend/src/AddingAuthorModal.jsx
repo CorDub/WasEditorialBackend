@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useCheckUser from './useCheckUser';
 
-function NewAuthorPage() {
+function AddingAuthorModal() {
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [country, setCountry] = useState(null);
@@ -65,4 +65,4 @@ function NewAuthorPage() {
   )
 }
 
-export default NewAuthorPage;
+export default AddingAuthorModal;

@@ -56,3 +56,37 @@ a {
 .grey-button:hover {
   cursor: pointer;
 }
+
+// Modals
+
+.modal-overlay {
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-proper {
+  z-index: 2000;
+  background-color: #E2E2E2;
+  width: 30%;
+  border-radius: 15px;
+  padding: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-button {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}

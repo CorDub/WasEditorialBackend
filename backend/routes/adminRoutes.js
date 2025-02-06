@@ -47,6 +47,40 @@ router.post('/user', async (req, res) => {
   }
 });
 
+router.patch('/user', async (req, res) => {
+  try {
+    const {
+      id,
+      first_name,
+      last_name,
+      country,
+      referido,
+      email,
+      category } = req.body;
+    const updatedAuthor = await prisma.user.update({
+      where: {id: id},
+      data: {
+        first_name: first_name,
+        last_name: last_name,
+        country: country,
+        referido: referido,
+        email: email,
+        category: category
+      }
+    });
+
+    console.log(updatedAuthor);
+    if (updatedAuthor) {
+      res.status(200).json({message: "Successfully updated password"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the author"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update user route:", error);
+  }
+})
+
 router.delete('/user', async (req, res) => {
   try {
     const user_id = parseInt(req.query.user_id);

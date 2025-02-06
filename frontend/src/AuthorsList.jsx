@@ -47,6 +47,10 @@ function AuthorsList() {
       header: "Email",
       accessorKey: "email"
     },
+    {
+      header: "Referido",
+      accesorKey: "referido"
+    }
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -102,7 +106,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen]);
+  }, [isDeleteModalOpen, isEditModalOpen]);
 
   return (
     <>

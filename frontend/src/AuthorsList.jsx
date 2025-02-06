@@ -8,6 +8,7 @@ import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 
 function AuthorsList() {
+  useCheckUser();
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
@@ -15,7 +16,7 @@ function AuthorsList() {
   const [editModal, setEditModal] = useState(null);
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
-  useCheckUser();
+  console.log(data);
 
   const columns = useMemo(() => [
     {
@@ -49,8 +50,8 @@ function AuthorsList() {
     },
     {
       header: "Referido",
-      accesorKey: "referido"
-    }
+      accessorKey: "referido"
+    },
   ], []);
   const table = useMaterialReactTable({
     columns,

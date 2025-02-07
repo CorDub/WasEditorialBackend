@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import useCheckUser from "./useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteCategoryModal from './DeleteCategoryModal';
-// import EditCategoryModal from './EditCategoryModal';
+import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
 
 function CategoriesList() {

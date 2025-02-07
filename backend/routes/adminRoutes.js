@@ -73,7 +73,7 @@ router.patch('/user', async (req, res) => {
 
     console.log(updatedAuthor);
     if (updatedAuthor) {
-      res.status(200).json({message: "Successfully updated password"});
+      res.status(200).json({message: "Successfully updated user"});
     } else {
       res.status(500).json({error: "There was an issue updating the author"});
     };
@@ -137,6 +137,36 @@ router.post('/category', async (req, res) => {
   } catch(error) {
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the category'});
+  }
+});
+
+router.patch('/category', async (req, res) => {
+  try {
+    const {
+      id,
+      tipo,
+      regalias,
+      gestionTiendas,
+      gestionMinima } = req.body;
+    const updatedCategory = await prisma.category.update({
+      where: {id: id},
+      data: {
+        type: parseInt(tipo),
+        percentage_royalties: parseInt(regalias),
+        percentage_management_stores: parseInt(gestionTiendas),
+        management_min: parseInt(gestionMinima),
+      }
+    });
+
+    console.log(updatedCategory);
+    if (updatedCategory) {
+      res.status(200).json({message: "Successfully updated category"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the category"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update category route:", error);
   }
 });
 

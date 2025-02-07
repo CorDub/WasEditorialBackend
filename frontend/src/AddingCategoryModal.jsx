@@ -33,7 +33,7 @@ function AddingCategoryModal({ closeAddingModal }) {
         closeAddingModal();
       } else {
         const data = await response.json();
-        alert(`Una nueva categoria ${data.id} ha sido creado.`);
+        alert(`Una nueva categoria ${data.type} ha sido creado.`);
         closeAddingModal();
       }
 

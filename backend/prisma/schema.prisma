@@ -35,7 +35,7 @@ model Book {
   title         String
   pasta         String
   price         Float
-  isbn          BigInt?         @unique
+  isbn          String?         @unique
   user          User        @relation(fields: [userId], references: [id])
   userId        Int
   inventories   Inventory[]
@@ -59,7 +59,7 @@ model Bookstore {
   name            String
   deal_percentage Int
   contact_name    String
-  contact_phone   BigInt
+  contact_phone   String
   contact_email   String
   inventories     Inventory[]
   createdAt       DateTime    @default(now())

@@ -170,4 +170,16 @@ router.patch('/category', async (req, res) => {
   }
 });
 
+// Book routes
+
+router.get('/books', async (req, res) => {
+  try {
+    const books = await prisma.book.findMany();
+    res.status(200).json(books);
+  } catch(error) {
+    console.error("Error in the get books route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching books'});
+  }
+})
+
 export default router;

@@ -67,7 +67,7 @@ async function main() {
       title: "Si vas a soñar haz lo en grande",
       pasta: "Blanda",
       price: 149.99,
-      isbn: 9786072927285,
+      isbn: "9786072927285",
       userId: 1,
     }
   })
@@ -77,7 +77,7 @@ async function main() {
       title: "Tu calabaza gigante",
       pasta: "Dura",
       price: 179.99,
-      isbn: 9786075941714,
+      isbn: "9786075941714",
       userId: 1,
     }
   })
@@ -87,7 +87,7 @@ async function main() {
       name: "Gandhi",
       deal_percentage: 50,
       contact_name: "Gerardo Rivera",
-      contact_phone: 525524518965,
+      contact_phone: "525524518965",
       contact_email: "gerardo_rivera@gandhi.com"
     }
   })

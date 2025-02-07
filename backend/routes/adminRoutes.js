@@ -170,4 +170,55 @@ router.patch('/category', async (req, res) => {
   }
 });
 
+// Book routes
+
+router.get('/book', async (req, res) => {
+  try {
+    const books = await prisma.book.findMany({
+      include: {
+        user: {
+          select: {
+            first_name: true,
+            last_name: true,
+          }
+        }
+      }
+    });
+
+    books.map((book) => {
+      book.authorName = book.user.first_name + " " + book.user.last_name
+    })
+
+    res.status(200).json(books);
+  } catch(error) {
+    console.error("Error in the get books route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching books'});
+  }
+})
+
+router.post('/book', async (req, res) => {
+  try {
+    const {
+      title,
+      pasta,
+      price,
+      isbn,
+      author } = req.body;
+    const new_book =  await prisma.book.create({
+      data: {
+        title: title,
+        pasta: pasta,
+        price: parseFloat(price),
+        isbn: isbn,
+        author: author,
+      },
+    });
+
+    res.status(201).json({title: new_book.title});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ error: 'A server error occured while creating the book'});
+  }
+});
+
 export default router;

@@ -61,6 +61,55 @@ async function main() {
       management_min: 0.00
     }
   })
+
+  await prisma.book.create({
+    data: {
+      title: "Si vas a soñar haz lo en grande",
+      pasta: "Blanda",
+      price: 149.99,
+      isbn: 9786072927285,
+      userId: 1,
+    }
+  })
+
+  await prisma.book.create({
+    data: {
+      title: "Tu calabaza gigante",
+      pasta: "Dura",
+      price: 179.99,
+      isbn: 9786075941714,
+      userId: 1,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Gandhi",
+      deal_percentage: 50,
+      contact_name: "Gerardo Rivera",
+      contact_phone: 525524518965,
+      contact_email: "gerardo_rivera@gandhi.com"
+    }
+  })
+
+  await prisma.inventory.create({
+    data: {
+      bookId: 1,
+      bookstoreId: 1,
+      country: "Mexico",
+      initial: 1000,
+    }
+  })
+
+  await prisma.inventory.create({
+    data: {
+      bookId: 2,
+      bookstoreId: 1,
+      country: "Mexico",
+      initial: 1000,
+    }
+  })
+
 }
 
 main()

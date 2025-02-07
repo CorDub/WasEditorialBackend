@@ -35,8 +35,7 @@ model Book {
   title         String
   pasta         String
   price         Float
-  inventory_mex Int
-  inventory_usa Int
+  isbn          BigInt?         @unique
   user          User        @relation(fields: [userId], references: [id])
   userId        Int
   inventories   Inventory[]
@@ -46,7 +45,7 @@ model Book {
 
 model Category {
   id                           Int      @id @default(autoincrement())
-  type                         Int?
+  type                         Int
   percentage_royalties         Int
   percentage_management_stores Int
   management_min               Float
@@ -60,7 +59,7 @@ model Bookstore {
   name            String
   deal_percentage Int
   contact_name    String
-  contact_phone   Int
+  contact_phone   BigInt
   contact_email   String
   inventories     Inventory[]
   createdAt       DateTime    @default(now())
@@ -73,10 +72,13 @@ model Inventory {
   bookId      Int
   bookstore   Bookstore @relation(fields: [bookstoreId], references: [id])
   bookstoreId Int
+  country     String
   initial     Int
   sales       Sale[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@unique([bookId, bookstoreId, country])
 }
 
 model Sale {

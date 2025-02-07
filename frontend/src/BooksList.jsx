@@ -45,7 +45,7 @@ function BooksList() {
     },
     {
       header: "Autor",
-      accessorKey: "userId"
+      accessorKey: "authorName"
     },
   ], []);
   const table = useMaterialReactTable({

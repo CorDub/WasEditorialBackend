@@ -174,7 +174,21 @@ router.patch('/category', async (req, res) => {
 
 router.get('/books', async (req, res) => {
   try {
-    const books = await prisma.book.findMany();
+    const books = await prisma.book.findMany({
+      include: {
+        user: {
+          select: {
+            first_name: true,
+            last_name: true,
+          }
+        }
+      }
+    });
+
+    books.map((book) => {
+      book.authorName = book.user.first_name + " " + book.user.last_name
+    })
+    
     res.status(200).json(books);
   } catch(error) {
     console.error("Error in the get books route:", error);

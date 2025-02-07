@@ -58,7 +58,7 @@ function BooksList() {
 
   async function fetchBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/books', {
+      const response = await fetch('http://localhost:3000/admin/book', {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

@@ -44,8 +44,8 @@ function BooksList() {
       accessorKey: "isbn"
     },
     {
-      header: "Autor",
-      accessorKey: "authorName"
+      header: "Autor(es)",
+      accessorKey: "authorNames",
     },
   ], []);
   const table = useMaterialReactTable({

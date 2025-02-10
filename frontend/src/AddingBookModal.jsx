@@ -8,7 +8,7 @@ function AddingBookModal({ closeAddingModal }) {
   const [pasta, setPasta] = useState(null);
   const [price, setPrice] = useState(null);
   const [isbn, setIsbn] = useState(null);
-  const [author, setAuthor] = useState(null);
+  const [authors, setAuthors] = useState([""]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -25,7 +25,7 @@ function AddingBookModal({ closeAddingModal }) {
           pasta: pasta,
           price: price,
           isbn: isbn,
-          author: author,
+          authors: authors,
         }),
       });
 
@@ -44,6 +44,20 @@ function AddingBookModal({ closeAddingModal }) {
     }
   }
 
+  function authorsChange(index, event) {
+    const authorsNew = [...authors];
+    authorsNew[index] = event.target.value;
+    setAuthors(authorsNew);
+  }
+
+  function addOtherAuthor() {
+    setAuthors([...authors, [""]]);
+  }
+
+  function removeOtherAuthor(indexToRemove) {
+    setAuthors(authors.filter((_, index)=> index !== indexToRemove));
+  }
+
   useEffect(()=>{
     console.log(pasta)
   }, [pasta])
@@ -55,7 +69,6 @@ function AddingBookModal({ closeAddingModal }) {
         <input type='text' placeholder="Titulo"
           onChange={(e) => setTitle(e.target.value)}></input>
         <select onChange={(e) =>setPasta(e.target.value)}>
-          {/* <option value="Blanda">Pasta</option> */}
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
@@ -63,8 +76,15 @@ function AddingBookModal({ closeAddingModal }) {
           onChange={(e) => setPrice(e.target.value)}></input>
         <input type='text' placeholder="ISBN"
           onChange={(e) => setIsbn(e.target.value)}></input>
-        <input type='text' placeholder="Autor"
-          onChange={(e) => setAuthor(e.target.value)}></input>
+        {authors.map((author, index) => (
+          <div key={index}>
+            <input type='text' placeholder="Autor"
+          onChange={(event) => authorsChange(index, event)}></input>
+            {authors.length > 1 &&
+              <button type="button" onClick={() => removeOtherAuthor(index)}>Eliminar autor</button>}
+          </div>
+        ))}
+        <button type="button" onClick={addOtherAuthor}>Añadir nuevo autor</button>
         <button type='submit'>Añadir nuevo libro</button>
       </form>
       </div>

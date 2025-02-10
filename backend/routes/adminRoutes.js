@@ -176,7 +176,7 @@ router.get('/book', async (req, res) => {
   try {
     const books = await prisma.book.findMany({
       include: {
-        user: {
+        users: {
           select: {
             first_name: true,
             last_name: true,
@@ -186,7 +186,14 @@ router.get('/book', async (req, res) => {
     });
 
     books.map((book) => {
-      book.authorName = book.user.first_name + " " + book.user.last_name
+      book.authorNames = "";
+      book.users.map((user) => {
+        if (book.authorNames === "") {
+          book.authorNames = ((user.first_name + " " + user.last_name))
+        } else {
+          book.authorNames += (", " + ((user.first_name + " " + user.last_name)))
+        }
+      })
     })
 
     res.status(200).json(books);

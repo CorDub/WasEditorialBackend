@@ -216,6 +216,7 @@ router.post('/book', async (req, res) => {
     authors.map((authorId) => {
       authorsIds.push({"id": authorId});
     })
+
     const new_book = await prisma.book.create({
       data: {
         title: title,
@@ -234,5 +235,16 @@ router.post('/book', async (req, res) => {
     res.status(500).json({ error: 'A server error occured while creating the book'});
   }
 });
+
+router.delete('/book', async (req, res) => {
+  try {
+    const book_id = parseInt(req.query.book_id);
+    await prisma.book.delete({where: {id: book_id}});
+    res.status(200).json({message: "Deleted successfully"})
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the book'});
+  }
+})
 
 export default router;

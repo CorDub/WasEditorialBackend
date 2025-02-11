@@ -288,4 +288,84 @@ router.patch('/book', async (req, res) => {
   }
 });
 
+// Bookstores routes
+
+router.get('/bookstore', async (req, res) => {
+  try {
+    const bookstores = await prisma.bookstore.findMany();
+    res.status(200).json(bookstores);
+  } catch(error) {
+    console.error("Error in the get bookstores route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching bookstores'});
+  }
+})
+
+router.post('/bookstore', async (req, res) => {
+  try {
+    const {
+      name,
+      dealPercentage,
+      contactName,
+      contactPhone,
+      contactEmail } = req.body;
+    const new_bookstore =  await prisma.bookstore.create({
+      data: {
+        name: name,
+        deal_percentage: parseFloat(dealPercentage),
+        contact_name: contactName,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+      },
+    });
+
+    res.status(201).json({name: new_bookstore.name});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ error: 'A server error occured while creating the category'});
+  }
+})
+
+router.patch('/bookstore', async (req, res) => {
+  try {
+    const {
+      id,
+      name,
+      dealPercentage,
+      contactName,
+      contactPhone,
+      contactEmail } = req.body;
+    const updatedBookstore = await prisma.bookstore.update({
+      where: {id: id},
+      data: {
+        name: name,
+        deal_percentage: parseFloat(dealPercentage),
+        contact_name: contactName,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+      }
+    });
+
+    console.log(updatedBookstore);
+    if (updatedBookstore) {
+      res.status(200).json({message: "Successfully updated bookstore"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the bookstore"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update bookstore route:", error);
+  }
+});
+
+router.delete('/bookstore', async (req, res) => {
+  try {
+    const bookstore_id = parseInt(req.query.bookstore_id);
+    await prisma.bookstore.delete({where: {id: bookstore_id}});
+    res.status(200).json({message: "Deleted successfully"})
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the bookstore'});
+  }
+})
+
 export default router;

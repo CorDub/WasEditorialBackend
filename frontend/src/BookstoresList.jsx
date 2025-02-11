@@ -3,7 +3,7 @@ import useCheckUser from "./useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
-import AddingBookModal from './AddingBookModal';
+import AddingBookstoreModal from './AddingBookstoreModal';
 
 function BookstoresList() {
   useCheckUser();
@@ -32,7 +32,7 @@ function BookstoresList() {
       accessorKey: "name"
     },
     {
-      header: "Acuerdo",
+      header: "% Acuerdo",
       accessorKey: "deal_percentage"
     },
     {
@@ -107,7 +107,7 @@ function BookstoresList() {
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingBookstoreModal closeAddingModal={closeAddingModal} />);
     setOpenAddingModal(true);
   }
 

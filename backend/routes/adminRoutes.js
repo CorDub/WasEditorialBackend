@@ -300,5 +300,29 @@ router.get('/bookstore', async (req, res) => {
   }
 })
 
+router.post('/bookstore', async (req, res) => {
+  try {
+    const {
+      name,
+      dealPercentage,
+      contactName,
+      contactPhone,
+      contactEmail } = req.body;
+    const new_bookstore =  await prisma.bookstore.create({
+      data: {
+        name: name,
+        deal_percentage: parseFloat(dealPercentage),
+        contact_name: contactName,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+      },
+    });
+
+    res.status(201).json({name: new_bookstore.name});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ error: 'A server error occured while creating the category'});
+  }
+})
 
 export default router;

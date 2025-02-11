@@ -178,6 +178,7 @@ router.get('/book', async (req, res) => {
       include: {
         users: {
           select: {
+            id: true,
             first_name: true,
             last_name: true,
           }
@@ -246,5 +247,45 @@ router.delete('/book', async (req, res) => {
     res.status(500).json({error: 'A server error occurred while deleting the book'});
   }
 })
+
+router.patch('/book', async (req, res) => {
+  try {
+    const {
+      id,
+      title,
+      pasta,
+      price,
+      isbn,
+      authors } = req.body;
+
+    const authorsIds = []
+    authors.map((authorId) => {
+      authorsIds.push({"id": authorId});
+    })
+
+    const updatedBook = await prisma.book.update({
+      where: {id: id},
+      data: {
+        title: title,
+        pasta: pasta,
+        price: parseFloat(price),
+        isbn: isbn,
+        users: {
+          connect: authorsIds,
+        }
+      }
+    });
+
+    console.log(updatedBook);
+    if (updatedBook) {
+      res.status(200).json({message: "Successfully updated book"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the book"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update book route:", error);
+  }
+});
 
 export default router;

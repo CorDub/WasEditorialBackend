@@ -104,8 +104,6 @@ function AddingBookModal({ closeAddingModal }) {
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index}>
-            {/* <input type='text' placeholder="Autor"
-          onChange={(event) => authorsChange(index, event)}></input> */}
             <select onChange={(event) => authorsChange(index, event)}>
               <option key={index}>Selecciona un autor</option>
               {existingAuthors && existingAuthors.map((author, index) => {

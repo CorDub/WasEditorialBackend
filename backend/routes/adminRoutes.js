@@ -268,7 +268,7 @@ router.patch('/book', async (req, res) => {
       data: {
         title: title,
         pasta: pasta,
-        price: price,
+        price: parseFloat(price),
         isbn: isbn,
         users: {
           connect: authorsIds,

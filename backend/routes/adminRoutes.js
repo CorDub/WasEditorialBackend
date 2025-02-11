@@ -288,4 +288,17 @@ router.patch('/book', async (req, res) => {
   }
 });
 
+// Bookstores routes
+
+router.get('/bookstore', async (req, res) => {
+  try {
+    const bookstores = await prisma.bookstore.findMany();
+    res.status(200).json(bookstores);
+  } catch(error) {
+    console.error("Error in the get bookstores route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching bookstores'});
+  }
+})
+
+
 export default router;

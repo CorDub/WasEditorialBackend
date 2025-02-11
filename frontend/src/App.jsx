@@ -11,6 +11,7 @@ import UserProvider from './UserProvider.jsx';
 import Navbar from './Navbar.jsx';
 import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
+import BookstoresList from './BookstoresList.jsx';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />
           <Route path="/admin/books" element={<BooksList />} />
+          <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />

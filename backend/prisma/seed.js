@@ -98,6 +98,16 @@ async function main() {
     }
   })
 
+  await prisma.bookstore.create({
+    data: {
+      name: "Mercado Libre",
+      deal_percentage: 30,
+      contact_name: "Jack Wotton",
+      contact_phone: "525580416352",
+      contact_email: "jlwotton17@mercadolibre.co.mx"
+    }
+  })
+
   await prisma.inventory.create({
     data: {
       bookId: 1,

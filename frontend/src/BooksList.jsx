@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import useCheckUser from "./useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import DeleteCategoryModal from './DeleteCategoryModal';
+import DeleteBookModal from './DeleteBookModal';
 import EditCategoryModal from './EditCategoryModal';
 import AddingBookModal from './AddingBookModal';
 
@@ -44,8 +44,8 @@ function BooksList() {
       accessorKey: "isbn"
     },
     {
-      header: "Autor",
-      accessorKey: "authorName"
+      header: "Autor(es)",
+      accessorKey: "authorNames",
     },
   ], []);
   const table = useMaterialReactTable({
@@ -79,11 +79,15 @@ function BooksList() {
   }
 
   useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  useEffect(() => {
     fetchBooks();
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteBookModal row={row} closeDeleteModal={closeDeleteModal}/>);
     setOpenDeleteModal(true);
   }
 

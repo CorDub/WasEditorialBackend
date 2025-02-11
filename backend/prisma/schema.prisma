@@ -14,21 +14,20 @@ datasource db {
 }
 
 model User {
-  id                  Int         @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   first_name          String
   last_name           String
   country             String
   referido            String?
-  email               String      @unique
+  email               String    @unique
   password            String
-  category            Category?   @relation(fields: [categoryId], references: [id])
+  category            Category? @relation(fields: [categoryId], references: [id])
   categoryId          Int?
   books               Book[]
-  is_admin            Boolean     @default(false)
+  is_admin            Boolean   @default(false)
   reset_password_code Int?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
-  UserBooks           UserBooks[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 model Book {
@@ -41,18 +40,6 @@ model Book {
   inventories Inventory[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  UserBooks   UserBooks[]
-}
-
-model UserBooks {
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  book      Book     @relation(fields: [bookId], references: [id])
-  bookId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([userId, bookId])
 }
 
 model Category {

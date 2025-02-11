@@ -8,7 +8,32 @@ function AddingBookModal({ closeAddingModal }) {
   const [pasta, setPasta] = useState(null);
   const [price, setPrice] = useState(null);
   const [isbn, setIsbn] = useState(null);
-  const [authors, setAuthors] = useState([""]);
+  const [authors, setAuthors] = useState([]);
+  const [existingAuthors, setExistingAuthors] = useState(null);
+
+  async function fetchUsers() {
+    try {
+      const response = await fetch('http://localhost:3000/admin/users', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setExistingAuthors(data);
+      }
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -46,12 +71,12 @@ function AddingBookModal({ closeAddingModal }) {
 
   function authorsChange(index, event) {
     const authorsNew = [...authors];
-    authorsNew[index] = event.target.value;
+    authorsNew[index] = parseInt(event.target.value);
     setAuthors(authorsNew);
   }
 
   function addOtherAuthor() {
-    setAuthors([...authors, [""]]);
+    setAuthors([...authors, 0]);
   }
 
   function removeOtherAuthor(indexToRemove) {
@@ -69,6 +94,7 @@ function AddingBookModal({ closeAddingModal }) {
         <input type='text' placeholder="Titulo"
           onChange={(e) => setTitle(e.target.value)}></input>
         <select onChange={(e) =>setPasta(e.target.value)}>
+          <option>Selecciona pasta</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
@@ -78,8 +104,19 @@ function AddingBookModal({ closeAddingModal }) {
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index}>
-            <input type='text' placeholder="Autor"
-          onChange={(event) => authorsChange(index, event)}></input>
+            {/* <input type='text' placeholder="Autor"
+          onChange={(event) => authorsChange(index, event)}></input> */}
+            <select onChange={(event) => authorsChange(index, event)}>
+              <option key={index}>Selecciona un autor</option>
+              {existingAuthors && existingAuthors.map((author, index) => {
+                return (
+                  <>
+                    <option key={index} value={`${author.id}`}>
+                      {author.first_name} {author.last_name}</option>
+                  </>
+                )
+              })}
+            </select>
             {authors.length > 1 &&
               <button type="button" onClick={() => removeOtherAuthor(index)}>Eliminar autor</button>}
           </div>

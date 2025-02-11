@@ -210,15 +210,22 @@ router.post('/book', async (req, res) => {
       pasta,
       price,
       isbn,
-      author } = req.body;
-    const new_book =  await prisma.book.create({
+      authors } = req.body;
+
+    const authorsIds = []
+    authors.map((authorId) => {
+      authorsIds.push({"id": authorId});
+    })
+    const new_book = await prisma.book.create({
       data: {
         title: title,
         pasta: pasta,
         price: parseFloat(price),
         isbn: isbn,
-        author: author,
-      },
+        users: {
+          connect: authorsIds,
+        },
+      }
     });
 
     res.status(201).json({title: new_book.title});

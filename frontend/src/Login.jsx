@@ -11,8 +11,6 @@ function LoginPage() {
   const navigate = useNavigate();
 
   async function handleSubmit (e) {
-    e.preventDefault();
-
     try {
       const response = await fetch('/api/login', {
         method: "POST",
@@ -27,14 +25,14 @@ function LoginPage() {
 
       if (response.ok === false) {
         console.log(response.status);
-      }
-
-      const data = await response.json();
-      setUser(data);
-      if (data.is_admin === true) {
-        navigate('/admin');
       } else {
-        navigate('/author');
+        const data = await response.json();
+        setUser(data);
+        if (data.is_admin === true) {
+          navigate('/admin');
+        } else {
+          navigate('/author');
+        }
       }
 
     } catch(error) {

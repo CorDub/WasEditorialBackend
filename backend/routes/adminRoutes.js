@@ -325,4 +325,36 @@ router.post('/bookstore', async (req, res) => {
   }
 })
 
+router.patch('/bookstore', async (req, res) => {
+  try {
+    const {
+      id,
+      name,
+      dealPercentage,
+      contactName,
+      contactPhone,
+      contactEmail } = req.body;
+    const updatedBookstore = await prisma.bookstore.update({
+      where: {id: id},
+      data: {
+        name: name,
+        deal_percentage: parseFloat(dealPercentage),
+        contact_name: contactName,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+      }
+    });
+
+    console.log(updatedBookstore);
+    if (updatedBookstore) {
+      res.status(200).json({message: "Successfully updated bookstore"});
+    } else {
+      res.status(500).json({error: "There was an issue updating the bookstore"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update bookstore route:", error);
+  }
+});
+
 export default router;

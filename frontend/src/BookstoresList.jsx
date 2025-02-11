@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import useCheckUser from "./useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteBookModal from './DeleteBookModal';
-import EditBookModal from './EditBookModal';
+import EditBookstoreModal from './EditBookstoreModal';
 import AddingBookstoreModal from './AddingBookstoreModal';
 
 function BookstoresList() {
@@ -97,7 +97,7 @@ function BookstoresList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditBookModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditBookstoreModal row={row} closeEditModal={closeEditModal}/>);
     setOpenEditModal(true);
   }
 

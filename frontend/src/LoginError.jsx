@@ -1,6 +1,6 @@
 import useCheckUser from "./useCheckUser";
 
-function LoginError({ errors }) {
+function LoginError({ errors, setErrors }) {
   useCheckUser();
   console.log(errors);
 

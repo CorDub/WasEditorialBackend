@@ -17,9 +17,9 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      await checkBoundsErrors(email, password);
-      if (errors.length !== 0) {
-        // setErrors([]);
+      const newErrors = checkBoundsErrors(email, password);
+      console.log(newErrors);
+      if (newErrors.length !== 0) {
         return;
       }
 
@@ -52,35 +52,31 @@ function LoginPage() {
     }
   }
 
-  async function checkBoundsErrors(email, password) {
+  function checkBoundsErrors(email, password) {
     let newErrors = [];
 
     if (typeof email !== "string" || typeof password !== "string") {
       newErrors.push(1);
-      return;
     }
 
     if (email.length === 0) {
       newErrors.push(2);
-      return;
     }
 
     if (email.length > 30) {
       newErrors.push(1);
-      return;
     }
 
     if (password.length === 0) {
       newErrors.push(3);
-      return;
     }
 
     if (password.length > 30) {
       newErrors.push(1);
-      return;
     }
 
     setErrors(newErrors);
+    return newErrors;
   }
 
   function transformErrorInputs() {
@@ -107,7 +103,7 @@ function LoginPage() {
           </div>
         </form>
       </div>
-      <LoginError errors={errors} />
+      <LoginError errors={errors} setErrors={setErrors}/>
       <Link to="/forgotten-password"
         className="login-forgotten-password">Olvidó su contraseña?</Link>
     </div>

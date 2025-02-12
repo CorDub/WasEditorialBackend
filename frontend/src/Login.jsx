@@ -17,8 +17,10 @@ function LoginPage() {
     e.preventDefault();
 
     try {
+      inputs.forEach((input) => {
+        input.classList.remove("error")
+      })
       const newErrors = checkBoundsErrors(email, password);
-      console.log(newErrors);
       if (newErrors.length !== 0) {
         return;
       }
@@ -36,7 +38,7 @@ function LoginPage() {
 
       if (response.ok === false) {
         console.log(response.status);
-        transformErrorInputs();
+        // transformErrorInputs();
       } else {
         const data = await response.json();
         setUser(data);
@@ -57,35 +59,23 @@ function LoginPage() {
 
     if (typeof email !== "string" || typeof password !== "string") {
       newErrors.push(1);
-    }
-
-    if (email.length === 0) {
-      newErrors.push(2);
-    }
-
-    if (email.length > 30) {
-      newErrors.push(1);
-    }
-
-    if (password.length === 0) {
-      newErrors.push(3);
-    }
-
-    if (password.length > 30) {
-      newErrors.push(1);
+    } else {
+      if (email.length === 0) {newErrors.push(2)};
+      if (email.length > 30 || password.length > 30) {newErrors.push(1)};
+      if (password.length === 0) {newErrors.push(3)};
     }
 
     setErrors(newErrors);
     return newErrors;
   }
 
-  function transformErrorInputs() {
-    inputs.forEach((input) => {
-      input.classList.add("error");
-      input.value = "";
-      input.value = "";
-    })
-  }
+  // function transformErrorInputs(inputs) {
+  //   setEmail("");
+  //   setPassword("");
+  //   inputs.forEach((input) => {
+  //     input.classList.add("error");
+  //   })
+  // }
 
   return (
     <div className="login-page">
@@ -95,17 +85,21 @@ function LoginPage() {
       <div className="login-form">
         <form onSubmit={handleSubmit}>
           <input className="login-input" type="text" placeholder="Correo"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}/>
           <input className="login-input" type="password" placeholder="Contraseña"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}/>
           <div className="login-button">
             <button className="blue-button" type="submit">Enter</button>
           </div>
         </form>
       </div>
-      <LoginError errors={errors} setErrors={setErrors}/>
+      <LoginError errors={errors} setErrors={setErrors} inputs={inputs} />
+      <div className="login-forpas">
       <Link to="/forgotten-password"
         className="login-forgotten-password">Olvidó su contraseña?</Link>
+      </div>
     </div>
   )
 }

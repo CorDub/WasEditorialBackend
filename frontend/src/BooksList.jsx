@@ -53,7 +53,9 @@ function BooksList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
+      </div>
     ),
   });
 

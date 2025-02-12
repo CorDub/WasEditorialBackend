@@ -53,7 +53,9 @@ function BookstoresList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
+      </div>
     ),
   });
 

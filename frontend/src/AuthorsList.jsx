@@ -6,6 +6,7 @@ import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
+import Navbar from './Navbar';
 
 function AuthorsList() {
   useCheckUser();
@@ -129,6 +130,7 @@ function AuthorsList() {
     <>
     {isLoading === false ? (
       <>
+        <Navbar active={"autores"}/>
         {isDeleteModalOpen && deleteModal}
         {isEditModalOpen && editModal}
         {isAddingModalOpen && addingModal}

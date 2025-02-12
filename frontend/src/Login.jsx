@@ -44,7 +44,7 @@ function LoginPage() {
         const data = await response.json();
         setUser(data);
         if (data.is_admin === true) {
-          navigate('/admin');
+          navigate('/admin/authors');
         } else {
           navigate('/author');
         }

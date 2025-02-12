@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdminPage from './AdminPage.jsx';
+// import AdminPage from './AdminPage.jsx';
 import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorPage from './AuthorPage.jsx';
@@ -17,10 +17,9 @@ function App() {
   return (
     <UserProvider>
       <Router>
-        <Navbar />
         <Routes>
           <Route path="/" element={<LoginPage/>} />
-          <Route path='/admin' element={<AdminPage />} />
+          {/* <Route path='/admin' element={<AdminPage />} /> */}
           <Route path='/author' element={<AuthorPage />} />
           <Route path="/author/:id" element={<AuthorPage />} />
           <Route path='/admin/authors' element={<AuthorsList />} />

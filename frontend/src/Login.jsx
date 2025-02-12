@@ -11,6 +11,8 @@ function LoginPage() {
   const navigate = useNavigate();
 
   async function handleSubmit (e) {
+    e.preventDefault();
+
     try {
       const response = await fetch('/api/login', {
         method: "POST",
@@ -25,6 +27,12 @@ function LoginPage() {
 
       if (response.ok === false) {
         console.log(response.status);
+        const inputs = document.querySelectorAll("input")
+        inputs.forEach((input) => {
+          input.classList.add("error");
+          input.value = "";
+          input.value = "";
+        })
       } else {
         const data = await response.json();
         setUser(data);

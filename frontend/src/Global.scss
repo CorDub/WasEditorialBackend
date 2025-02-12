@@ -129,6 +129,16 @@ input:focus-visible {
   box-shadow: 1px 1px 1px grey inset;
 }
 
+/// Errors
+
 .error {
   border: 1px solid red;
+}
+
+/// Table
+.table-add-button {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

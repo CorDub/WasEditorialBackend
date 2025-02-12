@@ -4,6 +4,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
 import AddingBookModal from './AddingBookModal';
+import Navbar from './Navbar';
 
 function BooksList() {
   useCheckUser();
@@ -118,6 +119,7 @@ function BooksList() {
 
   return(
     <>
+      <Navbar active={"libros"} />
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

@@ -61,7 +61,9 @@ function AuthorsList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
+      </div>
     ),
   });
 

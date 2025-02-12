@@ -4,6 +4,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
+import Navbar from './Navbar';
 
 function CategoriesList() {
   useCheckUser();
@@ -110,6 +111,7 @@ function CategoriesList() {
 
   return(
     <>
+      <Navbar active={"categorias"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

@@ -38,6 +38,7 @@ function LoginPage() {
 
       if (response.ok === false) {
         console.log(response.status);
+        setErrors([...errors, 1]);
         // transformErrorInputs();
       } else {
         const data = await response.json();

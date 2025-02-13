@@ -1,17 +1,32 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from "bcrypt";
+import authors from "/home/cordub/code/CorDub/WasEditorialBackend/authors.json" assert {type: 'json'};
 
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.create({
-    data: {
-      first_name: "Trying",
-      last_name: "McTryPherson",
-      country: "Estados Unidos",
-      email: 'trying@tocheckifitworks.com',
-      password: await bcrypt.hash("yesthisisapassword", 10),
-    },
+  // await prisma.user.create({
+  //   data: {
+  //     first_name: "Trying",
+  //     last_name: "McTryPherson",
+  //     country: "Estados Unidos",
+  //     email: 'trying@tocheckifitworks.com',
+  //     password: await bcrypt.hash("yesthisisapassword", 10),
+  //   },
+  // });
+
+  async function addAuthorFromDB(author) {
+    await prisma.user.create({
+      data: {
+        first_name: author.first_name,
+        last_name: author.last_name,
+        country: "Mexico",
+      }
+    })
+  };
+
+  authors.forEach((author) => {
+    addAuthorFromDB(author)
   });
 
   await prisma.user.create({
@@ -25,15 +40,15 @@ async function main() {
     },
   });
 
-  await prisma.user.create({
-    data: {
-      first_name: "Writer",
-      last_name: "McBook",
-      country: "Reino Unido",
-      email: "booking@alltheway.com",
-      password: await bcrypt.hash("writerwriting", 10),
-    },
-  });
+  // await prisma.user.create({
+  //   data: {
+  //     first_name: "Writer",
+  //     last_name: "McBook",
+  //     country: "Reino Unido",
+  //     email: "booking@alltheway.com",
+  //     password: await bcrypt.hash("writerwriting", 10),
+  //   },
+  // });
 
   await prisma.category.create({
     data: {
@@ -61,8 +76,6 @@ async function main() {
       management_min: 0.00
     }
   })
-
-  console.log(await prisma.user.findMany());
 
   await prisma.book.create({
     data: {

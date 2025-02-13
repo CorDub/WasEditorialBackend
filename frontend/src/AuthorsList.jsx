@@ -7,7 +7,6 @@ import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
-import { private_excludeVariablesFromRoot } from '@mui/material';
 
 function AuthorsList() {
   useCheckUser();
@@ -21,6 +20,7 @@ function AuthorsList() {
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -99,10 +99,12 @@ function AuthorsList() {
     setOpenEditModal(true);
   }
 
-  function closeEditModal(pageIndex) {
+  function closeEditModal(pageIndex, globalFilter) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    setForceRender(true);
   }
 
   function openAddingModal() {
@@ -144,7 +146,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, isAddingModalOpen]);
+  }, [isDeleteModalOpen, isAddingModalOpen, forceRender]);
 
   return (
     <>

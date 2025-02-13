@@ -67,6 +67,7 @@ function AuthorsList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>

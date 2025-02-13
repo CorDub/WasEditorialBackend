@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useCheckUser from "./useCheckUser";
 
-function EditAuthorModal({ row, closeEditModal }) {
+function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   useCheckUser();
 
   const [firstName, setFirstName] = useState(row.first_name);
@@ -31,7 +31,7 @@ function EditAuthorModal({ row, closeEditModal }) {
       });
 
       if (response.ok === true) {
-        closeEditModal();
+        closeEditModal(pageIndex, globalFilter);
         alert(`Successfully updated ${row.first_name} ${row.last_name}`);
       }
 

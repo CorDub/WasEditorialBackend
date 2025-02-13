@@ -15,12 +15,9 @@ function UserProvider({ children }) {
       });
 
       const data = await response.json();
-      console.log("Data from userContext:", data);
 
       if (response.ok === true) {
-        console.log(response.ok);
         setUser(data);
-        console.log(user);
       } else {
         setUser(null);
         console.log('no user to fetch');

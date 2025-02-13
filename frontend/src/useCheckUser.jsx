@@ -14,7 +14,6 @@ function useCheckUser() {
   }, [])
 
   useEffect(() => {
-    console.log("Checking user state after fetch:", user);  // Ensure user state is updated
     if (user === null) {
       navigate("/"); // Navigate only if user is still null after the update
     }

@@ -19,6 +19,8 @@ function AuthorsList() {
   const [addingModal, setAddingModal] = useState(null);
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -57,6 +59,11 @@ function AuthorsList() {
       accessorKey: "referido"
     },
   ], []);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  });
+
   const table = useMaterialReactTable({
     columns,
     data,
@@ -65,6 +72,12 @@ function AuthorsList() {
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
   });
 
   function openDeleteModal(row) {
@@ -78,13 +91,20 @@ function AuthorsList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}/>);
+    setPagination(prev => ({...prev}));
+
+    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex, globalFilter) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    setForceRender(true);
   }
 
   function openAddingModal() {
@@ -126,7 +146,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen]);
+  }, [isDeleteModalOpen, isAddingModalOpen, forceRender]);
 
   return (
     <>

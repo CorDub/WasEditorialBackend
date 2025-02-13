@@ -26,7 +26,6 @@ a {
   text-decoration: none;
 }
 
-
 // Buttons
 
 .blue-button {
@@ -38,6 +37,8 @@ a {
   padding-right: 0.5rem;
   background-color: $second-color;
   color: white;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .blue-button:hover {
@@ -116,17 +117,56 @@ a {
   margin-right: 0.5rem;
 }
 
+/// Form
+.global-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  p {
+    margin: 0px;
+    color: $second-color;
+    font-style: italic;
+  }
+}
+
 /// Inputs
 
 .global-input {
   border-radius: 15px;
   border: 1px solid grey;
   padding-left: 0.4rem;
+  margin-bottom: 0.5rem;
+  width: 70%;
 }
 
 .global-input:focus-visible {
   outline: none;
   box-shadow: 1px 1px 1px grey inset;
+}
+
+.select-global {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.2rem;
+  margin-bottom: 0.5rem;
+  width: 72.5%;
+  color: grey;
+}
+
+.select-global:focus-visible {
+  outline: none;
+}
+
+.selected {
+  color: black;
 }
 
 /// Errors

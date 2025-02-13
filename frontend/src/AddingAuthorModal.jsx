@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import useCheckUser from './useCheckUser';
 
 function AddingAuthorModal({ closeAddingModal }) {
+  useCheckUser();
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [country, setCountry] = useState(null);
@@ -33,8 +34,8 @@ function AddingAuthorModal({ closeAddingModal }) {
     "Zambia", "Zimbabue"
   ];
   const countrySelect = document.getElementById("country-select");
-
-  useCheckUser();
+  const [categories, setCategories] = useState([]);
+  const categorySelect = document.getElementById("category-select");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -86,6 +87,46 @@ function AddingAuthorModal({ closeAddingModal }) {
     };
   }
 
+  function categoryChange(e) {
+    if (e.target.value === "null") {
+      setCategory(null);
+      if (categorySelect.classList.contains("selected") === true) {
+        categorySelect.classList.remove("selected")
+      };
+    } else {
+      setCountry(e.target.value);
+      if (categorySelect.classList.contains("selected") === false) {
+        categorySelect.classList.add("selected")
+      };
+    };
+  }
+
+  async function fetchCategories() {
+    try {
+      const response = await fetch('http://localhost:3000/admin/categories', {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok === true) {
+        const dataCategories = await response.json();
+        setCategories(dataCategories);
+      } else {
+        console.log("There was an error fetching categories:", response.status);
+      };
+
+    } catch(error) {
+      console.error("Error while fetching categories:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories();
+  }, [])
+
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
@@ -102,7 +143,7 @@ function AddingAuthorModal({ closeAddingModal }) {
         <select className="select-global"
           id="country-select"
           onChange={(e) => countryChange(e)} >
-          <option value="null">Pais</option>
+          <option value="null">País</option>
           {countries.map((country, index) => (
             <option key={index} value={country}>{country}</option>
           ))}
@@ -113,9 +154,13 @@ function AddingAuthorModal({ closeAddingModal }) {
         <input type='text' placeholder="Correo"
           className="global-input"
           onChange={(e) => setEmail(e.target.value)}></input>
-        <input type='text' placeholder="Categoria"
-          className="global-input"
-          onChange={(e) => setCategory(e.target.value)}></input>
+        <select className="select-global" id="category-select"
+          onChange={(e) => categoryChange(e)}>
+          <option value="null">Categoría</option>
+          {categories && categories.map((category, index) => (
+            <option key={index} value={category.type}>{category.type}</option>
+          ))}
+        </select>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={closeAddingModal}>Cancelar</button>

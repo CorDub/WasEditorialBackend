@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from "bcrypt";
 import authors from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/authors.json" assert {type: 'json'};
+import books from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/books.json" assert {type: 'json'}
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,42 @@ async function main() {
 
   authors.forEach((author) => {
     addAuthorFromDB(author)
+  });
+
+  async function addBookFromDB(book, authorsIndexes) {
+    function checkISBN(isbn) {
+      if (isbn === "nan") {
+        return ""
+      } else {
+        return isbn
+      }
+    }
+
+    await prisma.book.create({
+      data: {
+        title: book.Title,
+        isbn: checkISBN(book.ISBN),
+        users: {
+          connect: authorsIndexes,
+        },
+      }
+    })
+  };
+
+  async function findAuthorWithFullName(user) {
+    const foundUser = await prisma.user.findUnique({where: {first_name: user.first_name, last_name: user.last_name}})
+    const formatted_user_id = {"id": foundUser.id}
+    return formatted_user_id
+  }
+
+  books.forEach((book) => {
+    let authorsIndexes = []
+    book["Author(s)"].map(async (user) => {
+      const user_id = await findAuthorWithFullName(user)
+      console.log(user_id);
+      authorsIndexes.push(user_id)
+    })
+    addBookFromDB(book, authorsIndexes)
   });
 
   await prisma.user.create({

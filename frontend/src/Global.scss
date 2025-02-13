@@ -26,6 +26,9 @@ a {
   text-decoration: none;
 }
 
+
+// Buttons
+
 .blue-button {
   border-radius: 15px;
   border: none;
@@ -55,6 +58,28 @@ a {
 
 .grey-button:hover {
   cursor: pointer;
+}
+
+.navbar-button {
+  border-radius: 15px;
+  border: none;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: $prim-color;
+  color: white;
+  transition: 0.3s;
+}
+
+.navbar-button:hover {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.active-button {
+  background-color: #E2E2E2;
+  color: #4E5981;
 }
 
 // Modals
@@ -91,6 +116,8 @@ a {
   margin-right: 0.5rem;
 }
 
+/// Inputs
+
 input {
   border-radius: 15px;
   border: 1px solid grey;
@@ -102,6 +129,16 @@ input:focus-visible {
   box-shadow: 1px 1px 1px grey inset;
 }
 
+/// Errors
+
 .error {
   border: 1px solid red;
+}
+
+/// Table
+.table-add-button {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

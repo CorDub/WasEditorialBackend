@@ -6,6 +6,7 @@ import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
+import Navbar from './Navbar';
 
 function AuthorsList() {
   useCheckUser();
@@ -60,7 +61,9 @@ function AuthorsList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
+      </div>
     ),
   });
 
@@ -129,6 +132,7 @@ function AuthorsList() {
     <>
     {isLoading === false ? (
       <>
+        <Navbar active={"autores"}/>
         {isDeleteModalOpen && deleteModal}
         {isEditModalOpen && editModal}
         {isAddingModalOpen && addingModal}

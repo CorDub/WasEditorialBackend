@@ -19,8 +19,8 @@ model User {
   last_name           String
   country             String
   referido            String?
-  email               String    @unique
-  password            String
+  email               String?    @unique
+  password            String?
   category            Category? @relation(fields: [categoryId], references: [id])
   categoryId          Int?
   books               Book[]

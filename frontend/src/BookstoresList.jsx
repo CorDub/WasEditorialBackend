@@ -4,6 +4,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import DeleteBookstoreModal from './DeleteBookstoreModal';
 import EditBookstoreModal from './EditBookstoreModal';
 import AddingBookstoreModal from './AddingBookstoreModal';
+import Navbar from "./Navbar";
 
 function BookstoresList() {
   useCheckUser();
@@ -52,7 +53,9 @@ function BookstoresList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
+      </div>
     ),
   });
 
@@ -118,6 +121,7 @@ function BookstoresList() {
 
   return(
     <>
+      <Navbar active={"librerias"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

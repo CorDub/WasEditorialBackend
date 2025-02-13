@@ -4,6 +4,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
+import Navbar from './Navbar';
 
 function CategoriesList() {
   useCheckUser();
@@ -48,7 +49,9 @@ function CategoriesList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
+      </div>
     ),
   });
 
@@ -110,6 +113,7 @@ function CategoriesList() {
 
   return(
     <>
+      <Navbar active={"categorias"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

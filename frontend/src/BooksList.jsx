@@ -4,6 +4,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
 import AddingBookModal from './AddingBookModal';
+import Navbar from './Navbar';
 
 function BooksList() {
   useCheckUser();
@@ -52,7 +53,9 @@ function BooksList() {
     columns,
     data,
     renderTopToolbarCustomActions: () => (
-      <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
+      <div className="table-add-button">
+        <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
+      </div>
     ),
   });
 
@@ -118,6 +121,7 @@ function BooksList() {
 
   return(
     <>
+      <Navbar active={"libros"} />
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

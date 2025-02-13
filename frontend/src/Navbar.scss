@@ -14,11 +14,19 @@
 }
 
 .navbar-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #E2E2E2;
 }
 
 .navbar-home:hover {
   cursor: pointer
+}
+
+.navbar-icon {
+  margin-right: 1rem;
+  margin-bottom: 2px;
 }
 
 .navbar-logo {

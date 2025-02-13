@@ -41,18 +41,20 @@ async function main() {
   };
 
   async function findAuthorWithFullName(user) {
-    const foundUser = await prisma.user.findUnique({where: {first_name: user.first_name, last_name: user.last_name}})
+    const foundUser = await prisma.user.findFirst({where: {first_name: user.first_name, last_name: user.last_name}})
     const formatted_user_id = {"id": foundUser.id}
     return formatted_user_id
   }
 
-  books.forEach((book) => {
-    let authorsIndexes = []
-    book["Author(s)"].map(async (user) => {
-      const user_id = await findAuthorWithFullName(user)
-      console.log(user_id);
-      authorsIndexes.push(user_id)
-    })
+  books.map(async (book) => {
+    let authorsIndexes = await Promise.all(
+      book["Author(s)"].map(async (user) => {
+        const user_id = await findAuthorWithFullName(user)
+        console.log(user_id);
+        return user_id;
+      })
+    )
+    console.log(authorsIndexes)
     addBookFromDB(book, authorsIndexes)
   });
 
@@ -91,30 +93,6 @@ async function main() {
       percentage_royalties: 20,
       percentage_management_stores: 20,
       management_min: 0.00
-    }
-  })
-
-  await prisma.book.create({
-    data: {
-      title: "Si vas a soñar haz lo en grande",
-      pasta: "Blanda",
-      price: 149.99,
-      isbn: "9786072927285",
-      users: {
-        connect: [{id: 1}, {id: 3}]
-      }
-    }
-  })
-
-  await prisma.book.create({
-    data: {
-      title: "Tu calabaza gigante",
-      pasta: "Dura",
-      price: 179.99,
-      isbn: "9786075941714",
-      users: {
-        connect: [{id: 1}, {id: 3}]
-      }
     }
   })
 

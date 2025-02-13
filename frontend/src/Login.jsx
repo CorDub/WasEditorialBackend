@@ -39,7 +39,6 @@ function LoginPage() {
       if (response.ok === false) {
         console.log(response.status);
         setErrors([...errors, 1]);
-        // transformErrorInputs();
       } else {
         const data = await response.json();
         setUser(data);
@@ -70,14 +69,6 @@ function LoginPage() {
     return newErrors;
   }
 
-  // function transformErrorInputs(inputs) {
-  //   setEmail("");
-  //   setPassword("");
-  //   inputs.forEach((input) => {
-  //     input.classList.add("error");
-  //   })
-  // }
-
   return (
     <div className="login-page">
       <div className="login-logo">
@@ -85,10 +76,10 @@ function LoginPage() {
       </div>
       <div className="login-form">
         <form onSubmit={handleSubmit}>
-          <input className="login-input" type="text" placeholder="Correo"
+          <input className="global-input login-input" type="text" placeholder="Correo"
             value={email}
             onChange={(e) => setEmail(e.target.value)}/>
-          <input className="login-input" type="password" placeholder="Contraseña"
+          <input className="global-input login-input" type="password" placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}/>
           <div className="login-button">

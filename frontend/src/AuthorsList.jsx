@@ -57,6 +57,10 @@ function AuthorsList() {
       accessorKey: "referido"
     },
   ], []);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  });
   const table = useMaterialReactTable({
     columns,
     data,
@@ -65,7 +69,14 @@ function AuthorsList() {
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    state: { pagination }
   });
+
+  console.log(pagination.pageIndex);
 
   function openDeleteModal(row) {
     setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}/>);
@@ -78,13 +89,18 @@ function AuthorsList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}/>);
+    setPagination(prev => {
+      setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
+        pageIndex={prev.pageIndex}/>);
+      return prev;
+    });
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex) {
     setEditModal(null);
     setOpenEditModal(false);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
   }
 
   function openAddingModal() {
@@ -126,7 +142,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen]);
+  }, [isDeleteModalOpen, isAddingModalOpen]);
 
   return (
     <>

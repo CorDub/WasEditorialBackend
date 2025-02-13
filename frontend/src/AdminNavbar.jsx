@@ -2,11 +2,9 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function AdminNavbar({ active }) {
-  console.log(active);
 
   function declareButtonActive(active) {
     const buttons = document.querySelectorAll(".navbar-button");
-    console.log(buttons);
     // Cleanup of any precedent active state
     buttons.forEach((button) => {
       if (button.classList.contains(".active-button")) {

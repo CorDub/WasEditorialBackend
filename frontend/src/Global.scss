@@ -118,13 +118,13 @@ a {
 
 /// Inputs
 
-input {
+.global-input {
   border-radius: 15px;
   border: 1px solid grey;
   padding-left: 0.4rem;
 }
 
-input:focus-visible {
+.global-input:focus-visible {
   outline: none;
   box-shadow: 1px 1px 1px grey inset;
 }

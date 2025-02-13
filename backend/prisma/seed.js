@@ -1,20 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from "bcrypt";
-import authors from "/home/cordub/code/CorDub/WasEditorialBackend/authors.json" assert {type: 'json'};
+import authors from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/authors.json" assert {type: 'json'};
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // await prisma.user.create({
-  //   data: {
-  //     first_name: "Trying",
-  //     last_name: "McTryPherson",
-  //     country: "Estados Unidos",
-  //     email: 'trying@tocheckifitworks.com',
-  //     password: await bcrypt.hash("yesthisisapassword", 10),
-  //   },
-  // });
-
   async function addAuthorFromDB(author) {
     await prisma.user.create({
       data: {
@@ -39,16 +29,6 @@ async function main() {
       is_admin: true
     },
   });
-
-  // await prisma.user.create({
-  //   data: {
-  //     first_name: "Writer",
-  //     last_name: "McBook",
-  //     country: "Reino Unido",
-  //     email: "booking@alltheway.com",
-  //     password: await bcrypt.hash("writerwriting", 10),
-  //   },
-  // });
 
   await prisma.category.create({
     data: {

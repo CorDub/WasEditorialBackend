@@ -2,8 +2,9 @@ import pandas as pd
 import json
 
 # import as a database and drop useless columns
-was_df = pd.read_csv("helpers/was_database.csv")
+was_df = pd.read_csv("/home/cordub/code/CorDub/WasEditorialBackend/helpers/was_database.csv")
 was_df = was_df.drop(columns=['Unnamed: 0', 'Publisher', 'Unnamed: 5'])
+
 
 # remove empty lines and deduplicate authors
 authors = []

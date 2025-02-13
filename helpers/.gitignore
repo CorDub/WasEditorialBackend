@@ -1,4 +1,4 @@
-# Keep environment variables out of version control
-was_database.csv
 was_database.ipynb
 authors.json
+was_database.csv
+books.json

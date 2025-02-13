@@ -68,6 +68,7 @@ function AuthorsList() {
     columns,
     data,
     enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
@@ -79,6 +80,34 @@ function AuthorsList() {
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
     state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   function openDeleteModal(row) {

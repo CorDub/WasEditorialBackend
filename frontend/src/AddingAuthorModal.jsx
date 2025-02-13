@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useCheckUser from './useCheckUser';
 
 function AddingAuthorModal({ closeAddingModal }) {
@@ -8,6 +8,31 @@ function AddingAuthorModal({ closeAddingModal }) {
   const [referido, setReferido] = useState(null);
   const [email, setEmail] = useState(null);
   const [category, setCategory] = useState(null);
+  const countries = [
+    "México", "Estados Unidos",
+    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
+    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
+    "Filipinas", "Finlandia", "Fiyi", "Francia",
+    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
+    "Haití", "Honduras", "Hungría",
+    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+    "Jamaica", "Japón", "Jordania",
+    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+    "Omán",
+    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
+    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+    "Yemen",
+    "Zambia", "Zimbabue"
+  ];
+  const countrySelect = document.getElementById("country-select");
 
   useCheckUser();
 
@@ -47,23 +72,55 @@ function AddingAuthorModal({ closeAddingModal }) {
     }
   }
 
+  function countryChange(e) {
+    if (e.target.value === "null") {
+      setCountry(null);
+      if (countrySelect.classList.contains("selected") === true) {
+        countrySelect.classList.remove("selected")
+      };
+    } else {
+      setCountry(e.target.value);
+      if (countrySelect.classList.contains("selected") === false) {
+        countrySelect.classList.add("selected")
+      };
+    };
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
-      <form onSubmit={handleSubmit}>
+      <div className="form-title">
+        <p>Nuevo autor</p>
+      </div>
+      <form onSubmit={handleSubmit} className="global-form">
         <input type='text' placeholder="Nombre"
+          className="global-input"
           onChange={(e) => setFirstName(e.target.value)}></input>
         <input type='text' placeholder="Apellido"
+          className="global-input"
           onChange={(e) => setLastName(e.target.value)}></input>
-        <input type='text' placeholder="Pais"
-          onChange={(e) => setCountry(e.target.value)}></input>
+        <select className="select-global"
+          id="country-select"
+          onChange={(e) => countryChange(e)} >
+          <option value="null">Pais</option>
+          {countries.map((country, index) => (
+            <option key={index} value={country}>{country}</option>
+          ))}
+        </select>
         <input type='text' placeholder="Referido (opcional)"
+          className="global-input"
           onChange={(e) => setReferido(e.target.value)}></input>
         <input type='text' placeholder="Correo"
+          className="global-input"
           onChange={(e) => setEmail(e.target.value)}></input>
         <input type='text' placeholder="Categoria"
+          className="global-input"
           onChange={(e) => setCategory(e.target.value)}></input>
-        <button type='submit'>Añadir nuevo autor</button>
+        <div className="form-actions">
+          <button type="button" className='blue-button'
+            onClick={closeAddingModal}>Cancelar</button>
+          <button type='submit' className="blue-button">Añadir</button>
+        </div>
       </form>
       </div>
     </div>

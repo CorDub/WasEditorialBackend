@@ -7,6 +7,7 @@ import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
+import { private_excludeVariablesFromRoot } from '@mui/material';
 
 function AuthorsList() {
   useCheckUser();
@@ -19,6 +20,7 @@ function AuthorsList() {
   const [addingModal, setAddingModal] = useState(null);
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const columns = useMemo(() => [
     {
@@ -61,6 +63,7 @@ function AuthorsList() {
     pageIndex: 0,
     pageSize: 15
   });
+
   const table = useMaterialReactTable({
     columns,
     data,
@@ -73,10 +76,9 @@ function AuthorsList() {
       density: 'compact',
     },
     onPaginationChange: setPagination,
-    state: { pagination }
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
   });
-
-  console.log(pagination.pageIndex);
 
   function openDeleteModal(row) {
     setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}/>);
@@ -89,11 +91,11 @@ function AuthorsList() {
   }
 
   function openEditModal(row) {
-    setPagination(prev => {
-      setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
-        pageIndex={prev.pageIndex}/>);
-      return prev;
-    });
+    setPagination(prev => ({...prev}));
+
+    setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+
     setOpenEditModal(true);
   }
 

@@ -60,7 +60,12 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
+        const error = await response.json();
+        console.log(error);
+        if (error.message) {
+          checkForErrors(error.message);
+          return;
+        }
         alert('No se pude crear un nuevo autor.');
         closeAddingModal(pageIndex, globalFilter);
       } else {
@@ -125,7 +130,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     }
   }
 
-  function checkForErrors() {
+  function checkForErrors(serverError) {
     let errorList = [];
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
@@ -204,6 +209,13 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         inputEmail.classList.add("error");
       };
     };
+
+    if (serverError === "El correo ya está usado") {
+      errorList.push(53);
+      if (!inputEmail.classList.contains("error")) {
+        inputEmail.classList.add("error");
+      };
+    }
 
     if (category === null) {
       errorList.push(61);

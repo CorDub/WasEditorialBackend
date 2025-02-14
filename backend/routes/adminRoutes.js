@@ -44,8 +44,12 @@ router.post('/user', async (req, res) => {
     res.status(201).json({name: new_author.name, email: new_author.email});
     sendSetPasswordMail(email, firstName, password);
   } catch(error) {
-    console.error("This is the entire error:", error);
-    res.status(500).json({ error: 'A server error occured while creating the user'});
+    console.error(error);
+    if (String(error).includes(("Unique constraint failed on the fields: (`email`)"))) {
+      res.status(500).json({message: "El correo ya está usado"})
+      return;
+    }
+    res.status(500).json({ error: error });
   }
 });
 

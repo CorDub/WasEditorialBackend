@@ -25,6 +25,8 @@ function AddingAuthorModalErrors({ errors, setErrors }) {
         return (<p className="login-error">El correo no puede estar vacío.</p>)
       case 52:
         return (<p className="login-error">El correo no puede tener más de 50 caracteres.</p>)
+      case 53:
+        return (<p className="login-error">Este correo ya está usado.</p>)
       case 61:
         return (<p className="login-error">La categoría no puede estar vacía.</p>)
       case 62:

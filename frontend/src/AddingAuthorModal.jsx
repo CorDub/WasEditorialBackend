@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import useCheckUser from './useCheckUser';
+import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
 function AddingAuthorModal({ closeAddingModal }) {
   useCheckUser();
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState(null);
-  const [referido, setReferido] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [referido, setReferido] = useState('');
+  const [email, setEmail] = useState('');
   const [category, setCategory] = useState(null);
   const countries = [
     "México", "Estados Unidos",
@@ -36,8 +37,9 @@ function AddingAuthorModal({ closeAddingModal }) {
   const countrySelect = document.getElementById("country-select");
   const [categories, setCategories] = useState([]);
   const categorySelect = document.getElementById("category-select");
+  const [errors, setErrors] = useState([]);
 
-  async function handleSubmit(e) {
+  async function sendToServer(e) {
     e.preventDefault();
 
     try {
@@ -123,6 +125,113 @@ function AddingAuthorModal({ closeAddingModal }) {
     }
   }
 
+  function checkForErrors() {
+    let errorList = [];
+    const inputFirstName = document.getElementById('adding-author-first-name');
+    const inputLastName = document.getElementById('adding-author-last-name');
+    const inputCountry = document.getElementById('country-select');
+    const inputReferido = document.getElementById('adding-author-referido');
+    const inputEmail = document.getElementById('adding-author-email');
+    const inputCategory = document.getElementById('category-select');
+    const inputsList = [inputFirstName, inputLastName, inputCountry,
+      inputReferido, inputEmail, inputCategory];
+
+    inputsList.forEach((input) => {
+      if (input.classList.contains("error")) {
+        input.classList.remove("error");
+      }
+    })
+
+    if (firstName === '') {
+      errorList.push(11);
+      if (!inputFirstName.classList.contains("error")) {
+        inputFirstName.classList.add("error");
+      };
+    };
+
+    if (firstName.length > 50) {
+      errorList.push(12);
+      if (!inputFirstName.classList.contains("error")) {
+        inputFirstName.classList.add("error");
+      };
+    };
+
+    // if (lastName === '') {
+    //   errorList.push(21);
+    //   if (!inputFirstName.classList.contains("error")) {
+    //     inputLastName.classList.add("error");
+    //   };
+    // };
+
+    if (lastName.length > 50) {
+      errorList.push(22);
+      if (!inputFirstName.classList.contains("error")) {
+        inputLastName.classList.add("error");
+      };
+    };
+
+    if (country === null) {
+      errorList.push(31);
+      if (!inputCountry.classList.contains("error")) {
+        inputCountry.classList.add("error");
+      };
+    };
+
+    if (!countries.includes(country)) {
+      errorList.push(32);
+      if (!inputCountry.classList.contains("error")) {
+        inputCountry.classList.add("error");
+      };
+    };
+
+    if (referido.length > 100) {
+      errorList.push(41);
+      if (!inputReferido.classList.contains("error")) {
+        inputReferido.classList.add("error");
+      };
+    };
+
+    if (email === '') {
+      errorList.push(51);
+      if (!inputEmail.classList.contains("error")) {
+        inputEmail.classList.add("error");
+      };
+    };
+
+    if (email.length > 50) {
+      errorList.push(52);
+      if (!inputEmail.classList.contains("error")) {
+        inputEmail.classList.add("error");
+      };
+    };
+
+    if (category === null) {
+      errorList.push(61);
+      if (!inputCategory.classList.contains("error")) {
+        inputCategory.classList.add("error");
+      };
+    };
+
+    if (!categories.includes(category)) {
+      errorList.push(62);
+      if (!inputCategory.classList.contains("error")) {
+        inputCategory.classList.add("error");
+      };
+    };
+
+    setErrors(errorList);
+    return errorList;
+  }
+
+  async function handleSubmit(e) {
+    const errorList = checkForErrors();
+    if (errorList.length > 0) {
+      return;
+    }
+
+    sendToServer(e)
+  }
+
   useEffect(() => {
     fetchCategories();
   }, [])
@@ -133,12 +242,12 @@ function AddingAuthorModal({ closeAddingModal }) {
       <div className="form-title">
         <p>Nuevo autor</p>
       </div>
-      <form onSubmit={handleSubmit} className="global-form">
+      <form className="global-form">
         <input type='text' placeholder="Nombre"
-          className="global-input"
+          className="global-input" id='adding-author-first-name'
           onChange={(e) => setFirstName(e.target.value)}></input>
         <input type='text' placeholder="Apellido"
-          className="global-input"
+          className="global-input" id="adding-author-last-name"
           onChange={(e) => setLastName(e.target.value)}></input>
         <select className="select-global"
           id="country-select"
@@ -149,10 +258,10 @@ function AddingAuthorModal({ closeAddingModal }) {
           ))}
         </select>
         <input type='text' placeholder="Referido (opcional)"
-          className="global-input"
+          className="global-input" id="adding-author-referido"
           onChange={(e) => setReferido(e.target.value)}></input>
         <input type='text' placeholder="Correo"
-          className="global-input"
+          className="global-input" id="adding-author-email"
           onChange={(e) => setEmail(e.target.value)}></input>
         <select className="select-global" id="category-select"
           onChange={(e) => categoryChange(e)}>
@@ -161,10 +270,11 @@ function AddingAuthorModal({ closeAddingModal }) {
             <option key={index} value={category.type}>{category.type}</option>
           ))}
         </select>
+        <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={closeAddingModal}>Cancelar</button>
-          <button type='submit' className="blue-button">Añadir</button>
+          <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
         </div>
       </form>
       </div>

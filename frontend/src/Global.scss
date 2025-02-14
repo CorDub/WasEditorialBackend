@@ -137,6 +137,10 @@ a {
   }
 }
 
+.form-actions {
+  padding-top: 0.5rem;
+}
+
 /// Inputs
 
 .global-input {
@@ -145,6 +149,7 @@ a {
   padding-left: 0.4rem;
   margin-bottom: 0.5rem;
   width: 70%;
+  box-sizing: border-box
 }
 
 .global-input:focus-visible {
@@ -157,8 +162,9 @@ a {
   border: 1px solid grey;
   padding-left: 0.2rem;
   margin-bottom: 0.5rem;
-  width: 72.5%;
+  width: 70%;
   color: grey;
+  box-sizing: border-box;
 }
 
 .select-global:focus-visible {
@@ -174,6 +180,22 @@ a {
 .error {
   border: 1px solid red;
 }
+
+.login-errors {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.login-error {
+  margin: 0;
+  color: red;
+  font-size: 0.9em;
+}
+
 
 /// Table
 .table-add-button {

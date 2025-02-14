@@ -165,7 +165,7 @@ function AddingAuthorModal({ closeAddingModal }) {
 
     if (lastName.length > 50) {
       errorList.push(22);
-      if (!inputFirstName.classList.contains("error")) {
+      if (!inputLastName.classList.contains("error")) {
         inputLastName.classList.add("error");
       };
     };

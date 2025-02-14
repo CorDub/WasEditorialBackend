@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import useCheckUser from "./useCheckUser";
-import './LoginError.scss';
 
 function LoginError({ errors, setErrors, inputs }) {
   useCheckUser();

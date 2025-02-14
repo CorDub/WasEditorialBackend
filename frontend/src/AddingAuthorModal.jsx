@@ -60,7 +60,12 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
+        const error = await response.json();
+        console.log(error);
+        if (error.message) {
+          checkForErrors(error.message);
+          return;
+        }
         alert('No se pude crear un nuevo autor.');
         closeAddingModal(pageIndex, globalFilter);
       } else {
@@ -125,7 +130,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     }
   }
 
-  function checkForErrors() {
+  function checkForErrors(serverError) {
     let errorList = [];
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
@@ -205,6 +210,13 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       };
     };
 
+    if (serverError === "El correo ya está usado") {
+      errorList.push(53);
+      if (!inputEmail.classList.contains("error")) {
+        inputEmail.classList.add("error");
+      };
+    }
+
     if (category === null) {
       errorList.push(61);
       if (!inputCategory.classList.contains("error")) {
@@ -213,25 +225,15 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     };
 
     if (!categories.includes(category)) {
-      console.log(typeof categories[0]);
-      console.log(typeof category);
-      console.log(!categories.includes(category))
       errorList.push(62);
       if (!inputCategory.classList.contains("error")) {
         inputCategory.classList.add("error");
       };
     };
 
-    console.log(errorList)
     setErrors(errorList);
     return errorList;
   }
-
-  useEffect(()=> {
-    console.log(categories)
-    console.log(country);
-    console.log(typeof category);
-  }, [categories, country, category])
 
   async function handleSubmit(e) {
     const errorList = checkForErrors();

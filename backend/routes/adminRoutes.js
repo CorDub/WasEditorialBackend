@@ -3,7 +3,6 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
-import { type } from "os";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -46,7 +45,11 @@ router.post('/user', async (req, res) => {
     sendSetPasswordMail(email, firstName, password);
   } catch(error) {
     console.error(error);
-    res.status(500).json({ error: 'A server error occured while creating the user'});
+    if (String(error).includes(("Unique constraint failed on the fields: (`email`)"))) {
+      res.status(500).json({message: "El correo ya está usado"})
+      return;
+    }
+    res.status(500).json({ error: error });
   }
 });
 

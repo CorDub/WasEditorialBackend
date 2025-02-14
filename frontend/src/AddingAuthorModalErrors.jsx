@@ -15,6 +15,8 @@ function AddingAuthorModalErrors({ errors, setErrors }) {
       //   break;
       case 22:
         return (<p className="login-error">El apellido no puede tener más de 50 caracteres.</p>)
+      case 121:
+        return (<p className="login-error">Un autor con este mismo nombre completo ya existe.</p>)
       case 31:
         return (<p className="login-error">El país no puede estar vacío.</p>)
       case 32:

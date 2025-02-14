@@ -3,6 +3,7 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
+import { type } from "os";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -103,6 +104,24 @@ router.get('/categories', async (req, res) => {
   } catch(error) {
     console.error("Error in the get categories route:", error);
     res.status(500).json({error: 'A server error occurred while fetching categories'});
+  }
+})
+
+router.get('/categories-type', async (req, res) => {
+  try {
+    const categories_type = await prisma.category.findMany({
+      select: {
+        type: true
+      }
+    });
+    let type_list = [];
+    categories_type.forEach((category) => {
+      type_list.push(String(category.type))
+    })
+    res.status(200).json(type_list);
+  } catch(error) {
+    console.error("Error in the get categories-type route:", error);
+    res.status(500).json({error: "A server error occurred while fetching categories-type"});
   }
 })
 

@@ -34,9 +34,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     "Yemen",
     "Zambia", "Zimbabue"
   ];
-  const countrySelect = document.getElementById("country-select");
   const [categories, setCategories] = useState([]);
-  const categorySelect = document.getElementById("category-select");
   const [errors, setErrors] = useState([]);
 
   async function sendToServer(e) {
@@ -80,30 +78,27 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     }
   }
 
-  function countryChange(e) {
-    if (e.target.value === "null") {
-      setCountry(null);
-      if (countrySelect.classList.contains("selected") === true) {
-        countrySelect.classList.remove("selected")
-      };
-    } else {
-      setCountry(e.target.value);
-      if (countrySelect.classList.contains("selected") === false) {
-        countrySelect.classList.add("selected")
-      };
-    };
-  }
+  function dropDownChange(e, input_name) {
+    const inputs = {
+      "Category": {
+        "function": setCategory,
+        "element": document.getElementById("category-select")
+      },
+      "Country": {
+        "function": setCountry,
+        "element": document.getElementById("country-select")
+      }
+    }
 
-  function categoryChange(e) {
     if (e.target.value === "null") {
-      setCategory(null);
-      if (categorySelect.classList.contains("selected") === true) {
-        categorySelect.classList.remove("selected")
+      inputs[input_name]["function"](null);
+      if (inputs[input_name]["element"].classList.contains("selected") === true) {
+        inputs[input_name]["element"].classList.remove("selected")
       };
     } else {
-      setCategory(e.target.value);
-      if (categorySelect.classList.contains("selected") === false) {
-        categorySelect.classList.add("selected")
+      inputs[input_name]["function"](e.target.value);
+      if (inputs[input_name]["element"].classList.contains("selected") === false) {
+        inputs[input_name]["element"].classList.add("selected")
       };
     };
   }
@@ -273,7 +268,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           onChange={(e) => setLastName(e.target.value)}></input>
         <select className="select-global"
           id="country-select"
-          onChange={(e) => countryChange(e)} >
+          onChange={(e) => dropDownChange(e, "Country")} >
           <option value="null">País</option>
           {countries.map((country, index) => (
             <option key={index} value={country}>{country}</option>
@@ -286,7 +281,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           className="global-input" id="adding-author-email"
           onChange={(e) => setEmail(e.target.value)}></input>
         <select className="select-global" id="category-select"
-          onChange={(e) => categoryChange(e)}>
+          onChange={(e) => dropDownChange(e, "Category")}>
           <option value="null">Categoría</option>
           {categories && categories.map((category, index) => (
             <option key={index} value={category}>{category}</option>

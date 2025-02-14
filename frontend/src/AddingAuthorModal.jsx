@@ -126,6 +126,12 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
   }
 
   function checkForErrors(serverError) {
+    function addErrorClass(input_name) {
+      if (!input_name.classList.contains("error")) {
+        input_name.classList.add("error");
+      };
+    }
+
     let errorList = [];
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
@@ -144,16 +150,12 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
 
     if (firstName === '') {
       errorList.push(11);
-      if (!inputFirstName.classList.contains("error")) {
-        inputFirstName.classList.add("error");
-      };
+      addErrorClass(inputFirstName);
     };
 
     if (firstName.length > 50) {
       errorList.push(12);
-      if (!inputFirstName.classList.contains("error")) {
-        inputFirstName.classList.add("error");
-      };
+      addErrorClass(inputFirstName);
     };
 
     // if (lastName === '') {
@@ -165,75 +167,53 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
 
     if (lastName.length > 50) {
       errorList.push(22);
-      if (!inputLastName.classList.contains("error")) {
-        inputLastName.classList.add("error");
-      };
+      addErrorClass(inputLastName);
     };
 
     if (serverError === "Un autor con el mismo nombre completo ya existe") {
       errorList.push(121);
-      if (!inputFirstName.classList.contains("error")) {
-        inputFirstName.classList.add("error");
-      };
-      if (!inputLastName.classList.contains("error")) {
-        inputLastName.classList.add("error");
-      };
+      addErrorClass(inputFirstName);
+      addErrorClass(inputLastName);
     }
 
     if (country === null) {
       errorList.push(31);
-      if (!inputCountry.classList.contains("error")) {
-        inputCountry.classList.add("error");
-      };
+      addErrorClass(inputCountry);
     };
 
     if (!countries.includes(country)) {
       errorList.push(32);
-      if (!inputCountry.classList.contains("error")) {
-        inputCountry.classList.add("error");
-      };
+      addErrorClass(inputCountry);
     };
 
     if (referido.length > 100) {
       errorList.push(41);
-      if (!inputReferido.classList.contains("error")) {
-        inputReferido.classList.add("error");
-      };
+      addErrorClass(inputReferido);
     };
 
     if (email === '') {
       errorList.push(51);
-      if (!inputEmail.classList.contains("error")) {
-        inputEmail.classList.add("error");
-      };
+      addErrorClass(inputEmail);
     };
 
     if (email.length > 50) {
       errorList.push(52);
-      if (!inputEmail.classList.contains("error")) {
-        inputEmail.classList.add("error");
-      };
+      addErrorClass(inputEmail);
     };
 
     if (serverError === "El correo ya está usado") {
       errorList.push(53);
-      if (!inputEmail.classList.contains("error")) {
-        inputEmail.classList.add("error");
-      };
+      addErrorClass(inputEmail);
     }
 
     if (category === null) {
       errorList.push(61);
-      if (!inputCategory.classList.contains("error")) {
-        inputCategory.classList.add("error");
-      };
+      addErrorClass(inputCategory);
     };
 
     if (!categories.includes(category)) {
       errorList.push(62);
-      if (!inputCategory.classList.contains("error")) {
-        inputCategory.classList.add("error");
-      };
+      addErrorClass(inputCategory);
     };
 
     setErrors(errorList);

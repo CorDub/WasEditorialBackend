@@ -3,7 +3,6 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
-import { type } from "os";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -45,7 +44,7 @@ router.post('/user', async (req, res) => {
     res.status(201).json({name: new_author.name, email: new_author.email});
     sendSetPasswordMail(email, firstName, password);
   } catch(error) {
-    console.error(error);
+    console.error("This is the entire error:", error);
     res.status(500).json({ error: 'A server error occured while creating the user'});
   }
 });

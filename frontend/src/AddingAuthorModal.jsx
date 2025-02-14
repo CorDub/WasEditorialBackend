@@ -213,25 +213,15 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     };
 
     if (!categories.includes(category)) {
-      console.log(typeof categories[0]);
-      console.log(typeof category);
-      console.log(!categories.includes(category))
       errorList.push(62);
       if (!inputCategory.classList.contains("error")) {
         inputCategory.classList.add("error");
       };
     };
 
-    console.log(errorList)
     setErrors(errorList);
     return errorList;
   }
-
-  useEffect(()=> {
-    console.log(categories)
-    console.log(country);
-    console.log(typeof category);
-  }, [categories, country, category])
 
   async function handleSubmit(e) {
     const errorList = checkForErrors();

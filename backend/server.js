@@ -102,7 +102,6 @@ app.get('/api/checkPermissions', authenticateUser, async (req, res) => {
   try {
     // const response = await authenticateUser(req, res);
     // const data = await response.json();
-    console.log('data from checkPermissions: ', req.user);
     res.json({user: req.user})
     // return data;
   } catch(error) {

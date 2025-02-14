@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
-function AddingAuthorModal({ closeAddingModal }) {
+function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckUser();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -62,7 +62,7 @@ function AddingAuthorModal({ closeAddingModal }) {
       if (response.ok === false) {
         console.log(response.status);
         alert('No se pude crear un nuevo autor.');
-        closeAddingModal();
+        closeAddingModal(pageIndex, globalFilter);
       } else {
         const data = await response.json();
         alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
@@ -96,16 +96,16 @@ function AddingAuthorModal({ closeAddingModal }) {
         categorySelect.classList.remove("selected")
       };
     } else {
-      setCountry(e.target.value);
+      setCategory(e.target.value);
       if (categorySelect.classList.contains("selected") === false) {
         categorySelect.classList.add("selected")
       };
     };
   }
 
-  async function fetchCategories() {
+  async function fetchCategoryTypes() {
     try {
-      const response = await fetch('http://localhost:3000/admin/categories', {
+      const response = await fetch('http://localhost:3000/admin/categories-type', {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"
@@ -165,7 +165,7 @@ function AddingAuthorModal({ closeAddingModal }) {
 
     if (lastName.length > 50) {
       errorList.push(22);
-      if (!inputFirstName.classList.contains("error")) {
+      if (!inputLastName.classList.contains("error")) {
         inputLastName.classList.add("error");
       };
     };
@@ -213,15 +213,25 @@ function AddingAuthorModal({ closeAddingModal }) {
     };
 
     if (!categories.includes(category)) {
+      console.log(typeof categories[0]);
+      console.log(typeof category);
+      console.log(!categories.includes(category))
       errorList.push(62);
       if (!inputCategory.classList.contains("error")) {
         inputCategory.classList.add("error");
       };
     };
 
+    console.log(errorList)
     setErrors(errorList);
     return errorList;
   }
+
+  useEffect(()=> {
+    console.log(categories)
+    console.log(country);
+    console.log(typeof category);
+  }, [categories, country, category])
 
   async function handleSubmit(e) {
     const errorList = checkForErrors();
@@ -233,7 +243,7 @@ function AddingAuthorModal({ closeAddingModal }) {
   }
 
   useEffect(() => {
-    fetchCategories();
+    fetchCategoryTypes();
   }, [])
 
   return (
@@ -267,7 +277,7 @@ function AddingAuthorModal({ closeAddingModal }) {
           onChange={(e) => categoryChange(e)}>
           <option value="null">Categoría</option>
           {categories && categories.map((category, index) => (
-            <option key={index} value={category.type}>{category.type}</option>
+            <option key={index} value={category}>{category}</option>
           ))}
         </select>
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>

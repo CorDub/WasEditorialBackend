@@ -138,13 +138,17 @@ function AuthorsList() {
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    setForceRender(true);
   }
 
   // Hook to set to Loading and not show the page before authenticating user
@@ -176,7 +180,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, isAddingModalOpen, forceRender]);
+  }, [isDeleteModalOpen, forceRender]);
 
   return (
     <>

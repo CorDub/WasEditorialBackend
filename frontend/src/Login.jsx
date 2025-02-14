@@ -75,11 +75,17 @@ function LoginPage() {
         <img src={logo} alt="was-editorial-log" />
       </div>
       <div className="login-form">
-        <form onSubmit={handleSubmit}>
-          <input className="global-input login-input" type="text" placeholder="Correo"
+        <form onSubmit={handleSubmit} className="global-form">
+          <input className="global-input login-input"
+            id="input-login-id"
+            type="text"
+            placeholder="Correo"
             value={email}
             onChange={(e) => setEmail(e.target.value)}/>
-          <input className="global-input login-input" type="password" placeholder="Contraseña"
+          <input className="global-input login-input"
+            id="input-login-id"
+            type="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}/>
           <div className="login-button">

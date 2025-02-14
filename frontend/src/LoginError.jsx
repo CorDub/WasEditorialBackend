@@ -36,7 +36,7 @@ function LoginError({ errors, setErrors, inputs }) {
     }
   }
 
-  //restingErrors in the parent component Login so that state can be transformed on submit again,
+  //reseting Errors in the parent component Login so that state can be transformed on submit again,
   //not blocking the whole submit process.
   useEffect(() => {
     setErrors([]);

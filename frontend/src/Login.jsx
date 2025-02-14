@@ -61,7 +61,7 @@ function LoginPage() {
       newErrors.push(1);
     } else {
       if (email.length === 0) {newErrors.push(2)};
-      if (email.length > 30 || password.length > 30) {newErrors.push(1)};
+      if (email.length > 50 || password.length > 50) {newErrors.push(1)};
       if (password.length === 0) {newErrors.push(3)};
     }
 

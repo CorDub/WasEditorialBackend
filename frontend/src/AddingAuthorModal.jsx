@@ -72,7 +72,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         const data = await response.json();
         alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`);
-        closeAddingModal();
+        closeAddingModal(pageIndex, globalFilter);
       }
 
     } catch(error) {
@@ -174,6 +174,16 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         inputLastName.classList.add("error");
       };
     };
+
+    if (serverError === "Un autor con el mismo nombre completo ya existe") {
+      errorList.push(121);
+      if (!inputFirstName.classList.contains("error")) {
+        inputFirstName.classList.add("error");
+      };
+      if (!inputLastName.classList.contains("error")) {
+        inputLastName.classList.add("error");
+      };
+    }
 
     if (country === null) {
       errorList.push(31);
@@ -285,7 +295,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={closeAddingModal}>Cancelar</button>
+            onClick={() => closeAddingModal(pageIndex, globalFilter)}>Cancelar</button>
           <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
         </div>
       </form>

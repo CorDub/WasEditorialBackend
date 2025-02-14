@@ -28,6 +28,8 @@ model User {
   reset_password_code Int?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+
+  @@unique([first_name, last_name])
 }
 
 model Book {

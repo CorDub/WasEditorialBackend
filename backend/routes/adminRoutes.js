@@ -49,6 +49,11 @@ router.post('/user', async (req, res) => {
       res.status(500).json({message: "El correo ya está usado"})
       return;
     }
+
+    if (String(error).includes(("Unique constraint failed on the fields: (`first_name`,`last_name`)"))) {
+      res.status(500).json({message: "Un autor con el mismo nombre completo ya existe"})
+      return;
+    }
     res.status(500).json({ error: error });
   }
 });

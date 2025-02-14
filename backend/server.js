@@ -136,7 +136,6 @@ async function authenticateAdmin(req, res, next) {
   if (user === null || user.is_admin === false) {
     return res.status(401).json({ error: "User not found or unauthorized"});
   } else {
-    console.log("all good");
     req.user = user;
     next();
   };

@@ -11,7 +11,18 @@ const router = express.Router();
 
 router.get('/users', async (req, res) => {
   try {
-    const users = await prisma.user.findMany({where: {is_admin: false}});
+    const users = await prisma.user.findMany({
+      where: {
+        is_admin: false
+      },
+      include: {
+        category: {
+          select: {
+            type: true
+          }
+        }
+      }
+    });
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -41,7 +52,10 @@ router.post('/user', async (req, res) => {
       },
     });
 
-    res.status(201).json({name: new_author.name, email: new_author.email});
+    res.status(201).json({
+      firstName: new_author.first_name,
+      lastName: new_author.last_name,
+      email: new_author.email});
     sendSetPasswordMail(email, firstName, password);
   } catch(error) {
     console.error(error);

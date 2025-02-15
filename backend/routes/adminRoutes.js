@@ -11,7 +11,18 @@ const router = express.Router();
 
 router.get('/users', async (req, res) => {
   try {
-    const users = await prisma.user.findMany({where: {is_admin: false}});
+    const users = await prisma.user.findMany({
+      where: {
+        is_admin: false
+      },
+      include: {
+        category: {
+          select: {
+            type: true
+          }
+        }
+      }
+    });
     res.json(users);
   } catch (error) {
     console.error(error);

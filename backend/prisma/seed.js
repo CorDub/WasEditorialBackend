@@ -11,7 +11,7 @@ async function main() {
       data: {
         first_name: author.first_name,
         last_name: author.last_name,
-        country: "Mexico",
+        country: "México",
       }
     })
   };
@@ -62,7 +62,7 @@ async function main() {
     data: {
       first_name: "Administrator",
       last_name: "McLibro",
-      country: "Mexico",
+      country: "México",
       email: "Imake@books.com",
       password: await bcrypt.hash("bookboi", 10),
       is_admin: true

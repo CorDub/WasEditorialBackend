@@ -11,6 +11,8 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [email, setEmail] = useState(row.email);
   const [category, setCategory] = useState(row.category);
 
+  console.log(category.type);
+
   async function editAuthor() {
     try {
       const response = await fetch('http://localhost:3000/admin/user', {
@@ -31,8 +33,8 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
       });
 
       if (response.ok === true) {
-        closeEditModal(pageIndex, globalFilter);
-        alert(`Successfully updated ${row.first_name} ${row.last_name}`);
+        const alertMessage = (`Actualizado ${row.first_name} ${row.last_name} con exito`);
+        closeEditModal(pageIndex, globalFilter, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -54,12 +56,12 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
             onChange={(e)=>setReferido(e.target.value)}></input>
           <input type="text" placeholder={`${row.email}`}
             onChange={(e)=>setEmail(e.target.value)}></input>
-          <input type="text" placeholder={`${row.category}`}
+          <input type="text" placeholder={`${row.category.type}`}
             onChange={(e)=>setCategory(e.target.value)}></input>
         </form>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-              onClick={closeEditModal}>Cancelar</button>
+              onClick={() => closeEditModal(pageIndex, globalFilter)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={editAuthor}>Confirmar</button>
         </div>

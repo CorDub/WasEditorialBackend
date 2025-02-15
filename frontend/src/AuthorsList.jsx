@@ -51,7 +51,7 @@ function AuthorsList() {
     },
     {
       header: "Categoria",
-      accessorKey: "categoryId"
+      accessorFn: (row) => row.category?.type || ''
     },
     {
       header: "Email",
@@ -137,7 +137,7 @@ function AuthorsList() {
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    setForceRender(true);
+    setForceRender(!forceRender);
   }
 
   function openAddingModal() {
@@ -151,9 +151,11 @@ function AuthorsList() {
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    setForceRender(true);
-    setAlertMessage(alertMessage);
-    setAlertType(alertType);
+    setForceRender(!forceRender);
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   // Hook to set to Loading and not show the page before authenticating user
@@ -175,6 +177,7 @@ function AuthorsList() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setData(data);
       }
 

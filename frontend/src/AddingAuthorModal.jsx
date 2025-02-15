@@ -69,7 +69,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       } else {
         const data = await response.json();
         console.log(data);
-        const alertMessage = `Un nuevo author ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
+        const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`;
         closeAddingModal(pageIndex, globalFilter, alertMessage, "confirmation");
       }

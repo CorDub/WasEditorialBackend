@@ -64,13 +64,14 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           checkForErrors(error.message);
           return;
         }
-        alert('No se pude crear un nuevo autor.');
-        closeAddingModal(pageIndex, globalFilter);
+        const alertMessage = 'No se pudó crear un nuevo autor.';
+        closeAddingModal(pageIndex, globalFilter, alertMessage, "error");
       } else {
         const data = await response.json();
-        alert(`Un nuevo author ${data.name} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña se ha sido enviado por correo.`);
-        closeAddingModal(pageIndex, globalFilter);
+        console.log(data);
+        const alertMessage = `Un nuevo author ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
+        Su contraseña se ha sido enviado por correo.`;
+        closeAddingModal(pageIndex, globalFilter, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -158,13 +159,6 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       addErrorClass(inputFirstName);
     };
 
-    // if (lastName === '') {
-    //   errorList.push(21);
-    //   if (!inputFirstName.classList.contains("error")) {
-    //     inputLastName.classList.add("error");
-    //   };
-    // };
-
     if (lastName.length > 50) {
       errorList.push(22);
       addErrorClass(inputLastName);
@@ -225,7 +219,6 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     if (errorList.length > 0) {
       return;
     }
-
     sendToServer(e)
   }
 

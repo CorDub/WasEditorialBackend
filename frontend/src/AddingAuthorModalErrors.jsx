@@ -10,9 +10,6 @@ function AddingAuthorModalErrors({ errors, setErrors }) {
         return (<p className="login-error">El nombre no puede estar vacío.</p>)
       case 12:
         return (<p className="login-error">El nombre no puede tener más de 50 caracteres.</p>)
-      // case 21:
-      //   return (<p className="login-error">El appellido no puede estar vacío.</p>)
-      //   break;
       case 22:
         return (<p className="login-error">El apellido no puede tener más de 50 caracteres.</p>)
       case 121:

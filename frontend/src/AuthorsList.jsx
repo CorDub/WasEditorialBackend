@@ -7,6 +7,7 @@ import EditAuthorModal from './EditAuthorModal';
 import useCheckUser from './useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
+import Alert from './Alert';
 
 function AuthorsList() {
   useCheckUser();
@@ -21,6 +22,8 @@ function AuthorsList() {
   const [isLoading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
   const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   const columns = useMemo(() => [
     {
@@ -143,12 +146,14 @@ function AuthorsList() {
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal(pageIndex, globalFilter) {
+  function closeAddingModal(pageIndex, globalFilter, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
     setForceRender(true);
+    setAlertMessage(alertMessage);
+    setAlertType(alertType);
   }
 
   // Hook to set to Loading and not show the page before authenticating user
@@ -191,6 +196,7 @@ function AuthorsList() {
         {isEditModalOpen && editModal}
         {isAddingModalOpen && addingModal}
         {data && <MaterialReactTable table={table} />}
+        <Alert message={alertMessage} type={alertType}/>
       </>
        ) : (
         <p>Loading...</p>

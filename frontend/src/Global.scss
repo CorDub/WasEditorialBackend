@@ -204,3 +204,41 @@ a {
   align-items: center;
   justify-content: center;
 }
+
+
+/// Alerts
+
+.alert-proper {
+  z-index: 2000;
+  background-color: #E2E2E2;
+  width: 30%;
+  border-radius: 15px;
+  padding: 1rem;
+  position: fixed;
+  display: flex;
+  align-items: flex;
+  justify-content: flex;
+  text-align: center;
+  bottom: 15px;
+  right: -500px;
+  right: 15px;
+  transition: 0.3s;
+}
+
+.slide {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+}
+
+.confirmation {
+  border: 1px solid green;
+}
+
+.warning {
+  border: 1px solid orange;
+}
+
+.error {
+  border: 1px sold red;
+}

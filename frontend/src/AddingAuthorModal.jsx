@@ -65,12 +65,12 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           return;
         }
         const alertMessage = 'No se pudó crear un nuevo autor.';
-        closeAddingModal(pageIndex, globalFilter, alertMessage, "error");
+        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`;
-        closeAddingModal(pageIndex, globalFilter, alertMessage, "confirmation");
+        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -262,7 +262,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(pageIndex, globalFilter)}>Cancelar</button>
+            onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
         </div>
       </form>

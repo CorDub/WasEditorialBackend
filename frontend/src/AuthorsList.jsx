@@ -146,12 +146,14 @@ function AuthorsList() {
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal(pageIndex, globalFilter, alertMessage, alertType) {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    setForceRender(!forceRender);
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
     if (alertMessage) {
       setAlertMessage(alertMessage);
       setAlertType(alertType);

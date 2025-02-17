@@ -124,7 +124,7 @@ function AuthorsList() {
   }
 
   function openEditModal(row) {
-    setPagination(prev => ({...prev}));
+    // setPagination(prev => ({...prev}));
 
     setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
       pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
@@ -132,17 +132,25 @@ function AuthorsList() {
     setOpenEditModal(true);
   }
 
-  function closeEditModal(pageIndex, globalFilter) {
+  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    setForceRender(!forceRender);
+    console.log(false);
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openAddingModal() {
     setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter} />)
+
     setOpenAddingModal(true);
   }
 
@@ -179,7 +187,6 @@ function AuthorsList() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setData(data);
       }
 

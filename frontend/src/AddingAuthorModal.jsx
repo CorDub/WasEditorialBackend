@@ -34,8 +34,8 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     "Yemen",
     "Zambia", "Zimbabue"
   ];
-  const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState([]);
+  const [categories, setCategories] = useState(null);
 
   async function sendToServer(e) {
     e.preventDefault();
@@ -101,28 +101,6 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
         inputs[input_name]["element"].classList.add("selected")
       };
     };
-  }
-
-  async function fetchCategoryTypes() {
-    try {
-      const response = await fetch('http://localhost:3000/admin/categories-type', {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
-      });
-
-      if (response.ok === true) {
-        const dataCategories = await response.json();
-        setCategories(dataCategories);
-      } else {
-        console.log("There was an error fetching categories:", response.status);
-      };
-
-    } catch(error) {
-      console.error("Error while fetching categories:", error);
-    }
   }
 
   function checkForErrors(serverError) {
@@ -221,8 +199,30 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     sendToServer(e)
   }
 
+  async function fetchCategoryTypes() {
+    try {
+      const response = await fetch('http://localhost:3000/admin/categories-type', {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok === true) {
+        const dataCategories = await response.json();
+        setCategories(dataCategories);
+      } else {
+        console.log("There was an error fetching categories:", response.status);
+      };
+
+    } catch(error) {
+      console.error("Error while fetching categories:", error);
+    }
+  }
+
   useEffect(() => {
-    fetchCategoryTypes();
+    fetchCategoryTypes()
   }, [])
 
   return (

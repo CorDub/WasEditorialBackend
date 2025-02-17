@@ -8,9 +8,9 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [firstName, setFirstName] = useState(row.first_name);
   const [lastName, setLastName] = useState(row.last_name);
   const [country, setCountry] = useState(row.country);
-  const [referido, setReferido] = useState(row.referido);
-  const [email, setEmail] = useState(row.email);
-  const [category, setCategory] = useState(row.category.type);
+  const [referido, setReferido] = useState(row.referido ? row.referido : "");
+  const [email, setEmail] = useState(row.email ? row.email : "");
+  const [category, setCategory] = useState(row.category ? row.category.type : "");
   const countries = [
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",

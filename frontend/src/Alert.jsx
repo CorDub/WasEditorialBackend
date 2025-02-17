@@ -1,4 +1,4 @@
-function Alert({ message, type }) {
+function Alert({ message, type, setAlertMessage, setAlertType }) {
   const alertProper = document.querySelector('.alert-proper');
 
   if (message.length > 0) {
@@ -6,12 +6,14 @@ function Alert({ message, type }) {
 
     setTimeout(() => {
       alertProper.classList.remove(`${type}`, "slide");
+      setAlertMessage("");
+      setAlertType("");
     }, 4000);
   }
 
   return (
     <div className="alert-proper">
-      <p>{message}</p>
+      <p className="alert-message">{message}</p>
     </div>
   )
 }

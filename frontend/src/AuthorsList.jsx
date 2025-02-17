@@ -114,13 +114,23 @@ function AuthorsList() {
   });
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal() {
+  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openEditModal(row) {
@@ -207,7 +217,8 @@ function AuthorsList() {
         {isEditModalOpen && editModal}
         {isAddingModalOpen && addingModal}
         {data && <MaterialReactTable table={table} />}
-        <Alert message={alertMessage} type={alertType}/>
+        <Alert message={alertMessage} type={alertType}
+          setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
       </>
        ) : (
         <p>Loading...</p>

@@ -215,12 +215,13 @@ a {
   padding: 1rem;
   position: fixed;
   display: flex;
-  align-items: flex;
-  justify-content: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   bottom: 15px;
   right: -700px;
   transition: 0.3s;
+  box-shadow: 3px, 3px, 5px rgba(0, 0, 0, 0.5);
 }
 
 .slide {
@@ -239,4 +240,11 @@ a {
 
 .error {
   border: 1px sold red;
+}
+
+.alert-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }

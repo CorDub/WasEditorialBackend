@@ -137,7 +137,6 @@ function AuthorsList() {
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    console.log(false);
     if (reload === true) {
       setForceRender(!forceRender);
     }

@@ -38,7 +38,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [errors, setErrors] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  async function editAuthor() {
+  async function editAuthor(e) {
     let fullCategory = {};
     categories.map((cat) => {
       if (cat.type === parseInt(category)) {
@@ -46,7 +46,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
         return;
       }
     });
-
+    e.preventDefault();
     try {
       const response = await fetch('http://localhost:3000/admin/user', {
         method: "PATCH",
@@ -220,12 +220,12 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
     fetchCategoryTypes()
   }, [])
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
     const errorList = checkForErrors();
     if (errorList.length > 0) {
       return;
     }
-    editAuthor()
+    editAuthor(e)
   }
 
   return (

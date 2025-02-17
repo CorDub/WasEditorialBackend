@@ -81,7 +81,7 @@ router.patch('/user', async (req, res) => {
       country,
       referido,
       email,
-      category } = req.body;
+      categoryId } = req.body;
     const updatedAuthor = await prisma.user.update({
       where: {id: id},
       data: {
@@ -90,7 +90,11 @@ router.patch('/user', async (req, res) => {
         country: country,
         referido: referido,
         email: email,
-        category: category
+        category: {
+          connect: {
+            id: categoryId
+          }
+        }
       }
     });
 
@@ -133,14 +137,15 @@ router.get('/categories-type', async (req, res) => {
   try {
     const categories_type = await prisma.category.findMany({
       select: {
+        id: true,
         type: true
       }
     });
-    let type_list = [];
-    categories_type.forEach((category) => {
-      type_list.push(String(category.type))
-    })
-    res.status(200).json(type_list);
+    // let type_list = [];
+    // categories_type.forEach((category) => {
+    //   type_list.push(String(category.type))
+    // })
+    res.status(200).json(categories_type);
   } catch(error) {
     console.error("Error in the get categories-type route:", error);
     res.status(500).json({error: "A server error occurred while fetching categories-type"});

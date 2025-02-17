@@ -8,9 +8,9 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [firstName, setFirstName] = useState(row.first_name);
   const [lastName, setLastName] = useState(row.last_name);
   const [country, setCountry] = useState(row.country);
-  const [referido, setReferido] = useState(row.referido);
-  const [email, setEmail] = useState(row.email);
-  const [category, setCategory] = useState(row.category.type);
+  const [referido, setReferido] = useState(row.referido ? row.referido : "");
+  const [email, setEmail] = useState(row.email ? row.email : "");
+  const [category, setCategory] = useState(row.category ? row.category.type : "");
   const countries = [
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -38,7 +38,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [errors, setErrors] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  async function editAuthor() {
+  async function editAuthor(e) {
     let fullCategory = {};
     categories.map((cat) => {
       if (cat.type === parseInt(category)) {
@@ -46,7 +46,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
         return;
       }
     });
-
+    e.preventDefault();
     try {
       const response = await fetch('http://localhost:3000/admin/user', {
         method: "PATCH",
@@ -184,8 +184,6 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
       categories_types.push(cat.type)
     });
     if (!categories_types.includes(parseInt(category))) {
-      console.log(categories_types);
-      console.log(category)
       errorList.push(62);
       addErrorClass(inputCategory);
     };
@@ -220,12 +218,12 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
     fetchCategoryTypes()
   }, [])
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
     const errorList = checkForErrors();
     if (errorList.length > 0) {
       return;
     }
-    editAuthor()
+    editAuthor(e)
   }
 
   return (

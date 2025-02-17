@@ -39,6 +39,13 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
 
   async function sendToServer(e) {
     e.preventDefault();
+    let fullCategory = {};
+    categories.map((cat) => {
+      if (cat.type === parseInt(category)) {
+        fullCategory = cat;
+        return;
+      }
+    });
 
     try {
       const response = await fetch('http://localhost:3000/admin/user', {
@@ -53,7 +60,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           country: country,
           referido: referido,
           email: email,
-          category: category
+          category: fullCategory.id
         }),
       });
 
@@ -182,7 +189,11 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       addErrorClass(inputCategory);
     };
 
-    if (!categories.includes(category)) {
+    const categories_types = [];
+    categories.map((cat) => {
+      categories_types.push(cat.type)
+    });
+    if (!categories_types.includes(parseInt(category))) {
       errorList.push(62);
       addErrorClass(inputCategory);
     };
@@ -256,7 +267,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
           onChange={(e) => dropDownChange(e, "Category")}>
           <option value="null">Categoría</option>
           {categories && categories.map((category, index) => (
-            <option key={index} value={category}>{category}</option>
+            <option key={index} value={category.type}>{category.type}</option>
           ))}
         </select>
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>

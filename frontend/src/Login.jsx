@@ -76,13 +76,12 @@ function LoginPage() {
       </div>
       <div className="login-form">
         <form onSubmit={handleSubmit} className="global-form">
-          <input className="global-input login-input"
-            id="input-login-id"
+          <input className="global-input login-input input-login-id"
             type="text"
             placeholder="Correo"
             value={email}
             onChange={(e) => setEmail(e.target.value)}/>
-          <input className="global-input login-input"
+          <input className="global-input login-input input-login-id"
             id="input-login-id"
             type="password"
             placeholder="Contraseña"

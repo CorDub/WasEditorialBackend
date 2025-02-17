@@ -184,8 +184,6 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
       categories_types.push(cat.type)
     });
     if (!categories_types.includes(parseInt(category))) {
-      console.log(categories_types);
-      console.log(category)
       errorList.push(62);
       addErrorClass(inputCategory);
     };

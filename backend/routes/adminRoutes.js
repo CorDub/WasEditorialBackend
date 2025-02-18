@@ -21,7 +21,11 @@ router.get('/users', async (req, res) => {
             type: true
           }
         }
-      }
+      },
+      orderBy: [
+        {last_name: 'asc'},
+        {first_name: 'asc'}
+      ]
     });
     res.json(users);
   } catch (error) {
@@ -229,6 +233,9 @@ router.get('/book', async (req, res) => {
             last_name: true,
           }
         }
+      },
+      orderBy: {
+        title: "asc"
       }
     });
 
@@ -322,7 +329,6 @@ router.patch('/book', async (req, res) => {
       }
     });
 
-    console.log(updatedBook);
     if (updatedBook) {
       res.status(200).json({message: "Successfully updated book"});
     } else {

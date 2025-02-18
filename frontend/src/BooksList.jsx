@@ -5,6 +5,7 @@ import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
 import AddingBookModal from './AddingBookModal';
 import Navbar from './Navbar';
+import Alert from "./Alert";
 
 function BooksList() {
   useCheckUser();
@@ -15,6 +16,14 @@ function BooksList() {
   const [editModal, setEditModal] = useState(null);
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  })
 
   const columns = useMemo(() => [
     {
@@ -52,11 +61,47 @@ function BooksList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   async function fetchBooks() {
@@ -80,10 +125,6 @@ function BooksList() {
       console.error("Error while fetching books:", error);
     }
   }
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   useEffect(() => {
     fetchBooks();
@@ -110,13 +151,23 @@ function BooksList() {
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   return(
@@ -126,6 +177,8 @@ function BooksList() {
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
       {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>
   )
 }

@@ -4,19 +4,21 @@ import "./AddingBookModal.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
+import AddingBookErrorList from "./AddingBookErrorList";
 
 function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckUser();
 
-  const [title, setTitle] = useState(null);
-  const [pasta, setPasta] = useState(null);
+  const [title, setTitle] = useState('');
+  const [pasta, setPasta] = useState('');
   const [price, setPrice] = useState(null);
-  const [isbn, setIsbn] = useState(null);
+  const [isbn, setIsbn] = useState('');
   const [authors, setAuthors] = useState([null]);
   const [existingAuthors, setExistingAuthors] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
+  const [errorList, setErrorList] = useState([]);
 
   async function fetchUsers() {
     try {
@@ -42,7 +44,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
     fetchUsers();
   }, [])
 
-  async function handleSubmit(e) {
+  async function sendToServer(e) {
     e.preventDefault();
 
     try {
@@ -156,6 +158,105 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
     }
   }
 
+  function addErrorClass(element) {
+    if (!element.classList.contains("error")) {
+      element.classList.add("error");
+    };
+  }
+
+  function checkForErrors() {
+    let newErrorList =[];
+
+    const inputTitle = document.getElementById('adding-book-title');
+    const inputPasta = document.getElementById('pasta-select');
+    const inputPrice = document.getElementById('adding-book-price');
+    const inputIsbn = document.getElementById('adding-book-isbn');
+    const inputAuthors = [];
+    authors.map((author, index) => {
+      inputAuthors.push(document.getElementById(`author-select-${index}`));
+    });
+
+    const inputsList = [inputTitle, inputPasta, inputPrice,
+      inputIsbn, inputAuthors];
+
+    inputsList.forEach((input) => {
+      if (input !== inputAuthors) {
+        if (input.classList.contains("error")) {
+          input.classList.remove("error");
+        }
+      }
+    })
+    inputAuthors.forEach((input) => {
+      if (input.classList.contains("error")) {
+        input.classList.remove("error");
+      }
+    })
+
+    if (title === '') {
+      newErrorList.push(11);
+      addErrorClass(inputTitle);
+    };
+
+    if (title.length > 200) {
+      newErrorList.push(12);
+      addErrorClass(inputTitle);
+    };
+
+    if (pasta === null) {
+      newErrorList.push(21);
+      addErrorClass(inputPasta);
+    };
+
+    if (pasta !== "Dura" && pasta !== "Blanda") {
+      newErrorList.push(22);
+      addErrorClass(inputPasta);
+    };
+
+    if (isNaN(parseFloat(price))) {
+      newErrorList.push(31);
+      addErrorClass(inputPrice);
+    };
+
+    if (parseFloat(price) < 0) {
+      newErrorList.push(32);
+      addErrorClass(inputPrice);
+    };
+
+    // if (parseInt(isbn).isNaN()) {
+    //   newErrorList.push(33);
+    //   addErrorClass(inputIsbn);
+    // };
+
+    authors.map((author, index) => {
+      if (author === null) {
+        newErrorList.push(41);
+        addErrorClass(inputAuthors[index]);
+      };
+
+      let authorsIds = []
+      existingAuthors.map((author) => {
+        authorsIds.push(author.id);
+      })
+      if (!authorsIds.includes(author)) {
+        newErrorList.push(42);
+        addErrorClass(inputAuthors[index]);
+      };
+    })
+
+    setErrorList(newErrorList);
+    return newErrorList;
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const errorList = checkForErrors();
+    if (errorList.length > 0) {
+      return;
+    }
+    sendToServer(e);
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
@@ -164,7 +265,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
       </div>
       <form onSubmit={handleSubmit} className="global-form">
         <input type='text' placeholder="Titulo"
-          className="global-input"
+          className="global-input" id="adding-book-title"
           onChange={(e) => setTitle(e.target.value)}></input>
         <select onChange={(e) =>dropDownChange(e, "Pasta")} className="select-global"
           id="pasta-select">
@@ -173,10 +274,10 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
           <option value="Dura">Dura</option>
         </select>
         <input type='text' placeholder="Precio"
-          className="global-input"
+          className="global-input" id="adding-book-price"
           onChange={(e) => setPrice(e.target.value)}></input>
         <input type='text' placeholder="ISBN"
-          className="global-input"
+          className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index} className="book-edit-author-dropdown">
@@ -222,6 +323,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
             </div>
           </div>
         ))}
+        <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>

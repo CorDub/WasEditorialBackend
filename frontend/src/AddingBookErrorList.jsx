@@ -15,10 +15,12 @@ function AddingBookErrorList({ errorList, setErrorList }) {
         return (<p className="login-error">La pasta no puede estar vacía.</p>)
       case 22:
         return (<p className="login-error">Por favor elige una pasta en la lista.</p>)
-      case 32:
+      case 31:
         return (<p className="login-error">El precio debe estar un numero.</p>)
-      case 33:
+      case 32:
         return (<p className="login-error">El precio debe estar superior a cero.</p>)
+      case 33:
+        return (<p className="login-error">El precio no puede estar vacío.</p>)
       case 41:
         return (<p className="login-error">El autor no puede estar vacío.</p>)
       case 42:

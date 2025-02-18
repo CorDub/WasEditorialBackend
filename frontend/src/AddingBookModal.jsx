@@ -70,7 +70,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
       } else {
         const data = await response.json();
         const alertMessage = `Un nuevo libro ${data.title} ha sido creado.`;
-        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "error");
+        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -221,6 +221,11 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
       newErrorList.push(32);
       addErrorClass(inputPrice);
     };
+
+    if (price === null) {
+      newErrorList.push(33);
+      addErrorClass(inputPrice);
+    }
 
     // if (parseInt(isbn).isNaN()) {
     //   newErrorList.push(33);

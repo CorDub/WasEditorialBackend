@@ -141,13 +141,23 @@ function BooksList() {
   }
 
   function openEditModal(row) {
-    setEditModal(<EditBookModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditBookModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openAddingModal() {

@@ -6,8 +6,8 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
   useCheckUser();
 
   const [firstName, setFirstName] = useState(row.first_name);
-  const [lastName, setLastName] = useState(row.last_name);
-  const [country, setCountry] = useState(row.country);
+  const [lastName, setLastName] = useState(row.last_name ? row.last_name : "");
+  const [country, setCountry] = useState(row.country ? row.country : "");
   const [referido, setReferido] = useState(row.referido ? row.referido : "");
   const [email, setEmail] = useState(row.email ? row.email : "");
   const [category, setCategory] = useState(row.category ? row.category.type : "");
@@ -236,7 +236,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
           <input type="text" value={`${firstName}`}
             className="global-input" id='adding-author-first-name'
             onChange={(e)=>setFirstName(e.target.value)}></input>
-          <input type="text" value={`${lastName}`}
+          <input type="text" value={`${lastName}`} placeholder="Apellido"
             className="global-input" id="adding-author-last-name"
             onChange={(e)=>setLastName(e.target.value)}></input>
           <select className="select-global"
@@ -244,18 +244,18 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
             onChange={(e) => dropDownChange(e, "Country")} >
             <option value={`${country}`}>{country}</option>
             {countries.map((country, index) => (
-              <option key={index} value={country}>{country}</option>
+              <option key={index} value={country} placeholder="Pais">{country}</option>
             ))}
           </select>
-          <input type="text" value={`${referido}`}
+          <input type="text" value={`${referido}`} placeholder='Referido'
             className="global-input" id="adding-author-referido"
             onChange={(e)=>setReferido(e.target.value)}></input>
-          <input type="text" value={`${email}`}
+          <input type="text" value={`${email}`} placeholder="Correo"
             className="global-input" id="adding-author-email"
             onChange={(e)=>setEmail(e.target.value)}></input>
           <select className="select-global" id="category-select"
             onChange={(e) => dropDownChange(e, "Category")}>
-            <option value={category}>{category}</option>
+            <option value={category} placeholder="Categoria">{category ? category : "Categoria"}</option>
             {categories && categories.map((cat, index) => (
               <option key={index} value={cat.type}>{cat.type}</option>
             ))}

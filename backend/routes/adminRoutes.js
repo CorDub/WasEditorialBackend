@@ -312,8 +312,8 @@ router.patch('/book', async (req, res) => {
       authors } = req.body;
 
     const authorsIds = []
-    authors.map((authorId) => {
-      authorsIds.push({"id": authorId});
+    authors.map((author) => {
+      authorsIds.push({"id": author.id});
     })
 
     const updatedBook = await prisma.book.update({

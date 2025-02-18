@@ -19,6 +19,8 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [y, setY] = useState(null);
   const [errorList, setErrorList] = useState([]);
 
+  console.log(authors);
+
   async function fetchUsers() {
       try {
         const response = await fetch('http://localhost:3000/admin/users', {
@@ -81,10 +83,10 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
       });
 
       if (response.ok === true) {
-        const alertMessage = `Se actualizó ${title} con exito`;
+        const alertMessage = `Se actualizó "${title}" con exito`;
         closeEditModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
-        const alertMessage = `No se pudó actualizar ${title}`;
+        const alertMessage = `No se pudó actualizar "${title}"`;
         closeEditModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
@@ -191,7 +193,8 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
       existingAuthors.map((author) => {
         authorsIds.push(author.id);
       })
-      if (!authorsIds.includes(author)) {
+      console.log(author);
+      if (!authorsIds.includes(author.id)) {
         newErrorList.push(42);
         addErrorClass(inputAuthors[index]);
       };
@@ -212,10 +215,6 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
   }
 
   function dropDownChange(e, input_name, input_index) {
-    console.log(e);
-    console.log(input_name);
-    console.log(input_index);
-
     const inputs = {
       "Pasta": {
         "function": setPasta,
@@ -286,7 +285,7 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
               {existingAuthors && existingAuthors.map((author, index) => {
                 return (
                   <>
-                    <option key={index} value={`${author.id}`}>
+                    <option key={index} value={author.id}>
                       {author.first_name} {author.last_name}</option>
                   </>
                 )

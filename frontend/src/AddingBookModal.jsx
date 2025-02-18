@@ -122,7 +122,7 @@ function AddingBookModal({ closeAddingModal }) {
           className="global-input"
           onChange={(e) => setTitle(e.target.value)}></input>
         <select onChange={(e) =>setPasta(e.target.value)} className="global-input">
-          <option>Selecciona pasta</option>
+          <option value="null">Selecciona pasta</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>

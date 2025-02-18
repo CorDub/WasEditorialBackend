@@ -15,6 +15,11 @@ function BooksList() {
   const [editModal, setEditModal] = useState(null);
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  })
 
   const columns = useMemo(() => [
     {
@@ -52,11 +57,47 @@ function BooksList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   async function fetchBooks() {

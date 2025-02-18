@@ -44,7 +44,7 @@ function BookstoresList() {
     {
       header: "Acuerdo",
       accessorKey: "deal_percentage",
-      Cell: ({ row }) => `${row.original.deal_percentage}%`
+      Cell: ({ row }) => row.original.deal_percentage != null ? `${row.original.deal_percentage}%` : ""
     },
     {
       header: "Nombre del contacto",
@@ -128,41 +128,67 @@ function BookstoresList() {
   }
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     fetchBookstores();
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteBookstoreModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteBookstoreModal row={row} closeDeleteModal={closeDeleteModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal() {
+  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openEditModal(row) {
-    setEditModal(<EditBookstoreModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditBookstoreModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingBookstoreModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingBookstoreModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   return(
@@ -172,6 +198,8 @@ function BookstoresList() {
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
       {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>
   )
 }

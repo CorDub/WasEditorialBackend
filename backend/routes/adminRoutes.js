@@ -360,6 +360,10 @@ router.post('/bookstore', async (req, res) => {
       contactName,
       contactPhone,
       contactEmail } = req.body;
+    // const dealPerc = null;
+    // if (!dealPercentage === "") {
+    //   delPerc = parseFloat(dealPercentage);
+    // }
     const new_bookstore =  await prisma.bookstore.create({
       data: {
         name: name,

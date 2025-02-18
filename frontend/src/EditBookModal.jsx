@@ -86,17 +86,24 @@ function EditBookModal({ row, closeEditModal }) {
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
-        <form>
+        <div className="form-title">
+          <p>Editar libro</p>
+        </div>
+        <form className="global-form">
         <input type='text' placeholder={title}
+          className="global-input" id="adding-book-title"
           onChange={(e) => setTitle(e.target.value)}></input>
-        <select onChange={(e) =>setPasta(e.target.value)}>
-          <option>{row.pasta}</option>
+        <select onChange={(e) =>setPasta(e.target.value)}
+          className="select-global" id="pasta-select">
+          <option>{pasta}</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
         <input type='text' placeholder={price}
+          className="global-input" id="adding-book-price"
           onChange={(e) => setPrice(e.target.value)}></input>
-        <input type='text' placeholder={isbn}
+        <input type='text' placeholder={isbn === "" ? "ISBN" : isbn}
+          className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index}>

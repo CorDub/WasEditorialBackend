@@ -233,6 +233,9 @@ router.get('/book', async (req, res) => {
             last_name: true,
           }
         }
+      },
+      orderBy: {
+        title: "asc"
       }
     });
 

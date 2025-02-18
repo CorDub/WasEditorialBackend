@@ -5,6 +5,7 @@ import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
 import AddingBookModal from './AddingBookModal';
 import Navbar from './Navbar';
+import Alert from "./Alert";
 
 function BooksList() {
   useCheckUser();
@@ -16,6 +17,9 @@ function BooksList() {
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 15
@@ -147,13 +151,23 @@ function BooksList() {
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   return(
@@ -163,6 +177,8 @@ function BooksList() {
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
       {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>
   )
 }

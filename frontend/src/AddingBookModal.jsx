@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import useCheckUser from './useCheckUser';
 import "./AddingBookModal.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 
-function AddingBookModal({ closeAddingModal }) {
+function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckUser();
 
   const [title, setTitle] = useState(null);
@@ -63,12 +63,12 @@ function AddingBookModal({ closeAddingModal }) {
 
       if (response.ok === false) {
         console.log(response.status);
-        alert('No se pude crear un nuveo libro.');
-        closeAddingModal();
+        const alertMessage= 'No se pudó crear un nuveo libro.';
+        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        alert(`Un nuevo libro ${data.title} ha sido creado.`);
-        closeAddingModal();
+        const alertMessage = `Un nuevo libro ${data.title} ha sido creado.`;
+        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "error");
       }
 
     } catch(error) {
@@ -224,7 +224,7 @@ function AddingBookModal({ closeAddingModal }) {
         ))}
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={closeAddingModal}>Cancelar</button>
+            onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir nuevo libro</button>
         </div>
       </form>

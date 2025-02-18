@@ -123,10 +123,6 @@ function BooksList() {
   }
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     fetchBooks();
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 

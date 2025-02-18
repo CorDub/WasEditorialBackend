@@ -38,12 +38,12 @@ function AuthorsList() {
       )
     },
     {
-      header: "Nombre",
-      accessorKey: "first_name"
-    },
-    {
       header: "Apellido",
       accessorKey: "last_name"
+    },
+    {
+      header: "Nombre",
+      accessorKey: "first_name"
     },
     {
       header: "Pais",

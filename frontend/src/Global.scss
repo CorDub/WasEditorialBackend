@@ -248,3 +248,30 @@ a {
   justify-content: center;
   text-align: center;
 }
+
+/// Tooltips
+
+.tooltip-proper {
+  z-index: 2000;
+  background-color: #4e6cb3;
+  color: white;
+  border-radius: 15px;
+  padding: 0.5rem;
+  position: fixed;
+  width: 90px;
+  height: 40px;
+  top: 500px;
+  bottom: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.tooltip-message {
+  font-size: 0.7em;
+}
+
+.hidden {
+  display: none;
+}

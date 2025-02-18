@@ -1,10 +1,11 @@
 import "./DeleteAuthorModal.scss"
 import useCheckUser from "./useCheckUser";
 
-function DeleteAuthorModal({ row, closeDeleteModal }) {
+function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckUser();
 
-  async function deleteAuthor() {
+  async function deleteAuthor(e) {
+    e.preventDefault();
     try {
       const response = await fetch(`http://localhost:3000/admin/user?user_id=${row.id}`, {
         method: "DELETE",
@@ -15,7 +16,11 @@ function DeleteAuthorModal({ row, closeDeleteModal }) {
       });
 
       if (response.ok) {
-        closeDeleteModal;
+        const alertMessage = `El autor ${row.first_name} ${row.last_name} ha sido eliminado.`;
+        closeDeleteModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+      } else {
+        const alertMessage = `No se pudo eliminar el autor ${row.first_name} ${row.last_name}`;
+        closeDeleteModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -32,7 +37,7 @@ function DeleteAuthorModal({ row, closeDeleteModal }) {
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={closeDeleteModal}>Cancelar</button>
+            onClick={() => closeDeleteModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteAuthor}>Confirmar</button>
         </div>

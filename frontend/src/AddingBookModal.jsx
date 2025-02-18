@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useCheckUser from './useCheckUser';
+import "./AddingBookModal.scss";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import Tooltip from "./Tooltip";
 
 function AddingBookModal({ closeAddingModal }) {
   useCheckUser();
@@ -10,6 +14,9 @@ function AddingBookModal({ closeAddingModal }) {
   const [isbn, setIsbn] = useState(null);
   const [authors, setAuthors] = useState([]);
   const [existingAuthors, setExistingAuthors] = useState(null);
+  const [tooltipMessage, setTooltipMessage] = useState("");
+  const [x, setX] = useState(null);
+  const [y, setY] = useState(null);
 
   async function fetchUsers() {
     try {
@@ -79,32 +86,55 @@ function AddingBookModal({ closeAddingModal }) {
     setAuthors([...authors, 0]);
   }
 
+  useEffect(() => {
+    addOtherAuthor();
+  }, []);
+
   function removeOtherAuthor(indexToRemove) {
     setAuthors(authors.filter((_, index)=> index !== indexToRemove));
+    setX(null);
+    setY(null);
+    setTooltipMessage("");
   }
 
-  useEffect(()=>{
-    console.log(pasta)
-  }, [pasta])
+  function toggleTooltip(message, elementId) {
+    if (x === null || y === null) {
+      const element = document.getElementById(elementId);
+      const elementRect = element.getBoundingClientRect();
+      setY(elementRect.top);
+      setX(elementRect.left);
+      setTooltipMessage(message);
+    } else {
+      setY(null);
+      setX(null);
+      setTooltipMessage("");
+    }
+  }
 
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
-      <form onSubmit={handleSubmit}>
+      <div className="form-title">
+        <p>Nuevo libro</p>
+      </div>
+      <form onSubmit={handleSubmit} className="global-form">
         <input type='text' placeholder="Titulo"
+          className="global-input"
           onChange={(e) => setTitle(e.target.value)}></input>
-        <select onChange={(e) =>setPasta(e.target.value)}>
+        <select onChange={(e) =>setPasta(e.target.value)} className="global-input">
           <option>Selecciona pasta</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
         <input type='text' placeholder="Precio"
+          className="global-input"
           onChange={(e) => setPrice(e.target.value)}></input>
         <input type='text' placeholder="ISBN"
+          className="global-input"
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
-          <div key={index}>
-            <select onChange={(event) => authorsChange(index, event)}>
+          <div key={index} className="book-edit-author-dropdown">
+            <select onChange={(event) => authorsChange(index, event)} className="global-input">
               <option key={index}>Selecciona un autor</option>
               {existingAuthors && existingAuthors.map((author, index) => {
                 return (
@@ -115,12 +145,39 @@ function AddingBookModal({ closeAddingModal }) {
                 )
               })}
             </select>
-            {authors.length > 1 &&
-              <button type="button" onClick={() => removeOtherAuthor(index)}>Eliminar autor</button>}
+            <div className="additional-authors-buttons">
+              <Tooltip message={tooltipMessage} x={x} y={y}/>
+              <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
+                id={`plus-icon-${index}`}
+                onMouseEnter={() => toggleTooltip(
+                  "Añadir autor a la lista de autores del libro",
+                  `plus-icon-${index}`)}
+                onMouseLeave={() => toggleTooltip(
+                  "Añadir autor a la lista de autores del libro",
+                  `plus-icon-${index}`)}
+                className="button-icon"/>
+              {authors.length > 1 &&
+                <>
+                  <Tooltip
+                    message={tooltipMessage}
+                    x={x}
+                    y={y}/>
+                  <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
+                    id={`cross-icon-${index}`}
+                    onMouseEnter={() => toggleTooltip(
+                      "Eliminar el autor de la lista de autores del libro",
+                      `cross-icon-${index}`)}
+                    onMouseLeave={() => toggleTooltip(
+                      "Eliminar el autor de la lista de autores del libro",
+                      `cross-icon-${index}`)}
+                    className="button-icon"/>
+                </>}
+            </div>
           </div>
         ))}
-        <button type="button" onClick={addOtherAuthor}>Añadir nuevo autor</button>
-        <button type='submit'>Añadir nuevo libro</button>
+        <div className="form-actions">
+          <button type='submit' className="blue-button">Añadir nuevo libro</button>
+        </div>
       </form>
       </div>
     </div>

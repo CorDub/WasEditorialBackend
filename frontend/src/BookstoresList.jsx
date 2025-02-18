@@ -5,6 +5,7 @@ import DeleteBookstoreModal from './DeleteBookstoreModal';
 import EditBookstoreModal from './EditBookstoreModal';
 import AddingBookstoreModal from './AddingBookstoreModal';
 import Navbar from "./Navbar";
+import Alert from "./Alert";
 
 function BookstoresList() {
   useCheckUser();
@@ -15,6 +16,14 @@ function BookstoresList() {
   const [editModal, setEditModal] = useState(null);
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  })
 
   const columns = useMemo(() => [
     {
@@ -33,8 +42,9 @@ function BookstoresList() {
       accessorKey: "name"
     },
     {
-      header: "% Acuerdo",
-      accessorKey: "deal_percentage"
+      header: "Acuerdo",
+      accessorKey: "deal_percentage",
+      Cell: ({ row }) => `${row.original.deal_percentage}%`
     },
     {
       header: "Nombre del contacto",
@@ -52,11 +62,47 @@ function BookstoresList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
       </div>
     ),
+    nitialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   async function fetchBookstores() {

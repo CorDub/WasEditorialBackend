@@ -42,6 +42,10 @@ function BooksList() {
       accessorKey: "title"
     },
     {
+      header: "Autor(es)",
+      accessorKey: "authorNames",
+    },
+    {
       header: "Pasta",
       accessorKey: "pasta"
     },
@@ -52,10 +56,6 @@ function BooksList() {
     {
       header: "ISBN",
       accessorKey: "isbn"
-    },
-    {
-      header: "Autor(es)",
-      accessorKey: "authorNames",
     },
   ], []);
   const table = useMaterialReactTable({

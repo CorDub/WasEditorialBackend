@@ -19,8 +19,6 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
   const [y, setY] = useState(null);
   const [errorList, setErrorList] = useState([]);
 
-  console.log(authors);
-
   async function fetchUsers() {
       try {
         const response = await fetch('http://localhost:3000/admin/users', {
@@ -325,7 +323,7 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeEditModal(pageIndex, globalFilter, false)}>Cancelar</button>
-          <button type='submit' className="blue-button">Añadir nuevo libro</button>
+          <button type='submit' className="blue-button">Confirmar</button>
         </div>
         </form>
       </div>

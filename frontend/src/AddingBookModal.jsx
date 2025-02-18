@@ -12,7 +12,7 @@ function AddingBookModal({ closeAddingModal }) {
   const [pasta, setPasta] = useState(null);
   const [price, setPrice] = useState(null);
   const [isbn, setIsbn] = useState(null);
-  const [authors, setAuthors] = useState([]);
+  const [authors, setAuthors] = useState([null]);
   const [existingAuthors, setExistingAuthors] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
@@ -78,7 +78,11 @@ function AddingBookModal({ closeAddingModal }) {
 
   function authorsChange(index, event) {
     const authorsNew = [...authors];
-    authorsNew[index] = parseInt(event.target.value);
+    if (event.target.value === "null") {
+      authorsNew[index] = null;
+    } else {
+      authorsNew[index] = parseInt(event.target.value);
+    }
     setAuthors(authorsNew);
   }
 
@@ -86,15 +90,56 @@ function AddingBookModal({ closeAddingModal }) {
     setAuthors([...authors, 0]);
   }
 
-  useEffect(() => {
-    addOtherAuthor();
-  }, []);
-
   function removeOtherAuthor(indexToRemove) {
     setAuthors(authors.filter((_, index)=> index !== indexToRemove));
     setX(null);
     setY(null);
     setTooltipMessage("");
+  }
+
+  function dropDownChange(e, input_name, input_index) {
+    console.log(e);
+    console.log(input_name);
+    console.log(input_index);
+
+    const inputs = {
+      "Pasta": {
+        "function": setPasta,
+        "element": document.getElementById("pasta-select")
+      },
+      "Autor": {
+        "function": authorsChange,
+        "element": document.getElementById(`author-select-${input_index}`)
+      }
+    }
+
+    if (input_index !== undefined) {
+      inputs[input_name]["function"](input_index, e);
+      if (e.target.value === "null") {
+        if (inputs[input_name]["element"].classList.contains("selected") === true) {
+          inputs[input_name]["element"].classList.remove("selected")
+        };
+        return;
+      } else {
+        // inputs[input_name]["function"](input_index, e);
+        if (inputs[input_name]["element"].classList.contains("selected") === false) {
+          inputs[input_name]["element"].classList.add("selected")
+        };
+        return;
+      }
+    };
+
+    if (e.target.value === "null") {
+      inputs[input_name]["function"](null);
+      if (inputs[input_name]["element"].classList.contains("selected") === true) {
+        inputs[input_name]["element"].classList.remove("selected")
+      };
+    } else {
+      inputs[input_name]["function"](e.target.value);
+      if (inputs[input_name]["element"].classList.contains("selected") === false) {
+        inputs[input_name]["element"].classList.add("selected")
+      };
+    };
   }
 
   function toggleTooltip(message, elementId) {
@@ -121,8 +166,9 @@ function AddingBookModal({ closeAddingModal }) {
         <input type='text' placeholder="Titulo"
           className="global-input"
           onChange={(e) => setTitle(e.target.value)}></input>
-        <select onChange={(e) =>setPasta(e.target.value)} className="global-input">
-          <option>Selecciona pasta</option>
+        <select onChange={(e) =>dropDownChange(e, "Pasta")} className="select-global"
+          id="pasta-select">
+          <option value="null">Selecciona pasta</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
@@ -134,8 +180,9 @@ function AddingBookModal({ closeAddingModal }) {
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index} className="book-edit-author-dropdown">
-            <select onChange={(event) => authorsChange(index, event)} className="global-input">
-              <option key={index}>Selecciona un autor</option>
+            <select onChange={(e) =>dropDownChange(e, "Autor", index)} className="select-global"
+              id={`author-select-${index}`}>
+              <option key={index} value="null">Selecciona un autor</option>
               {existingAuthors && existingAuthors.map((author, index) => {
                 return (
                   <>
@@ -176,6 +223,8 @@ function AddingBookModal({ closeAddingModal }) {
           </div>
         ))}
         <div className="form-actions">
+          <button type="button" className='blue-button'
+            onClick={closeAddingModal}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir nuevo libro</button>
         </div>
       </form>

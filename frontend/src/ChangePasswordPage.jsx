@@ -41,12 +41,14 @@ function ChangePasswordPage() {
       <div>
         <p>Cambiar contraseña</p>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="global-form special-forpas">
         <input type="password" placeholder="Nueva contraseña"
+          className="global-input"
           onChange={(e) => setCs1(e.target.value)}></input>
         <input type="password" placeholder="Confirma nueva contraseña"
+          className="global-input"
           onChange={(e) => setCs2(e.target.value)}></input>
-        <button type="submit">Ingresar</button>
+        <button type="submit" className="blue-button">Ingresar</button>
       </form>
     </div>
   )

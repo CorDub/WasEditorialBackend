@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 
 function AddingBookstoreErrorList({ errorList, setErrorList }) {
-  useEffect(() => {
-    setErrorList([]);
-  }, [])
 
   function displayError(error) {
     switch (error) {

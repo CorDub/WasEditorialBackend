@@ -69,7 +69,7 @@ function BookstoresList() {
         <button onClick={openAddingModal} className="blue-button">Añadir nueva librería</button>
       </div>
     ),
-    nitialState: {
+    initialState: {
       density: 'compact',
     },
     onPaginationChange: setPagination,

@@ -19,7 +19,7 @@ model User {
   last_name           String
   country             String
   referido            String?
-  email               String?    @unique
+  email               String?   @unique
   password            String?
   category            Category? @relation(fields: [categoryId], references: [id])
   categoryId          Int?
@@ -46,9 +46,9 @@ model Book {
 
 model Category {
   id                           Int      @id @default(autoincrement())
-  type                         Int
-  percentage_royalties         Int
-  percentage_management_stores Int
+  type                         String   @unique
+  percentage_royalties         Float
+  percentage_management_stores Float
   management_min               Float
   users                        User[]
   createdAt                    DateTime @default(now())

@@ -5,6 +5,7 @@ import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
 import Navbar from './Navbar';
+import Alert from "./Alert";
 
 function CategoriesList() {
   useCheckUser();
@@ -15,6 +16,14 @@ function CategoriesList() {
   const [editModal, setEditModal] = useState(null);
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  })
 
   const columns = useMemo(() => [
     {
@@ -34,25 +43,64 @@ function CategoriesList() {
     },
     {
       header: "Regalias de venta",
-      accessorKey: "percentage_royalties"
+      accessorKey: "percentage_royalties",
+      Cell: ({ row }) => `${row.original.percentage_royalties}%`
     },
     {
       header: "Gestión tiendas",
-      accessorKey: "percentage_management_stores"
+      accessorKey: "percentage_management_stores",
+      Cell: ({ row }) => `${row.original.percentage_management_stores}%`
     },
     {
       header: "Gestión minima",
-      accessorKey: "management_min"
+      accessorKey: "management_min",
+      Cell: ({ row }) => `$${row.original.management_min}`
     }
   ], []);
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   async function fetchCategories() {
@@ -82,33 +130,63 @@ function CategoriesList() {
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal() {
+  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openEditModal(row) {
-    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   return(
@@ -118,6 +196,8 @@ function CategoriesList() {
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
       {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>
   )
 }

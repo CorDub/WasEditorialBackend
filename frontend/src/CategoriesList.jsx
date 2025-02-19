@@ -60,11 +60,47 @@ function CategoriesList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
       </div>
     ),
+    initialState: {
+      density: 'compact',
+    },
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    state: { pagination, globalFilter },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: '15px',
+        backgroundColor: "#fff",
+        width: "95%",
+      }
+    },
+    muiTableBodyRowProps: {
+      sx: {
+        backgroundColor: "#fff",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiTopToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        backgroundColor: "#fff"
+      }
+    }
   });
 
   async function fetchCategories() {
@@ -94,33 +130,63 @@ function CategoriesList() {
   }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
 
   function openDeleteModal(row) {
-    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}/>);
+    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal() {
+  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openEditModal(row) {
-    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}/>);
+    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenEditModal(true);
   }
 
-  function closeEditModal() {
+  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   function openAddingModal() {
-    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal} />);
+    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal}
+      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal() {
+  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
+    globalFilter && setGlobalFilter(globalFilter);
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
   }
 
   return(

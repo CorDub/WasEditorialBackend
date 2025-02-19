@@ -58,10 +58,10 @@ model Category {
 model Bookstore {
   id              Int         @id @default(autoincrement())
   name            String
-  deal_percentage Float
-  contact_name    String
-  contact_phone   String
-  contact_email   String
+  deal_percentage Float?
+  contact_name    String?
+  contact_phone   String?
+  contact_email   String?
   inventories     Inventory[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt

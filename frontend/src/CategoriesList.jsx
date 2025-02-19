@@ -5,6 +5,7 @@ import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
 import Navbar from './Navbar';
+import Alert from "./Alert";
 
 function CategoriesList() {
   useCheckUser();
@@ -15,6 +16,14 @@ function CategoriesList() {
   const [editModal, setEditModal] = useState(null);
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15
+  })
 
   const columns = useMemo(() => [
     {
@@ -34,15 +43,18 @@ function CategoriesList() {
     },
     {
       header: "Regalias de venta",
-      accessorKey: "percentage_royalties"
+      accessorKey: "percentage_royalties",
+      Cell: ({ row }) => `${row.original.percentage_royalties}%`
     },
     {
       header: "Gestión tiendas",
-      accessorKey: "percentage_management_stores"
+      accessorKey: "percentage_management_stores",
+      Cell: ({ row }) => `${row.original.percentage_management_stores}%`
     },
     {
       header: "Gestión minima",
-      accessorKey: "management_min"
+      accessorKey: "management_min",
+      Cell: ({ row }) => `$${row.original.management_min}`
     }
   ], []);
   const table = useMaterialReactTable({
@@ -118,6 +130,8 @@ function CategoriesList() {
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
       {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>
   )
 }

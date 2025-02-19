@@ -208,6 +208,10 @@ function AuthorsList() {
     fetchUsers();
   }, [isDeleteModalOpen, forceRender]);
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <>
     {isLoading === false ? (

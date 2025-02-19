@@ -15,7 +15,11 @@ router.get('/users', async (req, res) => {
       where: {
         is_admin: false
       },
-      include: {
+      select: {
+        first_name: true,
+        last_name: true,
+        country: true,
+        referido: true,
         category: {
           select: {
             type: true

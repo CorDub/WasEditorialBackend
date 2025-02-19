@@ -32,12 +32,12 @@ function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         console.log(response.status);
-        alert('No se pude crear una nueva librería.');
-        closeAddingModal();
+        const alertMessage = 'No se pude crear una nueva librería.';
+        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        alert(`Una nueva librería ${data.name} ha sido creado en la database.`);
-        closeAddingModal();
+        const alertMessage = `Una nueva librería ${data.name} ha sido creado en la database.`;
+        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {

@@ -29,13 +29,12 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message === "Uniqueness error - tipo") {
           checkForErrors(13);
           return;
         }
 
-        const alertMessage = `No se pudó crear una nueva categoria ${tipo}.`;
+        const alertMessage = `No se pudó crear una nueva categoría ${tipo}.`;
         closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
 

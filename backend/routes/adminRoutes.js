@@ -206,7 +206,7 @@ router.patch('/category', async (req, res) => {
     const updatedCategory = await prisma.category.update({
       where: {id: id},
       data: {
-        type: parseInt(tipo),
+        type: tipo,
         percentage_royalties: parseInt(regalias),
         percentage_management_stores: parseInt(gestionTiendas),
         management_min: parseInt(gestionMinima),
@@ -221,6 +221,11 @@ router.patch('/category', async (req, res) => {
     };
 
   } catch(error) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
+      res.status(500).json({message: "Uniqueness error - tipo"})
+      return;
+    }
+
     console.error("Server error at the update category route:", error);
   }
 });

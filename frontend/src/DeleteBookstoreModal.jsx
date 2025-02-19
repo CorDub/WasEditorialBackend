@@ -1,6 +1,6 @@
 import useCheckUser from "./useCheckUser";
 
-function DeleteBookstoreModal({ row, closeDeleteModal }) {
+function DeleteBookstoreModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckUser();
 
   async function deleteBookstore() {
@@ -14,7 +14,11 @@ function DeleteBookstoreModal({ row, closeDeleteModal }) {
       });
 
       if (response.ok) {
-        closeDeleteModal;
+        const alertMessage = `La librería ${row.name} ha sido eliminada con exito.`;
+        closeDeleteModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+      } else {
+        const alertMessage = `No se pudó eliminar la librería ${row.name}`;
+        closeDeleteModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -23,7 +27,7 @@ function DeleteBookstoreModal({ row, closeDeleteModal }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={closeDeleteModal}>
+    <div className="modal-overlay" onClick={() => closeDeleteModal(pageIndex, globalFilter, false)}>
       <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar la librería
@@ -31,7 +35,7 @@ function DeleteBookstoreModal({ row, closeDeleteModal }) {
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={closeDeleteModal}>Cancelar</button>
+            onClick={() => closeDeleteModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteBookstore}>Confirmar</button>
         </div>

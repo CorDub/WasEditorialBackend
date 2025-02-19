@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./ConfirmationCodePage.scss";
 
 function ConfirmationCodePage() {
   const [cc1, setConfirmationCode1] = useState(null);
@@ -12,7 +13,6 @@ function ConfirmationCodePage() {
   const id = location.state.user_id;
   const navigate = useNavigate();
   const finalConfirmationCode = parseInt(cc1 + cc2 + cc3 + cc4 + cc5 + cc6);
-  console.log(id);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -42,22 +42,37 @@ function ConfirmationCodePage() {
     }
   }
 
+  function autoFocusNext(id) {
+
+  }
+
   return (
     <div className="ccp">
+      <p>Por favor ingrese el codigo de confirmación que le ha esta enviado a su correo.</p>
       <form onSubmit={handleSubmit}>
-        <input type="text" id='ccp1'
-          onChange={(e) => setConfirmationCode1((e.target.value).toString())}></input>
-        <input type="text" id='ccp2'
-          onChange={(e) => setConfirmationCode2((e.target.value).toString())}></input>
-        <input type="text" id='ccp3'
-          onChange={(e) => setConfirmationCode3((e.target.value).toString())}></input>
-        <input type="text" id='ccp4'
-          onChange={(e) => setConfirmationCode4((e.target.value).toString())}></input>
-        <input type="text" id='ccp5'
-          onChange={(e) => setConfirmationCode5((e.target.value).toString())}></input>
-        <input type="text" id='ccp6'
-          onChange={(e) => setConfirmationCode6((e.target.value).toString())}></input>
-        <button type='submit'>Submit</button>
+        <div>
+          <input type="text" maxLength='1' id='ccp1'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode1((e.target.value).toString())}></input>
+          <input type="text" maxLength='1' id='ccp2'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode2((e.target.value).toString())}></input>
+          <input type="text" maxLength='1' id='ccp3'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode3((e.target.value).toString())}></input>
+          <input type="text" maxLength='1' id='ccp4'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode4((e.target.value).toString())}></input>
+          <input type="text" maxLength='1' id='ccp5'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode5((e.target.value).toString())}></input>
+          <input type="text" maxLength='1' id='ccp6'
+            className="ccp-input"
+            onChange={(e) => setConfirmationCode6((e.target.value).toString())}></input>
+        </div>
+        <div className='form-actions ccp-actions'>
+          <button type='submit' className="blue-button">Submit</button>
+        </div>
       </form>
     </div>
   )

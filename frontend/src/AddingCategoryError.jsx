@@ -11,6 +11,8 @@ function AddingCategoryError({errorList, setErrorList}) {
         return (<p className="login-error">El tipo no puede estar vacío.</p>)
       case 12:
         return (<p className="login-error">El tipo no puede tener mas de 30 caracteres.</p>)
+      case 13:
+        return (<p className="login-error">Este tipo ya existe.</p>)
       case 21:
         return (<p className="login-error">El percentage de regalias debe estar un numero.</p>)
       case 22:

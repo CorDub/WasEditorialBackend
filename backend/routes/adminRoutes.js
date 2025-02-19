@@ -185,6 +185,11 @@ router.post('/category', async (req, res) => {
 
     res.status(201).json({name: new_category.type});
   } catch(error) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
+      res.status(500).json({message: "Uniqueness error - tipo"})
+      return;
+    }
+
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the category'});
   }

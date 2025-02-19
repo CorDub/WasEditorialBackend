@@ -28,13 +28,19 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
-        alert('No se pude crear una nueva categoria.');
-        closeAddingModal();
+        const error = await response.json();
+        console.log(error);
+        if (error.message === "Uniqueness error - tipo") {
+          checkForErrors(13);
+          return;
+        }
+
+        const alertMessage = `No se pudó crear una nueva categoria ${tipo}.`;
+        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
-        const data = await response.json();
-        alert(`Una nueva categoria ${data.type} ha sido creado.`);
-        closeAddingModal();
+
+        const alertMessage = `Una nueva categoria ${tipo} ha sido creado.`;
+        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -48,7 +54,7 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
     };
   }
 
-  function checkForErrors() {
+  function checkForErrors(serverError) {
     let newErrorList = [];
     const inputTipo = document.getElementById("adding-category-type");
     const inputRegalias = document.getElementById("adding-category-regalias");
@@ -71,6 +77,11 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
         addErrorClass(inputTipo)
       }
     };
+
+    if (serverError === 13) {
+      newErrorList.push(13);
+      addErrorClass(inputTipo);
+    }
 
     if (isNaN(parseFloat(regalias))) {
       newErrorList.push(21);

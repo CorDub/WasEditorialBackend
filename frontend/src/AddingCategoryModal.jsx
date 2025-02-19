@@ -5,10 +5,10 @@ import AddingCategoryError from './AddingCategoryError';
 function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckUser();
 
-  const [tipo, setTipo] = useState(null);
-  const [regalias, setRegalias] = useState(null);
-  const [gestionTiendas, setGestionTiendas] = useState(null);
-  const [gestionMinima, setGestionMinima] = useState(null);
+  const [tipo, setTipo] = useState('');
+  const [regalias, setRegalias] = useState('');
+  const [gestionTiendas, setGestionTiendas] = useState('');
+  const [gestionMinima, setGestionMinima] = useState('');
   const [errorList, setErrorList] = useState([]);
 
   async function sendToServer() {
@@ -50,10 +50,10 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
 
   function checkForErrors() {
     let newErrorList = [];
-    const inputTipo = document.getElementById("adding-bookstore-type");
-    const inputRegalias = document.getElementById("adding-bookstore-regalias");
-    const inputGestionTiendas = document.getElementById("adding-bookstore-gestionTiendas");
-    const inputGestionMinima = document.getElementById("adding-bookstore-gestionMinima");
+    const inputTipo = document.getElementById("adding-category-type");
+    const inputRegalias = document.getElementById("adding-category-regalias");
+    const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
+    const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
     let inputList = [inputTipo, inputRegalias, inputGestionTiendas, inputGestionMinima];
 
     inputList.forEach((input) => {
@@ -72,12 +72,35 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
       }
     };
 
-    if (isNaN(parseInt(regalias))) {
+    if (isNaN(parseFloat(regalias))) {
       newErrorList.push(21);
       addErrorClass(inputRegalias);
-    } else {
-      
-    }
+    };
+
+    if (regalias === "") {
+      newErrorList.push(22);
+      addErrorClass(inputRegalias);
+    };
+
+    if (isNaN(parseFloat(gestionTiendas))) {
+      newErrorList.push(31);
+      addErrorClass(inputGestionTiendas);
+    };
+
+    if (gestionTiendas === "") {
+      newErrorList.push(32);
+      addErrorClass(inputGestionTiendas);
+    };
+
+    if (isNaN(parseFloat(gestionMinima))) {
+      newErrorList.push(41);
+      addErrorClass(inputGestionMinima);
+    };
+
+    if (gestionMinima === "") {
+      newErrorList.push(42);
+      addErrorClass(inputGestionMinima);
+    };
 
     setErrorList(newErrorList);
     return newErrorList;

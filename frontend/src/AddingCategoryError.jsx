@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-function AddingBookstoreErrorList({ errorList, setErrorList }) {
+function AddingCategoryError({errorList, setErrorList}) {
+  useEffect(() => {
+    setErrorList([]);
+  }, [])
 
   function displayError(error) {
     switch (error) {
@@ -11,10 +14,6 @@ function AddingBookstoreErrorList({ errorList, setErrorList }) {
         return;
     }
   }
-
-  useEffect(() => {
-    setErrorList([]);
-  }, []);
 
   return(
     <div className="login-errors">
@@ -27,4 +26,4 @@ function AddingBookstoreErrorList({ errorList, setErrorList }) {
   )
 }
 
-export default AddingBookstoreErrorList;
+export default AddingCategoryError;

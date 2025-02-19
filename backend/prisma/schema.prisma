@@ -46,9 +46,9 @@ model Book {
 
 model Category {
   id                           Int      @id @default(autoincrement())
-  type                         Int
-  percentage_royalties         Int
-  percentage_management_stores Int
+  type                         String
+  percentage_royalties         Float
+  percentage_management_stores Float
   management_min               Float
   users                        User[]
   createdAt                    DateTime @default(now())

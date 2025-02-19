@@ -176,10 +176,10 @@ router.post('/category', async (req, res) => {
       gestionMinima } = req.body;
     const new_category =  await prisma.category.create({
       data: {
-        type: parseInt(tipo),
-        percentage_royalties: parseInt(regalias),
-        percentage_management_stores: parseInt(gestionTiendas),
-        management_min: parseInt(gestionMinima),
+        type: tipo,
+        percentage_royalties: parseFloat(regalias),
+        percentage_management_stores: parseFloat(gestionTiendas),
+        management_min: parseFloat(gestionMinima),
       },
     });
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './ForgottenPasswordPage.scss';
 
 function ForgottenPasswordPage() {
   const [correo1, setCorreo1] = useState("")
@@ -41,12 +42,14 @@ function ForgottenPasswordPage() {
   return(
     <div className="forpas">
       <p>Ingrese su correo por favor</p>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="global-form special-forpas">
         <input type="text" placeholder="Correo"
+          className="global-input"
           onChange={(e) => setCorreo1(e.target.value)}></input>
         <input type="text" placeholder="Ingrese de nuevo su correo"
+          className="global-input"
           onChange={(e) => setCorreo2(e.target.value)}></input>
-        <button type="submit">Submit</button>
+        <button type="submit" className="blue-button">Submit</button>
       </form>
     </div>
   )

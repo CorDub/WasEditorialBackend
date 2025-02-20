@@ -149,10 +149,6 @@ router.get('/categories-type', async (req, res) => {
         type: true
       }
     });
-    // let type_list = [];
-    // categories_type.forEach((category) => {
-    //   type_list.push(String(category.type))
-    // })
     res.status(200).json(categories_type);
   } catch(error) {
     console.error("Error in the get categories-type route:", error);
@@ -374,10 +370,6 @@ router.post('/bookstore', async (req, res) => {
       contactName,
       contactPhone,
       contactEmail } = req.body;
-    // const dealPerc = null;
-    // if (!dealPercentage === "") {
-    //   delPerc = parseFloat(dealPercentage);
-    // }
     const new_bookstore =  await prisma.bookstore.create({
       data: {
         name: name,

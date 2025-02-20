@@ -1,24 +1,13 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import { createRandomPassword, matchConfirmationCode } from './../utils.js';
+import { matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
-import { sendSetPasswordMail, sendResetPasswordMail } from './../mailer.js';
-// import { authenticateUser } from './../server.js';
+import {sendResetPasswordMail } from './../mailer.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-// router.get('/checkPermissions', async (req, res) => {
-//   try {
-//     const response = await authenticateUser(req, res, next);
-//     const data = await response.json();
-//     return data;
-//   } catch(error) {
-//     console.log("Error running checkPermissions in userRoutes:", error);
-//   }
-// })
-
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({where: {email: email}});
@@ -38,7 +27,7 @@ router.post('/api/login', async (req, res) => {
   }
 })
 
-router.get('/api/user', async (req, res) => {
+router.get('/user', async (req, res) => {
   try {
     const email = req.query.email;
     const user = await prisma.user.findUnique({where: {email: email}});
@@ -54,7 +43,7 @@ router.get('/api/user', async (req, res) => {
   }
 })
 
-router.post('/api/confirmation_code', async (req, res) => {
+router.post('/confirmation_code', async (req, res) => {
   try {
     const { confirmation_code, user_id } = req.body;
     const matched = await matchConfirmationCode(confirmation_code, user_id);
@@ -70,6 +59,21 @@ router.post('/api/confirmation_code', async (req, res) => {
   } catch(error) {
     console.error("Error confirming code:", error);
     res.status(500).json({error: 'A server error ocurred while confirming the code'});
+  }
+})
+
+router.post('/logout', async (req, res) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error when destroying session in logout route', err);
+        return res.status(500).json({ message: 'Logout failed' });
+      }
+    });
+    res.clearCookie('connect.sid');
+    res.json({message: 'Logged out'});
+  } catch(error) {
+    console.error("Error in logout route:", error);
   }
 })
 

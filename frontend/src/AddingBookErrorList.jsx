@@ -1,10 +1,6 @@
 import { useEffect } from "react";
 
 function AddingBookErrorList({ errorList, setErrorList }) {
-  useEffect(() => {
-    setErrorList([]);
-  }, [])
-
   function displayError(error) {
     switch (error) {
       case 11:

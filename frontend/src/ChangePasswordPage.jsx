@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import "./ChangePasswordPage.scss";
+import ChangePasswordPageErrors from "./ChangePasswordPageErrors";
+import Alert from "./Alert";
 
 function ChangePasswordPage() {
   const [cs1, setCs1] = useState('');
@@ -8,14 +10,15 @@ function ChangePasswordPage() {
   const location = useLocation();
   const { user_id } = location.state || {};
   const navigate = useNavigate();
+  const [errorList, setErrorList] = useState([])
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('');
 
-  async function handleSubmit(e) {
+  async function sendToServer() {
     if (cs1 !== cs2) {
       alert("La contraseña no fue la misma en ambos campos.");
       return;
     };
-
-    e.preventDefault();
 
     const response = await fetch('http://localhost:3000/author/change_password', {
       method: "PATCH",
@@ -32,8 +35,102 @@ function ChangePasswordPage() {
     if (response.ok === true) {
       navigate(`/author/${user_id}`);
     } else {
-      alert("There was an issue updating the password.");
+      const res = await response.json();
+      if(res.status === 500) {
+        setAlertMessage("No se pudó actualizar la contraseña");
+        setAlertType("error");
+        return;
+      };
+
+      console.log(res);
+      checkForErrors(res);
+      // if (error.message === "Password not meeting composition requirements") {
+      //   checkForErrors(13);
+      //   return;
+      // }
+
+      // if (error.message === "Password not meeting length requirements") {
+      //   checkForErrors(12);
+      //   return;
+      // }
+
+      // if (error.message === "Password is the same as previous one") {
+      //   checkForErrors(14);
+      //   return;
+      // }
+      // alert("There was an issue updating the password.");
     };
+  }
+
+  function addErrorClass(element) {
+    if (!element.classList.contains("error")) {
+      element.classList.add("error");
+    };
+  }
+
+  function checkForErrors(serverErrors) {
+    let newErrorList = [];
+
+    const inputCS1 = document.getElementById('cs1');
+    const inputCS2 = document.getElementById('cs2');
+    const inputList = [inputCS1, inputCS2];
+
+    inputList.forEach((input) => {
+      if (input.classList.contains("error")) {
+        input.classList.remove("error");
+      };
+    })
+
+    if (cs1 === "") {
+      newErrorList.push(1);
+      addErrorClass(inputCS1);
+    }
+
+    if (cs2 === "") {
+      newErrorList.push(1);
+      addErrorClass(inputCS2);
+    }
+
+    if (cs1 !== cs2) {
+      newErrorList.push(11);
+      addErrorClass(inputCS1);
+      addErrorClass(inputCS2);
+    };
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => {
+        if (error === 12) {
+          newErrorList.push(12);
+          addErrorClass(inputCS1);
+          addErrorClass(inputCS2);
+        }
+
+        if (error === 13) {
+          newErrorList.push(13);
+          addErrorClass(inputCS1);
+          addErrorClass(inputCS2);
+        }
+
+        if (error === 14) {
+          newErrorList.push(14);
+          addErrorClass(inputCS1);
+          addErrorClass(inputCS2);
+        }
+      })
+    }
+
+    setErrorList(newErrorList);
+    return newErrorList;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const errorList = checkForErrors();
+    if (errorList.length > 0) {
+      return;
+    }
+    sendToServer();
   }
 
   return(
@@ -43,13 +140,16 @@ function ChangePasswordPage() {
       </div>
       <form onSubmit={handleSubmit} className="global-form special-forpas">
         <input type="password" placeholder="Nueva contraseña"
-          className="global-input"
+          className="global-input" id="cs1"
           onChange={(e) => setCs1(e.target.value)}></input>
         <input type="password" placeholder="Confirma nueva contraseña"
-          className="global-input"
+          className="global-input" id="cs2"
           onChange={(e) => setCs2(e.target.value)}></input>
+        <ChangePasswordPageErrors errorList={errorList} setErrorList={setErrorList}/>
         <button type="submit" className="blue-button">Ingresar</button>
       </form>
+      {/* <Alert alertMessage={alertMessage} alertType={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/> */}
     </div>
   )
 }

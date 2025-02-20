@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
@@ -13,7 +13,7 @@ router.get('/users', async (req, res) => {
   try {
     const users = await prisma.user.findMany({
       where: {
-        is_admin: false
+        role: Role.author
       },
       select: {
         first_name: true,

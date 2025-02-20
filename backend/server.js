@@ -57,7 +57,8 @@ async function authenticateAdmin(req, res, next) {
   }
 
   const user = await prisma.user.findUnique({where: {id: req.session.user_id}});
-  if (user === null || user.is_admin === false) {
+  console.log(user);
+  if (user === null || (user.role !== "admin" && user.role !== "superadmin")) {
     return res.status(401).json({ error: "User not found or unauthorized"});
   } else {
     req.user = user;

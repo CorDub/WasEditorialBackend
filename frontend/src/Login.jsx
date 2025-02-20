@@ -53,7 +53,7 @@ function LoginPage() {
       } else {
         const data = await response.json();
         setUser(data);
-        if (data.is_admin === true) {
+        if (data.role === "admin" || data.role === "superadmin") {
           navigate('/admin/authors');
         } else {
           navigate('/author');

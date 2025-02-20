@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from "bcrypt";
 import authors from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/authors.json" assert {type: 'json'};
 import books from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/books.json" assert {type: 'json'}
@@ -50,11 +50,9 @@ async function main() {
     let authorsIndexes = await Promise.all(
       book["Author(s)"].map(async (user) => {
         const user_id = await findAuthorWithFullName(user)
-        console.log(user_id);
         return user_id;
       })
     )
-    console.log(authorsIndexes)
     addBookFromDB(book, authorsIndexes)
   });
 
@@ -65,13 +63,24 @@ async function main() {
       country: "México",
       email: "Imake@books.com",
       password: await bcrypt.hash("bookboi", 10),
-      is_admin: true
+      role: Role.superadmin
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      first_name: "Subadmin",
+      last_name: "Pedro",
+      country: "México",
+      email: "yessir@gmail.com",
+      password: await bcrypt.hash("bookboi2", 10),
+      role: Role.admin
     },
   });
 
   await prisma.category.create({
     data: {
-      type: 1,
+      type: "1",
       percentage_royalties: 100,
       percentage_management_stores: 50,
       management_min: 180.00
@@ -80,7 +89,7 @@ async function main() {
 
   await prisma.category.create({
     data: {
-      type: 2,
+      type: "2",
       percentage_royalties: 100,
       percentage_management_stores: 55,
       management_min: 150.00
@@ -89,7 +98,7 @@ async function main() {
 
   await prisma.category.create({
     data: {
-      type: 3,
+      type: "3",
       percentage_royalties: 20,
       percentage_management_stores: 20,
       management_min: 0.00

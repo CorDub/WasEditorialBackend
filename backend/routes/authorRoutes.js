@@ -34,21 +34,15 @@ router.patch('/change_password', async (req, res) => {
     }
 
     if (upper < 1 || lower < 1 || number <1 || special < 1) {
-      // res.status(400).json({message: "Password not meeting composition requirements"});
-      // return;
       errors.push(13)
     }
 
     if (password.length < 8) {
-      // res.status(400).json({message: "Password not meeting length requirements"});
-      // return;
       errors.push(12)
     };
 
     const current_user = await prisma.user.findUnique({where: {id: user_id}});
     if (await bcrypt.compare(password, current_user.password)) {
-      // res.status(400).json({message: "Password is the same as previous one"});
-      // return;
       errors.push(14);
     }
 

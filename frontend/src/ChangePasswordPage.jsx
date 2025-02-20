@@ -10,7 +10,7 @@ function ChangePasswordPage() {
   const location = useLocation();
   const { user_id } = location.state || {};
   const navigate = useNavigate();
-  const [errorList, setErrorList] = useState([])
+  const [errorList, setErrorList] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
 
@@ -33,7 +33,12 @@ function ChangePasswordPage() {
     });
 
     if (response.ok === true) {
-      navigate(`/author/${user_id}`);
+      navigate("/", {
+        state: {
+          alertMessage: "La contraseña se ha actualizada con exito.",
+          type: "confirmation"
+        }
+      });
     } else {
       const res = await response.json();
       if(res.status === 500) {
@@ -42,23 +47,7 @@ function ChangePasswordPage() {
         return;
       };
 
-      console.log(res);
       checkForErrors(res);
-      // if (error.message === "Password not meeting composition requirements") {
-      //   checkForErrors(13);
-      //   return;
-      // }
-
-      // if (error.message === "Password not meeting length requirements") {
-      //   checkForErrors(12);
-      //   return;
-      // }
-
-      // if (error.message === "Password is the same as previous one") {
-      //   checkForErrors(14);
-      //   return;
-      // }
-      // alert("There was an issue updating the password.");
     };
   }
 
@@ -148,8 +137,8 @@ function ChangePasswordPage() {
         <ChangePasswordPageErrors errorList={errorList} setErrorList={setErrorList}/>
         <button type="submit" className="blue-button">Ingresar</button>
       </form>
-      {/* <Alert alertMessage={alertMessage} alertType={alertType}
-        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/> */}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>
   )
 }

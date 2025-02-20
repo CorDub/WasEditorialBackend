@@ -8,7 +8,6 @@ import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
 import ForgottenPasswordPage from './ForgottenPasswordPage.jsx';
 import UserProvider from './UserProvider.jsx';
-import Navbar from './Navbar.jsx';
 import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';

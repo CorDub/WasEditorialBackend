@@ -1,9 +1,10 @@
-import { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.scss';
 import logo from './assets/logo-03-300x110-was.png';
 import UserContext from './UserContext';
 import LoginError from './LoginError';
+import Alert from './Alert';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -12,6 +13,16 @@ function LoginPage() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
   const inputs = document.querySelectorAll("input");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state) {
+      setAlertMessage(location.state.alertMessage);
+      setAlertType(location.state.type);
+    };
+  }, [location]);
 
   async function handleSubmit (e) {
     e.preventDefault();
@@ -96,6 +107,8 @@ function LoginPage() {
       <Link to="/forgotten-password"
         className="login-forgotten-password">Olvidó su contraseña?</Link>
       </div>
+      <Alert message={alertMessage} type={alertType} setAlertMessage={setAlertMessage}
+        setAlertType={setAlertType}/>
     </div>
   )
 }

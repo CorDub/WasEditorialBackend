@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 50%;
 }
 
 .login-logo {
@@ -16,8 +17,8 @@
   // margin-bottom: 1rem;
 }
 
-.input-login-id {
-  width: 100%;
+.special-login {
+  width: 400px;
 }
 
 .login-label, .login-input {

@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage/>} />
           {/* <Route path='/admin' element={<AdminPage />} /> */}
-          <Route path='/author' element={<AuthorPage />} />
+          {/* <Route path='/author' element={<AuthorPage />} /> */}
           <Route path="/author/:id" element={<AuthorPage />} />
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />

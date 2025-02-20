@@ -1,7 +1,7 @@
-
+import useCheckUser from "./useCheckUser";
 
 function AuthorPage() {
-
+  useCheckUser();
 
   return (
     <>

@@ -1,9 +1,11 @@
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 import { useEffect, useState } from "react";
 
 function AdminsList() {
   useCheckUser();
   const [admins, setAdmins] = useState(null);
+
+  console.log(admins)
 
   async function fetchAdmins() {
     try {
@@ -33,9 +35,7 @@ function AdminsList() {
 
   return (
     <div>
-      {admins && admins.map((admin) => {
-        <p>{admin.first_name}</p>
-      })}
+      <p>{admins[0].first_name}</p>
     </div>
   )
 }

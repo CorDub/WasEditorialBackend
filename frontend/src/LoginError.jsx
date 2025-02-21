@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 
 function LoginError({ errors, setErrors, inputs }) {
   useCheckUser();

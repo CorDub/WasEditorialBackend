@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';

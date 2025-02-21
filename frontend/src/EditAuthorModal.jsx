@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 
 function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {

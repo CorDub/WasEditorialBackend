@@ -4,7 +4,7 @@ import './AuthorsList.scss';
 import UserContext from "./UserContext";
 import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
 import Alert from './Alert';

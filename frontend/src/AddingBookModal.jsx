@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser';
 import "./AddingBookModal.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';

@@ -1,4 +1,4 @@
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 
 function DeleteBookModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckUser();

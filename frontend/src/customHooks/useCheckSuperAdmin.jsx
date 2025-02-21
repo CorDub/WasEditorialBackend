@@ -22,7 +22,7 @@ function useCheckSuperAdmin() {
     if (user.role !== "superadmin") {
       navigate("/");
     }
-  }, [user, navigate]);
+  }, []);
 }
 
 export default useCheckSuperAdmin;

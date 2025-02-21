@@ -1,11 +1,9 @@
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckSuperAdmin from "./customHooks/useCheckSuperAdmin";
 import { useEffect, useState } from "react";
 
 function AdminsList() {
-  useCheckUser();
+  useCheckSuperAdmin();
   const [admins, setAdmins] = useState(null);
-
-  console.log(admins)
 
   async function fetchAdmins() {
     try {
@@ -35,7 +33,7 @@ function AdminsList() {
 
   return (
     <div>
-      <p>{admins[0].first_name}</p>
+      <p>{admins && admins[0].first_name}</p>
     </div>
   )
 }

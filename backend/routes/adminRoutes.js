@@ -1,10 +1,10 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
+import { prisma } from "./../server.js"
 
-export const prisma = new PrismaClient();
 const router = express.Router();
 
 // User routes

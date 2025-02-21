@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
+import { prisma } from "./../server.js"
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 router.patch('/change_password', async (req, res) => {

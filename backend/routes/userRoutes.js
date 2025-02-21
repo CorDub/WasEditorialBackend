@@ -1,10 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 import { matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import {sendResetPasswordMail } from './../mailer.js';
+import { prisma } from "./../server.js"
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post('/login', async (req, res) => {

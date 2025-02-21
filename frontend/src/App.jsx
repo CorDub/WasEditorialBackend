@@ -11,6 +11,7 @@ import UserProvider from './UserProvider.jsx';
 import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
+import AdminsList from "./AdminsList.jsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
+          <Route path="/superadmin/admins" element={<AdminsList />} />
           {/* <Route path='/admin' element={<AdminPage />} /> */}
           {/* <Route path='/author' element={<AuthorPage />} /> */}
           <Route path="/author/:id" element={<AuthorPage />} />

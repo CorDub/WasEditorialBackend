@@ -1,7 +1,5 @@
 import crypto from 'crypto';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from "./server.js"
 
 export function createRandomPassword() {
   const pw = crypto.randomBytes(12).toString('hex');

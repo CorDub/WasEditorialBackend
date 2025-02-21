@@ -1,10 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 import { matchConfirmationCode } from './../utils.js';
 import bcrypt from 'bcrypt';
 import {sendResetPasswordMail } from './../mailer.js';
+import { prisma } from "./../server.js"
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
@@ -17,8 +16,13 @@ router.post('/login', async (req, res) => {
 
     if (user.email === email && (await bcrypt.compare(password, user.password))) {
       req.session.user_id =  user.id ;
+      // await new Promise((resolve) => req.session.save(resolve));
       console.log("created session id with:", req.session.user_id);
-      res.status(200).send(user);
+      const user_send = {
+        id: user.id,
+        role: user.role
+      }
+      res.status(200).send(user_send);
     } else {
       res.status(401).json({error: "Wrong password or email address"});
     }

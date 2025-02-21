@@ -20,6 +20,11 @@ router.post('/login', async (req, res) => {
       console.log("created session id with:", req.session.user_id);
       const user_send = {
         id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        referido: user.referido,
+        email: user.email,
+        categoryId: user.categoryId,
         role: user.role
       }
       res.status(200).send(user_send);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 import AddingBookstoreErrorList from "./AddingBookstoreErrorList";
 
 function EditBookstoreModal({ row, closeEditModal, pageIndex, globalFilter }) {

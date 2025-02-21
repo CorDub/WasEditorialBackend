@@ -4,7 +4,7 @@ import './AuthorsList.scss';
 import UserContext from "./UserContext";
 import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
 import Alert from './Alert';
@@ -19,7 +19,6 @@ function AuthorsList() {
   const [isAddingModalOpen, setOpenAddingModal] = useState(false);
   const [addingModal, setAddingModal] = useState(null);
   const { user } = useContext(UserContext);
-  const [isLoading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -178,11 +177,11 @@ function AuthorsList() {
   }
 
   // Hook to set to Loading and not show the page before authenticating user
-  useEffect(() => {
-    if (data !== undefined && user !== undefined) {
-      setLoading(false);
-    }
-  }, [data, user])
+  // useEffect(() => {
+  //   if (data !== undefined && user !== undefined) {
+  //     setLoading(false);
+  //   }
+  // }, [data, user])
 
   async function fetchUsers() {
     try {
@@ -208,26 +207,18 @@ function AuthorsList() {
     fetchUsers();
   }, [isDeleteModalOpen, forceRender]);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  console.log(user);
 
   return (
     <>
-    {isLoading === false ? (
-      <>
-        <Navbar active={"autores"}/>
-        {isDeleteModalOpen && deleteModal}
-        {isEditModalOpen && editModal}
-        {isAddingModalOpen && addingModal}
-        {data && <MaterialReactTable table={table} />}
-        <Alert message={alertMessage} type={alertType}
-          setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
-      </>
-       ) : (
-        <p>Loading...</p>
-    )}
-  </>
+      <Navbar subNav={user.user.role} active={"autores"}/>
+      {isDeleteModalOpen && deleteModal}
+      {isEditModalOpen && editModal}
+      {isAddingModalOpen && addingModal}
+      {data && <MaterialReactTable table={table} />}
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
+    </>
   )
 }
 

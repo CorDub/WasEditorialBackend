@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser';
 import AddingCategoryError from './AddingCategoryError';
 
 function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {

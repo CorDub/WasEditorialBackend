@@ -1,5 +1,5 @@
 import "./DeleteAuthorModal.scss"
-import useCheckUser from "./useCheckUser";
+import useCheckUser from "./customHooks/useCheckUser";
 
 function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckUser();

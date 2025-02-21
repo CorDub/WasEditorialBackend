@@ -28,7 +28,18 @@ app.use(session({
 
 app.get('/api/checkPermissions', authenticateUser, async (req, res) => {
   try {
-    res.json({user: req.user})
+    console.log("This is req.user:", req.user);
+    const user_clean = {
+      id: req.user.id,
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+      country: req.user.country,
+      referido: req.user.referido,
+      email: req.user.email,
+      categoryId: req.user.categoryId,
+      role: req.user.role
+    }
+    res.json({user: user_clean})
   } catch(error) {
     console.log("Error running checkPermissions in userRoutes:", error);
     res.status(500).json({error: "Error in checkPermissions"});

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser';
 
 function AdminPage () {
   useCheckUser();

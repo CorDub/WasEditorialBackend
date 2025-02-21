@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useCheckUser from './useCheckUser';
+import useCheckUser from './customHooks/useCheckUser.jsx';
 import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
 function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {

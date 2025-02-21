@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 const router = express.Router();
 
 // User routes

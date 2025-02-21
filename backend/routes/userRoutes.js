@@ -17,6 +17,7 @@ router.post('/login', async (req, res) => {
 
     if (user.email === email && (await bcrypt.compare(password, user.password))) {
       req.session.user_id =  user.id ;
+      await new Promise((resolve) => req.session.save(resolve));
       console.log("created session id with:", req.session.user_id);
       res.status(200).send(user);
     } else {

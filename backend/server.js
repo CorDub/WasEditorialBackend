@@ -4,10 +4,11 @@ import session from 'express-session';
 import userRoutes from './routes/userRoutes.js';
 import { PrismaClient } from "@prisma/client";
 import adminRoutes from "./routes/adminRoutes.js";
-import authorRoutes from "./routes/authorRoutes.js"
+import authorRoutes from "./routes/authorRoutes.js";
+import superAdminRoutes from "./routes/superAdminRoutes.js";
 
 const app = express();
-const prisma = new PrismaClient();
+ export const prisma = new PrismaClient();
 
 // Middleware
 app.use(cors({
@@ -66,9 +67,26 @@ async function authenticateAdmin(req, res, next) {
   };
 }
 
+async function authenticateSuperAdmin(req, res, next) {
+  if (!req.session.user_id) {
+    console.log("No user session");
+    return res.status(401).json({ error: "Unauthorized"});
+  }
+
+  const user = await prisma.user.findUnique({where: {id: req.session.user_id}});
+  console.log(user);
+  if (user === null || user.role !== "superadmin") {
+    return res.status(401).json({ error: "User not found or unauthorized"});
+  } else {
+    req.user = user;
+    next();
+  };
+}
+
 //Routes
 app.use('/author', authenticateUser, authorRoutes);
 app.use('/admin', authenticateAdmin, adminRoutes);
+app.use('/superadmin', authenticateSuperAdmin, superAdminRoutes);
 
 // Example API endpoint
 app.get('/', (req, res) => {

@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.scss"
 import UserContext from "./UserContext";
 import AdminNavbar from "./AdminNavbar";
+import SuperAdminNavbar from "./SuperAdminNavbar";
+import AuthorNavbar from "./AuthorNavbar";
 
-function Navbar({ active }) {
+function Navbar({ subNav, active }) {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -25,10 +27,24 @@ function Navbar({ active }) {
     }
   }
 
+  function chooseSubNavbar(subNav) {
+    switch (subNav) {
+      case "superadmin":
+        return <SuperAdminNavbar active={active}/>
+      case "admin":
+        return <AdminNavbar active={active}/>
+      case "user":
+        return <AuthorNavbar active={active}/>
+      default:
+        console.log('Unkown error')
+        return;
+    }
+  }
+
   return (
     <div className="navbar">
       <div className="navbar-home">
-        <AdminNavbar active={active}/>
+        {chooseSubNavbar(subNav)}
       </div>
       <div className='navbar-logout'>
         {(user !== '') &&

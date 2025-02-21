@@ -1,5 +1,7 @@
 import useCheckSuperAdmin from "./customHooks/useCheckSuperAdmin";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import Navbar from "./Navbar";
 
 function AdminsList() {
   useCheckSuperAdmin();
@@ -33,6 +35,7 @@ function AdminsList() {
 
   return (
     <div>
+      <Navbar subNav={"superadmin"} active={"admins"}/>
       <p>{admins && admins[0].first_name}</p>
     </div>
   )

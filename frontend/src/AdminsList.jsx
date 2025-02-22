@@ -6,6 +6,24 @@ import Navbar from "./Navbar";
 function AdminsList() {
   useCheckSuperAdmin();
   const [admins, setAdmins] = useState(null);
+  const columns = useMemo(() => [
+    {
+      header: "Apellido",
+      accessorKey:'last_name'
+    },
+    {
+      header: "Nombre",
+      accessorKey: "first_name"
+    },
+    {
+      header: "Pais",
+      accessorKey: "country"
+    },
+    {
+      header: "Email",
+      accessorKey: "email"
+    },
+  ], []);
 
   async function fetchAdmins() {
     try {

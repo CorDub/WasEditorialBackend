@@ -52,7 +52,6 @@ function LoginPage() {
         setErrors([...errors, 1]);
       } else {
         const data = await response.json();
-        console.log(data);
         setUser(data);
         if (data.role === "admin") {
           navigate('/admin/authors')

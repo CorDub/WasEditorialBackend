@@ -207,11 +207,9 @@ function AuthorsList() {
     fetchUsers();
   }, [isDeleteModalOpen, forceRender]);
 
-  console.log(user);
-
   return (
     <>
-      <Navbar subNav={user.user.role} active={"autores"}/>
+      <Navbar subNav={user.role} active={"autores"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

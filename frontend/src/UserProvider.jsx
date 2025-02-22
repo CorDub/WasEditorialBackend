@@ -2,7 +2,7 @@ import { useState } from "react";
 import UserContext from "./UserContext";
 
 function UserProvider({ children }) {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState("");
 
   async function fetchUser() {
     try {

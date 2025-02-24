@@ -21,6 +21,7 @@ function useCheckSuperAdmin() {
     }
 
     fetchUserData();
+
   }, [])
 }
 

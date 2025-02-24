@@ -22,6 +22,7 @@ function UserProvider({ children }) {
       } else {
         setUser(null);
         console.log('no user to fetch');
+        return(user);
       }
 
     } catch(error) {

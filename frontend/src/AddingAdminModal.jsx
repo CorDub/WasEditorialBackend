@@ -76,7 +76,7 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
   return (
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nuevo autor</p>
+        <p>Nuevo admin</p>
       </div>
       <form className="global-form">
         <input type='text' placeholder="Nombre"

@@ -20,6 +20,7 @@ router.get('/admins', async (req, res) => {
         {first_name: 'asc'}
       ]
     });
+    console.log(admins);
     res.json(admins);
   } catch (error) {
     console.error(error);

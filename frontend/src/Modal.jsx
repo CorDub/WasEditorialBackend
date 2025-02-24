@@ -31,7 +31,6 @@ function Modal({ modalType, clickedRow, closeModal, pageIndex, globalFilter }) {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-proper">
         <AddingAdminModal ref={addingModalRef} className='hidden'
           closeModal={closeModal} pageIndex={pageIndex} globalFilter={globalFilter}/>
         <EditAdminModal ref={editModalRef} className='hidden'
@@ -40,7 +39,6 @@ function Modal({ modalType, clickedRow, closeModal, pageIndex, globalFilter }) {
         <DeleteAdminModal ref={deleteModalRef} className='hidden'
           clickedRow={clickedRow} closeModal={closeModal}
           pageIndex={pageIndex} globalFilter={globalFilter}/>
-      </div>
     </div>
   )
 }

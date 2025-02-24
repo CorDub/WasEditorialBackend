@@ -57,7 +57,7 @@ function AdminsList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo autor</button>
+        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo admin</button>
       </div>
     ),
     initialState: {

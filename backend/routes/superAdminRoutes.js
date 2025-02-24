@@ -41,8 +41,8 @@ router.post('/admin', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const new_admin = await prisma.user.create({
       data: {
-        fistName: firstName,
-        lastName: lastName,
+        first_name: firstName,
+        last_name: lastName,
         email: email,
         password: hashedPassword,
         role: "admin"
@@ -52,7 +52,7 @@ router.post('/admin', async (req, res) => {
     res.status(201).json({
       firstName: new_admin.first_name,
       lastName: new_admin.last_name,
-      email: new_author.email
+      email: new_admin.email
     });
     sendSetPasswordMail(email, firstName, lastName);
 

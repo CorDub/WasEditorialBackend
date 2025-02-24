@@ -52,21 +52,27 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
   }
 
   function checkInputs() {
+    let errorsList = []
     const Expectations = {
       type: "string",
       presence: "not empty",
       length: 50
     };
-    setErrors(prev => [...prev, checkForErrors("Apellido", lastName, Expectations, firstNameRef)]);
+    errorsList.push(checkForErrors("Apellido", lastName, Expectations, firstNameRef));
+    setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, firstNameRef)]);
+    errorsList.push(checkForErrors("Nombre", firstName, Expectations, lastNameRef));
     setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, lastNameRef)]);
+    errorsList.push(checkForErrors("Correo", email, Expectations, emailRef));
     setErrors(prev => [...prev, checkForErrors("Correo", email, Expectations, emailRef)]);
+
+    return errorsList
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    checkInputs();
-    if (errors.length > 0) {
+    const res = checkInputs();
+    if (res.length > 0) {
       return;
     }
 

@@ -42,11 +42,7 @@ function AdminsList() {
       accessorKey: "first_name"
     },
     {
-      header: "Pais",
-      accessorKey: "country"
-    },
-    {
-      header: "Email",
+      header: "Correo",
       accessorKey: "email"
     },
   ], []);

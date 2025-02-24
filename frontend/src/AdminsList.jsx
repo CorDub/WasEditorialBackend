@@ -42,11 +42,7 @@ function AdminsList() {
       accessorKey: "first_name"
     },
     {
-      header: "Pais",
-      accessorKey: "country"
-    },
-    {
-      header: "Email",
+      header: "Correo",
       accessorKey: "email"
     },
   ], []);
@@ -57,7 +53,7 @@ function AdminsList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo autor</button>
+        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo admin</button>
       </div>
     ),
     initialState: {
@@ -96,11 +92,9 @@ function AdminsList() {
     }
   });
 
-  console.log(data);
-
-  function openModal(modalType, clickedRow) {
+  function openModal(type, clickedRow) {
     setClickedRow(clickedRow);
-    switch (modalType) {
+    switch (type) {
       case 'adding':
         setModalType("adding");
         break;

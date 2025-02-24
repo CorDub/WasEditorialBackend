@@ -18,9 +18,11 @@ function UserProvider({ children }) {
 
       if (response.ok === true) {
         setUser(data);
+        return(data);
       } else {
         setUser(null);
         console.log('no user to fetch');
+        return(user);
       }
 
     } catch(error) {

@@ -7,23 +7,22 @@ function useCheckSuperAdmin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUser();
+    async function fetchUserData() {
+      const userData = await fetchUser();
+
+      if (userData === null) {
+        navigate("/");
+        return;
+      };
+
+      if (userData.role !== "superadmin") {
+        navigate("/");
+      }
+    }
+
+    fetchUserData();
+
   }, [])
-
-  useEffect(() => {
-    if (user === "") {
-      return;
-    }
-
-    if (user === null) {
-      navigate("/");
-      return;
-    }
-
-    if (user.role !== "superadmin") {
-      navigate("/");
-    }
-  }, [user, navigate]);
 }
 
 export default useCheckSuperAdmin;

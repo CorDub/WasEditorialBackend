@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckUser from "./customHooks/useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteBookModal from './DeleteBookModal';
@@ -6,9 +6,11 @@ import EditBookModal from './EditBookModal';
 import AddingBookModal from './AddingBookModal';
 import Navbar from './Navbar';
 import Alert from "./Alert";
+import UserContext from './UserContext';
 
 function BooksList() {
   useCheckUser();
+  const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
@@ -192,7 +194,7 @@ function BooksList() {
 
   return(
     <>
-      <Navbar active={"libros"} />
+      <Navbar subNav={user.role} active={"libros"} />
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

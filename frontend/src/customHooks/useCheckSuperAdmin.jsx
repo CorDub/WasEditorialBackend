@@ -6,13 +6,8 @@ function useCheckSuperAdmin() {
   const { user, fetchUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  console.log(user);
-
   useEffect(() => {
-    async function fetchUserData() {
-      await fetchUser();
-    }
-    fetchUserData();
+    fetchUser();
   }, [])
 
   useEffect(() => {

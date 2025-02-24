@@ -96,11 +96,9 @@ function AdminsList() {
     }
   });
 
-  console.log(data);
-
-  function openModal(modalType, clickedRow) {
+  function openModal(type, clickedRow) {
     setClickedRow(clickedRow);
-    switch (modalType) {
+    switch (type) {
       case 'adding':
         setModalType("adding");
         break;

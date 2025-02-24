@@ -1,23 +1,23 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import AddingAdminModal from './AddingAdminModal';
 import EditAdminModal from './EditAdminModal';
 import DeleteAdminModal from './DeleteAdminModal';
 
 function Modal({ modalType, clickedRow, closeModal, pageIndex, globalFilter }) {
-  const addingModalRef = useRef();
-  const editModalRef = useRef();
-  const deleteModalRef = useRef();
+  const [isAddingModalOpen, setAddingModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   function determineModal(modalType) {
     switch (modalType) {
       case "adding":
-        addingModalRef.current.classList.remove("hidden");
+        setAddingModalOpen(true);
         break;
       case "edit":
-        editModalRef.current.classList.remove("hidden");
+        setEditModalOpen(true);
         break;
       case "delete":
-        deleteModalRef.current.classList.remove("hidden");
+        setDeleteModalOpen(true);
         break;
       default:
         console.log("Unkown modal type passed");
@@ -31,14 +31,17 @@ function Modal({ modalType, clickedRow, closeModal, pageIndex, globalFilter }) {
 
   return (
     <div className="modal-overlay">
-        <AddingAdminModal ref={addingModalRef} className='hidden'
-          closeModal={closeModal} pageIndex={pageIndex} globalFilter={globalFilter}/>
-        <EditAdminModal ref={editModalRef} className='hidden'
+        {isAddingModalOpen && <AddingAdminModal closeModal={closeModal}
+          pageIndex={pageIndex} globalFilter={globalFilter}
+          setAddingModalOpen={setAddingModalOpen}/>}
+        {isEditModalOpen && <EditAdminModal
           clickedRow={clickedRow} closeModal={closeModal}
-          pageIndex={pageIndex} globalFilter={globalFilter} />
-        <DeleteAdminModal ref={deleteModalRef} className='hidden'
+          pageIndex={pageIndex} globalFilter={globalFilter}
+          setEditModalOpen={setEditModalOpen}/>}
+        {isDeleteModalOpen && <DeleteAdminModal
           clickedRow={clickedRow} closeModal={closeModal}
-          pageIndex={pageIndex} globalFilter={globalFilter}/>
+          pageIndex={pageIndex} globalFilter={globalFilter}
+          setDeleteModalOpen={setDeleteModalOpen}/>}
     </div>
   )
 }

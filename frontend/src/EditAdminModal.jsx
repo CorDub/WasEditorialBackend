@@ -41,8 +41,8 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
         setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
-        const data = await response.json();
-        const alertMessage = `El admin ${data.firstName} ${data.lastName} ha sido actualizado con exito.`;
+        // const data = await response.json();
+        const alertMessage = `El admin ha sido actualizado con exito.`;
         setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }

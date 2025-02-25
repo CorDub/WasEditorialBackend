@@ -148,9 +148,7 @@ function AdminsList() {
 
   useEffect(() => {
     fetchAdmins();
-  }, []);
-
-  console.log(data);
+  }, [forceRender]);
 
   return (
     <div>

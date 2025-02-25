@@ -1,8 +1,6 @@
 import { useEffect } from "react";
-import useCheckUser from "./customHooks/useCheckUser";
 
 function AddingAuthorModalErrors({ errors, setErrors }) {
-  useCheckUser();
 
   function displayError(error) {
     switch (error) {

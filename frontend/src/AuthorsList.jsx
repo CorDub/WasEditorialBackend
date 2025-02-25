@@ -4,13 +4,13 @@ import './AuthorsList.scss';
 import UserContext from "./UserContext";
 import DeleteAuthorModal from './DeleteAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
-import useCheckUser from './customHooks/useCheckUser';
+import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingAuthorModal from './AddingAuthorModal';
 import Navbar from './Navbar';
 import Alert from './Alert';
 
 function AuthorsList() {
-  useCheckUser();
+  useCheckAdmin();
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);

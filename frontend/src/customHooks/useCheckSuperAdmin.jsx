@@ -8,6 +8,18 @@ function useCheckSuperAdmin() {
 
   useEffect(() => {
     async function fetchUserData() {
+      if (user !== "") {
+        if (user === null) {
+          navigate("/");
+          return;
+        }
+
+        if (user.role !== "superadmin") {
+          navigate("/");
+          return;
+        }
+      }
+
       const userData = await fetchUser();
 
       if (userData === null) {

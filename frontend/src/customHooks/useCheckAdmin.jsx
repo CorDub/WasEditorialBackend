@@ -8,21 +8,36 @@ function useCheckAdmin() {
 
   useEffect(() => {
     async function fetchUserData() {
-      await fetchUser();
+      if (user !== "") {
+        if (user === null) {
+          navigate("/");
+          return;
+        }
+
+        if (user.role !== "superadmin" && user.role !== "admin") {
+          navigate("/");
+          return;
+        }
+
+        return;
+      }
+
+      const userData = await fetchUser();
+      console.log("fetched user");
+
+      if (userData === null) {
+        navigate("/");
+        return;
+      };
+
+      if (userData.role !== "superadmin" && userData.role !== "admin") {
+        navigate("/");
+      }
     }
+
     fetchUserData();
-  }, [])
 
-  useEffect(() => {
-    if (user === null) {
-      navigate("/");
-      return;
-    }
-
-    if (user.role !== "admin" && user.role !== "superadmin") {
-      navigate("/")
-    }
-  }, [user, navigate]);
+  }, [user, fetchUser, navigate])
 }
 
 export default useCheckAdmin;

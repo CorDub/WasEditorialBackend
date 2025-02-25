@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import useCheckUser from './customHooks/useCheckUser.jsx';
+import useCheckAdmin from './customHooks/useCheckAdmin.jsx';
 import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
 function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState(null);

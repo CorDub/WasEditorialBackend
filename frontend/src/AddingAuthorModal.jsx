@@ -193,7 +193,7 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
     categories.map((cat) => {
       categories_types.push(cat.type)
     });
-    if (!categories_types.includes(parseInt(category))) {
+    if (!categories_types.includes(category)) {
       errorList.push(62);
       addErrorClass(inputCategory);
     };

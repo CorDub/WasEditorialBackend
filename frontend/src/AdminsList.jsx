@@ -45,6 +45,10 @@ function AdminsList() {
       header: "Correo",
       accessorKey: "email"
     },
+    {
+      header: "Role",
+      accessorKey: "role"
+    }
   ], []);
   const table = useMaterialReactTable({
     columns,

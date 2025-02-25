@@ -17,6 +17,7 @@ router.get('/admins', async (req, res) => {
         first_name: true,
         last_name: true,
         email: true,
+        role: true
       },
       orderBy: [
         {last_name: 'asc'},

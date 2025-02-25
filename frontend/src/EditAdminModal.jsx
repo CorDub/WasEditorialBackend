@@ -61,22 +61,32 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
     };
 
     const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    if (errorsFirstName.length > 0) {
-      errorsList.push(errorsFirstName);
-      setErrors(errorsFirstName)
-    }
-
     const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    if (errorsLastName.length > 0) {
-      errorsList.push(errorsLastName);
-      setErrors(errorsLastName)
+    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
+    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail];
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
     }
 
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    if (errorsEmail.length > 0) {
-      errorsList.push(errorsEmail);
-      setErrors(errorsEmail)
-    }
+    // if (errorsFirstName.length > 0) {
+    //   errorsList.push(errorsFirstName);
+    //   setErrors(errorsFirstName)
+    // }
+
+
+    // if (errorsLastName.length > 0) {
+    //   errorsList.push(errorsLastName);
+    //   setErrors(errorsLastName)
+    // }
+
+
+    // if (errorsEmail.length > 0) {
+    //   errorsList.push(errorsEmail);
+    //   setErrors(errorsEmail)
+    // }
 
     return errorsList
   }
@@ -112,6 +122,9 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>
+        <select>
+          <option></option>
+        </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

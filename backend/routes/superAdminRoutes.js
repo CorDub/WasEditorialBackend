@@ -14,6 +14,7 @@ router.get('/admins', async (req, res) => {
         role: { in: [Role.admin, Role.superadmin] }
       },
       select: {
+        id: true,
         first_name: true,
         last_name: true,
         email: true,
@@ -111,6 +112,17 @@ router.patch('/admin', async (req, res) => {
       return;
     }
     res.status(500).json({ error: error });
+  }
+})
+
+router.delete('/admin', async (req, res) => {
+  try {
+    const user_id = parseInt(req.query.user_id);
+    await prisma.user.delete({where: {id: user_id}});
+    res.status(200).json({message: "Deleted successfully"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the admin'});
   }
 })
 

@@ -29,7 +29,7 @@ function AdminsList() {
           <button onClick={() => openModal("edit", row.original)}
             className="blue-button modal-button">Editar</button>
           <button onClick={() => openModal("delete", row.original)}
-            className="blue-button modal-button">Cancelar</button>
+            className="blue-button modal-button">Eliminar</button>
         </div>
       )
     },

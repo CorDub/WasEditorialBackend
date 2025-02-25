@@ -84,7 +84,7 @@ async function main() {
       last_name: "Adorno",
       country: "México",
       email: "adorno@gmail.com",
-      password: await bcrypt.hash("bookboi", 10),
+      password: await bcrypt.hash("bookboi3", 10),
       role: Role.author
     },
   });

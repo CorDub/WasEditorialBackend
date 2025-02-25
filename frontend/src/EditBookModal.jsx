@@ -108,8 +108,8 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
   }
 
   function addErrorClass(element) {
-    if (!element.classList.contains("error")) {
-      element.classList.add("error");
+    if (!element.classList.contains("error-inputs")) {
+      element.classList.add("error-inputs");
     };
   }
 
@@ -130,14 +130,14 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
-        if (input.classList.contains("error")) {
-          input.classList.remove("error");
+        if (input.classList.contains("error-inputs")) {
+          input.classList.remove("error-inputs");
         }
       }
     })
     inputAuthors.forEach((input) => {
-      if (input.classList.contains("error")) {
-        input.classList.remove("error");
+      if (input.classList.contains("error-inputs")) {
+        input.classList.remove("error-inputs");
       }
     })
 
@@ -175,11 +175,6 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
       newErrorList.push(33);
       addErrorClass(inputPrice);
     }
-
-    // if (parseInt(isbn).isNaN()) {
-    //   newErrorList.push(33);
-    //   addErrorClass(inputIsbn);
-    // };
 
     authors.map((author, index) => {
       if (author === null) {
@@ -272,7 +267,7 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <input type='text' value={price}
           className="global-input" id="adding-book-price"
           onChange={(e) => setPrice(e.target.value)}></input>
-        <input type='text' value={isbn === "" ? "ISBN" : isbn}
+        <input type='text' value={isbn} placeholder="ISBN"
           className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>
         {authors.map((author, index) => (

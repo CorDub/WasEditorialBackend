@@ -156,8 +156,8 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
   }
 
   function addErrorClass(element) {
-    if (!element.classList.contains("error")) {
-      element.classList.add("error");
+    if (!element.classList.contains("error-inputs")) {
+      element.classList.add("error-inputs");
     };
   }
 

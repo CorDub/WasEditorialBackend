@@ -52,8 +52,8 @@ function ChangePasswordPage() {
   }
 
   function addErrorClass(element) {
-    if (!element.classList.contains("error")) {
-      element.classList.add("error");
+    if (!element.classList.contains("error-inputs")) {
+      element.classList.add("error-inputs");
     };
   }
 
@@ -65,8 +65,8 @@ function ChangePasswordPage() {
     const inputList = [inputCS1, inputCS2];
 
     inputList.forEach((input) => {
-      if (input.classList.contains("error")) {
-        input.classList.remove("error");
+      if (input.classList.contains("error-inputs")) {
+        input.classList.remove("error-inputs");
       };
     })
 

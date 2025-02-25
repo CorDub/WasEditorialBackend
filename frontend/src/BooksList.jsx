@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteBookModal from './DeleteBookModal';
 import EditBookModal from './EditBookModal';
@@ -9,7 +9,7 @@ import Alert from "./Alert";
 import UserContext from './UserContext';
 
 function BooksList() {
-  useCheckUser();
+  useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);

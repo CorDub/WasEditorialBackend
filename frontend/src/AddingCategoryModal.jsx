@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import useCheckUser from './customHooks/useCheckUser';
+import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingCategoryError from './AddingCategoryError';
 
 function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
 
   const [tipo, setTipo] = useState('');
   const [regalias, setRegalias] = useState('');

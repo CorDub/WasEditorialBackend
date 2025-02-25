@@ -1,9 +1,9 @@
 import { useState } from "react";
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingCategoryError from './AddingCategoryError';
 
 function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
   const [tipo, setTipo] = useState(row.type);
   const [regalias, setRegalias] = useState(row.percentage_royalties);
   const [gestionTiendas, setGestionTiendas] = useState(row.percentage_management_stores);

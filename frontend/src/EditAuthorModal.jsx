@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 
 function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
 
   const [firstName, setFirstName] = useState(row.first_name);
   const [lastName, setLastName] = useState(row.last_name ? row.last_name : "");

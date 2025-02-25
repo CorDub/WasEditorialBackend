@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import useCheckUser from './customHooks/useCheckUser';
+import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingBookstoreErrorList from './AddingBookstoreErrorList';
 
 function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
 
   const [name, setName] = useState('');
   const [dealPercentage, setDealPercentage] = useState('');

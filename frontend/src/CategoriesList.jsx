@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteCategoryModal from './DeleteCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
@@ -9,7 +9,7 @@ import Alert from "./Alert";
 import UserContext from './UserContext';
 
 function CategoriesList() {
-  useCheckUser();
+  useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);

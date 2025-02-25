@@ -1,7 +1,7 @@
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteBookModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
-  useCheckUser();
+  useCheckAdmin();
 
   async function deleteBook() {
     try {

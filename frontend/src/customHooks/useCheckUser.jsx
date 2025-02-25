@@ -8,16 +8,33 @@ function useCheckUser() {
 
   useEffect(() => {
     async function fetchUserData() {
-      await fetchUser();
-    }
-    fetchUserData();
-  }, [])
+      if (user !== "") {
+        if (user === null) {
+          navigate("/");
+          return;
+        }
 
-  useEffect(() => {
-    if (user === null) {
-      navigate("/"); // Navigate only if user is still null after the update
+        if (user.role !== "superadmin" || user.role !== "admin") {
+          navigate("/");
+          return;
+        }
+      }
+
+      const userData = await fetchUser();
+
+      if (userData === null) {
+        navigate("/");
+        return;
+      };
+
+      if (userData.role !== "superadmin" || user.role !== "admin") {
+        navigate("/");
+      }
     }
-  }, [user, navigate]);
+
+    fetchUserData();
+
+  }, [])
 }
 
 export default useCheckUser;

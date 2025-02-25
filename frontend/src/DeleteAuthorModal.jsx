@@ -1,9 +1,8 @@
 import "./DeleteAuthorModal.scss"
-import useCheckUser from "./customHooks/useCheckUser";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
-  useCheckUser();
-  console.log(row);
+  useCheckAdmin();
 
   async function deleteAuthor(e) {
     e.preventDefault();

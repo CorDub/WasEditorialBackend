@@ -9,10 +9,12 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
   const [firstName, setFirstName] = useState(clickedRow.first_name);
   const [lastName, setLastName] = useState(clickedRow.last_name);
   const [email, setEmail] = useState(clickedRow.email);
+  const [role, setRole] = useState(clickedRow.role);
   const [errors, setErrors] = useState([]);
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
+  const roleRef = useRef();
 
   async function sendToServer() {
     try {
@@ -27,6 +29,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
           firstName: firstName,
           lastName: lastName,
           email: email,
+          role: role
         }),
       });
 
@@ -41,8 +44,8 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
         setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
-        const data = await response.json();
-        const alertMessage = `El admin ${data.firstName} ${data.lastName} ha sido actualizado con exito.`;
+        // const data = await response.json();
+        const alertMessage = `El admin ha sido actualizado con exito.`;
         setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
@@ -61,22 +64,32 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
     };
 
     const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    if (errorsFirstName.length > 0) {
-      errorsList.push(errorsFirstName);
-      setErrors(errorsFirstName)
-    }
-
     const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    if (errorsLastName.length > 0) {
-      errorsList.push(errorsLastName);
-      setErrors(errorsLastName)
+    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
+    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail];
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
     }
 
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    if (errorsEmail.length > 0) {
-      errorsList.push(errorsEmail);
-      setErrors(errorsEmail)
-    }
+    // if (errorsFirstName.length > 0) {
+    //   errorsList.push(errorsFirstName);
+    //   setErrors(errorsFirstName)
+    // }
+
+
+    // if (errorsLastName.length > 0) {
+    //   errorsList.push(errorsLastName);
+    //   setErrors(errorsLastName)
+    // }
+
+
+    // if (errorsEmail.length > 0) {
+    //   errorsList.push(errorsEmail);
+    //   setErrors(errorsEmail)
+    // }
 
     return errorsList
   }
@@ -91,6 +104,44 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
     }
 
     sendToServer()
+  }
+
+  function dropDownChange(e, input_name, input_index) {
+
+    const inputs = {
+      "Role": {
+        "function": setRole,
+        "element": roleRef
+      }
+    }
+
+    if (input_index !== undefined) {
+      inputs[input_name]["function"](input_index, e);
+      if (e.target.value === "null") {
+        if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+          inputs[input_name]["element"].current.classList.remove("selected")
+        };
+        return;
+      } else {
+        // inputs[input_name]["function"](input_index, e);
+        if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+          inputs[input_name]["element"].current.classList.add("selected")
+        };
+        return;
+      }
+    };
+
+    if (e.target.value === "null") {
+      inputs[input_name]["function"](null);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+        inputs[input_name]["element"].current.classList.remove("selected")
+      };
+    } else {
+      inputs[input_name]["function"](e.target.value);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+        inputs[input_name]["element"].current.classList.add("selected")
+      };
+    };
   }
 
   return (
@@ -112,6 +163,13 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>
+        <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
+          ref={roleRef}>
+          <option value={role}>{role}</option>
+          <option value="superadmin">Superadmin</option>
+          <option value="admin">Admin</option>
+          <option value="author">Usuario</option>
+        </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

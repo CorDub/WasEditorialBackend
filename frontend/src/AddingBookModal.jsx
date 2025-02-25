@@ -100,10 +100,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
   }
 
   function dropDownChange(e, input_name, input_index) {
-    console.log(e);
-    console.log(input_name);
-    console.log(input_index);
-
+    
     const inputs = {
       "Pasta": {
         "function": setPasta,

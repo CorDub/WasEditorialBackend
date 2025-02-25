@@ -1,6 +1,6 @@
 function Alert({ message, type, setAlertMessage, setAlertType }) {
   const alertProper = document.querySelector('.alert-proper');
-  
+
   if (message.length > 0) {
     alertProper.classList.add(`${type}`, "slide");
 

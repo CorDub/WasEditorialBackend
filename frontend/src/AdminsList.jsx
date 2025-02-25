@@ -71,7 +71,10 @@ function AdminsList() {
       sx: {
         borderRadius: '15px',
         backgroundColor: "#fff",
-        width: "95%",
+        position: "fixed",
+        top: "60px",
+        left: "10px",
+        width: "99vw"
       }
     },
     muiTableBodyRowProps: {

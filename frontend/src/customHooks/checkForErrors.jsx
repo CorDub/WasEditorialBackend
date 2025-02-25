@@ -3,13 +3,13 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const expectationsList = Object.keys(fieldExpectations);
 
   function addErrorClass(ref) {
-    if (!ref.current.classList.contains("error")) {
-      ref.current.classList.add("error");
+    if (!ref.current.classList.contains("error-inputs")) {
+      ref.current.classList.add("error-inputs");
     }
   }
 
-  if (fieldRef.current.classList.contains("error")) {
-    fieldRef.current.classList.remove("error");
+  if (fieldRef.current.classList.contains("error-inputs")) {
+    fieldRef.current.classList.remove("error-inputs");
   }
 
   for (const expectation of expectationsList) {
@@ -40,6 +40,17 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
       case "length":
         if (fieldValue.length > fieldExpectations.length) {
           errorList.push(`${fieldName} no puede tener mas de ${fieldExpectations.length} caracteres.`);
+        };
+        addErrorClass(fieldRef);
+        break;
+
+      case "value":
+        if (!fieldExpectations.value.includes(fieldValue)) {
+          let str_possibles = ""
+          for (const value of fieldExpectations.value) {
+            str_possibles += (value + " ")
+          }
+          errorList.push(`${fieldName} debe ser uno de los siguientes: ${str_possibles}.`)
         };
         addErrorClass(fieldRef);
         break;

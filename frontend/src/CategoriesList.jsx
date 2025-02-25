@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckUser from "./customHooks/useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteCategoryModal from './DeleteCategoryModal';
@@ -6,9 +6,11 @@ import EditCategoryModal from './EditCategoryModal';
 import AddingCategoryModal from './AddingCategoryModal';
 import Navbar from './Navbar';
 import Alert from "./Alert";
+import UserContext from './UserContext';
 
 function CategoriesList() {
   useCheckUser();
+  const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
@@ -78,7 +80,10 @@ function CategoriesList() {
       sx: {
         borderRadius: '15px',
         backgroundColor: "#fff",
-        width: "95%",
+        position: "fixed",
+        top: "60px",
+        left: "10px",
+        width: "99vw"
       }
     },
     muiTableBodyRowProps: {
@@ -191,7 +196,7 @@ function CategoriesList() {
 
   return(
     <>
-      <Navbar active={"categorias"}/>
+      <Navbar subNav={user.role} active={"categorias"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

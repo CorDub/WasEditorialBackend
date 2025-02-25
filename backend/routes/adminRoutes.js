@@ -16,6 +16,7 @@ router.get('/users', async (req, res) => {
         role: Role.author
       },
       select: {
+        id: true,
         first_name: true,
         last_name: true,
         country: true,

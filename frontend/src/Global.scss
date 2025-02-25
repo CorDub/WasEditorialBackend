@@ -9,10 +9,12 @@ $global-second-font: 'Roboto Slab';
 
 html, body {
   background: $bg-second-color;
+  background-image: url("/home/cordub/code/CorDub/WasEditorialBackend/frontend/src/assets/triangles.png");
+  background-size: cover;
+  background-position: center;
   font-family: $global-font;
   height: 100%;
   margin: 0;
-
 }
 
 #root {
@@ -177,7 +179,7 @@ a {
 
 /// Errors
 
-.error {
+.error-inputs {
   border: 1px solid red;
 }
 
@@ -211,7 +213,7 @@ a {
 .alert-proper {
   z-index: 2000;
   background-color: #E2E2E2;
-  width: 30%;
+  width: 25%;
   border-radius: 15px;
   padding: 1rem;
   position: fixed;
@@ -222,7 +224,7 @@ a {
   bottom: 15px;
   right: -700px;
   transition: 0.3s;
-  box-shadow: 3px, 3px, 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
 }
 
 .slide {
@@ -232,7 +234,8 @@ a {
 }
 
 .confirmation {
-  border: 1px solid green;
+  background-color: #4E5981;
+  color: #fff;
 }
 
 .warning {
@@ -240,7 +243,9 @@ a {
 }
 
 .error {
-  border: 1px sold red;
+  border: 1px solid red;
+  background-color: #4E5981;
+  color: #fff;
 }
 
 .alert-message {

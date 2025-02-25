@@ -3,6 +3,7 @@ import useCheckUser from "./customHooks/useCheckUser";
 
 function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckUser();
+  console.log(row);
 
   async function deleteAuthor(e) {
     e.preventDefault();

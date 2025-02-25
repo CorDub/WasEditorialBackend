@@ -7,8 +7,8 @@ function LoginError({ errors, setErrors, inputs }) {
   function displayError(error) {
     if (error === 1) {
       inputs.forEach((input) => {
-        if (!input.classList.contains("error"))  {
-          input.classList.add("error");
+        if (!input.classList.contains("error-inputs"))  {
+          input.classList.add("error-inputs");
         }
       })
       return (
@@ -17,8 +17,8 @@ function LoginError({ errors, setErrors, inputs }) {
     }
 
     if (error === 2) {
-      if (!inputs[0].classList.contains("error"))  {
-        inputs[0].classList.add("error");
+      if (!inputs[0].classList.contains("error-inputs"))  {
+        inputs[0].classList.add("error-inputs");
       }
       return (
         <p className="login-error">El correo no puede estar vacio</p>
@@ -26,8 +26,8 @@ function LoginError({ errors, setErrors, inputs }) {
     }
 
     if (error === 3) {
-      if (!inputs[1].classList.contains("error"))  {
-        inputs[1].classList.add("error");
+      if (!inputs[1].classList.contains("error-inputs"))  {
+        inputs[1].classList.add("error-inputs");
       }
       return (
         <p className="login-error">La contraseña no puede estar vacia</p>

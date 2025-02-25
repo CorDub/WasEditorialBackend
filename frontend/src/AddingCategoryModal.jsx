@@ -48,8 +48,8 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
   }
 
   function addErrorClass(element) {
-    if (!element.classList.contains("error")) {
-      element.classList.add("error");
+    if (!element.classList.contains("error-inputs")) {
+      element.classList.add("error-inputs");
     };
   }
 
@@ -62,8 +62,8 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
     let inputList = [inputTipo, inputRegalias, inputGestionTiendas, inputGestionMinima];
 
     inputList.forEach((input) => {
-      if (input.classList.contains("error")) {
-        input.classList.remove("error");
+      if (input.classList.contains("error-inputs")) {
+        input.classList.remove("error-inputs");
       }
     });
 

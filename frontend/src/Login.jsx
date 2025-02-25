@@ -29,7 +29,7 @@ function LoginPage() {
 
     try {
       inputs.forEach((input) => {
-        input.classList.remove("error")
+        input.classList.remove("error-inputs")
       })
       const newErrors = checkBoundsErrors(email, password);
       if (newErrors.length !== 0) {

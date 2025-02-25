@@ -61,16 +61,16 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
       presence: "not empty",
       length: 50
     };
-    // errorsList.push(checkForErrors("Apellido", lastName, Expectations, firstNameRef));
-    // setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, firstNameRef)]);
-    // errorsList.push(checkForErrors("Nombre", firstName, Expectations, lastNameRef));
-    // setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, lastNameRef)]);
-    // errorsList.push(checkForErrors("Correo", email, Expectations, emailRef));
-    // setErrors(prev => [...prev, checkForErrors("Correo", email, Expectations, emailRef)]);
+    const roleExpectations = {
+      presence: "not empty",
+      value: ["superadmin", "admin", "author"]
+    }
+
     const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
     const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
     const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail];
+    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);

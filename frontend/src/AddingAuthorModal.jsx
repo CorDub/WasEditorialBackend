@@ -112,8 +112,8 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
 
   function checkForErrors(serverError) {
     function addErrorClass(input_name) {
-      if (!input_name.classList.contains("error")) {
-        input_name.classList.add("error");
+      if (!input_name.classList.contains("error-inputs")) {
+        input_name.classList.add("error-inputs");
       };
     }
 
@@ -128,8 +128,8 @@ function AddingAuthorModal({ closeAddingModal, pageIndex, globalFilter }) {
       inputReferido, inputEmail, inputCategory];
 
     inputsList.forEach((input) => {
-      if (input.classList.contains("error")) {
-        input.classList.remove("error");
+      if (input.classList.contains("error-inputs")) {
+        input.classList.remove("error-inputs");
       }
     })
 

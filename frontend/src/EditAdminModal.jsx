@@ -62,35 +62,22 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
       presence: "not empty",
       length: 50
     };
+    const roleExpectations = {
+      presence: "not empty",
+      value: ["superadmin", "admin", "author"]
+    }
 
     const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
     const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
     const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail];
+    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
         setErrors(prev => [...prev, errorInput]);
       }
     }
-
-    // if (errorsFirstName.length > 0) {
-    //   errorsList.push(errorsFirstName);
-    //   setErrors(errorsFirstName)
-    // }
-
-
-    // if (errorsLastName.length > 0) {
-    //   errorsList.push(errorsLastName);
-    //   setErrors(errorsLastName)
-    // }
-
-
-    // if (errorsEmail.length > 0) {
-    //   errorsList.push(errorsEmail);
-    //   setErrors(errorsEmail)
-    // }
-
     return errorsList
   }
 

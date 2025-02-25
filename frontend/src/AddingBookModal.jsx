@@ -100,7 +100,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
   }
 
   function dropDownChange(e, input_name, input_index) {
-    
+
     const inputs = {
       "Pasta": {
         "function": setPasta,
@@ -178,14 +178,14 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
-        if (input.classList.contains("error")) {
-          input.classList.remove("error");
+        if (input.classList.contains("error-inputs")) {
+          input.classList.remove("error-inputs");
         }
       }
     })
     inputAuthors.forEach((input) => {
-      if (input.classList.contains("error")) {
-        input.classList.remove("error");
+      if (input.classList.contains("error-inputs")) {
+        input.classList.remove("error-inputs");
       }
     })
 

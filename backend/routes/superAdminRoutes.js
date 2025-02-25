@@ -14,9 +14,11 @@ router.get('/admins', async (req, res) => {
         role: { in: [Role.admin, Role.superadmin] }
       },
       select: {
+        id: true,
         first_name: true,
         last_name: true,
         email: true,
+        role: true
       },
       orderBy: [
         {last_name: 'asc'},
@@ -36,6 +38,7 @@ router.post('/admin', async (req, res) => {
       firstName,
       lastName,
       email,
+      role
     } = req.body;
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +48,7 @@ router.post('/admin', async (req, res) => {
         last_name: lastName,
         email: email,
         password: hashedPassword,
-        role: "admin"
+        role: role
       }
     })
 
@@ -76,7 +79,8 @@ router.patch('/admin', async (req, res) => {
     const {
       firstName,
       lastName,
-      email} = req.body;
+      email,
+      role} = req.body;
     const admin = await prisma.user.findUnique({where: {email: email}})
     console.log("This is the admin", admin);
     const updatedAdmin = await prisma.user.update({
@@ -85,6 +89,7 @@ router.patch('/admin', async (req, res) => {
         first_name: firstName,
         last_name: lastName,
         email: email,
+        role: role
       }
     });
 
@@ -107,6 +112,17 @@ router.patch('/admin', async (req, res) => {
       return;
     }
     res.status(500).json({ error: error });
+  }
+})
+
+router.delete('/admin', async (req, res) => {
+  try {
+    const user_id = parseInt(req.query.user_id);
+    await prisma.user.delete({where: {id: user_id}});
+    res.status(200).json({message: "Deleted successfully"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the admin'});
   }
 })
 

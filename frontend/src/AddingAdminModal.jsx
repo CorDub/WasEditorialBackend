@@ -8,10 +8,12 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [errors, setErrors] = useState([]);
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
+  const roleRef = useRef();
 
   async function sendToServer() {
     try {
@@ -25,6 +27,7 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
           firstName: firstName,
           lastName: lastName,
           email: email,
+          role: role
         }),
       });
 
@@ -58,12 +61,22 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
       presence: "not empty",
       length: 50
     };
-    errorsList.push(checkForErrors("Apellido", lastName, Expectations, firstNameRef));
-    setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, firstNameRef)]);
-    errorsList.push(checkForErrors("Nombre", firstName, Expectations, lastNameRef));
-    setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, lastNameRef)]);
-    errorsList.push(checkForErrors("Correo", email, Expectations, emailRef));
-    setErrors(prev => [...prev, checkForErrors("Correo", email, Expectations, emailRef)]);
+    // errorsList.push(checkForErrors("Apellido", lastName, Expectations, firstNameRef));
+    // setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, firstNameRef)]);
+    // errorsList.push(checkForErrors("Nombre", firstName, Expectations, lastNameRef));
+    // setErrors(prev => [...prev, checkForErrors("Nombre", firstName, Expectations, lastNameRef)]);
+    // errorsList.push(checkForErrors("Correo", email, Expectations, emailRef));
+    // setErrors(prev => [...prev, checkForErrors("Correo", email, Expectations, emailRef)]);
+    const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
+    const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
+    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
+    const errorInputs = [errorsFirstName, errorsLastName, errorsEmail];
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
+    }
 
     return errorsList
   }
@@ -77,6 +90,44 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
     }
 
     sendToServer()
+  }
+
+  function dropDownChange(e, input_name, input_index) {
+
+    const inputs = {
+      "Role": {
+        "function": setRole,
+        "element": roleRef
+      }
+    }
+
+    if (input_index !== undefined) {
+      inputs[input_name]["function"](input_index, e);
+      if (e.target.value === "null") {
+        if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+          inputs[input_name]["element"].current.classList.remove("selected")
+        };
+        return;
+      } else {
+        // inputs[input_name]["function"](input_index, e);
+        if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+          inputs[input_name]["element"].current.classList.add("selected")
+        };
+        return;
+      }
+    };
+
+    if (e.target.value === "null") {
+      inputs[input_name]["function"](null);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+        inputs[input_name]["element"].current.classList.remove("selected")
+      };
+    } else {
+      inputs[input_name]["function"](e.target.value);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+        inputs[input_name]["element"].current.classList.add("selected")
+      };
+    };
   }
 
   return (
@@ -97,6 +148,13 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>
+        <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
+          ref={roleRef}>
+          <option value="null">Selecciona rol</option>
+          <option value="superadmin">Superadmin</option>
+          <option value="admin">Admin</option>
+          <option value="author">Usuario</option>
+        </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

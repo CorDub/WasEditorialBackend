@@ -29,7 +29,7 @@ function AdminsList() {
           <button onClick={() => openModal("edit", row.original)}
             className="blue-button modal-button">Editar</button>
           <button onClick={() => openModal("delete", row.original)}
-            className="blue-button modal-button">Cancelar</button>
+            className="blue-button modal-button">Eliminar</button>
         </div>
       )
     },
@@ -45,6 +45,10 @@ function AdminsList() {
       header: "Correo",
       accessorKey: "email"
     },
+    {
+      header: "Role",
+      accessorKey: "role"
+    }
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -148,9 +152,7 @@ function AdminsList() {
 
   useEffect(() => {
     fetchAdmins();
-  }, []);
-
-  console.log(data);
+  }, [forceRender]);
 
   return (
     <div>

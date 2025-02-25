@@ -37,6 +37,7 @@ router.post('/admin', async (req, res) => {
       firstName,
       lastName,
       email,
+      role
     } = req.body;
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -46,7 +47,7 @@ router.post('/admin', async (req, res) => {
         last_name: lastName,
         email: email,
         password: hashedPassword,
-        role: "admin"
+        role: role
       }
     })
 

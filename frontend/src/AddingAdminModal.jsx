@@ -27,6 +27,7 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
           firstName: firstName,
           lastName: lastName,
           email: email,
+          role: role
         }),
       });
 

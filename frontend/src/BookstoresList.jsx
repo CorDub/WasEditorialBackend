@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckUser from "./customHooks/useCheckUser";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import DeleteBookstoreModal from './DeleteBookstoreModal';
@@ -6,9 +6,11 @@ import EditBookstoreModal from './EditBookstoreModal';
 import AddingBookstoreModal from './AddingBookstoreModal';
 import Navbar from "./Navbar";
 import Alert from "./Alert";
+import UserContext from './UserContext';
 
 function BookstoresList() {
   useCheckUser();
+  const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
@@ -80,7 +82,10 @@ function BookstoresList() {
       sx: {
         borderRadius: '15px',
         backgroundColor: "#fff",
-        width: "95%",
+        position: "fixed",
+        top: "60px",
+        left: "10px",
+        width: "99vw"
       }
     },
     muiTableBodyRowProps: {
@@ -193,7 +198,7 @@ function BookstoresList() {
 
   return(
     <>
-      <Navbar active={"librerias"}/>
+      <Navbar subNav={user.role} active={"librerias"}/>
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}

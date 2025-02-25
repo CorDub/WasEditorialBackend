@@ -63,7 +63,7 @@ function AuthorsList() {
   ], []);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 15
+    pageSize: 19
   });
 
   const table = useMaterialReactTable({
@@ -87,7 +87,11 @@ function AuthorsList() {
       sx: {
         borderRadius: '15px',
         backgroundColor: "#fff",
-        width: "95%",
+        position: "fixed",
+        top: "60px",
+        left: "10px",
+        width: "99vw",
+        // height: "93vh"
       }
     },
     muiTableBodyRowProps: {

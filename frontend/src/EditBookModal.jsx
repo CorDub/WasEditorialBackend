@@ -5,7 +5,7 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 import AddingBookErrorList from "./AddingBookErrorList";
 
-function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
+function EditBookModal({ row, closeEditModal, globalFilter }) {
   useCheckAdmin();
 
   const [title, setTitle] = useState(row.title);
@@ -82,10 +82,10 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
 
       if (response.ok === true) {
         const alertMessage = `Se actualizó "${title}" con exito`;
-        closeEditModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeEditModal(globalFilter, true, alertMessage, "confirmation");
       } else {
         const alertMessage = `No se pudó actualizar "${title}"`;
-        closeEditModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeEditModal(globalFilter, false, alertMessage, "error");
       }
 
     } catch(error) {
@@ -317,7 +317,7 @@ function EditBookModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeEditModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeEditModal(globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Confirmar</button>
         </div>
         </form>

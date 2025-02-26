@@ -22,10 +22,10 @@ function BooksList() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 15
-  })
+  // const [pagination, setPagination] = useState({
+  //   pageIndex: 0,
+  //   pageSize: 15
+  // })
 
   const columns = useMemo(() => [
     {
@@ -63,8 +63,12 @@ function BooksList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    localization: {
+      noRecordsToDisplay: 'Descargando datos'
+    },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
+    enablePagination: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
@@ -73,9 +77,9 @@ function BooksList() {
     initialState: {
       density: 'compact',
     },
-    onPaginationChange: setPagination,
+    // onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { pagination, globalFilter },
+    state: { globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -85,6 +89,12 @@ function BooksList() {
         top: "60px",
         left: "10px",
         width: "99vw"
+      }
+    },
+    muiTableContainerProps: {
+      sx: {
+        maxHeight: '81vh',
+        overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {
@@ -137,7 +147,7 @@ function BooksList() {
 
   function openDeleteModal(row) {
     setDeleteModal(<DeleteBookModal row={row} closeDeleteModal={closeDeleteModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
@@ -145,7 +155,7 @@ function BooksList() {
     setDeleteModal(null);
     setOpenDeleteModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }
@@ -157,7 +167,7 @@ function BooksList() {
 
   function openEditModal(row) {
     setEditModal(<EditBookModal row={row} closeEditModal={closeEditModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      globalFilter={globalFilter}/>);
     setOpenEditModal(true);
   }
 
@@ -165,7 +175,7 @@ function BooksList() {
     setEditModal(null);
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }
@@ -177,7 +187,7 @@ function BooksList() {
 
   function openAddingModal() {
     setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      globalFilter={globalFilter}/>);
     setOpenAddingModal(true);
   }
 
@@ -185,7 +195,7 @@ function BooksList() {
     setAddingModal(null);
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }

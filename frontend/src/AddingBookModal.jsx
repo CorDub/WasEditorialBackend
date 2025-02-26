@@ -6,7 +6,7 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 import AddingBookErrorList from "./AddingBookErrorList";
 
-function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
+function AddingBookModal({ closeAddingModal, globalFilter }) {
   useCheckAdmin();
 
   const [title, setTitle] = useState('');
@@ -66,11 +66,11 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
       if (response.ok === false) {
         console.log(response.status);
         const alertMessage= 'No se pudó crear un nuveo libro.';
-        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeAddingModal(globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Un nuevo libro ${data.title} ha sido creado.`;
-        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeAddingModal(globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -328,7 +328,7 @@ function AddingBookModal({ closeAddingModal, pageIndex, globalFilter }) {
         <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeAddingModal(globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir nuevo libro</button>
         </div>
       </form>

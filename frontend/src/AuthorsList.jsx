@@ -69,6 +69,9 @@ function AuthorsList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    localization: {
+      noRecordsToDisplay: 'Descargando datos'
+    },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enablePagination: false,
@@ -190,10 +193,10 @@ function AuthorsList() {
 
   // Hook to set to Loading and not show the page before authenticating user
   // useEffect(() => {
-  //   if (data !== undefined && user !== undefined) {
+  //   if (data) {
   //     setLoading(false);
   //   }
-  // }, [data, user])
+  // }, [data])
 
   async function fetchUsers() {
     try {

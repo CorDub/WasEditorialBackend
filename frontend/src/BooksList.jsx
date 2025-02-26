@@ -63,6 +63,9 @@ function BooksList() {
   const table = useMaterialReactTable({
     columns,
     data,
+    localization: {
+      noRecordsToDisplay: 'Descargando datos'
+    },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enablePagination: false,

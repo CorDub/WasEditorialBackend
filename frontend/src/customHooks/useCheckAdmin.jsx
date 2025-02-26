@@ -23,7 +23,6 @@ function useCheckAdmin() {
       }
 
       const userData = await fetchUser();
-      console.log("fetched user");
 
       if (userData === null) {
         navigate("/");

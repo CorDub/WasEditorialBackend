@@ -1,4 +1,5 @@
 import express from 'express';
+// import redis from 'redis';
 import cors from 'cors';
 import session from 'express-session';
 import userRoutes from './routes/userRoutes.js';
@@ -8,7 +9,10 @@ import authorRoutes from "./routes/authorRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
 
 const app = express();
- export const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
+// export const redisClient = redis.createClient();
+// redisClient.on("error", (err) => console.error("Redis Error:", err));
+// redisClient.connect().then(() => console.log("Connected to Redis"));
 
 // Middleware
 app.use(cors({

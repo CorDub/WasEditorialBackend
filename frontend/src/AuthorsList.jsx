@@ -11,7 +11,8 @@ import Alert from './Alert';
 
 function AuthorsList() {
   useCheckAdmin();
-  const [data, setData] = useState([]);
+  const [fetchedData, setFetchedData] = useState([]);
+  const data = useMemo(() => fetchedData, [fetchedData]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
   const [isEditModalOpen, setOpenEditModal] = useState(false);
@@ -23,6 +24,8 @@ function AuthorsList() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+
+  console.log(data.slice(0, 25));
 
   const columns = useMemo(() => [
     {
@@ -75,6 +78,7 @@ function AuthorsList() {
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enablePagination: false,
+    enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
@@ -210,7 +214,20 @@ function AuthorsList() {
 
       if (response.ok) {
         const data = await response.json();
-        setData(data);
+
+        // let sliceBeginning = 0;
+        // let sliceEnd = 25;
+        // while (sliceEnd <= data.length) {
+        //   setFetchedData(prev => [...prev, ...data.slice(sliceBeginning, sliceEnd)])
+        //   sliceBeginning += 25;
+        //   sliceEnd += 25;
+        // };
+
+        // if (sliceEnd > data.length) {
+        //   setFetchedData(prev => [...prev, data.slice(sliceBeginning, data.length)])
+        // };
+
+        setFetchedData(data);
       }
 
     } catch (error) {

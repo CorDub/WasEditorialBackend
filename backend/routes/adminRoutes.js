@@ -11,6 +11,13 @@ const router = express.Router();
 
 router.get('/users', async (req, res) => {
   try {
+    // const cachedData = await redisClient.get("authorsList");
+
+    // if (cachedData) {
+    //   console.log(cachedData);
+    //   return res.json(JSON.parse(cachedData));
+    // }
+
     const users = await prisma.user.findMany({
       where: {
         role: Role.author
@@ -32,9 +39,13 @@ router.get('/users', async (req, res) => {
         {first_name: 'asc'}
       ]
     });
+
+    // await redisClient.set("authorsList", JSON.stringify(users));
+
     res.json(users);
   } catch (error) {
     console.error(error);
+    res.status(500).json({error: "Server error at users route"});
   }
 });
 

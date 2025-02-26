@@ -69,6 +69,7 @@ function BooksList() {
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enablePagination: false,
+    enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>

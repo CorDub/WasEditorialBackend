@@ -25,8 +25,6 @@ function AuthorsList() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  console.log(data.slice(0, 25));
-
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -141,9 +139,11 @@ function AuthorsList() {
     setDeleteModal(null);
     setOpenDeleteModal(false);
     globalFilter && setGlobalFilter(globalFilter);
+    console.log("first part");
 
     if (reload === true) {
       setForceRender(!forceRender);
+      console.log("forceRender changed.");
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
@@ -237,7 +237,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, forceRender]);
+  }, [forceRender]);
 
   return (
     <>

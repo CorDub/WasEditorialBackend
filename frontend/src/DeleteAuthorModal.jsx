@@ -29,7 +29,7 @@ function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={closeDeleteModal}>
+    <div className="modal-overlay" onClick={() => closeDeleteModal(globalFilter, false)}>
       <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar el autor
@@ -37,7 +37,7 @@ function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={() => closeDeleteModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeDeleteModal(globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteAuthor}>Confirmar</button>
         </div>

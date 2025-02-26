@@ -18,6 +18,8 @@ function useCheckSuperAdmin() {
           navigate("/");
           return;
         }
+
+        return;
       }
 
       const userData = await fetchUser();

@@ -61,16 +61,17 @@ function AuthorsList() {
       accessorKey: "referido"
     },
   ], []);
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 19
-  });
+  // const [pagination, setPagination] = useState({
+  //   pageIndex: 0,
+  //   pageSize: 19
+  // });
 
   const table = useMaterialReactTable({
     columns,
     data,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
+    enablePagination: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={openAddingModal} className="blue-button">Añadir nuevo autor</button>
@@ -79,9 +80,10 @@ function AuthorsList() {
     initialState: {
       density: 'compact',
     },
-    onPaginationChange: setPagination,
+    // onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { pagination, globalFilter },
+    // state: { pagination, globalFilter },
+    state: { globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -92,6 +94,12 @@ function AuthorsList() {
         left: "10px",
         width: "99vw",
         // height: "93vh"
+      }
+    },
+    muiTableContainerProps: {
+      sx: {
+        maxHeight: '81vh',
+        overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {
@@ -113,20 +121,20 @@ function AuthorsList() {
       sx: {
         backgroundColor: "#fff"
       }
-    }
+    },
   });
 
   function openDeleteModal(row) {
     setDeleteModal(<DeleteAuthorModal row={row} closeDeleteModal={closeDeleteModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      globalFilter={globalFilter}/>);
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeDeleteModal(globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }
@@ -140,16 +148,16 @@ function AuthorsList() {
     // setPagination(prev => ({...prev}));
 
     setEditModal(<EditAuthorModal row={row} closeEditModal={closeEditModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
+      globalFilter={globalFilter}/>);
 
     setOpenEditModal(true);
   }
 
-  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeEditModal(globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }
@@ -161,16 +169,16 @@ function AuthorsList() {
 
   function openAddingModal() {
     setAddingModal(<AddingAuthorModal closeAddingModal={closeAddingModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter} />)
+      globalFilter={globalFilter} />)
 
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeAddingModal(globalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+
     if (reload === true) {
       setForceRender(!forceRender);
     }
@@ -217,7 +225,7 @@ function AuthorsList() {
       {isDeleteModalOpen && deleteModal}
       {isEditModalOpen && editModal}
       {isAddingModalOpen && addingModal}
-      {data && <MaterialReactTable table={table} />}
+      {data && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </>

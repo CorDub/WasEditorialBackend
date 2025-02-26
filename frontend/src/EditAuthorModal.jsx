@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 
-function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
+function EditAuthorModal({ row, closeEditModal, globalFilter }) {
   useCheckAdmin();
 
   const [firstName, setFirstName] = useState(row.first_name);
@@ -67,7 +67,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
 
       if (response.ok === true) {
         const alertMessage = (`Actualizado ${firstName} ${lastName} con exito`);
-        closeEditModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeEditModal(globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -264,7 +264,7 @@ function EditAuthorModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-              onClick={() => closeEditModal(pageIndex, globalFilter, false)}>Cancelar</button>
+              onClick={() => closeEditModal(globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={handleSubmit}>Confirmar</button>
         </div>

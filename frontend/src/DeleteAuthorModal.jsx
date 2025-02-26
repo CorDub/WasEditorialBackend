@@ -1,7 +1,7 @@
 import "./DeleteAuthorModal.scss"
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 
-function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
+function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
   useCheckAdmin();
 
   async function deleteAuthor(e) {
@@ -17,10 +17,10 @@ function DeleteAuthorModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
 
       if (response.ok) {
         const alertMessage = `El autor ${row.first_name} ${row.last_name} ha sido eliminado.`;
-        closeDeleteModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeDeleteModal(globalFilter, true, alertMessage, "confirmation");
       } else {
         const alertMessage = `No se pudo eliminar el autor ${row.first_name} ${row.last_name}`;
-        closeDeleteModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeDeleteModal(globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {

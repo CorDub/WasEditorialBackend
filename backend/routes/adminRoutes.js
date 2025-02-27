@@ -406,7 +406,7 @@ router.patch('/book', async (req, res) => {
 
 router.get('/bookstore', async (req, res) => {
   try {
-    const bookstores = await prisma.bookstore.findMany();
+    const bookstores = await prisma.bookstore.findMany({where: {isDeleted: false}});
     res.status(200).json(bookstores);
   } catch(error) {
     console.error("Error in the get bookstores route:", error);
@@ -472,10 +472,22 @@ router.patch('/bookstore', async (req, res) => {
 });
 
 router.delete('/bookstore', async (req, res) => {
+  const bookstore_id = parseInt(req.query.bookstore_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const bookstore_id = parseInt(req.query.bookstore_id);
-    await prisma.bookstore.delete({where: {id: bookstore_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.bookstore.delete({where: {id: bookstore_id}});
+      res.status(200).json({message: "La libreria ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.bookstore.update({where:
+        {id: bookstore_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "La libreria ha sido eliminado (recuperable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the bookstore'});

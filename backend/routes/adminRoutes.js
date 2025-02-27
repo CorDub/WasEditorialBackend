@@ -158,7 +158,7 @@ router.delete('/user', async (req, res) => {
 
 router.get('/categories', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({where: {isDeleted: false}});
     res.status(200).json(categories);
   } catch(error) {
     console.error("Error in the get categories route:", error);
@@ -182,10 +182,22 @@ router.get('/categories-type', async (req, res) => {
 })
 
 router.delete('/category', async (req, res) => {
+  const category_id = parseInt(req.query.category_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const category_id = parseInt(req.query.category_id);
-    await prisma.category.delete({where: {id: category_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.category.delete({where: {id: category_id}});
+      res.status(200).json({message: "La categoria ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.category.update({where:
+        {id: category_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "La categoria ha sido eliminado (recuperable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the category'});

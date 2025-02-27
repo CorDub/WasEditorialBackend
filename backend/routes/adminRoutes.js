@@ -20,7 +20,8 @@ router.get('/users', async (req, res) => {
 
     const users = await prisma.user.findMany({
       where: {
-        role: Role.author
+        role: Role.author,
+        isDeleted: false,
       },
       select: {
         id: true,
@@ -131,10 +132,22 @@ router.patch('/user', async (req, res) => {
 })
 
 router.delete('/user', async (req, res) => {
+  const user_id = parseInt(req.query.user_id);
+  const hardDelete = req.query.flag;
+  console.log(hardDelete);
   try {
-    const user_id = parseInt(req.query.user_id);
-    await prisma.user.delete({where: {id: user_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.user.delete({where: {id: user_id}});
+      res.status(200).json({message: "El autor ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.user.update({where:
+        {id: user_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});

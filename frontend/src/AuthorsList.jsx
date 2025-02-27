@@ -139,11 +139,9 @@ function AuthorsList() {
     setDeleteModal(null);
     setOpenDeleteModal(false);
     globalFilter && setGlobalFilter(globalFilter);
-    console.log("first part");
 
     if (reload === true) {
       setForceRender(!forceRender);
-      console.log("forceRender changed.");
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);

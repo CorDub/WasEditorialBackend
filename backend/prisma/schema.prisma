@@ -32,6 +32,7 @@ model User {
   books               Book[]
   role                Role      @default(author)
   reset_password_code Int?
+  isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -46,6 +47,7 @@ model Book {
   isbn        String?
   users       User[]
   inventories Inventory[]
+  isDeleted   Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -57,6 +59,7 @@ model Category {
   percentage_management_stores Float
   management_min               Float
   users                        User[]
+  isDeleted                    Boolean  @default(false)
   createdAt                    DateTime @default(now())
   updatedAt                    DateTime @updatedAt
 }
@@ -69,6 +72,7 @@ model Bookstore {
   contact_phone   String?
   contact_email   String?
   inventories     Inventory[]
+  isDeleted       Boolean     @default(false)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }

@@ -143,6 +143,36 @@ a {
   padding-top: 0.5rem;
 }
 
+.harddel-checkbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  p {
+    margin: 0;
+    font-style: italic;
+    font-size: 0.9em;
+  }
+}
+
+.harddel-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: justify;
+  p {
+    margin: 0;
+    color: red;
+  }
+}
+
+.harddel-icon {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.5em;
+}
+
 /// Inputs
 
 .global-input {

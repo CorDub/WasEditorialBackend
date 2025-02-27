@@ -158,7 +158,7 @@ router.delete('/user', async (req, res) => {
 
 router.get('/categories', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({where: {isDeleted: false}});
     res.status(200).json(categories);
   } catch(error) {
     console.error("Error in the get categories route:", error);
@@ -182,10 +182,22 @@ router.get('/categories-type', async (req, res) => {
 })
 
 router.delete('/category', async (req, res) => {
+  const category_id = parseInt(req.query.category_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const category_id = parseInt(req.query.category_id);
-    await prisma.category.delete({where: {id: category_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.category.delete({where: {id: category_id}});
+      res.status(200).json({message: "La categoria ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.category.update({where:
+        {id: category_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "La categoria ha sido eliminado (recuperable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the category'});
@@ -260,6 +272,9 @@ router.patch('/category', async (req, res) => {
 router.get('/book', async (req, res) => {
   try {
     const books = await prisma.book.findMany({
+      where: {
+        isDeleted: false
+      },
       include: {
         users: {
           select: {
@@ -326,10 +341,22 @@ router.post('/book', async (req, res) => {
 });
 
 router.delete('/book', async (req, res) => {
+  const book_id = parseInt(req.query.book_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const book_id = parseInt(req.query.book_id);
-    await prisma.book.delete({where: {id: book_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.book.delete({where: {id: book_id}});
+      res.status(200).json({message: "El libro ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.book.update({where:
+        {id: book_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "El libro ha sido eliminado (recupeerable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the book'});
@@ -379,7 +406,7 @@ router.patch('/book', async (req, res) => {
 
 router.get('/bookstore', async (req, res) => {
   try {
-    const bookstores = await prisma.bookstore.findMany();
+    const bookstores = await prisma.bookstore.findMany({where: {isDeleted: false}});
     res.status(200).json(bookstores);
   } catch(error) {
     console.error("Error in the get bookstores route:", error);
@@ -445,10 +472,22 @@ router.patch('/bookstore', async (req, res) => {
 });
 
 router.delete('/bookstore', async (req, res) => {
+  const bookstore_id = parseInt(req.query.bookstore_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const bookstore_id = parseInt(req.query.bookstore_id);
-    await prisma.bookstore.delete({where: {id: bookstore_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.bookstore.delete({where: {id: bookstore_id}});
+      res.status(200).json({message: "La libreria ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.bookstore.update({where:
+        {id: bookstore_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "La libreria ha sido eliminado (recuperable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the bookstore'});

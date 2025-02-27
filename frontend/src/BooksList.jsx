@@ -152,7 +152,7 @@ function BooksList() {
     setOpenDeleteModal(true);
   }
 
-  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeDeleteModal(globalFilter, reload, alertMessage, alertType) {
     setDeleteModal(null);
     setOpenDeleteModal(false);
     globalFilter && setGlobalFilter(globalFilter);
@@ -172,7 +172,7 @@ function BooksList() {
     setOpenEditModal(true);
   }
 
-  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeEditModal(globalFilter, reload, alertMessage, alertType) {
     setEditModal(null);
     setOpenEditModal(false);
     globalFilter && setGlobalFilter(globalFilter);
@@ -192,7 +192,7 @@ function BooksList() {
     setOpenAddingModal(true);
   }
 
-  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeAddingModal(lobalFilter, reload, alertMessage, alertType) {
     setAddingModal(null);
     setOpenAddingModal(false);
     globalFilter && setGlobalFilter(globalFilter);

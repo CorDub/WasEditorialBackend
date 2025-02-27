@@ -260,6 +260,9 @@ router.patch('/category', async (req, res) => {
 router.get('/book', async (req, res) => {
   try {
     const books = await prisma.book.findMany({
+      where: {
+        isDeleted: false
+      },
       include: {
         users: {
           select: {
@@ -326,10 +329,22 @@ router.post('/book', async (req, res) => {
 });
 
 router.delete('/book', async (req, res) => {
+  const book_id = parseInt(req.query.book_id);
+  const hardDelete = req.query.flag;
+
   try {
-    const book_id = parseInt(req.query.book_id);
-    await prisma.book.delete({where: {id: book_id}});
-    res.status(200).json({message: "Deleted successfully"})
+    if (hardDelete === "true") {
+      await prisma.book.delete({where: {id: book_id}});
+      res.status(200).json({message: "El libro ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.book.update({where:
+        {id: book_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "El libro ha sido eliminado (recupeerable) con exito."})
+    }
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the book'});

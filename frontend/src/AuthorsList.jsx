@@ -25,8 +25,6 @@ function AuthorsList() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  console.log(data.slice(0, 25));
-
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -237,7 +235,7 @@ function AuthorsList() {
 
   useEffect(() => {
     fetchUsers();
-  }, [isDeleteModalOpen, forceRender]);
+  }, [forceRender]);
 
   return (
     <>

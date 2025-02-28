@@ -494,4 +494,52 @@ router.delete('/bookstore', async (req, res) => {
   }
 })
 
+/// Inventories routes
+
+router.get('/inventories', async (req, res) => {
+  try {
+    // const cachedData = await redisClient.get("authorsList");
+
+    // if (cachedData) {
+    //   console.log(cachedData);
+    //   return res.json(JSON.parse(cachedData));
+    // }
+
+    const inventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        bookId: true,
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookstoreId: true,
+        bookstore: {
+          select: {
+            name: true
+          }
+        },
+        country: true,
+        initial: true,
+      },
+      orderBy: {
+        book: {
+          title: 'asc'
+        }
+      }
+    });
+
+    // await redisClient.set("authorsList", JSON.stringify(users));
+
+    res.json(inventories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at inventories route"});
+  }
+});
+
 export default router;

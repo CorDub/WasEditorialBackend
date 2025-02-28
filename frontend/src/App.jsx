@@ -13,6 +13,7 @@ import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
 import AdminsList from "./AdminsList.jsx";
 import InventoriesList from './InventoriesList.jsx';
+import SalesList from "./SalesList.jsx"
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />
           <Route path="/admin/inventories" element={<InventoriesList />} />
+          <Route path="/admin/sales" element={<SalesList />} />
           <Route path="/admin/books" element={<BooksList />} />
           <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />

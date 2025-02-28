@@ -31,6 +31,16 @@ function AdminNavbar({ active }) {
       buttons[3].classList.add("active-button");
       return;
     };
+
+    if (active === "inventorias") {
+      buttons[4].classList.add("active-button");
+      return;
+    };
+
+    if (active === "ventas") {
+      buttons[5].classList.add("active-button");
+      return;
+    };
   }
 
   useEffect(() => {
@@ -43,6 +53,8 @@ function AdminNavbar({ active }) {
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
+      <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
+      <Link to='/admin/sales' className="navbar-button">Ventas</Link>
     </div>
   )
 }

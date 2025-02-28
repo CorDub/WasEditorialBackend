@@ -13,12 +13,11 @@ function InventoriesList() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("");
+  const [modalType, setModalType] = useState("inventory");
+  const [modalAction, setModalAction] = useState("");
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-
-  console.log(data);
 
   const columns = useMemo(() => [
     {
@@ -57,7 +56,7 @@ function InventoriesList() {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo admin</button>
+        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo inventario</button>
       </div>
     ),
     initialState: {
@@ -102,13 +101,13 @@ function InventoriesList() {
     setClickedRow(clickedRow);
     switch (type) {
       case 'adding':
-        setModalType("adding");
+        setModalAction("adding");
         break;
       case 'edit':
-        setModalType("edit");
+        setModalAction("edit");
         break;
       case 'delete':
-        setModalType("delete");
+        setModalAction("delete");
         break;
       default:
         console.log("Unknown error")
@@ -155,7 +154,7 @@ function InventoriesList() {
   return(
     <div>
       <Navbar subNav={user.role} active={"inventorias"}/>
-      {isModalOpen && <Modal modalType={modalType} clickedRow={clickedRow}
+      {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}

@@ -307,6 +307,27 @@ router.get('/book', async (req, res) => {
   }
 })
 
+router.get('/existingBooks', async (req, res) => {
+  try {
+    const existingBooks = await prisma.book.findMany({
+      where: {
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        title: true
+      },
+      orderBy: {
+        title: "asc"
+      }
+    });
+    res.status(200).json(existingBooks);
+  } catch (error) {
+    console.error("Error while fetching existingBooks in the backend:", error);
+    res.status(500).json({error: "A server error occurred while fetching existingBooks"});
+  }
+})
+
 router.post('/book', async (req, res) => {
   try {
     const {
@@ -411,6 +432,24 @@ router.get('/bookstore', async (req, res) => {
   } catch(error) {
     console.error("Error in the get bookstores route:", error);
     res.status(500).json({error: 'A server error occurred while fetching bookstores'});
+  }
+})
+
+router.get('/existingBookstore', async (req, res) => {
+  try {
+    const existingBookstores = await prisma.bookstore.findMany({
+      where: {
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    })
+    res.status(200).json(existingBookstores);
+  } catch (error) {
+    console.error("Error in the route existingBookstores:", error);
+    res.status(500).json({error: 'A server error occurred while fetching existingBookstores'});
   }
 })
 

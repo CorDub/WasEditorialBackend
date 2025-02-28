@@ -36,6 +36,11 @@ function SuperAdminNavbar({ active }) {
       buttons[4].classList.add("active-button");
       return;
     };
+
+    if (active === "inventorias") {
+      buttons[5].classList.add("active-button");
+      return;
+    }
   }
 
   useEffect(() => {
@@ -49,6 +54,7 @@ function SuperAdminNavbar({ active }) {
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
+      <Link to='/admin/inventories' className="navbar-button">Inventorias</Link>
     </div>
   )
 }

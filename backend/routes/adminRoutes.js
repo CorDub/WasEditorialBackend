@@ -435,7 +435,7 @@ router.get('/bookstore', async (req, res) => {
   }
 })
 
-router.get('/existingBookstore', async (req, res) => {
+router.get('/existingBookstores', async (req, res) => {
   try {
     const existingBookstores = await prisma.bookstore.findMany({
       where: {
@@ -580,5 +580,33 @@ router.get('/inventories', async (req, res) => {
     res.status(500).json({error: "Server error at inventories route"});
   }
 });
+
+router.post('/inventory', async (req, res) => {
+  try {
+    const {
+      book,
+      bookstore,
+      country,
+      inicial
+    } = req.body;
+    const createdInventory = await prisma.inventory.create({
+      data: {
+        bookId: book,
+        bookstoreId: bookstore,
+        country: country,
+        initial: inicial
+      }
+    });
+    res.status(201).json(createdInventory);
+  } catch (error) {
+    console.error(error);
+    if (String(error).includes(("Unique constraint failed on the fields: (`bookId`, `bookstoreId`, `country`)"))) {
+      res.status(500).json({message: "Este inventario ya existe"})
+      return;
+    }
+
+    res.status(500).json({ error: error });
+  }
+})
 
 export default router;

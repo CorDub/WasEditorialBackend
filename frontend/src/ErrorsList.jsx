@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 
 function ErrorsList({ errors, setErrors }) {
-
   useEffect(()=> {
     setErrors([]);
   }, [])
-  
+
   return (
     <div className="login-errors">
       {errors.length === 0 ?

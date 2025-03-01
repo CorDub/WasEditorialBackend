@@ -83,7 +83,8 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    setErrors([]);
+    
     const res = checkInputs();
     if (res.length > 0) {
       return;

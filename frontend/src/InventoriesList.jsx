@@ -44,7 +44,7 @@ function InventoriesList() {
       accessorKey: "country"
     },
     {
-      header: "Inicial",
+      header: "Cantidad inicial",
       accessorKey: "initial"
     }
   ], []);

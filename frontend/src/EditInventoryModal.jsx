@@ -3,17 +3,17 @@ import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
-function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
-  const [book, setBook] = useState("");
-  const [bookId, setBookId] = useState(null);
-  const [bookstore, setBookstore] = useState("");
-  const [bookstoreId, setBookstoreId] = useState(null);
-  const [country, setCountry] = useState("");
-  const [inicial, setInicial] = useState(0);
+  const [book, setBook] = useState(clickedRow.book.title);
+  const [bookId, setBookId] = useState(clickedRow.bookId);
+  const [bookstore, setBookstore] = useState(clickedRow.bookstore.name);
+  const [bookstoreId, setBookstoreId] = useState(clickedRow.bookstoreId);
+  const [country, setCountry] = useState(clickedRow.country);
+  const [inicial, setInicial] = useState(clickedRow.initial);
   const bookRef = useRef();
   const bookstoreRef = useRef();
   const countryRef = useRef();
@@ -219,12 +219,13 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
   async function sendToServer() {
     try {
       const response = await fetch('http://localhost:3000/admin/inventory', {
-        method: "POST",
+        method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
+          id: clickedRow.id,
           book: bookId,
           bookstore: bookstoreId,
           country: country,
@@ -239,11 +240,11 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó crear un nuevo inventario.';
+        const alertMessage = 'No se pudó editar el inventario.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
         console.log("Yeah created");
-        const alertMessage = `Un nuevo inventario ha sido creado.`;
+        const alertMessage = `El inventario ha sido editado con exito.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -252,44 +253,45 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
     }
   }
 
-  return(
+  return (
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nuevo inventario</p>
+        <p>Editar inventario</p>
       </div>
       <form className="global-form">
         <select onChange={(e) => dropDownChange(e, "Book")}
           className="select-global" ref={bookRef}>
-          <option value="null">Selecciona libro</option>
+          <option value={book}>{book}</option>
           {existingBooks && existingBooks.map((book, index) => (
             <option key={index} value={book.title}>{book.title}</option>
           ))}
         </select>
         <select onChange={(e) => dropDownChange(e, "Bookstore")}
           className="select-global" ref={bookstoreRef}>
-          <option value="null">Selecciona libreria</option>
+          <option value={bookstore}>{bookstore}</option>
           {existingBookstores && existingBookstores.map((bookstore, index) => (
             <option key={index} value={bookstore.title}>{bookstore.name}</option>
           ))}
         </select>
         <select onChange={(e) => dropDownChange(e, "Country")}
           className="select-global" ref={countryRef}>
-          <option value="null">Selecciona pais</option>
+          <option value={country}>{country}</option>
           {countries && countries.map((country, index) => (
             <option key={index} value={country}>{country}</option>
           ))}
         </select>
-        <input type="text" placeholder="Cantidad inicial de libros" className="global-input"
+        <input type="text" placeholder="Cantidad inicial de libros"
+          className="global-input" value={inicial}
           ref={inicialRef} onChange={(e) => setInicial(parseInt(e.target.value))}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
-          <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
+          <button type='button' onClick={handleSubmit} className="blue-button">Confirmar</button>
         </div>
       </form>
     </div>
   )
 }
 
-export default AddingInventoryModal;
+export default EditInventoryModal;

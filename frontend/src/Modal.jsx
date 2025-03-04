@@ -2,6 +2,7 @@ import AddingAdminModal from './AddingAdminModal';
 import EditAdminModal from './EditAdminModal';
 import DeleteAdminModal from './DeleteAdminModal';
 import AddingInventoryModal from './AddingInventoryModal';
+import EditInventoryModal from './EditInventoryModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -12,6 +13,7 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
     },
     inventory: {
       adding: AddingInventoryModal,
+      edit: EditInventoryModal,
     }
   };
 

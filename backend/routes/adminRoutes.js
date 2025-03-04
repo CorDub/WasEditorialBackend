@@ -667,4 +667,62 @@ router.delete('/inventory', async (req, res) => {
   }
 })
 
+/// Sales routes
+
+
+router.get('/sales', async (req, res) => {
+  try {
+    // const cachedData = await redisClient.get("authorsList");
+
+    // if (cachedData) {
+    //   console.log(cachedData);
+    //   return res.json(JSON.parse(cachedData));
+    // }
+
+    const sales = await prisma.sale.findMany({
+      where: {
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        inventoryId: true,
+        inventory: {
+          select: {
+            bookId: true,
+            book: {
+              select: {
+                title: true
+              }
+            },
+            bookstoreId: true,
+            bookstore: {
+              select: {
+                name: true
+              }
+            },
+            country: true,
+            initial: true
+          }
+        },
+        quantity: true,
+        createdAt: true,
+        updatedAt: true
+      },
+      orderBy: {
+        updatedAt: "desc"
+      }
+    });
+
+    // await redisClient.set("authorsList", JSON.stringify(users));
+    sales.map((sale) => {
+      sale.completeInventory = sale.inventory.book.title + " de " + sale.inventory.bookstore.name + " en " + sale.inventory.country
+    })
+
+    res.json(sales);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at sales route"});
+  }
+});
+
 export default router;

@@ -600,7 +600,7 @@ router.post('/inventory', async (req, res) => {
     res.status(201).json(createdInventory);
   } catch (error) {
     console.error(error);
-    if (String(error).includes(("Unique constraint failed on the fields: (`bookId`, `bookstoreId`, `country`)"))) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
       res.status(500).json({message: "Este inventario ya existe"})
       return;
     }
@@ -608,5 +608,40 @@ router.post('/inventory', async (req, res) => {
     res.status(500).json({ error: error });
   }
 })
+
+router.patch('/inventory', async (req, res) => {
+  try {
+    const {
+      id,
+      book,
+      bookstore,
+      country,
+      inicial
+    } = req.body;
+    const updatedInventory = await prisma.inventory.update({
+      where: {id: id},
+      data: {
+        bookId: book,
+        bookstoreId: bookstore,
+        country: country,
+        initial: inicial
+      }
+    });
+
+    console.log(updatedInventory);
+    if (updatedInventory) {
+      res.status(200).json({message: "Successfully updated inventory"});
+    } else {
+      if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+        res.status(500).json({message: "Este inventario ya existe"})
+        return;
+      }
+      res.status(500).json({error: "There was an issue updating the bookstore"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update bookstore route:", error);
+  }
+});
 
 export default router;

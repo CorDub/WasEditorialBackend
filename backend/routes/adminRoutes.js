@@ -644,4 +644,27 @@ router.patch('/inventory', async (req, res) => {
   }
 });
 
+router.delete('/inventory', async (req, res) => {
+  const inventory_id = parseInt(req.query.inventory_id);
+  const hardDelete = req.query.flag;
+
+  try {
+    if (hardDelete === "true") {
+      await prisma.inventory.delete({where: {id: inventory_id}});
+      res.status(200).json({message: "El inventario ha sido eliminado por siempre con exito."})
+    } else {
+      await prisma.inventory.update({where:
+        {id: inventory_id},
+        data: {
+          isDeleted: true
+        }
+      });
+      res.status(200).json({message: "El inventario ha sido eliminado (recuperable) con exito."})
+    }
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the inventory'});
+  }
+})
+
 export default router;

@@ -33,21 +33,21 @@ function SalesList () {
       )
     },
     {
-      header: "Libro",
-      accessorKey:'book.title'
+      header: "Editada",
+      accessorKey: "updatedAt"
     },
     {
-      header: "Libreria",
-      accessorKey: "bookstore.name"
+      header: "Cantidad",
+      accessorKey: "quantity"
     },
     {
-      header: "País",
-      accessorKey: "country"
+      header: "Inventario",
+      accessorKey:'completeInventory'
     },
     {
-      header: "Cantidad inicial",
-      accessorKey: "initial"
-    }
+      header: "Creada",
+      accessorKey: "createdAt"
+    },
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -57,7 +57,7 @@ function SalesList () {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo inventario</button>
+        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nueva venta</button>
       </div>
     ),
     initialState: {

@@ -154,6 +154,19 @@ async function main() {
     }
   })
 
+  await prisma.sale.create({
+    data: {
+      inventoryId: 1,
+      quantity: 10
+    }
+  })
+
+  await prisma.sale.create({
+    data: {
+      inventoryId: 2,
+      quantity: 18
+    }
+  })
 }
 
 main()

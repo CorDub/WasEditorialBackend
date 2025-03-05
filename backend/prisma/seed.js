@@ -140,7 +140,7 @@ async function main() {
     data: {
       bookId: 1,
       bookstoreId: 1,
-      country: "Mexico",
+      country: "México",
       initial: 1000,
     }
   })
@@ -149,7 +149,7 @@ async function main() {
     data: {
       bookId: 2,
       bookstoreId: 1,
-      country: "Mexico",
+      country: "México",
       initial: 1000,
     }
   })

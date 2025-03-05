@@ -19,6 +19,8 @@ function InventoriesList() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
 
+  console.log(data);
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -44,8 +46,11 @@ function InventoriesList() {
       accessorKey: "country"
     },
     {
-      header: "Cantidad inicial",
-      accessorKey: "initial"
+      header: "Cantidad",
+      // accessorKey: "initial"
+      Cell: ({row}) => (
+        <p>{row.original.current}/{row.original.initial}</p>
+      )
     }
   ], []);
   const table = useMaterialReactTable({

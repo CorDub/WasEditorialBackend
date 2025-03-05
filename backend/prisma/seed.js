@@ -142,6 +142,7 @@ async function main() {
       bookstoreId: 1,
       country: "México",
       initial: 1000,
+      current: 1000
     }
   })
 
@@ -151,6 +152,7 @@ async function main() {
       bookstoreId: 1,
       country: "México",
       initial: 1000,
+      current: 1000
     }
   })
 

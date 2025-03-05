@@ -564,6 +564,7 @@ router.get('/inventories', async (req, res) => {
         },
         country: true,
         initial: true,
+        current: true
       },
       orderBy: {
         book: {
@@ -594,7 +595,8 @@ router.post('/inventory', async (req, res) => {
         bookId: book,
         bookstoreId: bookstore,
         country: country,
-        initial: inicial
+        initial: inicial,
+        current: inicial
       }
     });
     res.status(201).json(createdInventory);

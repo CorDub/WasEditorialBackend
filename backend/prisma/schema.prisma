@@ -85,6 +85,7 @@ model Inventory {
   bookstoreId Int
   country     String
   initial     Int
+  current     Int
   sales       Sale[]
   isDeleted   Boolean   @default(false)
   createdAt   DateTime  @default(now())

@@ -715,7 +715,9 @@ router.get('/sales', async (req, res) => {
 
     // await redisClient.set("authorsList", JSON.stringify(users));
     sales.map((sale) => {
-      sale.completeInventory = sale.inventory.book.title + " de " + sale.inventory.bookstore.name + " en " + sale.inventory.country
+      sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name + ", " + sale.inventory.country
+      sale.createdAt = sale.createdAt.toLocaleString();
+      sale.updatedAt = sale.updatedAt.toLocaleString();
     })
 
     res.json(sales);
@@ -724,5 +726,36 @@ router.get('/sales', async (req, res) => {
     res.status(500).json({error: "Server error at sales route"});
   }
 });
+
+router.post('/sale', async (req, res) => {
+  try {
+    const {
+      book,
+      bookstore,
+      country,
+      quantity
+    } = req.body;
+    console.log(book);
+    console.log(bookstore);
+    console.log(country);
+    const selectedInventory = await prisma.inventory.findUnique({where : {
+      bookId_bookstoreId_country: {
+        bookId : book,
+        bookstoreId: bookstore,
+        country: country
+      }}});
+    console.log(selectedInventory);
+    const createdSale = await prisma.sale.create({
+      data: {
+        inventoryId: selectedInventory.id,
+        quantity: quantity
+      }
+    });
+    res.status(201).json(createdSale);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
+})
 
 export default router;

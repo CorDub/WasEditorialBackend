@@ -13,7 +13,7 @@ function SalesList () {
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("");
+  const [modalType, setModalType] = useState("sale");
   const [modalAction, setModalAction] = useState("");
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");

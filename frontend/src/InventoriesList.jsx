@@ -47,7 +47,6 @@ function InventoriesList() {
     },
     {
       header: "Cantidad",
-      // accessorKey: "initial"
       Cell: ({row}) => (
         <p>{row.original.current}/{row.original.initial}</p>
       )

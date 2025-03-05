@@ -564,6 +564,7 @@ router.get('/inventories', async (req, res) => {
         },
         country: true,
         initial: true,
+        current: true
       },
       orderBy: {
         book: {
@@ -594,7 +595,8 @@ router.post('/inventory', async (req, res) => {
         bookId: book,
         bookstoreId: bookstore,
         country: country,
-        initial: inicial
+        initial: inicial,
+        current: inicial
       }
     });
     res.status(201).json(createdInventory);
@@ -735,22 +737,38 @@ router.post('/sale', async (req, res) => {
       country,
       quantity
     } = req.body;
-    console.log(book);
-    console.log(bookstore);
-    console.log(country);
+
     const selectedInventory = await prisma.inventory.findUnique({where : {
       bookId_bookstoreId_country: {
         bookId : book,
         bookstoreId: bookstore,
         country: country
       }}});
-    console.log(selectedInventory);
+
+    if (!selectedInventory) {
+      res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+      return;
+    }
+
+    if (selectedInventory.current < quantity) {
+      res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+      return;
+    }
+
     const createdSale = await prisma.sale.create({
       data: {
         inventoryId: selectedInventory.id,
         quantity: quantity
       }
     });
+
+    const updatedInventory = await prisma.inventory.update({
+      where: {id: selectedInventory.id},
+      data: {
+        current: selectedInventory.current-quantity
+      }
+    })
+    console.log(updatedInventory);
     res.status(201).json(createdSale);
   } catch (error) {
     console.error(error);

@@ -745,8 +745,13 @@ router.post('/sale', async (req, res) => {
         country: country
       }}});
 
+    if (!selectedInventory) {
+      res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+      return;
+    }
+
     if (selectedInventory.current < quantity) {
-      res.status(400).json({ error: "El inventario tiene menos libros que la cantidad entrada."})
+      res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
       return;
     }
 

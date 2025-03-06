@@ -31,7 +31,7 @@ function DeleteInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}
       }
 
     } catch (error) {
-      console.error('Error while deleting user', error)
+      console.error('Error while deleting inventory', error)
     }
   }
 

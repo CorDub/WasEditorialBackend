@@ -19,8 +19,6 @@ function InventoriesList() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  console.log(data);
-
   const columns = useMemo(() => [
     {
       header: "Acciones",

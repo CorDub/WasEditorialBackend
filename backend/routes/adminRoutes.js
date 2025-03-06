@@ -762,18 +762,81 @@ router.post('/sale', async (req, res) => {
       }
     });
 
-    const updatedInventory = await prisma.inventory.update({
-      where: {id: selectedInventory.id},
-      data: {
-        current: selectedInventory.current-quantity
-      }
-    })
-    console.log(updatedInventory);
+    if (createdSale) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: selectedInventory.id},
+        data: {
+          current: selectedInventory.current-quantity
+        }
+      });
+      console.log(updatedInventory);
+    }
+
     res.status(201).json(createdSale);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error });
   }
 })
+
+router.patch('/sale', async (req, res) => {
+  try {
+    const {
+      id,
+      book,
+      bookstore,
+      country,
+      quantity
+    } = req.body;
+
+    const selectedInventory = await prisma.inventory.findUnique({where : {
+      bookId_bookstoreId_country: {
+        bookId : book,
+        bookstoreId: bookstore,
+        country: country
+      }}});
+
+    if (!selectedInventory) {
+      res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+      return;
+    }
+
+    if (selectedInventory.current < quantity) {
+      res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+      return;
+    }
+
+    const previousSale = await prisma.sale.findUnique({where: {id: id}});
+    let quantityUpdate = previousSale.quantity - quantity;
+
+    const updatedSale = await prisma.sale.update({
+      where: {id: id},
+      data: {
+        inventoryId: selectedInventory.id,
+        quantity: quantity
+      }
+    });
+
+    if (updatedSale) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: selectedInventory.id},
+        data: {
+          current: selectedInventory.current + quantityUpdate
+        }
+      });
+      console.log(updatedInventory);
+      res.status(200).json({message: "Successfully updated inventory"});
+    } else {
+      if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+        res.status(500).json({message: "Este inventario ya existe"})
+        return;
+      }
+      res.status(500).json({error: "There was an issue updating the bookstore"});
+    };
+
+  } catch(error) {
+    console.error("Server error at the update bookstore route:", error);
+  }
+});
 
 export default router;

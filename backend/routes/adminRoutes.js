@@ -839,4 +839,34 @@ router.patch('/sale', async (req, res) => {
   }
 });
 
+router.delete('/sale', async (req, res) => {
+  const sale_id = parseInt(req.query.sale_id);
+  const inventory_id = parseInt(req.query.inventory_id);
+  const quantity = parseInt(req.query.quantity);
+  try {
+    const deletedSale = await prisma.sale.update({where:
+      {id: sale_id},
+      data: {
+        isDeleted: true
+      }
+    });
+
+    if (deletedSale) {
+      const selectedInventory = await prisma.inventory.findUnique({where: {id: inventory_id}});
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: inventory_id},
+        data: {
+          current: selectedInventory.current + quantity
+        }
+      });
+      console.log(updatedInventory);
+    }
+
+    res.status(200).json({message: "La venta ha sido eliminada con exito."})
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({error: 'A server error occurred while deleting the sale'});
+  }
+})
+
 export default router;

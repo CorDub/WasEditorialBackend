@@ -6,6 +6,7 @@ import EditInventoryModal from './EditInventoryModal';
 import DeleteInventoryModal from './DeleteInventoryModal';
 import AddingSaleModal from './AddingSaleModal';
 import EditSaleModal from "./EditSaleModal";
+import DeleteSaleModal from './DeleteSaleModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -22,6 +23,7 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
     sale: {
       adding: AddingSaleModal,
       edit: EditSaleModal,
+      delete: DeleteSaleModal
     }
   };
 

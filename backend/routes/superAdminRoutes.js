@@ -118,21 +118,15 @@ router.patch('/admin', async (req, res) => {
 
 router.delete('/admin', async (req, res) => {
   const user_id = parseInt(req.query.user_id);
-  const hardDelete = req.query.flag;
 
   try {
-    if (hardDelete === "true") {
-      await prisma.user.delete({where: {id: user_id}});
-      res.status(200).json({message: "El admin ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.user.update({where:
-        {id: user_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "El admin ha sido eliminado (recuperable) con exito."})
-    }
+    await prisma.user.update({where:
+      {id: user_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "El admin ha sido eliminado (recuperable) con exito."})
   } catch (error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the admin'});

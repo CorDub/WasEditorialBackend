@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
-function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalOpen }) {
+function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState('');
@@ -39,13 +39,11 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
           return;
         }
         const alertMessage = 'No se pudó crear un nuevo admin.';
-        setAddingModalOpen(false);
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Un(a) nuev(o.a) admin ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`;
-        setAddingModalOpen(false);
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -84,7 +82,7 @@ function AddingAdminModal({ closeModal, pageIndex, globalFilter, setAddingModalO
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors([]);
-    
+
     const res = checkInputs();
     if (res.length > 0) {
       return;

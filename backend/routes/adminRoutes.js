@@ -36,8 +36,8 @@ router.get('/users', async (req, res) => {
         }
       },
       orderBy: [
-        {last_name: 'asc'},
-        {first_name: 'asc'}
+        {first_name: 'asc'},
+        {last_name: 'asc'}
       ]
     });
 
@@ -133,21 +133,15 @@ router.patch('/user', async (req, res) => {
 
 router.delete('/user', async (req, res) => {
   const user_id = parseInt(req.query.user_id);
-  const hardDelete = req.query.flag;
-  console.log(hardDelete);
+
   try {
-    if (hardDelete === "true") {
-      await prisma.user.delete({where: {id: user_id}});
-      res.status(200).json({message: "El autor ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.user.update({where:
-        {id: user_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
-    }
+    await prisma.user.update({where:
+      {id: user_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});
@@ -169,6 +163,9 @@ router.get('/categories', async (req, res) => {
 router.get('/categories-type', async (req, res) => {
   try {
     const categories_type = await prisma.category.findMany({
+      where: {
+        isDeleted: false
+      },
       select: {
         id: true,
         type: true
@@ -183,21 +180,15 @@ router.get('/categories-type', async (req, res) => {
 
 router.delete('/category', async (req, res) => {
   const category_id = parseInt(req.query.category_id);
-  const hardDelete = req.query.flag;
 
   try {
-    if (hardDelete === "true") {
-      await prisma.category.delete({where: {id: category_id}});
-      res.status(200).json({message: "La categoria ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.category.update({where:
-        {id: category_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "La categoria ha sido eliminado (recuperable) con exito."})
-    }
+    await prisma.category.update({where:
+      {id: category_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "La categoria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the category'});
@@ -363,21 +354,15 @@ router.post('/book', async (req, res) => {
 
 router.delete('/book', async (req, res) => {
   const book_id = parseInt(req.query.book_id);
-  const hardDelete = req.query.flag;
 
   try {
-    if (hardDelete === "true") {
-      await prisma.book.delete({where: {id: book_id}});
-      res.status(200).json({message: "El libro ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.book.update({where:
-        {id: book_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "El libro ha sido eliminado (recupeerable) con exito."})
-    }
+    await prisma.book.update({where:
+      {id: book_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "El libro ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the book'});
@@ -512,21 +497,15 @@ router.patch('/bookstore', async (req, res) => {
 
 router.delete('/bookstore', async (req, res) => {
   const bookstore_id = parseInt(req.query.bookstore_id);
-  const hardDelete = req.query.flag;
 
   try {
-    if (hardDelete === "true") {
-      await prisma.bookstore.delete({where: {id: bookstore_id}});
-      res.status(200).json({message: "La libreria ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.bookstore.update({where:
-        {id: bookstore_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "La libreria ha sido eliminado (recuperable) con exito."})
-    }
+    await prisma.bookstore.update({where:
+      {id: bookstore_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "La libreria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the bookstore'});
@@ -648,21 +627,15 @@ router.patch('/inventory', async (req, res) => {
 
 router.delete('/inventory', async (req, res) => {
   const inventory_id = parseInt(req.query.inventory_id);
-  const hardDelete = req.query.flag;
 
   try {
-    if (hardDelete === "true") {
-      await prisma.inventory.delete({where: {id: inventory_id}});
-      res.status(200).json({message: "El inventario ha sido eliminado por siempre con exito."})
-    } else {
-      await prisma.inventory.update({where:
-        {id: inventory_id},
-        data: {
-          isDeleted: true
-        }
-      });
-      res.status(200).json({message: "El inventario ha sido eliminado (recuperable) con exito."})
-    }
+    await prisma.inventory.update({where:
+      {id: inventory_id},
+      data: {
+        isDeleted: true
+      }
+    });
+    res.status(200).json({message: "El inventario ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the inventory'});

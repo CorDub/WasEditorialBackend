@@ -243,6 +243,14 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         newErrorList.push(42);
         addErrorClass(inputAuthors[index]);
       };
+
+      const authorsSet = new Set(authors);
+      if (authorsSet.size !== authorsIds.length) {
+        if (!newErrorList.includes(43)) {
+          newErrorList.push(43);
+        }
+        addErrorClass(inputAuthors[index]);
+      }
     })
 
     setErrorList(newErrorList);

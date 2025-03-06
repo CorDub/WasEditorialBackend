@@ -46,7 +46,7 @@ function InventoriesList() {
     {
       header: "Cantidad",
       Cell: ({row}) => (
-        <p>{row.original.current}/{row.original.initial}</p>
+        <div>{row.original.current}/{row.original.initial}</div>
       )
     }
   ], []);

@@ -1,0 +1,61 @@
+.table-actions {
+  display: flex;
+  align-items: center;
+}
+
+.ta-gear {
+  font-size: 1.5em;
+  color: #4E6CB3;
+  transition: transform 0.2s;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.displaying {
+  color: grey;
+  font-size: 1.5em;
+  transform: rotate(360deg);
+  transition: 0.3s;
+  &:hover {
+    color: #4E6CB3;
+  }
+}
+
+.ta-buttons {
+  z-index: 0;
+  transition: transform 0.2s, opacity 0.2s;
+  transform: translateX(-10px);
+}
+
+.invisible {
+  transition: 0.2s;
+  opacity: 0;
+}
+
+.visible {
+  transition: 0.2s;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.ta-button {
+  font-size: 1em;
+  margin-left: 0.5rem;
+  transition: 0.2s;
+  color: grey;
+}
+
+.ta-edit {
+  &:hover {
+    cursor: pointer;
+    color: #4E6CB3;
+  }
+}
+
+.ta-delete {
+  &:hover {
+    cursor: pointer;
+    color: red;
+  }
+}

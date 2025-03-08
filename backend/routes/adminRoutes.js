@@ -347,6 +347,11 @@ router.post('/book', async (req, res) => {
 
     res.status(201).json({title: new_book.title});
   } catch(error) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`isbn`)"))) {
+      res.status(500).json({message: "Este ISBN ya existe"})
+      return;
+    }
+
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the book'});
   }

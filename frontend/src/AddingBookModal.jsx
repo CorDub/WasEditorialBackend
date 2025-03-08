@@ -64,7 +64,13 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
+        const error = await response.json();
+        console.log(error.message === "Este ISBN ya existe");
+        if (error.message === "Este ISBN ya existe") {
+          checkForErrors(42);
+          return;
+        }
+
         const alertMessage= 'No se pudó crear un nuveo libro.';
         closeAddingModal(globalFilter, false, alertMessage, "error");
       } else {
@@ -161,7 +167,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
     };
   }
 
-  function checkForErrors() {
+  function checkForErrors(serverError) {
     let newErrorList =[];
 
     const inputTitle = document.getElementById('adding-book-title');
@@ -224,14 +230,19 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
       addErrorClass(inputPrice);
     }
 
-    // if (parseInt(isbn).isNaN()) {
-    //   newErrorList.push(33);
-    //   addErrorClass(inputIsbn);
-    // };
+    if (isNaN(parseInt(isbn))) {
+      newErrorList.push(41);
+      addErrorClass(inputIsbn);
+    };
+
+    if (serverError === 42) {
+      newErrorList.push(42);
+      addErrorClass(inputIsbn);
+    }
 
     authors.map((author, index) => {
       if (author === null) {
-        newErrorList.push(41);
+        newErrorList.push(51);
         addErrorClass(inputAuthors[index]);
       };
 
@@ -240,17 +251,17 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         authorsIds.push(author.id);
       })
       if (!authorsIds.includes(author)) {
-        newErrorList.push(42);
+        newErrorList.push(52);
         addErrorClass(inputAuthors[index]);
       };
 
-      const authorsSet = new Set(authors);
-      if (authorsSet.size !== authorsIds.length) {
-        if (!newErrorList.includes(43)) {
-          newErrorList.push(43);
-        }
-        addErrorClass(inputAuthors[index]);
-      }
+      // const authorsSet = new Set(authors);
+      // if (authorsSet.size !== authorsIds.length) {
+      //   if (!newErrorList.includes(53)) {
+      //     newErrorList.push(53);
+      //   }
+      //   addErrorClass(inputAuthors[index]);
+      // }
     })
 
     setErrorList(newErrorList);

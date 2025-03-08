@@ -255,13 +255,13 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         addErrorClass(inputAuthors[index]);
       };
 
-      // const authorsSet = new Set(authors);
-      // if (authorsSet.size !== authorsIds.length) {
-      //   if (!newErrorList.includes(53)) {
-      //     newErrorList.push(53);
-      //   }
-      //   addErrorClass(inputAuthors[index]);
-      // }
+      const authorsSet = new Set(authors);
+      if (authorsSet.size !== authors.length) {
+        if (!newErrorList.includes(53)) {
+          newErrorList.push(53);
+        }
+        addErrorClass(inputAuthors[index]);
+      }
     })
 
     setErrorList(newErrorList);

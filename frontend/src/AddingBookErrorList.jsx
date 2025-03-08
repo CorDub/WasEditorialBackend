@@ -18,10 +18,14 @@ function AddingBookErrorList({ errorList, setErrorList }) {
       case 33:
         return (<p className="login-error">El precio no puede estar vacío.</p>)
       case 41:
-        return (<p className="login-error">El autor no puede estar vacío.</p>)
+        return (<p className="login-error">El ISBN debe ser un numero</p>)
       case 42:
+        return (<p className="login-error">Este ISBN ya existe</p>)
+      case 51:
+        return (<p className="login-error">El autor no puede estar vacío.</p>)
+      case 52:
         return (<p className="login-error">Por favor elige un autor en la lista.</p>)
-      case 43:
+      case 53:
         return (<p className="login-error">No se puede tener dos veces lo mismo autor.</p>)
       default:
         console.log('Unknown error')

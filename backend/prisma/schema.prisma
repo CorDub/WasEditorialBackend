@@ -44,7 +44,7 @@ model Book {
   title       String
   pasta       String?
   price       Float?
-  isbn        String?
+  isbn        String?     @unique
   users       User[]
   inventories Inventory[]
   isDeleted   Boolean     @default(false)

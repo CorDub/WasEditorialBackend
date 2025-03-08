@@ -22,8 +22,8 @@ async function main() {
 
   async function addBookFromDB(book, authorsIndexes) {
     function checkISBN(isbn) {
-      if (isbn === "nan") {
-        return ""
+      if (isbn === "nan" || isbn === "na") {
+        return null
       } else {
         return isbn
       }

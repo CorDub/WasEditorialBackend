@@ -30,6 +30,9 @@ router.get('/users', async (req, res) => {
         country: true,
         referido: true,
         category: {
+          where: {
+            isDeleted: false
+          },
           select: {
             type: true
           }

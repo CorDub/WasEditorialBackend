@@ -144,9 +144,8 @@ router.delete('/user', async (req, res) => {
 
     if (deletedAuthor) {
       const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor);
-      console.log(deletedBooksIds);
       const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books");
-      console.log(deletedInventoriesIds);
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
     };
 
     res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
@@ -911,25 +910,50 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
     return;
   }
 
-    let inventoriesToDelete = [];
-    for (const id of IdsList) {
-      const relatedInventories = await prisma.inventory.findMany({
-        where: {[filter]: id}
-      });
-      for (const inventory of relatedInventories) {
-        inventoriesToDelete.push(inventory.id);
-      };
+  let inventoriesToDelete = [];
+  for (const id of IdsList) {
+    const relatedInventories = await prisma.inventory.findMany({
+      where: {[filter]: id}
+    });
+    for (const inventory of relatedInventories) {
+      inventoriesToDelete.push(inventory.id);
     };
+  };
 
-    let deletedInventoriesIds = [];
-    for (const inventoryId of inventoriesToDelete) {
-      const deletedInventory =  await prisma.inventory.update({
-        where: {id: inventoryId},
-        data: {isDeleted: true},
-      });
-      deletedInventoriesIds.push(deletedInventory.id);
-    };
-    return deletedInventoriesIds;
+  let deletedInventoriesIds = [];
+  for (const inventoryId of inventoriesToDelete) {
+    const deletedInventory =  await prisma.inventory.update({
+      where: {id: inventoryId},
+      data: {isDeleted: true},
+    });
+    deletedInventoriesIds.push(deletedInventory.id);
+  };
+  return deletedInventoriesIds;
+}
+
+async function softDeleteSalesOnCascade(IdsList) {
+  let salesToDelete = [];
+
+  for (const id of IdsList) {
+    const relatedSales = await prisma.sale.findMany({
+      where: {inventoryId: id},
+      select: {
+        id : true
+      }
+    });
+    for (const sale of relatedSales) {
+      salesToDelete.push(sale.id);
+    }
+  }
+
+  await Promise.all(
+    salesToDelete.map(async (saleId) => {
+      await prisma.sale.update({
+        where: {id: saleId},
+        data: { isDeleted: true}
+      })
+    })
+  );
 }
 
 export default router;

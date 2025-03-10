@@ -141,6 +141,34 @@ router.delete('/user', async (req, res) => {
         isDeleted: true
       }
     });
+
+    const booksToDelete = await prisma.book.findMany({
+      where: {
+        users: {
+          some: {
+            id: user_id
+          }
+        },
+        isDeleted: false
+      },
+      include: {
+        users: true
+      }
+    });
+
+    for (const book of booksToDelete) {
+      console.log("book:", book);
+
+      if (book.users.length > 1) {
+        continue
+      } else {
+        await prisma.book.update({
+          where: {id: book.id},
+          data: {isDeleted: true}
+        })
+      };
+    };
+
     res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
   } catch(error) {
     console.error(error);

@@ -12,7 +12,6 @@ function TableActions({openModal, row}) {
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState('');
-  console.log(row);
 
   function displayingActions() {
     if (gearRef.current.classList.contains("displaying")) {

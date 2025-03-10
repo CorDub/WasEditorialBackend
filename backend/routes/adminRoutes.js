@@ -59,6 +59,8 @@ router.post('/user', async (req, res) => {
       referido,
       email,
       category } = req.body;
+
+    console.log(category);
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
     const new_author =  await prisma.user.create({

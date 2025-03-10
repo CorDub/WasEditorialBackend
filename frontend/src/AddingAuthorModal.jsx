@@ -39,13 +39,8 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
 
   async function sendToServer(e) {
     e.preventDefault();
-    let fullCategory = {};
-    categories.map((cat) => {
-      if (cat.type === parseInt(category)) {
-        fullCategory = cat;
-        return;
-      }
-    });
+
+    const cat = await categories.find(cat => cat.type === category);
 
     try {
       const response = await fetch('http://localhost:3000/admin/user', {
@@ -60,7 +55,7 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
           country: country,
           referido: referido,
           email: email,
-          category: fullCategory.id
+          category: cat.id
         }),
       });
 

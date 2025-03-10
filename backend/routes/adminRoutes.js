@@ -135,41 +135,20 @@ router.delete('/user', async (req, res) => {
   const user_id = parseInt(req.query.user_id);
 
   try {
-    await prisma.user.update({where:
+    const deletedAuthor = await prisma.user.update({where:
       {id: user_id},
       data: {
         isDeleted: true
       }
     });
 
-    const booksToDelete = await prisma.book.findMany({
-      where: {
-        users: {
-          some: {
-            id: user_id
-          }
-        },
-        isDeleted: false
-      },
-      include: {
-        users: true
-      }
-    });
-
-    for (const book of booksToDelete) {
-      console.log("book:", book);
-
-      if (book.users.length > 1) {
-        continue
-      } else {
-        await prisma.book.update({
-          where: {id: book.id},
-          data: {isDeleted: true}
-        })
-      };
+    if (deletedAuthor) {
+      const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor);
+      const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books");
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
     };
 
-    res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
+    res.status(200).json({message: "El autor ha sido eliminado (recuperable) con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});
@@ -389,12 +368,18 @@ router.delete('/book', async (req, res) => {
   const book_id = parseInt(req.query.book_id);
 
   try {
-    await prisma.book.update({where:
+    const deletedBook = await prisma.book.update({where:
       {id: book_id},
       data: {
         isDeleted: true
       }
     });
+
+    if (deletedBook) {
+      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books");
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
+    }
+
     res.status(200).json({message: "El libro ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
@@ -532,12 +517,18 @@ router.delete('/bookstore', async (req, res) => {
   const bookstore_id = parseInt(req.query.bookstore_id);
 
   try {
-    await prisma.bookstore.update({where:
+    const deletedBookstore = await prisma.bookstore.update({where:
       {id: bookstore_id},
       data: {
         isDeleted: true
       }
     });
+
+    if (deletedBookstore) {
+      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores");
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
+    }
+
     res.status(200).json({message: "La libreria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -662,12 +653,17 @@ router.delete('/inventory', async (req, res) => {
   const inventory_id = parseInt(req.query.inventory_id);
 
   try {
-    await prisma.inventory.update({where:
+    const deletedInventory = await prisma.inventory.update({where:
       {id: inventory_id},
       data: {
         isDeleted: true
       }
     });
+
+    if (deletedInventory) {
+      await softDeleteSalesOnCascade([inventory_id]);
+    }
+
     res.status(200).json({message: "El inventario ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
@@ -874,5 +870,93 @@ router.delete('/sale', async (req, res) => {
     res.status(500).json({error: 'A server error occurred while deleting the sale'});
   }
 })
+
+async function softDeleteBooksOnCascade(deletedAuthor) {
+  const booksToDelete = await prisma.book.findMany({
+    where: {
+      users: {
+        some: {
+          id: deletedAuthor.id
+        }
+      },
+      isDeleted: false
+    },
+    include: {
+      users: true
+    }
+  });
+
+  let deletedBooksIds = [];
+  for (const book of booksToDelete) {
+    if (book.users.length > 1) {
+      continue
+    } else {
+      const deletedBook = await prisma.book.update({
+        where: {id: book.id},
+        data: {isDeleted: true}
+      })
+      deletedBooksIds.push(deletedBook.id);
+    };
+  };
+
+  return deletedBooksIds;
+}
+
+async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
+  let filter = '';
+  if (cascadeType === "books") {
+    filter = "bookId"
+  } else if (cascadeType === "bookstores") {
+    filter = "bookstoreId"
+  } else {
+    console.log("There was an error soft deleting inventories on cascade");
+    return;
+  }
+
+  let inventoriesToDelete = [];
+  for (const id of IdsList) {
+    const relatedInventories = await prisma.inventory.findMany({
+      where: {[filter]: id}
+    });
+    for (const inventory of relatedInventories) {
+      inventoriesToDelete.push(inventory.id);
+    };
+  };
+
+  let deletedInventoriesIds = [];
+  for (const inventoryId of inventoriesToDelete) {
+    const deletedInventory =  await prisma.inventory.update({
+      where: {id: inventoryId},
+      data: {isDeleted: true},
+    });
+    deletedInventoriesIds.push(deletedInventory.id);
+  };
+  return deletedInventoriesIds;
+}
+
+async function softDeleteSalesOnCascade(IdsList) {
+  let salesToDelete = [];
+
+  for (const id of IdsList) {
+    const relatedSales = await prisma.sale.findMany({
+      where: {inventoryId: id},
+      select: {
+        id : true
+      }
+    });
+    for (const sale of relatedSales) {
+      salesToDelete.push(sale.id);
+    }
+  }
+
+  await Promise.all(
+    salesToDelete.map(async (saleId) => {
+      await prisma.sale.update({
+        where: {id: saleId},
+        data: { isDeleted: true}
+      })
+    })
+  );
+}
 
 export default router;

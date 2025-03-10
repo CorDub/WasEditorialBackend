@@ -148,7 +148,7 @@ router.delete('/user', async (req, res) => {
       await softDeleteSalesOnCascade(deletedInventoriesIds);
     };
 
-    res.status(200).json({message: "El autor ha sido eliminado (recupeerable) con exito."})
+    res.status(200).json({message: "El autor ha sido eliminado (recuperable) con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});
@@ -376,16 +376,8 @@ router.delete('/book', async (req, res) => {
     });
 
     if (deletedBook) {
-      const deletedInventories = await prisma.inventory.findMany({
-        where: { bookId: book_id},
-      });
-
-      for (const inventory of deletedInventories) {
-        await prisma.inventory.update({
-          where: {id: inventory.id},
-          data: {isDeleted: true}
-        })
-      };
+      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books");
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
     }
 
     res.status(200).json({message: "El libro ha sido eliminado con exito."})
@@ -525,12 +517,18 @@ router.delete('/bookstore', async (req, res) => {
   const bookstore_id = parseInt(req.query.bookstore_id);
 
   try {
-    await prisma.bookstore.update({where:
+    const deletedBookstore = await prisma.bookstore.update({where:
       {id: bookstore_id},
       data: {
         isDeleted: true
       }
     });
+
+    if (deletedBookstore) {
+      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores");
+      await softDeleteSalesOnCascade(deletedInventoriesIds);
+    }
+
     res.status(200).json({message: "La libreria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -655,12 +653,17 @@ router.delete('/inventory', async (req, res) => {
   const inventory_id = parseInt(req.query.inventory_id);
 
   try {
-    await prisma.inventory.update({where:
+    const deletedInventory = await prisma.inventory.update({where:
       {id: inventory_id},
       data: {
         isDeleted: true
       }
     });
+
+    if (deletedInventory) {
+      await softDeleteSalesOnCascade([inventory_id]);
+    }
+
     res.status(200).json({message: "El inventario ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);

@@ -123,7 +123,7 @@ router.delete('/admin', async (req, res) => {
     await prisma.user.update({where:
       {id: user_id},
       data: {
-        isDeleted: true
+        isDeleted: true,
       }
     });
     res.status(200).json({message: "El admin ha sido eliminado (recuperable) con exito."})

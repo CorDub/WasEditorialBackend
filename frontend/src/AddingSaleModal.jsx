@@ -5,13 +5,14 @@ import ErrorsList from "./ErrorsList";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const [data, setData] = useState([]);
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
   const [book, setBook] = useState("");
-  const [bookId, setBookId] = useState(null);
+  // const [bookId, setBookId] = useState(null);
   const [bookstore, setBookstore] = useState("");
-  const [bookstoreId, setBookstoreId] = useState(null);
+  // const [bookstoreId, setBookstoreId] = useState(null);
   const [country, setCountry] = useState("");
   const [quantity, setQuantity] = useState(1);
   const bookRef = useRef();
@@ -43,79 +44,114 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Zambia", "Zimbabue"
   ];
 
-  let bookTitlesList = []
-  for (const book of existingBooks) {
-    bookTitlesList.push(book.title)
-  }
-  let bookstoreNamesList = []
-  for (const bookstore of existingBookstores) {
-    bookstoreNamesList.push(bookstore.name)
-  }
+  // let bookTitlesList = []
+  // for (const book of existingBooks) {
+  //   bookTitlesList.push(book.title)
+  // }
+  // let bookstoreNamesList = []
+  // for (const bookstore of existingBookstores) {
+  //   bookstoreNamesList.push(bookstore.name)
+  // }
 
-  useEffect(() => {
-    const selectedBook = existingBooks.find(item => item.title === book);
-    setBookId(selectedBook && selectedBook.id);
-  }, [book, existingBooks])
+  // useEffect(() => {
+  //   const selectedBook = existingBooks.find(item => item.title === book);
+  //   setBookId(selectedBook && selectedBook.id);
+  // }, [book, existingBooks])
 
-  useEffect(() => {
-    const selectedBookstore = existingBookstores.find(item => item.name === bookstore);
-    setBookstoreId(selectedBookstore && selectedBookstore.id);
-  }, [bookstore, existingBookstores])
+  // useEffect(() => {
+  //   const selectedBookstore = existingBookstores.find(item => item.name === bookstore);
+  //   setBookstoreId(selectedBookstore && selectedBookstore.id);
+  // }, [bookstore, existingBookstores])
 
-  async function fetchExistingBooks() {
+  // async function fetchExistingBooks() {
+  //   try {
+  //     const response = await fetch('http://localhost:3000/admin/existingBooks', {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setExistingBooks(data);
+  //     } else {
+  //       console.log("There was an error fetching existing books:", response.status)
+  //     }
+
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     await Promise.all([
+  //       fetchExistingBooks(),
+  //       fetchExistingBookstores()
+  //     ]);
+  //   }
+
+  //   fetchData();
+  // }, [])
+
+  // async function fetchExistingBookstores() {
+  //   try {
+  //     const response = await fetch("http://localhost:3000/admin/existingBookstores", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setExistingBookstores(data);
+  //     } else {
+  //       console.log("There was an error fetching the exisiting bookstores:", response.status)
+  //     }
+
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
+
+  async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/existingBooks', {
+      const response = await fetch('http://localhost:3000/admin/inventories', {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        credentials: "include",
-      });
+        credentials: 'include'
+      })
 
       if (response.ok) {
         const data = await response.json();
-        setExistingBooks(data);
-      } else {
-        console.log("There was an error fetching existing books:", response.status)
+        console.log(data);
+        setData(data);
       }
-
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   useEffect(() => {
-    async function fetchData() {
-      await Promise.all([
-        fetchExistingBooks(),
-        fetchExistingBookstores()
-      ]);
+    fetchInventories();
+  }, []);
+
+  useEffect(() => {
+    let inventoryBooks = [];
+    let inventoryBookstores = [];
+    for (const inventory of data) {
+      inventoryBooks.push(inventory.book.title);
+      inventoryBookstores.push(inventory.bookstore.name);
     }
-
-    fetchData();
-  }, [])
-
-  async function fetchExistingBookstores() {
-    try {
-      const response = await fetch("http://localhost:3000/admin/existingBookstores", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setExistingBookstores(data);
-      } else {
-        console.log("There was an error fetching the exisiting bookstores:", response.status)
-      }
-
-    } catch (error) {
-      console.error(error)
-    }
-  }
+    setExistingBooks(inventoryBooks);
+    setExistingBookstores(inventoryBookstores);
+  }, [data])
 
   function dropDownChange(e, input_name, input_index) {
 
@@ -169,13 +205,13 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       type: "string",
       presence: "not empty",
       length: 100,
-      value: bookTitlesList
+      value: existingBooks
     };
     const expectationsBookstore = {
       type: "string",
       presence: "not empty",
       length: 50,
-      value: bookstoreNamesList
+      value: existingBookstores
     };
     const expectationsPais = {
       type: "string",
@@ -219,6 +255,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
+      const chosenInventory = data.find(inventory => inventory.book.title === book);
+      console.log(chosenInventory);
+
       const response = await fetch('http://localhost:3000/admin/sale', {
         method: "POST",
         headers: {
@@ -226,8 +265,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         },
         credentials: "include",
         body: JSON.stringify({
-          book: bookId,
-          bookstore: bookstoreId,
+          book: chosenInventory.bookId,
+          bookstore: chosenInventory.bookstoreId,
           country: country,
           quantity: quantity
         }),
@@ -263,14 +302,14 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           className="select-global" ref={bookRef}>
           <option value="null">Selecciona libro</option>
           {existingBooks && existingBooks.map((book, index) => (
-            <option key={index} value={book.title}>{book.title}</option>
+            <option key={index} value={book}>{book}</option>
           ))}
         </select>
         <select onChange={(e) => dropDownChange(e, "Bookstore")}
           className="select-global" ref={bookstoreRef}>
           <option value="null">Selecciona libreria</option>
           {existingBookstores && existingBookstores.map((bookstore, index) => (
-            <option key={index} value={bookstore.title}>{bookstore.name}</option>
+            <option key={index} value={bookstore}>{bookstore}</option>
           ))}
         </select>
         <select onChange={(e) => dropDownChange(e, "Country")}

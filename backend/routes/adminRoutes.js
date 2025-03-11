@@ -140,11 +140,9 @@ router.delete('/user', async (req, res) => {
   const user_id = parseInt(req.query.user_id);
 
   try {
-    const deletedAuthor = await prisma.user.update({where:
-      {id: user_id},
-      data: {
-        isDeleted: true
-      }
+    const deletedAuthor = await prisma.user.update({
+      where: {id: user_id},
+      data: {isDeleted: true}
     });
 
     if (deletedAuthor) {

@@ -9,7 +9,11 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await prisma.user.findUnique({where: {email: email}});
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+        isDeleted: false
+      }});
     if (user === null) {
       return res.status(401).send("No tenemos una cuenta registrada con este correo.");
     }

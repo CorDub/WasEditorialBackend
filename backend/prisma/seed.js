@@ -78,16 +78,16 @@ async function main() {
     },
   });
 
-  // await prisma.user.create({
-  //   data: {
-  //     first_name: "Autorino",
-  //     last_name: "Adorno",
-  //     country: "México",
-  //     email: "adorno@gmail.com",
-  //     password: await bcrypt.hash("bookboi3", 10),
-  //     role: Role.author
-  //   },
-  // });
+  await prisma.user.create({
+    data: {
+      first_name: "Autorino",
+      last_name: "Adorno",
+      country: "México",
+      email: "adorno@gmail.com",
+      password: await bcrypt.hash("bookboi3", 10),
+      role: Role.author
+    },
+  });
 
   await prisma.category.create({
     data: {

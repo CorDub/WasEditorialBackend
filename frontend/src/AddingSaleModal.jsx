@@ -10,9 +10,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
   const [book, setBook] = useState("");
-  // const [bookId, setBookId] = useState(null);
   const [bookstore, setBookstore] = useState("");
-  // const [bookstoreId, setBookstoreId] = useState(null);
   const [country, setCountry] = useState("");
   const [quantity, setQuantity] = useState(1);
   const bookRef = useRef();
@@ -43,80 +41,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Yemen",
     "Zambia", "Zimbabue"
   ];
-
-  // let bookTitlesList = []
-  // for (const book of existingBooks) {
-  //   bookTitlesList.push(book.title)
-  // }
-  // let bookstoreNamesList = []
-  // for (const bookstore of existingBookstores) {
-  //   bookstoreNamesList.push(bookstore.name)
-  // }
-
-  // useEffect(() => {
-  //   const selectedBook = existingBooks.find(item => item.title === book);
-  //   setBookId(selectedBook && selectedBook.id);
-  // }, [book, existingBooks])
-
-  // useEffect(() => {
-  //   const selectedBookstore = existingBookstores.find(item => item.name === bookstore);
-  //   setBookstoreId(selectedBookstore && selectedBookstore.id);
-  // }, [bookstore, existingBookstores])
-
-  // async function fetchExistingBooks() {
-  //   try {
-  //     const response = await fetch('http://localhost:3000/admin/existingBooks', {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       credentials: "include",
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setExistingBooks(data);
-  //     } else {
-  //       console.log("There was an error fetching existing books:", response.status)
-  //     }
-
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     await Promise.all([
-  //       fetchExistingBooks(),
-  //       fetchExistingBookstores()
-  //     ]);
-  //   }
-
-  //   fetchData();
-  // }, [])
-
-  // async function fetchExistingBookstores() {
-  //   try {
-  //     const response = await fetch("http://localhost:3000/admin/existingBookstores", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       credentials: "include",
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setExistingBookstores(data);
-  //     } else {
-  //       console.log("There was an error fetching the exisiting bookstores:", response.status)
-  //     }
-
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 
   async function fetchInventories() {
     try {

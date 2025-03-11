@@ -193,13 +193,6 @@ function AuthorsList() {
     }
   }
 
-  // Hook to set to Loading and not show the page before authenticating user
-  // useEffect(() => {
-  //   if (data) {
-  //     setLoading(false);
-  //   }
-  // }, [data])
-
   async function fetchUsers() {
     try {
       const response = await fetch('http://localhost:3000/admin/users', {
@@ -212,18 +205,6 @@ function AuthorsList() {
 
       if (response.ok) {
         const data = await response.json();
-
-        // let sliceBeginning = 0;
-        // let sliceEnd = 25;
-        // while (sliceEnd <= data.length) {
-        //   setFetchedData(prev => [...prev, ...data.slice(sliceBeginning, sliceEnd)])
-        //   sliceBeginning += 25;
-        //   sliceEnd += 25;
-        // };
-
-        // if (sliceEnd > data.length) {
-        //   setFetchedData(prev => [...prev, data.slice(sliceBeginning, data.length)])
-        // };
 
         setFetchedData(data);
       }

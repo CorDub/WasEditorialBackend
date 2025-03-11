@@ -30,6 +30,9 @@ router.get('/users', async (req, res) => {
         country: true,
         referido: true,
         category: {
+          where: {
+            isDeleted: false
+          },
           select: {
             type: true
           }
@@ -59,6 +62,8 @@ router.post('/user', async (req, res) => {
       referido,
       email,
       category } = req.body;
+
+    console.log(category);
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
     const new_author =  await prisma.user.create({
@@ -135,11 +140,9 @@ router.delete('/user', async (req, res) => {
   const user_id = parseInt(req.query.user_id);
 
   try {
-    const deletedAuthor = await prisma.user.update({where:
-      {id: user_id},
-      data: {
-        isDeleted: true
-      }
+    const deletedAuthor = await prisma.user.update({
+      where: {id: user_id},
+      data: {isDeleted: true}
     });
 
     if (deletedAuthor) {
@@ -189,12 +192,29 @@ router.delete('/category', async (req, res) => {
   const category_id = parseInt(req.query.category_id);
 
   try {
-    await prisma.category.update({where:
+    const deletedCategory = await prisma.category.update({where:
       {id: category_id},
-      data: {
-        isDeleted: true
-      }
+      data: { isDeleted: true }
     });
+
+    if (deletedCategory) {
+      const authorsToUpdate = await prisma.user.findMany({
+        where: {
+          isDeleted: false,
+          categoryId: category_id,
+        }
+      });
+
+      await Promise.all(
+        authorsToUpdate.map(async (author) => {
+          await prisma.user.update({
+            where: {id: author.id},
+            data: {categoryId: null}
+          })
+        })
+      );
+    };
+
     res.status(200).json({message: "La categoria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);

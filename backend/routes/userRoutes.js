@@ -43,7 +43,10 @@ router.post('/login', async (req, res) => {
 router.get('/user', async (req, res) => {
   try {
     const email = req.query.email;
-    const user = await prisma.user.findUnique({where: {email: email}});
+    const user = await prisma.user.findUnique({where: {
+      email: email,
+      isDeleted: false
+    }});
 
     if (user === null) {
       res.status(204).json("No user with this email were found");

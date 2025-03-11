@@ -136,6 +136,48 @@ async function main() {
     }
   })
 
+  await prisma.bookstore.create({
+    data: {
+      name: "Plataforma Was",
+      deal_percentage: 30,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Amazon",
+      deal_percentage: 30,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Gonvill",
+      deal_percentage: 30,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Sanborns",
+      deal_percentage: 30,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Central de",
+      deal_percentage: 30,
+    }
+  })
+
+  await prisma.bookstore.create({
+    data: {
+      name: "Aeropuerto CDMX",
+      deal_percentage: 30,
+    }
+  })
+
   await prisma.inventory.create({
     data: {
       bookId: 1,
@@ -155,6 +197,28 @@ async function main() {
       current: 1000
     }
   })
+
+  const booksCount = await prisma.book.count();
+  const bookstoresCount = await prisma.bookstore.count();
+
+  async function createRandomInventory() {
+    const initialInventory = Math.floor(Math.random() * 1000)
+    await prisma.inventory.create({
+      data: {
+        bookId: Math.floor(Math.random() * (booksCount)) + 1,
+        bookstoreId: Math.floor(Math.random() * (bookstoresCount)) +1,
+        country: "México",
+        initial: initialInventory,
+        current: Math.floor(Math.random() * initialInventory)
+      }
+    })
+  }
+
+  await Promise.all(
+    [...Array(30)].map(() =>
+      createRandomInventory()
+    )
+  );
 
   await prisma.sale.create({
     data: {

@@ -1,7 +1,7 @@
 import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from "bcrypt";
-import authors from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/authors.json" assert {type: 'json'};
-import books from "/home/cordub/code/CorDub/WasEditorialBackend/helpers/books.json" assert {type: 'json'}
+import authors from "../../helpers/authors.json" assert {type: 'json'};
+import books from "../../helpers/books.json" assert {type: 'json'}
 
 const prisma = new PrismaClient();
 

@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
-function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEditModalOpen }) {
+function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
 
   const [firstName, setFirstName] = useState(clickedRow.first_name);
@@ -41,12 +41,10 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
           return;
         }
         const alertMessage = 'No se pudó actualizar el admin.';
-        setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         // const data = await response.json();
         const alertMessage = `El admin ha sido actualizado con exito.`;
-        setEditModalOpen(false);
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -85,7 +83,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter, setEd
     e.preventDefault();
 
     const res = checkInputs();
-    console.log(res);
     if (res.length > 0) {
       return;
     }

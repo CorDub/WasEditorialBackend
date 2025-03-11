@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import express from 'express';
 // import redis from 'redis';
 import cors from 'cors';
@@ -9,7 +8,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
 
-dotenv.config();
 const app = express();
 export const prisma = new PrismaClient();
 // export const redisClient = redis.createClient();

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import useCheckUser from "./customHooks/useCheckUser"
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
+import Navbar from "./Navbar";
 
 function AuthorPage() {
   const { user } = useContext(UserContext);
@@ -41,6 +42,7 @@ function AuthorPage() {
 
   return (
     <>
+      <Navbar subNav={user.role} active={"autores"}/>
       <h1>Yeah this is the author page number {page_id && page_id}</h1>
       {inventories && inventories.map((inventory) => (
         <ul key={inventory.id}>

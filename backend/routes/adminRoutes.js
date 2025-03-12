@@ -595,9 +595,11 @@ router.get('/inventories', async (req, res) => {
       }
     });
 
+    const bookstoresCount = await prisma.bookstore.count();
+
     // await redisClient.set("authorsList", JSON.stringify(users));
 
-    res.json(inventories);
+    res.json([inventories, bookstoresCount]);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at inventories route"});

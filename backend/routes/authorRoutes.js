@@ -66,4 +66,24 @@ router.patch('/change_password', async (req, res) => {
   }
 })
 
+router.get('/books/:bookId/inventories', async (req, res) => {
+  try {
+    const inventories = await prisma.inventory.findMany({
+      where: { bookId: parseInt(req.params.bookId) }
+    });
+
+    console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
+    if (inventories.length === 0) {
+      console.log("No inventory records found!");
+    } else {
+      console.log("First record:", inventories[0]);
+    }
+
+    res.status(200).json(inventories);
+  } catch(error) {
+    console.error("Error in the get inventories route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching inventories'});
+  }
+})
+
 export default router;

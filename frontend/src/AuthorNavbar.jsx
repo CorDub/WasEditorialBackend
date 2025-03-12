@@ -26,11 +26,6 @@ function AuthorNavbar({ active }) {
       buttons[2].classList.add("active-button");
       return;
     };
-
-    if (active === "categorias") {
-      buttons[3].classList.add("active-button");
-      return;
-    };
   }
 
   useEffect(() => {
@@ -42,7 +37,6 @@ function AuthorNavbar({ active }) {
       <Link to='/admin/authors' className="navbar-button">Autores</Link>
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
-      <Link to='/admin/categories' className="navbar-button">Categorias</Link>
     </div>
   )
 }

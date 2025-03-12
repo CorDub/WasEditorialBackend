@@ -33,7 +33,7 @@ function Navbar({ subNav, active }) {
         return <SuperAdminNavbar active={active}/>
       case "admin":
         return <AdminNavbar active={active}/>
-      case "user":
+      case "author":
         return <AuthorNavbar active={active}/>
       default:
         console.log('Unkown error')

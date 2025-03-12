@@ -13,22 +13,40 @@ function InventoriesAreaDashboard() {
   const containerRef = useRef();
 
   function splitAreas() {
+    //get max available width and height
     const computedStyle = window.getComputedStyle(containerRef.current);
     const available_height_str = computedStyle.height;
     const available_height = parseInt(available_height_str.replace("px", ""));
     const available_width = parseInt(computedStyle.width.replace("px", ""));
 
+    console.log(available_height);
+    console.log(available_width);
     const totalArea = available_height * available_width
 
+    //get percentages split
     let totalCurrentQuantities = 0
     for (const quantity of currentQuantities) {
       totalCurrentQuantities += quantity
     }
 
+    const areaPercentages = Array.from({length: bookstoresCount}).fill(0);
+    for (let i = 0; i < currentQuantities.length; i++ ) {
+      areaPercentages[i] = Math.round((currentQuantities[i] / totalCurrentQuantities) * 100);
+    }
+    let totalAreaPercentage = 0
+    for (const percent of areaPercentages) {
+      totalAreaPercentage += percent;
+    }
+    if (totalAreaPercentage < 100) {
+      areaPercentages[0] += 100 - totalAreaPercentage;
+    } else if (totalAreaPercentage > 100) {
+      areaPercentages[0] -= totalAreaPercentage - 100;
+    }
+
     const areaPixels = Array.from({length: bookstoresCount}).fill(0);
 
-    for (let i = 0; i < currentQuantities.length; i++ ) {
-      areaPixels[i] = Math.floor((currentQuantities[i] * totalArea) / totalCurrentQuantities);
+    for (let i = 0; i < areaPercentages.length; i++ ) {
+      areaPixels[i] = Math.round((areaPercentages[i] * totalArea) / 100);
     }
 
     const pixelPackage = {
@@ -51,7 +69,7 @@ function InventoriesAreaDashboard() {
       // height: 0,
       // width: 0
     }));
-    console.log(areaDimensions);
+
 
     for (let i = 0; i < areaDimensions.length; i++) {
 
@@ -63,7 +81,6 @@ function InventoriesAreaDashboard() {
       }
       //first area
       if (i == 0) {
-        console.log(areaPixels[i]);
         dimensions.height = Math.floor(areaPixels[i]/2);
         dimensions.width = Math.floor(areaPixels[i]/2);
         if (areaPixels[i] % 2 !== 0) {
@@ -71,7 +88,7 @@ function InventoriesAreaDashboard() {
           dimensions.height += remaining;
         }
         areaDimensions[i] = dimensions;
-        console.log(areaDimensions);
+
         continue;
       };
 
@@ -88,7 +105,7 @@ function InventoriesAreaDashboard() {
         dimensions.top = totalHeightSoFar;
         dimensions.left = areaDimensions[i - 1].left
         areaDimensions[i] = dimensions;
-        console.log(areaDimensions);
+
         continue;
       }
 

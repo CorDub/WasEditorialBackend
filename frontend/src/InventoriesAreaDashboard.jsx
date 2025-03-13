@@ -11,16 +11,16 @@ function InventoriesAreaDashboard() {
   const [bookstoresCount, setBookstoresCount] = useState(null);
   const { user } = useContext(UserContext);
   const [currentQuantities, setCurrentQuantities] = useState([]);
-  const [viewportHeight, setViewportHeight] = useState(document.documentElement.clientHeight);
-  const [viewportWidth, setViewportWidth] = useState(document.documentElement.clientHeight);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const available_height = viewportHeight - 70;
   const available_width = viewportWidth - 20;
   const [areaDimensions, setAreaDimensions] = useState([]);
 
   useEffect(() => {
     function handleResize() {
-      setViewportHeight(document.documentElement.clientHeight);
-      setViewportWidth(document.documentElement.clientWidth);
+      setViewportHeight(window.innerHeight);
+      setViewportWidth(window.innerWidth);
     };
     window.addEventListener('resize', handleResize);
     return () => {

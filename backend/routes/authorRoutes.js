@@ -66,6 +66,28 @@ router.patch('/change_password', async (req, res) => {
   }
 })
 
+router.get('/books', async (req, res) => {
+  try {
+    // if (!req.session.user_id) {
+    //     return res.status(401).json({ message: "Unauthorized" });
+    // }
+    console.log(req.session.user_id)
+    const books = await prisma.book.findMany({
+        where: {
+            users: {
+                some: { id: req.session.user_id }
+            }
+        }
+    });
+
+    res.status(200).json(books);
+  } catch (error) {
+      console.error(error);
+    res.status(500).send("Server error");
+  }
+})
+
+
 router.get('/books/:bookId/inventories', async (req, res) => {
   try {
     const inventories = await prisma.inventory.findMany({

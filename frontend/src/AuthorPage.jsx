@@ -10,9 +10,9 @@ function AuthorPage() {
   const page_id = parseInt(params.id);
   const [inventories, setInventories] = useState([])
 
-  console.log(page_id);
+  // console.log(page_id);
 
-  useCheckUser(page_id);
+  // useCheckUser(page_id);
 
   useEffect(()=>{
     fetchInventories()

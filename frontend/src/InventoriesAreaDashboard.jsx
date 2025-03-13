@@ -13,6 +13,8 @@ function InventoriesAreaDashboard() {
   const [currentQuantities, setCurrentQuantities] = useState([]);
   const [viewportHeight, setViewportHeight] = useState(document.documentElement.clientHeight);
   const [viewportWidth, setViewportWidth] = useState(document.documentElement.clientHeight);
+  const available_height = viewportHeight - 70;
+  const available_width = viewportWidth - 20;
   const [areaDimensions, setAreaDimensions] = useState([]);
 
   useEffect(() => {
@@ -27,14 +29,6 @@ function InventoriesAreaDashboard() {
   }, []);
 
   function splitAreas() {
-    //get max available width and height
-    // const computedStyle = window.getComputedStyle(containerRef.current);
-    // const available_height_str = computedStyle.height;
-    // const available_height = parseInt(available_height_str.replace("px", ""));
-    // const available_width = parseInt(computedStyle.width.replace("px", ""));
-    const available_height = viewportHeight - 70;
-    const available_width = viewportWidth - 10;
-
     const totalArea = available_height * available_width
 
     //get percentages split
@@ -58,33 +52,59 @@ function InventoriesAreaDashboard() {
     }
 
     const areaPixels = Array.from({length: bookstoresCount}).fill(0);
-    areaPixels.sort((a,b) => b - a);
 
     for (let i = 0; i < areaPercentages.length; i++ ) {
       areaPixels[i] = Math.round((areaPercentages[i] * totalArea) / 100);
     }
 
+    areaPixels.sort((a,b) => b - a);
+
     const pixelPackage = {
       areaPixels: areaPixels,
-      available_width: available_width,
-      available_height: available_height
     }
 
     return pixelPackage;
   }
 
+  function determineNextStartingPoint(previousArea, antePreviousArea) {
+    if (!antePreviousArea) {
+      const nextStartingPoint = {
+        top: previousArea.height,
+        left: 0,
+        maxHeight: available_height
+      }
+      return nextStartingPoint;
+    }
+
+    let nextStartingPoint = {
+      top: 0,
+      left: 0,
+      maxHeight: 0
+    };
+
+    if (previousArea.left + previousArea.width >= antePreviousArea.left + antePreviousArea.width) {
+      nextStartingPoint.left = antePreviousArea.left + antePreviousArea.width
+      nextStartingPoint.top = antePreviousArea.top;
+      if (nextStartingPoint.top >= previousArea.top) {
+        nextStartingPoint.maxHeight = available_height;
+      } else {
+        nextStartingPoint.maxHeight = previousArea.top;
+      }
+
+    } else {
+      nextStartingPoint.left = previousArea.left + previousArea.width;
+      nextStartingPoint.top = previousArea.top;
+      nextStartingPoint.maxHeight = available_height;
+    }
+
+    return nextStartingPoint;
+  }
+
   function determineAreaDimensions(pixelPackage) {
     const areaPixels = pixelPackage.areaPixels;
-    const available_width = pixelPackage.available_width;
-    const available_height = pixelPackage.available_height;
 
     let areaDimensions = Array.from({length: bookstoresCount}, () => ({
-      // top: 0,
-      // left: 0,
-      // height: 0,
-      // width: 0
     }));
-
 
     for (let i = 0; i < areaDimensions.length; i++) {
 
@@ -96,96 +116,136 @@ function InventoriesAreaDashboard() {
       }
       //first area
       if (i == 0) {
-        dimensions.height = Math.floor(Math.sqrt(areaPixels[i]));
-        dimensions.width = Math.floor(Math.sqrt(areaPixels[i]));
-        // Adjustment in case the area is odd
-        // if (areaPixels[i] % 2 !== 0) {
-        //   const remaining = areaPixels[i] - dimensions.height*2;
-        //   dimensions.height += remaining;
-        // }
+        dimensions.height = Math.round(Math.sqrt(areaPixels[i] / 2));
+        dimensions.width = Math.round(dimensions.height * 2);
         areaDimensions[i] = dimensions;
         continue;
       };
 
-      //continuing "column" if we have remaining height
-      const totalHeightSoFar = areaDimensions[i-1].top + areaDimensions[i-1].height;
-      if (totalHeightSoFar < available_height) {
-        dimensions.left = areaDimensions[i - 1].left
-        const remainingHeight = available_height - totalHeightSoFar;
-        // Checking if we have enough height remaining to continue
-        // with another square or go with rectangle
-        if (Math.floor(Math.sqrt(areaPixels[i])) <= remainingHeight) {
-          dimensions.height = Math.floor(Math.sqrt(areaPixels[i]));
-        } else {
-          dimensions.height = remainingHeight;
-        }
+      let previousArea = areaDimensions[i-1];
+      let antePreviousAreaIndex = 2;
+      let antePreviousArea = areaDimensions[i-antePreviousAreaIndex];
 
-        //Adding a check to not go overboard with the width;
-        const width_length = (dimensions.left + Math.floor(areaPixels[i] / dimensions.height));
-        // rectangle
-        if (width_length > available_width) {
-          dimensions.width = width_length - (available_width - width_length);
-        // square
-        } else {
-          dimensions.width = Math.floor(areaPixels[i] / dimensions.height);
-        }
-
-        dimensions.top = totalHeightSoFar;
-        areaDimensions[i] = dimensions;
-        continue;
+      if (antePreviousArea) {
+        while (antePreviousArea.top === previousArea.top) {
+          antePreviousAreaIndex += 1;
+          antePreviousArea = areaDimensions[i-antePreviousAreaIndex];
+        };
       };
 
-      // new "row"
-      let newLeft = 0;
-      // finding the first previous item in areaDimension that has top 0 to start new row from top
-      for (let i2 = areaDimensions.length - 1; i2 >= 0; i2--) {
-        if (!areaDimensions[i2]) {
-          continue;
-        };
+      /// general loop
+      const nsp = determineNextStartingPoint(previousArea, antePreviousArea);
+      dimensions.top = nsp.top;
+      dimensions.left = nsp.left;
+      dimensions.height = nsp.maxHeight - dimensions.top;
 
-        if (areaDimensions[i2].top === 0) {
-          newLeft = areaDimensions[i2].left + areaDimensions[i2].width;
-          break;
-        }
-      }
-      dimensions.top = 0;
-      dimensions.left = newLeft;
-      //detecting "collision"
-      let maxAvailableHeight = 0;
-      for (let i3 = 0; i3 < areaDimensions.length; i3++) {
-        if (i3 == 0) {
-          continue;
-        };
-        if (areaDimensions[i3].width + areaDimensions[i3].left > dimensions.left) {
-          maxAvailableHeight = areaDimensions[i3].height + areaDimensions[i3].top;
-          break;
-        }
-      }
-      if (Math.floor(Math.sqrt(areaPixels[i])) >= maxAvailableHeight) {
-        dimensions.height = maxAvailableHeight;
-      } else {
-        dimensions.height = Math.floor(Math.sqrt(areaPixels[i]));
-      }
+      const width_length = (dimensions.left + Math.round(areaPixels[i] / dimensions.height))
 
-      const width_length = (dimensions.left + Math.floor(areaPixels[i] / dimensions.height));
-      // rectangle
       if (width_length > available_width) {
-        dimensions.width = width_length - (available_width - width_length);
-      // square
+        dimensions.width = available_width - dimensions.left;
       } else {
-        dimensions.width = Math.floor(areaPixels[i] / dimensions.height);
-      }
+        dimensions.width =  Math.floor(areaPixels[i] / dimensions.height);
+      };
       areaDimensions[i] = dimensions;
     }
 
     return areaDimensions;
   }
 
-  useEffect(() => {
-    const pixelPackage = splitAreas();
-    const areaDimensions = determineAreaDimensions(pixelPackage);
-    setAreaDimensions(areaDimensions);
-  }, [viewportHeight, viewportWidth, currentQuantities])
+  function finalAdjustment(areaDimensions) {
+    if (areaDimensions.length === 0) {
+      console.log("areadimensions undefined");
+      return;
+    }
+
+    console.log('areaDimensions', areaDimensions);
+
+    let top_width = 0;
+    let bot_width = 0;
+
+    for (const area of areaDimensions) {
+      if (area.top === 0) {
+        top_width += area.width;
+      } else {
+        bot_width += area.width;
+      }
+    }
+
+    console.log("top_width", top_width);
+    console.log("bot_width", bot_width);
+
+    const smaller_side = top_width < bot_width ? top_width : bot_width;
+    const missing_width = smaller_side === top_width ? smaller_side - bot_width : smaller_side - top_width;
+
+    console.log("smaller_side", smaller_side);
+    console.log("missing_width", missing_width);
+
+    let percentages = [];
+    if (smaller_side === top_width) {
+      for (let i = 0; i < areaDimensions.length; i++) {
+        let areaPercentage = {
+          index: 0,
+          percentage: 0
+        }
+        if (areaDimensions[i].top === 0) {
+          areaPercentage.index = i;
+          areaPercentage.percentage = Math.round(areaDimensions[i].width / smaller_side * 100);
+          percentages.push(areaPercentage);
+        }
+      }
+    } else {
+      for (let i = 0; i < areaDimensions.length; i++) {
+        let areaPercentage = {
+          index: 0,
+          percentage: 0
+        }
+        if (areaDimensions[i].top !== 0) {
+          areaPercentage.index = i;
+          areaPercentage.percentage = Math.round(areaDimensions[i].width / smaller_side * 100);
+          percentages.push(areaPercentage);
+        }
+      }
+    }
+
+    console.log("percentages", percentages);
+
+    let totalPercentages = 0;
+    for (const percent of percentages) {
+      totalPercentages += percent.percentage;
+    }
+    if (totalPercentages > 100) {
+      percentages[percentages.length-1].percentage -= (totalPercentages - 100);
+    } else {
+      percentages[percentages.length-1].percentage += (100 - totalPercentages);
+    }
+
+    console.log("percentages after adjustment", percentages);
+
+    let missing_width_percentages = [];
+    for (const percentage of percentages) {
+      let areaMissingPercentage = {
+        index: percentage.index,
+        missingLength: Math.abs(Math.round(percentage.percentage * missing_width / 100))
+      }
+      missing_width_percentages.push(areaMissingPercentage);
+    }
+
+    console.log("missing_width_percentages", missing_width_percentages);
+
+    let finalAreaDimensions = [...areaDimensions];
+    for (let i = 0; i < missing_width_percentages.length; i++) {
+      if (i === 0) {
+        finalAreaDimensions[missing_width_percentages[i].index].width += missing_width_percentages[i].missingLength;
+      } else {
+        console.log(finalAreaDimensions[missing_width_percentages[i].index])
+        finalAreaDimensions[missing_width_percentages[i].index].width += missing_width_percentages[i].missingLength;
+        finalAreaDimensions[missing_width_percentages[i].index].left = finalAreaDimensions[missing_width_percentages[i-1].index].width + finalAreaDimensions[missing_width_percentages[i-1].index].left;
+      }
+    }
+
+    console.log("final_area_dimensions", finalAreaDimensions);
+    return finalAreaDimensions;
+  };
 
   async function fetchInventories() {
     try {
@@ -218,6 +278,15 @@ function InventoriesAreaDashboard() {
     }
     setCurrentQuantities(newArray);
   }, [data, bookstoresCount]);
+
+  useEffect(() => {
+    const pixelPackage = splitAreas();
+    const areaDimensions = determineAreaDimensions(pixelPackage);
+    setAreaDimensions(areaDimensions);
+
+    const finalAreaDimensions = finalAdjustment(areaDimensions);
+    setAreaDimensions(finalAreaDimensions);
+  }, [viewportHeight, viewportWidth, currentQuantities])
 
   return (
     <div>

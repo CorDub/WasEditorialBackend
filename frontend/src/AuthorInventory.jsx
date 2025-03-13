@@ -1,18 +1,17 @@
-import { useParams } from "react-router-dom";
 import useCheckUser from "./customHooks/useCheckUser"
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
+import BookInventory from "./BookInventory"; 
+
 
 function AuthorInventory(){
   const { user } = useContext(UserContext);
-  const params = useParams();
-  const page_id = parseInt(params.id);
   const [inventories, setInventories] = useState([])
   const [books, setBooks] = useState([])
+  const [selectedBookId, setSelectedBookId] = useState("");
 
 
-  console.log(page_id);
 
   // useCheckUser(page_id);
 
@@ -61,17 +60,27 @@ function AuthorInventory(){
   //   }
   // }
 
+  const handleBookChange = (event) =>{
+    setSelectedBookId(event.target.value);
+  }
 
 
   return (
     <>
       <Navbar subNav={user.role} active={"autores"}/>
-      <h1>Yeah this is the AuthorInventory page number</h1>
-      {books && books.map((book) => (
-        <ul key={book.id}>
-          <li>{book.title}</li>
-        </ul>
-      ))}
+      <h1>Yeah this is the AuthorInventory page number{user.id}</h1>
+      {books && (
+          <select onChange={handleBookChange} id="book-select">
+            <option value="">--Please choose an option--</option>
+            {books.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.title}
+              </option>
+            ))}
+          </select>
+      )}
+      {selectedBookId && <BookInventory bookId={selectedBookId} />}
+
     </>
   )
 }

@@ -30,6 +30,7 @@ function InventoryArea({name, count, top, left, height, width}) {
           <img
             src={logo}
             className='inventory-img'
+            style={width < 110 ? {width: "80%"} : null}
             alt="logo de la tienda" /> :
           <div style={{display: 'flex', flexDirection:'column', marginBottom:'0.5rem'}}>
             <div className="inventory-name">{name}</div>

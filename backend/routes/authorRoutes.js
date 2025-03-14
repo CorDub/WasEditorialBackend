@@ -66,4 +66,46 @@ router.patch('/change_password', async (req, res) => {
   }
 })
 
+router.get('/books', async (req, res) => {
+  try {
+    // if (!req.session.user_id) {
+    //     return res.status(401).json({ message: "Unauthorized" });
+    // }
+    console.log(req.session.user_id)
+    const books = await prisma.book.findMany({
+        where: {
+            users: {
+                some: { id: req.session.user_id }
+            }
+        }
+    });
+
+    res.status(200).json(books);
+  } catch (error) {
+      console.error(error);
+    res.status(500).send("Server error");
+  }
+})
+
+
+router.get('/books/:bookId/inventories', async (req, res) => {
+  try {
+    const inventories = await prisma.inventory.findMany({
+      where: { bookId: parseInt(req.params.bookId) }
+    });
+
+    console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
+    if (inventories.length === 0) {
+      console.log("No inventory records found!");
+    } else {
+      console.log("First record:", inventories[0]);
+    }
+
+    res.status(200).json(inventories);
+  } catch(error) {
+    console.error("Error in the get inventories route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching inventories'});
+  }
+})
+
 export default router;

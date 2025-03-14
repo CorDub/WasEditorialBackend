@@ -12,17 +12,17 @@ function AuthorNavbar({ active }) {
       }
     });
 
-    if (active === "autores") {
+    if (active === "inventario") {
       buttons[0].classList.add("active-button");
       return;
     };
 
-    if (active === "libros") {
+    if (active === "ventas") {
       buttons[1].classList.add("active-button");
       return;
     };
 
-    if (active === "librerias") {
+    if (active === "kindle") {
       buttons[2].classList.add("active-button");
       return;
     };
@@ -34,9 +34,9 @@ function AuthorNavbar({ active }) {
 
   return(
     <div className="admin-navbar">
-      <Link to='/admin/authors' className="navbar-button">Autores</Link>
-      <Link to='/admin/books' className="navbar-button">Libros</Link>
-      <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
+      <Link to='/author/inventory' className="navbar-button">Inventario</Link>
+      <Link to='/author/sales' className="navbar-button">Ventas</Link>
+      {/* <Link to='/admin/bookstores' className="navbar-button">Kindle</Link> */}
     </div>
   )
 }

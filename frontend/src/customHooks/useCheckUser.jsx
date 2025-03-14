@@ -18,10 +18,10 @@ function useCheckUser(page_id) {
         return;
       }
 
-      if (user.id !== page_id) {
-        navigate("/");
-        return;
-      }
+      // if (user.id !== page_id) {
+      //   navigate("/");
+      //   return;
+      // }
 
         return;
       }
@@ -37,10 +37,10 @@ function useCheckUser(page_id) {
         return;
       }
 
-      if (userData.id !== page_id) {
-        navigate("/");
-        return;
-      }
+      // if (userData.id !== page_id) {
+      //   navigate("/");
+      //   return;
+      // }
     }
 
     fetchUserData();

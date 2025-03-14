@@ -15,6 +15,7 @@ import AdminsList from "./AdminsList.jsx";
 import InventoriesList from './InventoriesList.jsx';
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
+import AuthorInventory from './AuthorInventory.jsx';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/superadmin/admins" element={<AdminsList />} />
           {/* <Route path='/admin' element={<AdminPage />} /> */}
           {/* <Route path='/author' element={<AuthorPage />} /> */}
-          <Route path="/author/:id" element={<AuthorPage />} />
+          <Route path="/author" element={<AuthorPage />} />
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />
           <Route path="/admin/inventories" element={<InventoriesList />} />
@@ -36,6 +37,7 @@ function App() {
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />
+          <Route path='/author/inventory' element={<AuthorInventory/>} />
         </Routes>
       </Router>
     </UserProvider>

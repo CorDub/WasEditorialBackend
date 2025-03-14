@@ -8,7 +8,6 @@ import InventoryArea from "./InventoryArea";
 function InventoriesAreaDashboard() {
   useCheckAdmin();
   const [data, setData] = useState([]);
-  const [bookstoresCount, setBookstoresCount] = useState(null);
   const { user } = useContext(UserContext);
   const [currentQuantities, setCurrentQuantities] = useState([]);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
@@ -16,7 +15,7 @@ function InventoriesAreaDashboard() {
   const available_height = viewportHeight - 70;
   const available_width = viewportWidth - 20;
   const [areaDimensions, setAreaDimensions] = useState([]);
-  const [bookstoresCounts, setBookstoresCounts] = useState({});
+  const [bookstoresCounts, setBookstoresCounts] = useState([]);
 
   useEffect(() => {
     function handleResize() {
@@ -30,7 +29,7 @@ function InventoriesAreaDashboard() {
   }, []);
 
   function getBookstoresNamesandCounts(data) {
-    const resCounts = {};
+    const resCounts = [];
 
     for (let i = 0; i < data.length; i++) {
       if (!resCounts[data[i].bookstoreId]) {
@@ -44,7 +43,10 @@ function InventoriesAreaDashboard() {
       }
     }
 
-    setBookstoresCounts(resCounts);
+    const filteredResCounts = resCounts.filter(count => count !== "");
+    const sortedResCounts = filteredResCounts.sort((a, b) => b.count - a.count);
+
+    setBookstoresCounts(sortedResCounts);
   }
 
   useEffect(() => {
@@ -60,7 +62,7 @@ function InventoriesAreaDashboard() {
       totalCurrentQuantities += quantity
     }
 
-    const areaPercentages = Array.from({length: Object.keys(bookstoresCounts).length}).fill(0);
+    const areaPercentages = Array.from({length: bookstoresCounts.length}).fill(0);
     for (let i = 0; i < currentQuantities.length; i++ ) {
       areaPercentages[i] = Math.round((currentQuantities[i] / totalCurrentQuantities) * 100);
     }
@@ -74,7 +76,7 @@ function InventoriesAreaDashboard() {
       areaPercentages[0] -= totalAreaPercentage - 100;
     }
 
-    const areaPixels = Array.from({length: Object.keys(bookstoresCounts).length}).fill(0);
+    const areaPixels = Array.from({length: bookstoresCounts.length}).fill(0);
 
     for (let i = 0; i < areaPercentages.length; i++ ) {
       areaPixels[i] = Math.round((areaPercentages[i] * totalArea) / 100);
@@ -90,9 +92,6 @@ function InventoriesAreaDashboard() {
   }
 
   function determineNextStartingPoint(previousArea, antePreviousArea) {
-    console.log("previousArea", previousArea);
-    console.log("antePreviousArea", antePreviousArea);
-
     if (!antePreviousArea) {
       const nextStartingPoint = {
         top: previousArea.height,
@@ -105,7 +104,6 @@ function InventoriesAreaDashboard() {
     const antePreviousAreaRight = antePreviousArea.left + antePreviousArea.width;
     const previousAreaRight = previousArea.left + previousArea.width;
     const leastRightmost = antePreviousAreaRight > previousAreaRight ? previousArea : antePreviousArea;
-    console.log("leastRightmost", leastRightmost);
 
     let nextStartingPoint = {
       top: 0,
@@ -113,32 +111,9 @@ function InventoriesAreaDashboard() {
       maxHeight: 0
     };
 
-    // if (previousArea.left + previousArea.width >= antePreviousArea.left + antePreviousArea.width) {
-    //   nextStartingPoint.left = antePreviousArea.left + antePreviousArea.width
-    //   nextStartingPoint.top = antePreviousArea.top;
-    //   if (nextStartingPoint.top >= previousArea.top) {
-    //     nextStartingPoint.maxHeight = available_height;
-    //   } else {
-    //     nextStartingPoint.maxHeight = previousArea.top;
-    //   }
-    // } else {
-    //   // console.log("yus");
-    //   // console.log(antePreviousArea.top)
-    //   nextStartingPoint.left = previousArea.left + previousArea.width;
-    //   nextStartingPoint.top = previousArea.top;
-    //   // console.log(nextStartingPoint.top > antePreviousArea.top)
-    //   if (nextStartingPoint.top > antePreviousArea.top) {
-    //     nextStartingPoint.maxHeight = antePreviousArea.top;
-    //   } else {
-    //     nextStartingPoint.maxHeight = available_height;
-    //   }
-    // }
-
     nextStartingPoint.top = leastRightmost.top;
     nextStartingPoint.left = leastRightmost.left + leastRightmost.width;
     nextStartingPoint.maxHeight = leastRightmost.top + leastRightmost.height;
-
-    console.log("nextStartingPoint", nextStartingPoint);
 
     return nextStartingPoint;
   }
@@ -146,7 +121,7 @@ function InventoriesAreaDashboard() {
   function determineAreaDimensions(pixelPackage) {
     const areaPixels = pixelPackage.areaPixels;
 
-    let areaDimensions = Array.from({length: Object.keys(bookstoresCounts).length}, () => ({
+    let areaDimensions = Array.from({length: bookstoresCounts.length}, () => ({
     }));
 
     for (let i = 0; i < areaDimensions.length; i++) {
@@ -170,10 +145,6 @@ function InventoriesAreaDashboard() {
       let antePreviousArea = areaDimensions[i-antePreviousAreaIndex];
 
       if (antePreviousArea) {
-        // while (antePreviousArea.top === previousArea.top) {
-        //   antePreviousAreaIndex += 1;
-        //   antePreviousArea = areaDimensions[i-antePreviousAreaIndex];
-        // };
         let secondRightmost = {id: 0, right: 0};
         for (let i2 = 0; i2 < i; i2++) {
           const currentRight = areaDimensions[i2].left + areaDimensions[i2].width
@@ -187,7 +158,6 @@ function InventoriesAreaDashboard() {
       };
 
       /// general loop
-      console.log(i+1);
       const nsp = determineNextStartingPoint(previousArea, antePreviousArea);
       dimensions.top = nsp.top;
       dimensions.left = nsp.left;
@@ -307,7 +277,7 @@ function InventoriesAreaDashboard() {
   }, []);
 
   useEffect(() => {
-    const newArray = Array.from({length: Object.keys(bookstoresCounts).length}, () => 0);
+    const newArray = Array.from({length: bookstoresCounts.length}, () => 0);
     for (const inventory of data) {
       newArray[inventory.bookstoreId - 1] += parseInt(inventory.current)
     }
@@ -327,14 +297,20 @@ function InventoriesAreaDashboard() {
     <div>
       <Navbar subNav={user.role} active={"inventories2"}/>
       <div className="areas-container">
-        {areaDimensions && areaDimensions.map((area, index) => (
-          <InventoryArea
-            key={index}
-            top={area.top}
-            left={area.left}
-            height={area.height}
-            width={area.width}/>
-        ))}
+        {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
+          // const bookstore = bookstoresCounts[(index+1).toString()];
+          const bookstore = bookstoresCounts[index];
+          return (
+            <InventoryArea
+              key={index}
+              name={bookstore.name}
+              count={bookstore.count}
+              top={area.top}
+              left={area.left}
+              height={area.height}
+              width={area.width}/>
+            )
+          })}
       </div>
     </div>
   )

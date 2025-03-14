@@ -6,7 +6,24 @@
 
 .inventory-area {
   position: absolute;
-  border: 1px solid black;
   border-radius: 15px;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory-name {
+  margin-bottom: 0.5rem;
+}
+
+.inventory-logo {
+  display: flex;
+  justify-content: center;
+}
+
+.inventory-img {
+  width: 100px;
+  margin-bottom: 0.5rem;
 }

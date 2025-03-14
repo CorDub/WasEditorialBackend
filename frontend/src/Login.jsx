@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.scss';
-import logo from './assets/logo-03-300x110-was.png';
+import logo from './assets/PlataformaWas.png';
 import UserContext from './UserContext';
 import LoginError from './LoginError';
 import Alert from './Alert';

@@ -300,10 +300,11 @@ function InventoriesAreaDashboard() {
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
           // const bookstore = bookstoresCounts[(index+1).toString()];
           const bookstore = bookstoresCounts[index];
+          const noSpaceName = bookstore.name.replace(' ', '');
           return (
             <InventoryArea
               key={index}
-              name={bookstore.name}
+              name={noSpaceName}
               count={bookstore.count}
               top={area.top}
               left={area.left}

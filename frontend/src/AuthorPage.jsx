@@ -3,12 +3,13 @@ import useCheckUser from "./customHooks/useCheckUser"
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
+import ShowInventories from "./ShowInventory";
 
 function AuthorPage() {
   const { user } = useContext(UserContext);
   const params = useParams();
   const page_id = parseInt(params.id);
-  const [inventories, setInventories] = useState([])
+  const [inventories, setInventories] = useState("")
 
   // console.log(page_id);
 
@@ -21,7 +22,7 @@ function AuthorPage() {
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/author/books/1/inventories', {
+      const response = await fetch('http://localhost:3000/author', {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -43,15 +44,10 @@ function AuthorPage() {
   return (
     <>
       <Navbar subNav={user.role} active={"autores"}/>
-      <h1>Yeah this is the author page number {page_id && page_id}</h1>
-      {inventories && inventories.map((inventory) => (
-        <ul key={inventory.id}>
-          <li>{inventory.id}</li>
-          <li>{inventory.book}</li>
-          <li>{inventory.country}</li>
-          <li>{inventory.initial}</li>
-        </ul>
-      ))}
+      <h1>Reporte de Inventario</h1>
+      {inventories && (
+        <ShowInventories inventories={inventories}/>
+      )}
     </>
   )
 };

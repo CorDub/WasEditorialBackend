@@ -88,24 +88,130 @@ router.get('/books', async (req, res) => {
 })
 
 
+router.get('/', async (req, res) => {
+  try {
+    // Check if user is authenticated
+    if (!req.session.user_id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Get all books with their inventory and sales data that belong to the user
+    const books = await prisma.book.findMany({
+      where: {
+        users: {
+          some: { id: req.session.user_id }
+        }
+      },
+      include: {
+        inventories: {
+          include: {
+            sales: true
+          }
+        }
+      }
+    });
+
+    // Calculate overall totals across all books
+    let overallInitialTotal = 0;
+    let overallSoldTotal = 0;
+
+    // Calculate sales summary for each book
+    const bookSales = books.map(book => {
+      const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
+      const soldTotal = book.inventories.reduce((sum, inv) => {
+        const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
+        return sum + itemSales;
+      }, 0);
+      const remainingTotal = initialTotal - soldTotal;
+
+      // Add to overall totals
+      overallInitialTotal += initialTotal;
+      overallSoldTotal += soldTotal;
+
+      return {
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        summary: {
+          initial: initialTotal,
+          sold: soldTotal,
+          total: remainingTotal
+        }
+      };
+    });
+
+    const overallRemainingTotal = overallInitialTotal - overallSoldTotal;
+
+    console.log(`Processed sales data for ${books.length} books for user ${req.session.user_id}`);
+    
+    res.status(200).json({
+      summary: {
+        initial: overallInitialTotal,
+        sold: overallSoldTotal,
+        total: overallRemainingTotal
+      },
+      bookSales: bookSales
+    });
+  } catch(error) {
+    console.error("Error in the home route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching inventory data'});
+  }
+});
+
+
+// Endpoint for getting inventories of a specific book
 router.get('/books/:bookId/inventories', async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.session.user_id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Get the book to verify user ownership
+    const book = await prisma.book.findFirst({
+      where: {
+        id: parseInt(req.params.bookId),
+        users: {
+          some: { id: req.session.user_id }
+        }
+      }
+    });
+
+    // If book doesn't exist or user doesn't have access
+    if (!book) {
+      return res.status(404).json({ message: "Book not found or access denied" });
+    }
+
+    // Get inventories for the book
     const inventories = await prisma.inventory.findMany({
-      where: { bookId: parseInt(req.params.bookId) }
+      where: { bookId: parseInt(req.params.bookId) },
+      include: {
+        sales: true
+      }
     });
 
     console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
-    if (inventories.length === 0) {
-      console.log("No inventory records found!");
-    } else {
-      console.log("First record:", inventories[0]);
-    }
+    
+    // Calculate the aggregated data
+    const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
+    const soldTotal = inventories.reduce((sum, inv) => {
+      const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
+      return sum + itemSales;
+    }, 0);
+    const remainingTotal = initialTotal - soldTotal;
 
-    res.status(200).json(inventories);
+    res.status(200).json({
+      inventories,
+      summary: {
+        initial: initialTotal,
+        sold: soldTotal,
+        total: remainingTotal
+      }
+    });
   } catch(error) {
     console.error("Error in the get inventories route:", error);
     res.status(500).json({error: 'A server error occurred while fetching inventories'});
   }
-})
+});
 
 export default router;

@@ -4,7 +4,7 @@ import UserContext from "./UserContext";
 function BookInventory(props){
 
   const bookId = props.bookId
-  const [inventories, setInventories] = useState([])
+  const [inventories, setInventories] = useState("")
 
 
   useEffect(()=>{
@@ -34,9 +34,7 @@ function BookInventory(props){
 
   return(
     <>    <h2>hello {bookId}</h2>
-      {inventories && inventories.map((inventory) => (<ul key={inventory.id}>
-        <li>{inventory.initial}</li>
-      </ul>))}
+      {inventories && <ShowInventories inventories={inventories}/>}
     </>
 
   )

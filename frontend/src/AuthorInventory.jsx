@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import useCheckUser from "./customHooks/useCheckUser"
-import { useContext, useEffect, useState, useMemo } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
@@ -14,14 +14,6 @@ function AuthorInventory(){
   const [books, setBooks] = useState([])
   const [selectedBookId, setSelectedBookId] = useState("");
   const [showTotal, setShowTotal] = useState(false);
-
-  // Memoize the BestSellerGraph component
-  const memoizedGraph = useMemo(() => {
-    if (!inventories) return null;
-    return <BestSellerGraph bookSales={inventories.bookSales} />;
-  }, [inventories]);
-
-  // useCheckUser(page_id);
 
   useEffect(()=>{
     fetchInventories()

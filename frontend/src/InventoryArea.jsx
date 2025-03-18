@@ -20,8 +20,6 @@ function InventoryArea({name, count, top, left, height, width}) {
       .then((image) => setLogo(image.default));
   }, [name, top, left, height, width])
 
-  console.log(name, logo);
-
   return (
     <div className="inventory-area" ref={areaRef}>
 

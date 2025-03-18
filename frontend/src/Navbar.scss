@@ -43,3 +43,22 @@
 .navbar-welcome {
   color: #E2E2E2;
 }
+
+.navbar-input {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.5rem;
+  padding-bottom: 0.2rem;
+  padding-top: 0.2rem;
+  height: 20px;
+  font-size: 1em;
+  transition: 0.3s
+}
+
+.navbar-extended {
+  transform: translateY()
+}
+
+.navbar-input:focus-visible {
+  outline: none;
+}

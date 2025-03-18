@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
+import ShowInventory from "./ShowInventories";
 
 function BookInventory(props){
 
@@ -33,8 +34,8 @@ function BookInventory(props){
   if (!bookId) return <p>Loading...</p>;
 
   return(
-    <>    <h2>hello {bookId}</h2>
-      {inventories && <ShowInventories inventories={inventories}/>}
+    <>    
+      {inventories && <ShowInventory inventories={inventories}/>}
     </>
 
   )

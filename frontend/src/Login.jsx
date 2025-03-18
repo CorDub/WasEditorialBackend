@@ -58,7 +58,7 @@ function LoginPage() {
         } else if (data.role === "superadmin") {
           navigate('/superadmin/admins')
         } else {
-          navigate(`/author`);
+          navigate(`/author/inventory`);
         }
       }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import './ShowInventory.css';
+import './ShowInventories.css';
 
 function ShowInventories(props) {
 
@@ -44,4 +44,4 @@ function ShowInventories(props) {
     )
 }  
 
-export default ShowInventories;
+export default ShowInventories

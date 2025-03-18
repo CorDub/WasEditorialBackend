@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import AdminPage from './AdminPage.jsx';
 import LoginPage from './Login.jsx';
 import './Global.scss';
-import AuthorPage from './AuthorPage.jsx';
+// import AuthorPage from './AuthorPage.jsx';
 import AuthorsList from './AuthorsList.jsx';
 import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
@@ -16,10 +16,12 @@ import InventoriesList from './InventoriesList.jsx';
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
+import InventoriesProvider from './InventoriesProvider.jsx';
 
 function App() {
   return (
     <UserProvider>
+    <InventoriesProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
@@ -39,6 +41,7 @@ function App() {
           <Route path='/author/inventory' element={<AuthorInventory/>} />
         </Routes>
       </Router>
+    </InventoriesProvider>
     </UserProvider>
   )
 }

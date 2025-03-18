@@ -1,7 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import InventoriesContext from "./InventoriesContext";
 
 function SuperAdminNavbar({ active }) {
+  const inventoryRef = useRef();
+  const [searchTerms, setSearchTerms] = useState("");
+  const { inventories } = useContext(InventoriesContext);
 
   function declareButtonActive(active) {
     const buttons = document.querySelectorAll(".navbar-button");
@@ -48,7 +52,7 @@ function SuperAdminNavbar({ active }) {
     }
 
     if (active === "inventories2") {
-      buttons[7].classList.add("active-button");
+      inventoryRef.current.focus();
       return;
     }
   }
@@ -56,6 +60,10 @@ function SuperAdminNavbar({ active }) {
   useEffect(() => {
     declareButtonActive(active);
   }, [active])
+
+  useEffect(() => {
+    console.log(inventories)
+  }, [inventories])
 
   return(
     <div className="admin-navbar">
@@ -66,7 +74,16 @@ function SuperAdminNavbar({ active }) {
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
       <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
-      <Link to='/admin/inventories2' className="navbar-button">Inventory2</Link>
+      {active === "inventories2" ?
+        <input
+          type="text"
+          className="navbar-input"
+          placeholder="Busca un inventario"
+          ref={inventoryRef}
+          onChange={(e) => setSearchTerms(e.target.value)}
+          ></input> :
+        <Link to='/admin/inventories2' className="navbar-button">Inventory2</Link>
+      }
     </div>
   )
 }

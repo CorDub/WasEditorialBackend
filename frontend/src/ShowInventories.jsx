@@ -1,5 +1,5 @@
 import React from 'react';
-import './ShowInventories.css';
+import './ShowInventories.scss';
 
 function ShowInventories(props) {
 
@@ -8,7 +8,6 @@ function ShowInventories(props) {
     
     return (
       <div id='show-inventory-container'>
-        <h2 id='show-inventory-title'>Reporte de Inventario</h2>
         {inventories && ( 
           <table className="inventory-table">
             <tbody>

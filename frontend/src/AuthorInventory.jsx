@@ -5,7 +5,8 @@ import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
 import BestSellerGraph from "./BestSellerGraph";
-import './AuthorInventory.css';
+import './AuthorInventory.scss';
+import BookSelector from "./CustomDropdown";
 
 function AuthorInventory(){
   const { user } = useContext(UserContext);
@@ -58,27 +59,27 @@ function AuthorInventory(){
     <Navbar subNav={user.role} active={"autores"} />
     <div id="author-page-container">
       <h1 id="author-page-title">Inventario</h1>
-      {booksInventories && (
-        <select onChange={handleBookChange} id="book-select">
-          <option value="total">INVENTARIO TOTAL</option>
-          {booksInventories.map((bookInventory) => (
-            <option key={bookInventory.bookId} value={bookInventory.bookId}>
-              {bookInventory.title}
-            </option>
-          ))}
-        </select>
-      )}
-      
-      <div className="author-page-content">
-        {showTotal ? (
-          <ShowInventories inventories={inventories} />
-        ) : (
-          selectedBookId && (
-            <ShowInventories 
+      <div id="author-page-content">
+        <div id="author-inventory-container">
+          <div id="author-inventory-title-container">
+            <h2 id='show-inventory-title'>Reporte de Inventario</h2>
+              {booksInventories && (
+                <BookSelector
+                  booksInventories={booksInventories} 
+                  onBookChange={handleBookChange}
+                />
+              )}
+          </div>
+          {showTotal ? (
+            <ShowInventories inventories={inventories} />
+          ) : (
+            selectedBookId && (
+              <ShowInventories 
               inventories={booksInventories.find(book => book.bookId === parseInt(selectedBookId))} 
-            />
-          )
-        )}
+              />
+            )
+          )}
+        </div>
         {inventories && <BestSellerGraph bookSales={inventories.bookInventories} />}
       </div>
     </div>

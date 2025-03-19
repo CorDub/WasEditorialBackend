@@ -294,7 +294,7 @@ function InventoriesAreaDashboard() {
   }, [viewportHeight, viewportWidth, currentQuantities])
 
   return (
-    <div>
+    <div className="inventory-area-container">
       <Navbar subNav={user.role} active={"inventories2"}/>
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {

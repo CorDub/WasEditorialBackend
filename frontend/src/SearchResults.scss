@@ -1,0 +1,22 @@
+.search-results {
+  position: absolute;
+  background-color: #E2E2E2;
+  border-radius: 15px;
+  z-index: 10;
+  // padding: 0.5rem;
+}
+
+.result {
+  color: black;
+  padding: 0.5rem;
+  margin: 0.2rem;
+  border-radius: 15px;
+  p {
+    margin: 0;
+  }
+}
+
+.result:hover {
+  background-color: #4E5981;
+  color: #fff;
+}

@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import AdminPage from './AdminPage.jsx';
 import LoginPage from './Login.jsx';
 import './Global.scss';
-// import AuthorPage from './AuthorPage.jsx';
 import AuthorsList from './AuthorsList.jsx';
 import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';

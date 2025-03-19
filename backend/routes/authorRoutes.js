@@ -88,7 +88,7 @@ router.get('/books', async (req, res) => {
 })
 
 
-router.get('/', async (req, res) => {
+router.get('/inventories', async (req, res) => {
   try {
     // Check if user is authenticated
     if (!req.session.user_id) {
@@ -116,7 +116,7 @@ router.get('/', async (req, res) => {
     let overallSoldTotal = 0;
 
     // Calculate sales summary for each book
-    const bookSales = books.map(book => {
+    const bookInventories = books.map(book => {
       const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
       const soldTotal = book.inventories.reduce((sum, inv) => {
         const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
@@ -150,7 +150,7 @@ router.get('/', async (req, res) => {
         sold: overallSoldTotal,
         total: overallRemainingTotal
       },
-      bookSales: bookSales
+      bookInventories: bookInventories
     });
   } catch(error) {
     console.error("Error in the home route:", error);

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import InventoriesContext from "./InventoriesContext";
+import SearchResults from "./SearchResults";
 
 function SuperAdminNavbar({ active }) {
-  const inventoryRef = useRef();
+  const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
   const { inventories } = useContext(InventoriesContext);
+  const [inventoryNames, setinventoryNames] = useState([]);
+  const [searchResults, setsearchResults] = useState([]);
 
   function declareButtonActive(active) {
     const buttons = document.querySelectorAll(".navbar-button");
@@ -52,7 +55,7 @@ function SuperAdminNavbar({ active }) {
     }
 
     if (active === "inventories2") {
-      inventoryRef.current.focus();
+      searchBarRef.current.focus();
       return;
     }
   }
@@ -61,9 +64,44 @@ function SuperAdminNavbar({ active }) {
     declareButtonActive(active);
   }, [active])
 
+  function getListOfInventories() {
+    let inventoryNames = [];
+    for (const inventory of inventories) {
+      if (!inventoryNames.includes(inventory.book.title)) {
+        inventoryNames.push(inventory.book.title)
+      }
+
+      if (!inventoryNames.includes(inventory.bookstore.name)) {
+        inventoryNames.push(inventory.bookstore.name)
+      }
+    }
+    setinventoryNames(inventoryNames);
+  }
+
   useEffect(() => {
-    console.log(inventories)
+    getListOfInventories();
   }, [inventories])
+
+  function searchThroughInventoryNames(searchTerm) {
+    const res = [];
+    for (const inventoryName of inventoryNames) {
+      const nameBeginning = inventoryName.substring(0, searchTerm.length);
+      if (searchTerm.toLowerCase() === nameBeginning.toLowerCase()) {
+        res.push(inventoryName);
+        if (res.length >= 5) {
+          return res;
+        }
+      }
+    }
+    return res;
+  }
+
+  useEffect(() => {
+    const res = searchThroughInventoryNames(searchTerms);
+    if (searchTerms) {
+      setsearchResults(res);
+    };
+  }, [searchTerms])
 
   return(
     <div className="admin-navbar">
@@ -75,13 +113,21 @@ function SuperAdminNavbar({ active }) {
       <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
       {active === "inventories2" ?
-        <input
-          type="text"
-          className="navbar-input"
-          placeholder="Busca un inventario"
-          ref={inventoryRef}
-          onChange={(e) => setSearchTerms(e.target.value)}
-          ></input> :
+        <>
+          <input
+            type="text"
+            className="navbar-input"
+            placeholder="Busca un inventario"
+            ref={searchBarRef}
+            onChange={(e) => setSearchTerms(e.target.value)}
+            ></input>
+          {searchTerms ?
+            <SearchResults
+              searchResults={searchResults}
+              searchBarRef={searchBarRef}/> :
+            null
+          }
+        </>:
         <Link to='/admin/inventories2' className="navbar-button">Inventory2</Link>
       }
     </div>

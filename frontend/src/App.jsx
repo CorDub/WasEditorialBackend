@@ -15,10 +15,12 @@ import InventoriesList from './InventoriesList.jsx';
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
+import InventoriesProvider from './InventoriesProvider.jsx';
 
 function App() {
   return (
     <UserProvider>
+    <InventoriesProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
@@ -38,6 +40,7 @@ function App() {
           <Route path='/author/inventory' element={<AuthorInventory/>} />
         </Routes>
       </Router>
+    </InventoriesProvider>
     </UserProvider>
   )
 }

@@ -1,10 +1,12 @@
 import { useRef, useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./InventoriesAreaDashboard.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faBookOpen} from '@fortawesome/free-solid-svg-icons';
 
 function InventoryArea({name, count, top, left, height, width}) {
   const areaRef = useRef();
+  const navigate = useNavigate();
   const [logo, setLogo] = useState('');
 
   function setArea() {
@@ -20,9 +22,15 @@ function InventoryArea({name, count, top, left, height, width}) {
       .then((image) => setLogo(image.default));
   }, [name, top, left, height, width])
 
-  return (
-    <div className="inventory-area" ref={areaRef}>
+  function redirectToBookstoreInventory() {
+    navigate('/admin/bookstoreInventory', {state: {name}});
+  }
 
+  return (
+    <div
+      className="inventory-area"
+      ref={areaRef}
+      onClick={redirectToBookstoreInventory}>
       <div className="inventory-logo">
         { logo ?
           <img

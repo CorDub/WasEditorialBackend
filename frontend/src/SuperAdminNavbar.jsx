@@ -84,6 +84,12 @@ function SuperAdminNavbar({ active }) {
     getListOfInventories();
   }, [inventories])
 
+  useEffect(() => {
+    if (active === "inventories2") {
+      searchBarRef.current.classList.add("navbar-extended");
+    }
+  }, [active]);
+
   function searchThroughInventoryNames(searchTerm) {
     const res = [];
     for (const inventory of inventoryNames) {

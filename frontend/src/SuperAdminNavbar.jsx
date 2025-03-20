@@ -67,12 +67,14 @@ function SuperAdminNavbar({ active }) {
   function getListOfInventories() {
     let inventoryNames = [];
     for (const inventory of inventories) {
-      if (!inventoryNames.includes(inventory.book.title)) {
-        inventoryNames.push(inventory.book.title)
+      const names = inventoryNames.map(item => item.name)
+
+      if (!names.includes(inventory.book.title)) {
+        inventoryNames.push({name: inventory.book.title, type: 'book'})
       }
 
-      if (!inventoryNames.includes(inventory.bookstore.name)) {
-        inventoryNames.push(inventory.bookstore.name)
+      if (!names.includes(inventory.bookstore.name)) {
+        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
       }
     }
     setinventoryNames(inventoryNames);
@@ -84,10 +86,10 @@ function SuperAdminNavbar({ active }) {
 
   function searchThroughInventoryNames(searchTerm) {
     const res = [];
-    for (const inventoryName of inventoryNames) {
-      const nameBeginning = inventoryName.substring(0, searchTerm.length);
+    for (const inventory of inventoryNames) {
+      const nameBeginning = inventory.name.substring(0, searchTerm.length);
       if (searchTerm.toLowerCase() === nameBeginning.toLowerCase()) {
-        res.push(inventoryName);
+        res.push(inventory);
         if (res.length >= 5) {
           return res;
         }

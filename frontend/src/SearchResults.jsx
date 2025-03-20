@@ -1,8 +1,10 @@
 import { useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SearchResults.scss";
 
 function SearchResults({searchResults, searchBarRef}) {
   const searchResultsRef = useRef();
+  const navigate = useNavigate();
 
   function determineSearchResultsPosition() {
     const searchBarRefPosition = searchBarRef.current.getBoundingClientRect()
@@ -15,6 +17,14 @@ function SearchResults({searchResults, searchBarRef}) {
     determineSearchResultsPosition();
   }, [searchResults]);
 
+  function redirectToRelevant(name, type) {
+    if (type === "book") {
+      navigate("/admin/bookInventory", {state: {name: name,  type: type}})
+    } else if (type === "bookstore") {
+      navigate("/admin/bookstoreInventory", {state: {name: name,  type: type}})
+    }
+  }
+
   return (
     <div
       className="search-results"
@@ -24,7 +34,10 @@ function SearchResults({searchResults, searchBarRef}) {
           <div
             key={index}
             className="result">
-            <p>{result}</p>
+            <p
+              className="result-link"
+              onClick={() => redirectToRelevant(result.name, result.type)}
+              >{result.name}</p>
           </div>
         )
       })}

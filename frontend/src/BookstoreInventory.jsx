@@ -1,13 +1,15 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { useLocation } from 'react-router-dom';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import InventoriesContext from "./InventoriesContext";
+import "./BookstoreInventory.scss";
 
-function BookstoreInventory() {
+function BookstoreInventory({selectedBookstore}) {
   useCheckAdmin();
   const location = useLocation();
   const { inventories } = useContext(InventoriesContext);
   const [relevantInventories, setRelevantInventories] = useState([]);
+  const bookstoreInventoryRef = useRef()
 
   useEffect(() => {
     selectRelevantInventories();
@@ -16,7 +18,7 @@ function BookstoreInventory() {
   function selectRelevantInventories() {
     const relevantInventories = [];
     for (const inventory of inventories) {
-      if (inventory.bookstore.name === location.state.name) {
+      if (inventory.bookstore.name === selectedBookstore) {
         relevantInventories.push(inventory)
       }
     }
@@ -33,9 +35,17 @@ function BookstoreInventory() {
     sortRelevantInventories()
   }, [relevantInventories])
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      bookstoreInventoryRef.current.classList.add("bookstore-inventory-extended");
+    });
+  }, [selectedBookstore])
+
   return (
-    <div className="bookstore-inventory">
-      yes this is bookstore inventory for bookstore {location && location.state.name}
+    <div
+      className="bookstore-inventory"
+      ref={bookstoreInventoryRef}>
+      yes this is bookstore inventory for bookstore {selectedBookstore && selectedBookstore}
     </div>
   )
 }

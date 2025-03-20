@@ -1,0 +1,15 @@
+.bookstore-inventory {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  border-radius: 15px;
+  background-color: white;
+  transition: 0.5s;
+  width: 0;
+  height: 0;
+}
+
+.bookstore-inventory-extended {
+  width: calc(100vw - 20px);
+  height: calc(100vh - 70px);
+}

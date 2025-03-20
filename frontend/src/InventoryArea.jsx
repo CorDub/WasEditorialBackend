@@ -4,7 +4,17 @@ import "./InventoriesAreaDashboard.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faBookOpen} from '@fortawesome/free-solid-svg-icons';
 
-function InventoryArea({name, count, top, left, height, width}) {
+function InventoryArea({
+    name,
+    count,
+    top,
+    left,
+    height,
+    width,
+    setBookstoreInventoryOpen,
+    setSelectedBookstore,
+    retreat,
+    setRetreat}) {
   const areaRef = useRef();
   const navigate = useNavigate();
   const [logo, setLogo] = useState('');
@@ -23,15 +33,30 @@ function InventoryArea({name, count, top, left, height, width}) {
       .then((image) => setLogo(image.default));
   }, [name, top, left, height, width])
 
-  function redirectToBookstoreInventory() {
-    navigate('/admin/bookstoreInventory', {state: {name}});
+  // function redirectToBookstoreInventory() {
+  //   navigate('/admin/bookstoreInventory', {state: {name}});
+  // }
+
+  function openSelectedBookstoreInventory() {
+    setRetreat(true);
+    areaRef.current.classList.remove("inventory-area-extended");
+    setTimeout(() => {
+      setSelectedBookstore(name);
+      setBookstoreInventoryOpen(true);
+    }, 250)
   }
+
+  useEffect(() => {
+    if (retreat === true) {
+      areaRef.current.classList.remove("inventory-area-extended");
+    }
+  }, [retreat])
 
   return (
     <div
       className="inventory-area"
       ref={areaRef}
-      onClick={redirectToBookstoreInventory}>
+      onClick={openSelectedBookstoreInventory}>
       <div className="inventory-logo">
         { logo ?
           <img

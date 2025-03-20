@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import "./InventoriesAreaDashboard.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faBookOpen} from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +15,6 @@ function InventoryArea({
     retreat,
     setRetreat}) {
   const areaRef = useRef();
-  const navigate = useNavigate();
   const [logo, setLogo] = useState('');
 
   function setArea() {
@@ -33,13 +31,8 @@ function InventoryArea({
       .then((image) => setLogo(image.default));
   }, [name, top, left, height, width])
 
-  // function redirectToBookstoreInventory() {
-  //   navigate('/admin/bookstoreInventory', {state: {name}});
-  // }
-
   function openSelectedBookstoreInventory() {
     setRetreat(true);
-    areaRef.current.classList.remove("inventory-area-extended");
     setTimeout(() => {
       setSelectedBookstore(name);
       setBookstoreInventoryOpen(true);

@@ -298,7 +298,6 @@ function InventoriesAreaDashboard() {
       <Navbar subNav={user.role} active={"inventories2"}/>
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
-          // const bookstore = bookstoresCounts[(index+1).toString()];
           const bookstore = bookstoresCounts[index];
           const noSpaceName = bookstore.name.replace(' ', '');
           return (

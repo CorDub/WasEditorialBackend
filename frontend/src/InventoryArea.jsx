@@ -14,6 +14,7 @@ function InventoryArea({name, count, top, left, height, width}) {
     areaRef.current.style.left = left + 10 +"px";
     areaRef.current.style.height = height - 10 + "px";
     areaRef.current.style.width = width - 10 + "px";
+    areaRef.current.classList.add("inventory-area-extended");
   };
 
   useEffect(() => {

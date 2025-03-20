@@ -4,6 +4,8 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import UserContext from "./UserContext";
 import "./InventoriesAreaDashboard.scss"
 import InventoryArea from "./InventoryArea";
+import BookInventory from "./BookInventory";
+import BookstoreInventory from "./BookstoreInventory";
 
 function InventoriesAreaDashboard() {
   useCheckAdmin();
@@ -16,6 +18,10 @@ function InventoriesAreaDashboard() {
   const available_width = viewportWidth - 20;
   const [areaDimensions, setAreaDimensions] = useState([]);
   const [bookstoresCounts, setBookstoresCounts] = useState([]);
+  const [isBookInventoryOpen, setBookInventoryOpen] = useState(false);
+  const [isBookstoreInventoryOpen, setBookstoreInventoryOpen] = useState(false);
+  const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [retreat, setRetreat] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -293,12 +299,18 @@ function InventoriesAreaDashboard() {
     setAreaDimensions(finalAreaDimensions);
   }, [viewportHeight, viewportWidth, currentQuantities])
 
+  // function minifyAreas() {
+  //   for (const area in areaDimensions) {
+  //     if ()
+  //   }
+  // }
+
   return (
     <div className="inventory-area-container">
       <Navbar subNav={user.role} active={"inventories2"}/>
+      {isBookInventoryOpen === false && isBookstoreInventoryOpen === false &&
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
-          // const bookstore = bookstoresCounts[(index+1).toString()];
           const bookstore = bookstoresCounts[index];
           const noSpaceName = bookstore.name.replace(' ', '');
           return (
@@ -309,10 +321,17 @@ function InventoriesAreaDashboard() {
               top={area.top}
               left={area.left}
               height={area.height}
-              width={area.width}/>
+              width={area.width}
+              setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+              setSelectedBookstore={setSelectedBookstore}
+              retreat={retreat}
+              setRetreat={setRetreat}/>
             )
           })}
-      </div>
+      </div>}
+
+      {isBookstoreInventoryOpen &&
+        <BookstoreInventory selectedBookstore={selectedBookstore}/>}
     </div>
   )
 }

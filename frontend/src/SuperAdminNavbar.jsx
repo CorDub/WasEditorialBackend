@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import InventoriesContext from "./InventoriesContext";
 import SearchResults from "./SearchResults";
 
-function SuperAdminNavbar({ active }) {
+function SuperAdminNavbar({ active, setBookstoreInventoryOpen, setSelectedBookstore, retreat, setRetreat }) {
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
   const { inventories } = useContext(InventoriesContext);
@@ -127,12 +127,18 @@ function SuperAdminNavbar({ active }) {
             className="navbar-input"
             placeholder="Busca un inventario"
             ref={searchBarRef}
+            value={searchTerms}
             onChange={(e) => setSearchTerms(e.target.value)}
             ></input>
           {searchTerms ?
             <SearchResults
               searchResults={searchResults}
-              searchBarRef={searchBarRef}/> :
+              searchBarRef={searchBarRef}
+              setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+              setSelectedBookstore={setSelectedBookstore}
+              retreat={retreat}
+              setRetreat={setRetreat}
+              setSearchTerms={setSearchTerms}/> :
             null
           }
         </>:

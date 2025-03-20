@@ -36,6 +36,7 @@ function BookstoreInventory({selectedBookstore}) {
   }, [relevantInventories])
 
   useEffect(() => {
+    
     requestAnimationFrame(() => {
       bookstoreInventoryRef.current.classList.add("bookstore-inventory-extended");
     });

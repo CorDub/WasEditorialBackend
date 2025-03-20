@@ -299,15 +299,15 @@ function InventoriesAreaDashboard() {
     setAreaDimensions(finalAreaDimensions);
   }, [viewportHeight, viewportWidth, currentQuantities])
 
-  // function minifyAreas() {
-  //   for (const area in areaDimensions) {
-  //     if ()
-  //   }
-  // }
-
   return (
     <div className="inventory-area-container">
-      <Navbar subNav={user.role} active={"inventories2"}/>
+      <Navbar
+        subNav={user.role}
+        active={"inventories2"}
+        setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+        setSelectedBookstore={setSelectedBookstore}
+        retreat={retreat}
+        setRetreat={setRetreat}/>
       {isBookInventoryOpen === false && isBookstoreInventoryOpen === false &&
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {

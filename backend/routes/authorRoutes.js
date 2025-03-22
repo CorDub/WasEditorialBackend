@@ -214,4 +214,50 @@ router.get('/books/:bookId/inventories', async (req, res) => {
   }
 });
 
+router.get('/sales', async (req, res) => {
+  try {
+    if (!req.session.user_id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const books = await prisma.book.findMany({
+      where: {
+        users: {
+          some: { id: req.session.user_id }
+        }
+      },
+      include: {
+        inventories: {
+          include: {
+            sales: true
+          }
+        }
+      }
+    });
+
+    const bookSales = books.map(book => {
+      const totalSales = book.inventories.reduce((sum, inv) => {
+        const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
+        return sum + itemSales;
+      }, 0);
+
+      return {
+        bookId: book.id,
+        title: book.title,
+        quantity: totalSales
+      };
+    });
+
+    const totalSales = bookSales.reduce((sum, book) => sum + book.quantity, 0);
+
+    res.status(200).json({
+      totalSales,
+      bookSales
+    });
+  } catch(error) {
+    console.error("Error in the sales route:", error);
+    res.status(500).json({error: 'A server error occurred while fetching sales data'});
+  }
+});
+
 export default router;

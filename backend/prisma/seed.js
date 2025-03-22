@@ -280,37 +280,60 @@ async function main() {
   const inventories = [];
   for (const book of randomBooks) {
     for (const bookstore of bookstores) {
-      const inventory = await prisma.inventory.create({
-        data: {
+      // Check if inventory already exists
+      const existingInventory = await prisma.inventory.findFirst({
+        where: {
           bookId: book.id,
           bookstoreId: bookstore.id,
-          country: 'México',
-          initial: 100,
-          current: 100
+          country: 'México'
         }
       });
-      inventories.push(inventory);
+
+      if (!existingInventory) {
+        const inventory = await prisma.inventory.create({
+          data: {
+            bookId: book.id,
+            bookstoreId: bookstore.id,
+            country: 'México',
+            initial: 100,
+            current: 100
+          }
+        });
+        inventories.push(inventory);
+      } else {
+        inventories.push(existingInventory);
+      }
     }
   }
 
+  // Create sales only for the newly created inventories
   for (const inventory of inventories) {
-    const numSales = Math.floor(Math.random() * 11) + 5;
-    for (let i = 0; i < numSales; i++) {
-      const quantity = Math.floor(Math.random() * 5) + 1;
-      await prisma.sale.create({
-        data: {
-          inventoryId: inventory.id,
-          quantity: quantity
-        }
-      });
-      await prisma.inventory.update({
-        where: { id: inventory.id },
-        data: {
-          current: {
-            decrement: quantity
+    // Check if inventory already has sales
+    const existingSales = await prisma.sale.findFirst({
+      where: {
+        inventoryId: inventory.id
+      }
+    });
+
+    if (!existingSales) {
+      const numSales = Math.floor(Math.random() * 11) + 5;
+      for (let i = 0; i < numSales; i++) {
+        const quantity = Math.floor(Math.random() * 5) + 1;
+        await prisma.sale.create({
+          data: {
+            inventoryId: inventory.id,
+            quantity: quantity
           }
-        }
-      });
+        });
+        await prisma.inventory.update({
+          where: { id: inventory.id },
+          data: {
+            current: {
+              decrement: quantity
+            }
+          }
+        });
+      }
     }
   }
 }

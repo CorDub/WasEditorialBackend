@@ -233,6 +233,86 @@ async function main() {
       quantity: 18
     }
   })
+
+  const user = await prisma.user.findFirst({
+    where: {
+      email: {
+        contains: 'adorno'
+      }
+    }
+  });
+
+  if (!user) {
+    console.log('User not found');
+    return;
+  }
+
+  const randomBooks = await prisma.book.findMany({
+    take: 5,
+    where: {
+      NOT: {
+        users: {
+          some: {
+            id: user.id
+          }
+        }
+      }
+    }
+  });
+
+  for (const book of randomBooks) {
+    await prisma.book.update({
+      where: { id: book.id },
+      data: {
+        users: {
+          connect: { id: user.id }
+        }
+      }
+    });
+  }
+
+  const bookstores = await prisma.bookstore.findMany({
+    where: {
+      isDeleted: false
+    }
+  });
+
+  const inventories = [];
+  for (const book of randomBooks) {
+    for (const bookstore of bookstores) {
+      const inventory = await prisma.inventory.create({
+        data: {
+          bookId: book.id,
+          bookstoreId: bookstore.id,
+          country: 'México',
+          initial: 100,
+          current: 100
+        }
+      });
+      inventories.push(inventory);
+    }
+  }
+
+  for (const inventory of inventories) {
+    const numSales = Math.floor(Math.random() * 11) + 5;
+    for (let i = 0; i < numSales; i++) {
+      const quantity = Math.floor(Math.random() * 5) + 1;
+      await prisma.sale.create({
+        data: {
+          inventoryId: inventory.id,
+          quantity: quantity
+        }
+      });
+      await prisma.inventory.update({
+        where: { id: inventory.id },
+        data: {
+          current: {
+            decrement: quantity
+          }
+        }
+      });
+    }
+  }
 }
 
 main()

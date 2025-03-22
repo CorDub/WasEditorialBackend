@@ -16,6 +16,8 @@ import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
 import InventoriesProvider from './InventoriesProvider.jsx';
+import BookstoreInventory from './BookstoreInventory.jsx';
+import BookInventory from './BookInventory.jsx';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
           <Route path="/admin/categories" element={<CategoriesList />} />
           <Route path="/admin/inventories" element={<InventoriesList />} />
           <Route path="/admin/inventories2" element={<InventoriesAreaDashboard />} />
+          <Route path="/admin/bookstoreInventory" element={<BookstoreInventory />} />
+          <Route path="/admin/bookInventory" element={<BookInventory />} />
           <Route path="/admin/sales" element={<SalesList />} />
           <Route path="/admin/books" element={<BooksList />} />
           <Route path="/admin/bookstores" element={<BookstoresList />} />

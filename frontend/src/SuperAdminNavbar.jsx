@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import InventoriesContext from "./InventoriesContext";
 import SearchResults from "./SearchResults";
 
-function SuperAdminNavbar({ active }) {
+function SuperAdminNavbar({ active, setBookstoreInventoryOpen, setSelectedBookstore, retreat, setRetreat }) {
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
   const { inventories } = useContext(InventoriesContext);
@@ -67,12 +67,14 @@ function SuperAdminNavbar({ active }) {
   function getListOfInventories() {
     let inventoryNames = [];
     for (const inventory of inventories) {
-      if (!inventoryNames.includes(inventory.book.title)) {
-        inventoryNames.push(inventory.book.title)
+      const names = inventoryNames.map(item => item.name)
+
+      if (!names.includes(inventory.book.title)) {
+        inventoryNames.push({name: inventory.book.title, type: 'book'})
       }
 
-      if (!inventoryNames.includes(inventory.bookstore.name)) {
-        inventoryNames.push(inventory.bookstore.name)
+      if (!names.includes(inventory.bookstore.name)) {
+        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
       }
     }
     setinventoryNames(inventoryNames);
@@ -82,12 +84,18 @@ function SuperAdminNavbar({ active }) {
     getListOfInventories();
   }, [inventories])
 
+  useEffect(() => {
+    if (active === "inventories2") {
+      searchBarRef.current.classList.add("navbar-extended");
+    }
+  }, [active]);
+
   function searchThroughInventoryNames(searchTerm) {
     const res = [];
-    for (const inventoryName of inventoryNames) {
-      const nameBeginning = inventoryName.substring(0, searchTerm.length);
+    for (const inventory of inventoryNames) {
+      const nameBeginning = inventory.name.substring(0, searchTerm.length);
       if (searchTerm.toLowerCase() === nameBeginning.toLowerCase()) {
-        res.push(inventoryName);
+        res.push(inventory);
         if (res.length >= 5) {
           return res;
         }
@@ -119,12 +127,18 @@ function SuperAdminNavbar({ active }) {
             className="navbar-input"
             placeholder="Busca un inventario"
             ref={searchBarRef}
+            value={searchTerms}
             onChange={(e) => setSearchTerms(e.target.value)}
             ></input>
           {searchTerms ?
             <SearchResults
               searchResults={searchResults}
-              searchBarRef={searchBarRef}/> :
+              searchBarRef={searchBarRef}
+              setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+              setSelectedBookstore={setSelectedBookstore}
+              retreat={retreat}
+              setRetreat={setRetreat}
+              setSearchTerms={setSearchTerms}/> :
             null
           }
         </>:

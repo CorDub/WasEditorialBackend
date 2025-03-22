@@ -53,11 +53,12 @@
   padding-top: 0.2rem;
   height: 20px;
   font-size: 1em;
-  transition: 0.3s
+  transition: 0.3s;
+  width: 0px;
 }
 
 .navbar-extended {
-  transform: translateY()
+  width: 300px;
 }
 
 .navbar-input:focus-visible {

@@ -6,7 +6,7 @@ import AdminNavbar from "./AdminNavbar";
 import SuperAdminNavbar from "./SuperAdminNavbar";
 import AuthorNavbar from "./AuthorNavbar";
 
-function Navbar({ subNav, active }) {
+function Navbar({ subNav, active, setBookstoreInventoryOpen, setSelectedBookstore, retreat, setRetreat }) {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -30,7 +30,12 @@ function Navbar({ subNav, active }) {
   function chooseSubNavbar(subNav) {
     switch (subNav) {
       case "superadmin":
-        return <SuperAdminNavbar active={active}/>
+        return <SuperAdminNavbar
+                  active={active}
+                  setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+                  setSelectedBookstore={setSelectedBookstore}
+                  retreat={retreat}
+                  setRetreat={setRetreat}/>
       case "admin":
         return <AdminNavbar active={active}/>
       case "author":

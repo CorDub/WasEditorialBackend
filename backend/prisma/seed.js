@@ -280,7 +280,6 @@ async function main() {
   const inventories = [];
   for (const book of randomBooks) {
     for (const bookstore of bookstores) {
-      // Check if inventory already exists
       const existingInventory = await prisma.inventory.findFirst({
         where: {
           bookId: book.id,
@@ -306,9 +305,7 @@ async function main() {
     }
   }
 
-  // Create sales only for the newly created inventories
   for (const inventory of inventories) {
-    // Check if inventory already has sales
     const existingSales = await prisma.sale.findFirst({
       where: {
         inventoryId: inventory.id

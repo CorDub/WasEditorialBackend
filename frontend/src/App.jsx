@@ -18,7 +18,7 @@ import AuthorInventory from './AuthorInventory.jsx';
 import InventoriesProvider from './InventoriesProvider.jsx';
 import BookstoreInventory from './BookstoreInventory.jsx';
 import BookInventory from './BookInventory.jsx';
-
+import AuthorSales from './AuthorSales.jsx';
 function App() {
   return (
     <UserProvider>
@@ -42,6 +42,7 @@ function App() {
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />
           <Route path='/author/inventory' element={<AuthorInventory/>} />
+          <Route path='/author/sales' element={<AuthorSales/>} />
         </Routes>
       </Router>
     </InventoriesProvider>

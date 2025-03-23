@@ -216,47 +216,65 @@ router.get('/books/:bookId/inventories', async (req, res) => {
 
 router.get('/sales', async (req, res) => {
   try {
-    if (!req.session.user_id) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const books = await prisma.book.findMany({
+    const authorId = req.session.user_id;
+    
+    const sales = await prisma.sale.findMany({
       where: {
-        users: {
-          some: { id: req.session.user_id }
+        inventory: {
+          book: {
+            users: {
+              some: {
+                id: authorId
+              }
+            }
+          }
         }
       },
       include: {
-        inventories: {
+        inventory: {
           include: {
-            sales: true
+            book: true,
+            bookstore: true
           }
         }
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
-    const bookSales = books.map(book => {
-      const totalSales = book.inventories.reduce((sum, inv) => {
-        const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
-        return sum + itemSales;
-      }, 0);
+    const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
 
-      return {
-        bookId: book.id,
-        title: book.title,
-        quantity: totalSales
-      };
-    });
+    const bookSales = sales.reduce((acc, sale) => {
+      const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
+      if (existingBook) {
+        existingBook.quantity += sale.quantity;
+      } else {
+        acc.push({
+          bookId: sale.inventory.book.id,
+          title: sale.inventory.book.title,
+          quantity: sale.quantity
+        });
+      }
+      return acc;
+    }, []);
 
-    const totalSales = bookSales.reduce((sum, book) => sum + book.quantity, 0);
-
-    res.status(200).json({
+    res.json({
       totalSales,
-      bookSales
+      bookSales,
+      sales: sales.map(sale => ({
+        id: sale.id,
+        book_id: sale.inventory.book.id,
+        bookstore_id: sale.inventory.bookstore.id,
+        quantity: sale.quantity,
+        created_at: sale.createdAt,
+        title: sale.inventory.book.title,
+        bookstore_name: sale.inventory.bookstore.name
+      }))
     });
-  } catch(error) {
-    console.error("Error in the sales route:", error);
-    res.status(500).json({error: 'A server error occurred while fetching sales data'});
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

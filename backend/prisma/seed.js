@@ -202,16 +202,29 @@ async function main() {
   const bookstoresCount = await prisma.bookstore.count();
 
   async function createRandomInventory() {
-    const initialInventory = Math.floor(Math.random() * 1000)
-    await prisma.inventory.create({
-      data: {
-        bookId: Math.floor(Math.random() * (booksCount)) + 1,
-        bookstoreId: Math.floor(Math.random() * (bookstoresCount)) +1,
-        country: "México",
-        initial: initialInventory,
-        current: Math.floor(Math.random() * initialInventory)
+    const bookId = Math.floor(Math.random() * (booksCount)) + 1;
+    const bookstoreId = Math.floor(Math.random() * (bookstoresCount)) + 1;
+    
+    const existingInventory = await prisma.inventory.findFirst({
+      where: {
+        bookId: bookId,
+        bookstoreId: bookstoreId,
+        country: "México"
       }
-    })
+    });
+
+    if (!existingInventory) {
+      const initialInventory = Math.floor(Math.random() * 1000);
+      await prisma.inventory.create({
+        data: {
+          bookId: bookId,
+          bookstoreId: bookstoreId,
+          country: "México",
+          initial: initialInventory,
+          current: Math.floor(Math.random() * initialInventory)
+        }
+      });
+    }
   }
 
   await Promise.all(
@@ -316,10 +329,16 @@ async function main() {
       const numSales = Math.floor(Math.random() * 11) + 5;
       for (let i = 0; i < numSales; i++) {
         const quantity = Math.floor(Math.random() * 5) + 1;
+        // Generate a random date within the last 12 months
+        const monthsAgo = Math.floor(Math.random() * 12);
+        const saleDate = new Date();
+        saleDate.setMonth(saleDate.getMonth() - monthsAgo);
+        
         await prisma.sale.create({
           data: {
             inventoryId: inventory.id,
-            quantity: quantity
+            quantity: quantity,
+            createdAt: saleDate
           }
         });
         await prisma.inventory.update({

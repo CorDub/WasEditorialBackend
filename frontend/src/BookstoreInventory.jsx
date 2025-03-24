@@ -1,15 +1,17 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from 'react-router-dom';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import InventoriesContext from "./InventoriesContext";
 import "./BookstoreInventory.scss";
+import BookstoreInventoryBook from "./BookstoreInventoryBook";
+import BookstoreInventoryTotal from "./BookstoreInventoryTotal";
 
-function BookstoreInventory({selectedBookstore}) {
+function BookstoreInventory({selectedBookstore, selectedLogo}) {
   useCheckAdmin();
-  const location = useLocation();
   const { inventories } = useContext(InventoriesContext);
   const [relevantInventories, setRelevantInventories] = useState([]);
   const bookstoreInventoryRef = useRef()
+  const [currentTotal, setCurrentTotal] = useState(0);
+  const [initialTotal, setInitialTotal] = useState(0);
 
   useEffect(() => {
     selectRelevantInventories();
@@ -17,26 +19,22 @@ function BookstoreInventory({selectedBookstore}) {
 
   function selectRelevantInventories() {
     const relevantInventories = [];
+    let currentTotal = 0;
+    let initialTotal = 0;
     for (const inventory of inventories) {
       if (inventory.bookstore.name === selectedBookstore) {
-        relevantInventories.push(inventory)
+        relevantInventories.push(inventory);
+        currentTotal += inventory.current;
+        initialTotal += inventory.initial;
       }
     }
-    setRelevantInventories(relevantInventories);
-  }
-
-  function sortRelevantInventories() {
+    setCurrentTotal(currentTotal);
+    setInitialTotal(initialTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
-    console.log(sortedRelevantInventories);
     setRelevantInventories(sortedRelevantInventories);
   }
 
   useEffect(() => {
-    sortRelevantInventories()
-  }, [relevantInventories])
-
-  useEffect(() => {
-    
     requestAnimationFrame(() => {
       bookstoreInventoryRef.current.classList.add("bookstore-inventory-extended");
     });
@@ -46,7 +44,22 @@ function BookstoreInventory({selectedBookstore}) {
     <div
       className="bookstore-inventory"
       ref={bookstoreInventoryRef}>
-      yes this is bookstore inventory for bookstore {selectedBookstore && selectedBookstore}
+      <BookstoreInventoryTotal
+        selectedBookstore={selectedBookstore}
+        selectedLogo={selectedLogo}
+        currentTotal={currentTotal}
+        initialTotal={initialTotal}/>
+      {relevantInventories.map((inventory, index) => {
+        return (
+          <BookstoreInventoryBook
+            key={index}
+            title={inventory.book.title}
+            current={inventory.current}
+            initial={inventory.initial}/>
+        )
+      })
+
+      }
     </div>
   )
 }

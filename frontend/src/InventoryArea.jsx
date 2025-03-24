@@ -12,6 +12,7 @@ function InventoryArea({
     width,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedLogo,
     retreat,
     setRetreat}) {
   const areaRef = useRef();
@@ -35,6 +36,7 @@ function InventoryArea({
     setRetreat(true);
     setTimeout(() => {
       setSelectedBookstore(name);
+      setSelectedLogo(logo);
       setBookstoreInventoryOpen(true);
     }, 250)
   }

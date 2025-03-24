@@ -7,9 +7,33 @@
   transition: 0.5s;
   width: 0;
   height: 0;
+  // padding: 1rem;
 }
 
 .bookstore-inventory-extended {
   width: calc(100vw - 20px);
   height: calc(100vh - 70px);
+}
+
+.bookstore-inventory-book {
+  display: flex;
+  margin-top: 0.5rem;
+  p {
+    margin: 0;
+  }
+}
+
+.bookstore-inventory-total {
+  margin-left: 1rem;
+  margin-top: 1rem;
+  border: 1px solid black;
+  border-radius: 15px;
+  height: 60px;
+  width: 50%;
+  display: flex;
+}
+
+.bookstore-inventory-img {
+  height: 100%;
+  margin-left: 0.5rem;
 }

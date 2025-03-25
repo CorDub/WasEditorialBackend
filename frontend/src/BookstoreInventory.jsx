@@ -20,7 +20,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   const [initialTotal, setInitialTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalType, steModalType] = useState("inventory");
+  const [modalType, setModalType] = useState("inventory");
   const [modalAction, setModalAction] = useState("");
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -122,6 +122,8 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   useEffect(() => {
     selectRelevantInventories();
   }, [inventories, forceRender])
+
+  console.log(selectedBookstore);
 
   function selectRelevantInventories() {
     const relevantInventories = [];

@@ -1,10 +1,11 @@
 import { useRef, useEffect, useState } from "react";
 import "./InventoriesAreaDashboard.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faBookOpen} from '@fortawesome/free-solid-svg-icons';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 function InventoryArea({
     name,
+    bookstoreName,
     count,
     top,
     left,
@@ -35,7 +36,7 @@ function InventoryArea({
   function openSelectedBookstoreInventory() {
     setRetreat(true);
     setTimeout(() => {
-      setSelectedBookstore(name);
+      setSelectedBookstore(bookstoreName);
       setSelectedLogo(logo);
       setBookstoreInventoryOpen(true);
     }, 250)

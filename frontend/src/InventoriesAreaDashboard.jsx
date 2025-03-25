@@ -318,6 +318,7 @@ function InventoriesAreaDashboard() {
             <InventoryArea
               key={index}
               name={noSpaceName}
+              bookstoreName={bookstore.name}
               count={bookstore.count}
               top={area.top}
               left={area.left}

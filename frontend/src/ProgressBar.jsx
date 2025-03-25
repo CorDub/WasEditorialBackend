@@ -6,7 +6,7 @@ function ProgressBar({current, initial}) {
   const currentBarRef = useRef();
 
   function setCurrentLength() {
-    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * current / initial);
+    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * (initial-current) / initial);
     currentBarRef.current.style.width = currentLength + "px";
   }
 
@@ -18,9 +18,9 @@ function ProgressBar({current, initial}) {
     <div className="progress-bar">
       <div className="progress-bar-max" ref={maxBarRef}>
         <div className="progress-bar-current" ref={currentBarRef}>
-          <div className="pb-current-number">{current}</div>
+          <div className="pb-current-number">{initial - current}</div>
         </div>
-        <div className="pb-max-number">{initial}</div>
+        <div className="pb-max-number">{current}</div>
       </div>
     </div>
   )

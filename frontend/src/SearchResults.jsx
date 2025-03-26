@@ -23,6 +23,7 @@ function SearchResults({
   }, [searchResults]);
 
   function openSelectedBookstoreInventory(name) {
+    setBookstoreInventoryOpen(false);
     setSearchTerms("");
     setRetreat(true);
     setTimeout(() => {

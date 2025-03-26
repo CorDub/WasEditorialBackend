@@ -12,7 +12,7 @@ import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({selectedBookstore, selectedLogo}) {
   useCheckAdmin();
-  const { inventories } = useContext(InventoriesContext);
+  const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [relevantInventories, setRelevantInventories] = useState([]);
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
@@ -120,10 +120,11 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   });
 
   useEffect(() => {
+    if (!inventories) {
+      fetchInventories();
+    }
     selectRelevantInventories();
   }, [inventories, forceRender])
-
-  console.log(selectedBookstore);
 
   function selectRelevantInventories() {
     const relevantInventories = [];

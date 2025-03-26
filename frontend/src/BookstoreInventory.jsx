@@ -12,7 +12,7 @@ import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({selectedBookstore, selectedLogo}) {
   useCheckAdmin();
-  const { inventories } = useContext(InventoriesContext);
+  const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [relevantInventories, setRelevantInventories] = useState([]);
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
@@ -20,7 +20,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   const [initialTotal, setInitialTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalType, steModalType] = useState("inventory");
+  const [modalType, setModalType] = useState("inventory");
   const [modalAction, setModalAction] = useState("");
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -120,6 +120,9 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   });
 
   useEffect(() => {
+    if (!inventories) {
+      fetchInventories();
+    }
     selectRelevantInventories();
   }, [inventories, forceRender])
 

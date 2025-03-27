@@ -192,7 +192,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
     const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
     const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-    const errorsInicial = checkForErrors("Cantidad inicial", inicial, expectationsInicial, inicialRef);
+    const errorsInicial = checkForErrors("Cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef);
     const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

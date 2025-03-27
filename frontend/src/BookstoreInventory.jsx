@@ -77,7 +77,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo inventario</button>
+        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button">Añadir nuevo inventario</button>
       </div>
     ),
     initialState: {
@@ -92,8 +92,8 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
         backgroundColor: "#fff",
         position: "fixed",
         top: "140px",
-        left: "10px",
-        width: "98vw"
+        left: "25px",
+        width: "97vw"
       }
     },
     muiTableContainerProps: {

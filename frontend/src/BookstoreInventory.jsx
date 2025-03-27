@@ -25,13 +25,18 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isTableActionsOpen, setTableActionsOpen] = useState(false);
 
   const columns = useMemo(() => [
     {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          <TableActions openModal={openModal} row={row}/>
+          <TableActions
+            openModal={openModal}
+            row={row}
+            isTableActionsOpen={isTableActionsOpen}
+            setTableActionsOpen={setTableActionsOpen}/>
         </div>
       )
     },
@@ -169,6 +174,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
 
   function closeModal(globalFilter, reload, alertMessage, alertType) {
     setModalOpen(false);
+    setTableActionsOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
       fetchInventories();

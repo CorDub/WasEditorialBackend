@@ -6,7 +6,7 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
-function TableActions({openModal, row}) {
+function TableActions({openModal, row, isTableActionsOpen, setTableActionsOpen}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -16,6 +16,7 @@ function TableActions({openModal, row}) {
   function displayingActions() {
     if (gearRef.current.classList.contains("displaying")) {
       gearRef.current.classList.remove("displaying");
+      setTableActionsOpen(false);
     } else {
       gearRef.current.classList.add("displaying");
     }

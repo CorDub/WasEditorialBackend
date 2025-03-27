@@ -229,7 +229,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
           book: bookId,
           bookstore: bookstoreId,
           country: country,
-          inicial: inicial
+          inicial: parseInt(inicial)
         }),
       });
 
@@ -281,7 +281,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
         </select>
         <input type="text" placeholder="Cantidad inicial de libros"
           className="global-input" value={inicial}
-          ref={inicialRef} onChange={(e) => setInicial(parseInt(e.target.value))}></input>
+          ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

@@ -1,13 +1,20 @@
+import { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 function BookstoreInventoryTotal({selectedBookstore, selectedLogo, currentTotal, initialTotal}) {
+  const [logo, setLogo] = useState(null);
+
+  useEffect(() => {
+      import (`./assets/${selectedBookstore}.png`)
+        .then((image) => setLogo(image.default));
+  }, [selectedLogo])
 
   return(
     <div className="bookstore-inventory-total">
-      { selectedLogo ?
-        <img src={selectedLogo} className="bookstore-inventory-img"/> :
+      {logo ?
+        <img src={logo} className="bookstore-inventory-img"/> :
         <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
           <FontAwesomeIcon
             icon={faBookOpen}

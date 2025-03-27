@@ -642,7 +642,11 @@ router.patch('/inventory', async (req, res) => {
       country,
       inicial
     } = req.body;
-    const updatedInventory = await prisma.inventory.update({
+    const currentInventory = await prisma.inventory.findUnique({
+      where: {id: id}
+    });
+    const difference = inicial - currentInventory.initial
+    let updatedInventory = await prisma.inventory.update({
       where: {id: id},
       data: {
         bookId: book,
@@ -651,6 +655,17 @@ router.patch('/inventory', async (req, res) => {
         initial: inicial
       }
     });
+    if (updatedInventory.current > updatedInventory.initial) {
+      updatedInventory = await prisma.inventory.update({
+        where: {id: id},
+        data: {current: updatedInventory.initial}
+      })
+    } else {
+      updatedInventory = await prisma.inventory.update({
+        where: {id: id},
+        data: {current: updatedInventory.current + difference}
+      })
+    }
 
     console.log(updatedInventory);
     if (updatedInventory) {

@@ -13,7 +13,6 @@ import ProgressBar from "./ProgressBar";
 function BookstoreInventory({selectedBookstore, selectedLogo}) {
   useCheckAdmin();
   const { inventories, fetchInventories } = useContext(InventoriesContext);
-  const [relevantInventories, setRelevantInventories] = useState([]);
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
   const [currentTotal, setCurrentTotal] = useState(0);
@@ -26,13 +25,18 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isTableActionsOpen, setTableActionsOpen] = useState(false);
 
   const columns = useMemo(() => [
     {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          <TableActions openModal={openModal} row={row}/>
+          <TableActions
+            openModal={openModal}
+            row={row}
+            isTableActionsOpen={isTableActionsOpen}
+            setTableActionsOpen={setTableActionsOpen}/>
         </div>
       )
     },
@@ -140,7 +144,6 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
     setCurrentTotal(currentTotal);
     setInitialTotal(initialTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
-    setRelevantInventories(sortedRelevantInventories);
     setData(sortedRelevantInventories);
   }
 
@@ -171,8 +174,10 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
 
   function closeModal(globalFilter, reload, alertMessage, alertType) {
     setModalOpen(false);
+    setTableActionsOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
+      fetchInventories();
       setForceRender(!forceRender);
     }
     if (alertMessage) {
@@ -190,15 +195,6 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
         initialTotal={initialTotal}/>
-      {/* {relevantInventories.map((inventory, index) => {
-        return (
-          <BookstoreInventoryBook
-            key={index}
-            title={inventory.book.title}
-            current={inventory.current}
-            initial={inventory.initial}/>
-        )
-      }) */}
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

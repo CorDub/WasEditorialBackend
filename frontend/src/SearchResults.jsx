@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import "./SearchResults.scss";
 
 function SearchResults({
@@ -23,6 +23,7 @@ function SearchResults({
   }, [searchResults]);
 
   function openSelectedBookstoreInventory(name) {
+    setBookstoreInventoryOpen(false);
     setSearchTerms("");
     setRetreat(true);
     setTimeout(() => {

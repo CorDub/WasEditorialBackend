@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 import InventoriesContext from "./InventoriesContext";
 import SearchResults from "./SearchResults";
 
-function SuperAdminNavbar({ active, setBookstoreInventoryOpen, setSelectedBookstore, retreat, setRetreat }) {
+function SuperAdminNavbar({
+    active,
+    setBookstoreInventoryOpen,
+    setSelectedBookstore,
+    retreat,
+    setRetreat }) {
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
   const { inventories, fetchInventories } = useContext(InventoriesContext);

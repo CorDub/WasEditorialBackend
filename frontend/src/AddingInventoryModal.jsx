@@ -252,6 +252,14 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
     }
   }
 
+  useEffect(() => {
+    setBookstore(clickedRow.bookstore);
+  }, [clickedRow])
+
+  useEffect(() => {
+    console.log(bookstore);
+  }, [bookstore])
+
   return(
     <div className="modal-proper">
       <div className="form-title">
@@ -267,9 +275,10 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         </select>
         <select onChange={(e) => dropDownChange(e, "Bookstore")}
           className="select-global" ref={bookstoreRef}>
-          <option value="null">Selecciona libreria</option>
+          <option value={clickedRow.bookstore}>{clickedRow.bookstore}</option>
           {existingBookstores && existingBookstores.map((bookstore, index) => (
-            <option key={index} value={bookstore.title}>{bookstore.name}</option>
+            bookstore.name !== clickedRow.bookstore &&
+              <option key={index} value={bookstore.title}>{bookstore.name}</option>
           ))}
         </select>
         <select onChange={(e) => dropDownChange(e, "Country")}

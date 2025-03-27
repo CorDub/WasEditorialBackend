@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
@@ -6,7 +6,7 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
-function TableActions({openModal, row, isTableActionsOpen, setTableActionsOpen}) {
+function TableActions ({openModal, row, isTableActionsOpen, setTableActionsOpen}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -16,9 +16,10 @@ function TableActions({openModal, row, isTableActionsOpen, setTableActionsOpen})
   function displayingActions() {
     if (gearRef.current.classList.contains("displaying")) {
       gearRef.current.classList.remove("displaying");
-      setTableActionsOpen(false);
     } else {
+      console.log("adding displaying");
       gearRef.current.classList.add("displaying");
+      setTableActionsOpen(true);
     }
 
     if (buttonsRef.current.classList.contains("visible")) {
@@ -35,6 +36,22 @@ function TableActions({openModal, row, isTableActionsOpen, setTableActionsOpen})
       }, 5)
     }
   }
+
+  useEffect(() => {
+    console.log(isTableActionsOpen);
+  }, [isTableActionsOpen]);
+
+  // useEffect(() => {
+  //   console.log(isTableActionsOpen);
+  //   if (isTableActionsOpen === false) {
+  //     gearRef.current.classList.remove("displaying");
+  //     buttonsRef.current.classList.remove("visible");
+  //     buttonsRef.current.classList.add("invisible");
+  //     setTimeout(() => {
+  //       buttonsRef.current.classList.add("hidden");
+  //     }, 200)
+  //   }
+  // }, [isTableActionsOpen])
 
   function toggleTooltip(message, elementId) {
     if (x === null || y === null) {
@@ -69,4 +86,4 @@ function TableActions({openModal, row, isTableActionsOpen, setTableActionsOpen})
   )
 }
 
-export default TableActions
+export default TableActions;

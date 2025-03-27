@@ -243,7 +243,6 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
         const alertMessage = 'No se pudó editar el inventario.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        console.log("Yeah created");
         const alertMessage = `El inventario ha sido editado con exito.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }

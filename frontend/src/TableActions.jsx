@@ -17,9 +17,7 @@ function TableActions ({openModal, row, isTableActionsOpen, setTableActionsOpen}
     if (gearRef.current.classList.contains("displaying")) {
       gearRef.current.classList.remove("displaying");
     } else {
-      console.log("adding displaying");
       gearRef.current.classList.add("displaying");
-      setTableActionsOpen(true);
     }
 
     if (buttonsRef.current.classList.contains("visible")) {
@@ -38,20 +36,12 @@ function TableActions ({openModal, row, isTableActionsOpen, setTableActionsOpen}
   }
 
   useEffect(() => {
-    console.log(isTableActionsOpen);
-  }, [isTableActionsOpen]);
-
-  // useEffect(() => {
-  //   console.log(isTableActionsOpen);
-  //   if (isTableActionsOpen === false) {
-  //     gearRef.current.classList.remove("displaying");
-  //     buttonsRef.current.classList.remove("visible");
-  //     buttonsRef.current.classList.add("invisible");
-  //     setTimeout(() => {
-  //       buttonsRef.current.classList.add("hidden");
-  //     }, 200)
-  //   }
-  // }, [isTableActionsOpen])
+    if (!isTableActionsOpen) {
+      gearRef.current.classList.remove("displaying");
+      buttonsRef.current.classList.remove("visible");
+      buttonsRef.current.classList.add("hidden");
+    }
+  }, [isTableActionsOpen, gearRef, buttonsRef])
 
   function toggleTooltip(message, elementId) {
     if (x === null || y === null) {
@@ -71,6 +61,7 @@ function TableActions ({openModal, row, isTableActionsOpen, setTableActionsOpen}
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
         onClick={displayingActions} ref={gearRef}/>
+
       <div className="ta-buttons hidden" ref={buttonsRef}>
         <Tooltip message={tooltipMessage} x={x} y={y}/>
         <FontAwesomeIcon icon={faPen} className="ta-button ta-edit" id={`ta-edit-${row.index}`}

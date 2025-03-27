@@ -33,6 +33,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
       Cell: ({row}) => (
         <div>
           <TableActions
+            key={isTableActionsOpen}
             openModal={openModal}
             row={row}
             isTableActionsOpen={isTableActionsOpen}
@@ -66,7 +67,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
         <ProgressBar current={row.original.current} initial={row.original.initial} />
       )
     }
-  ], []);
+  ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
     data,
@@ -128,7 +129,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
       fetchInventories();
     }
     selectRelevantInventories();
-  }, [inventories, forceRender])
+  }, [inventories])
 
   function selectRelevantInventories() {
     const relevantInventories = [];
@@ -174,7 +175,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
 
   function closeModal(globalFilter, reload, alertMessage, alertType) {
     setModalOpen(false);
-    setTableActionsOpen(false);
+    setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
       fetchInventories();

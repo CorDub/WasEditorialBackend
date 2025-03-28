@@ -77,7 +77,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button">Añadir nuevo inventario</button>
+        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
       </div>
     ),
     initialState: {

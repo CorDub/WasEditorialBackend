@@ -21,6 +21,7 @@ function InventoriesAreaDashboard() {
   const [isBookInventoryOpen, setBookInventoryOpen] = useState(false);
   const [isBookstoreInventoryOpen, setBookstoreInventoryOpen] = useState(false);
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreNoSpaces, setSelectedBookstoreNoSpaces] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
   const [retreat, setRetreat] = useState(false);
 
@@ -334,6 +335,7 @@ function InventoriesAreaDashboard() {
               width={area.width}
               setBookstoreInventoryOpen={setBookstoreInventoryOpen}
               setSelectedBookstore={setSelectedBookstore}
+              setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
               setSelectedLogo={setSelectedLogo}
               retreat={retreat}
               setRetreat={setRetreat}/>
@@ -344,6 +346,7 @@ function InventoriesAreaDashboard() {
       {isBookstoreInventoryOpen &&
         <BookstoreInventory
           selectedBookstore={selectedBookstore}
+          selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
           selectedLogo={selectedLogo}
           isBookstoreInventoryOpen={isBookstoreInventoryOpen}
           setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}

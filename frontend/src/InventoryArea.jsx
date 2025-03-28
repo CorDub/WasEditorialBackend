@@ -13,6 +13,7 @@ function InventoryArea({
     width,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBookstoreNoSpaces,
     setSelectedLogo,
     retreat,
     setRetreat}) {
@@ -33,10 +34,14 @@ function InventoryArea({
       .then((image) => setLogo(image.default));
   }, [name, top, left, height, width])
 
+  useEffect(() => {
+  }, [bookstoreName, name])
+
   function openSelectedBookstoreInventory() {
     setRetreat(true);
     setTimeout(() => {
       setSelectedBookstore(bookstoreName);
+      setSelectedBookstoreNoSpaces(name);
       setSelectedLogo(logo);
       setBookstoreInventoryOpen(true);
     }, 250)

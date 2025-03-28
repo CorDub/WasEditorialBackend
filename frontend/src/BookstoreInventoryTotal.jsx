@@ -6,6 +6,7 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 function BookstoreInventoryTotal({
     selectedBookstore,
+    selectedBookstoreNoSpaces,
     selectedLogo,
     currentTotal,
     initialTotal,
@@ -15,7 +16,7 @@ function BookstoreInventoryTotal({
 
   // import only the logo you need based on the name
   useEffect(() => {
-      import (`./assets/${selectedBookstore}.png`)
+      import (`./assets/${selectedBookstoreNoSpaces}.png`)
         .then((image) => setLogo(image.default));
   }, [selectedLogo])
 
@@ -38,11 +39,13 @@ function BookstoreInventoryTotal({
       }
       <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>
       <div>Total disponibles: {currentTotal} / {initialTotal}</div>
-      <ProgressBar current={currentTotal} initial={initialTotal} />
-      <FontAwesomeIcon
-        icon={faCircleXmark}
-        className="inventory-back-button"
-        onClick={returnToInventoriesAreaDashboard}/>
+      <div className="bookstore-progress-return">
+        <ProgressBar current={currentTotal} initial={initialTotal} />
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          className="inventory-back-button"
+          onClick={returnToInventoriesAreaDashboard}/>
+      </div>
     </div>
   )
 }

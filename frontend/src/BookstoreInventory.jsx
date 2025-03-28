@@ -12,6 +12,7 @@ import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({
     selectedBookstore,
+    selectedBookstoreNoSpaces,
     selectedLogo,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen}) {
@@ -197,6 +198,7 @@ function BookstoreInventory({
       ref={bookstoreInventoryRef}>
       <BookstoreInventoryTotal
         selectedBookstore={selectedBookstore}
+        selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
         initialTotal={initialTotal}

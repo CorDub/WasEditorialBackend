@@ -300,6 +300,14 @@ function InventoriesAreaDashboard() {
     setAreaDimensions(finalAreaDimensions);
   }, [viewportHeight, viewportWidth, currentQuantities])
 
+  useEffect(() => {
+    console.log(!isBookInventoryOpen && !isBookstoreInventoryOpen);
+  }, [isBookstoreInventoryOpen])
+
+  useEffect(() => {
+    setRetreat(false);
+  }, [isBookstoreInventoryOpen])
+
   return (
     <div className="inventory-area-container">
       <Navbar
@@ -309,7 +317,7 @@ function InventoriesAreaDashboard() {
         setSelectedBookstore={setSelectedBookstore}
         retreat={retreat}
         setRetreat={setRetreat}/>
-      {isBookInventoryOpen === false && isBookstoreInventoryOpen === false &&
+      {!isBookInventoryOpen && !isBookstoreInventoryOpen &&
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
           const bookstore = bookstoresCounts[index];
@@ -334,7 +342,11 @@ function InventoriesAreaDashboard() {
       </div>}
 
       {isBookstoreInventoryOpen &&
-        <BookstoreInventory selectedBookstore={selectedBookstore} selectedLogo={selectedLogo}/>}
+        <BookstoreInventory
+          selectedBookstore={selectedBookstore}
+          selectedLogo={selectedLogo}
+          isBookstoreInventoryOpen={isBookstoreInventoryOpen}
+          setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}
     </div>
   )
 }

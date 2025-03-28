@@ -612,6 +612,37 @@ router.post('/inventory', async (req, res) => {
       country,
       inicial
     } = req.body;
+    const existing = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: book,
+          bookstoreId: bookstore,
+          country: country
+        }
+      }
+    });
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Este inventario ya existe"})
+        return;
+      }
+
+      const exhumedInventory = await prisma.inventory.update({
+        where: {id: existing.id},
+        data: {
+          bookId: book,
+          bookstoreId: bookstore,
+          country: country,
+          initial: inicial,
+          current: inicial,
+          isDeleted: false
+        }
+      });
+      res.status(201).json(exhumedInventory);
+      return;
+    }
+
     const createdInventory = await prisma.inventory.create({
       data: {
         bookId: book,

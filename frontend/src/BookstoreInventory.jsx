@@ -10,7 +10,12 @@ import Alert from "./Alert";
 import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
 
-function BookstoreInventory({selectedBookstore, selectedLogo}) {
+function BookstoreInventory({
+    selectedBookstore,
+    selectedBookstoreNoSpaces,
+    selectedLogo,
+    isBookstoreInventoryOpen,
+    setBookstoreInventoryOpen}) {
   useCheckAdmin();
   const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [data, setData] = useState([]);
@@ -77,7 +82,7 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button">Añadir nuevo inventario</button>
+        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
       </div>
     ),
     initialState: {
@@ -193,9 +198,12 @@ function BookstoreInventory({selectedBookstore, selectedLogo}) {
       ref={bookstoreInventoryRef}>
       <BookstoreInventoryTotal
         selectedBookstore={selectedBookstore}
+        selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
-        initialTotal={initialTotal}/>
+        initialTotal={initialTotal}
+        isBookstoreInventoryOpen={isBookstoreInventoryOpen}
+        setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

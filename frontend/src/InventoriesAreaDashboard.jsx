@@ -21,6 +21,7 @@ function InventoriesAreaDashboard() {
   const [isBookInventoryOpen, setBookInventoryOpen] = useState(false);
   const [isBookstoreInventoryOpen, setBookstoreInventoryOpen] = useState(false);
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreNoSpaces, setSelectedBookstoreNoSpaces] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
   const [retreat, setRetreat] = useState(false);
 
@@ -300,6 +301,14 @@ function InventoriesAreaDashboard() {
     setAreaDimensions(finalAreaDimensions);
   }, [viewportHeight, viewportWidth, currentQuantities])
 
+  useEffect(() => {
+    console.log(!isBookInventoryOpen && !isBookstoreInventoryOpen);
+  }, [isBookstoreInventoryOpen])
+
+  useEffect(() => {
+    setRetreat(false);
+  }, [isBookstoreInventoryOpen])
+
   return (
     <div className="inventory-area-container">
       <Navbar
@@ -309,7 +318,7 @@ function InventoriesAreaDashboard() {
         setSelectedBookstore={setSelectedBookstore}
         retreat={retreat}
         setRetreat={setRetreat}/>
-      {isBookInventoryOpen === false && isBookstoreInventoryOpen === false &&
+      {!isBookInventoryOpen && !isBookstoreInventoryOpen &&
       <div className="areas-container">
         {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
           const bookstore = bookstoresCounts[index];
@@ -326,6 +335,7 @@ function InventoriesAreaDashboard() {
               width={area.width}
               setBookstoreInventoryOpen={setBookstoreInventoryOpen}
               setSelectedBookstore={setSelectedBookstore}
+              setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
               setSelectedLogo={setSelectedLogo}
               retreat={retreat}
               setRetreat={setRetreat}/>
@@ -334,7 +344,12 @@ function InventoriesAreaDashboard() {
       </div>}
 
       {isBookstoreInventoryOpen &&
-        <BookstoreInventory selectedBookstore={selectedBookstore} selectedLogo={selectedLogo}/>}
+        <BookstoreInventory
+          selectedBookstore={selectedBookstore}
+          selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
+          selectedLogo={selectedLogo}
+          isBookstoreInventoryOpen={isBookstoreInventoryOpen}
+          setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}
     </div>
   )
 }

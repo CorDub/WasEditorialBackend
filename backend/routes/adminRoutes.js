@@ -63,8 +63,45 @@ router.post('/user', async (req, res) => {
       email,
       category } = req.body;
 
+    const existing = await prisma.user.findUnique({
+      where: {
+        first_name_last_name: {
+          first_name: firstName,
+          last_name: lastName
+        }
+      }
+    });
+
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Este usuario ya existe"})
+        return;
+      }
+
+      const exhumedUser = await prisma.user.update({
+        where: {id: existing.id},
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          country: country,
+          referido: referido,
+          email: email,
+          password: hashedPassword,
+          categoryId: parseInt(category),
+          isDeleted: false
+        }
+      });
+      res.status(201).json({
+        firstName: exhumedUser.first_name,
+        lastName: exhumedUser.last_name,
+        email: exhumedUser.email});
+      sendSetPasswordMail(email, firstName, password);
+      return;
+    }
+
     const new_author =  await prisma.user.create({
       data: {
         first_name: firstName,
@@ -228,6 +265,33 @@ router.post('/category', async (req, res) => {
       regalias,
       gestionTiendas,
       gestionMinima } = req.body;
+
+    const existing = await prisma.category.findUnique({
+      where: {
+        type: {type}
+      }
+    });
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Esta categoria ya existe"})
+        return;
+      }
+
+      const exhumedUser = await prisma.user.update({
+        where: {id: existing.id},
+        data: {
+          type: tipo,
+          percentage_royalties: parseFloat(regalias),
+          percentage_management_stores: parseFloat(gestionTiendas),
+          management_min: parseFloat(gestionMinima),
+          isDeleted: false
+        }
+      });
+      res.status(201).json({name: exhumedUser.type});
+      return;
+    }
+
     const new_category =  await prisma.category.create({
       data: {
         type: tipo,

@@ -28,7 +28,7 @@ function InventoriesProvider({ children }) {
   }, []);
 
   return (
-    <InventoriesContext.Provider value={{ inventories }}>
+    <InventoriesContext.Provider value={{ inventories, fetchInventories }}>
       {children}
     </InventoriesContext.Provider>
   )

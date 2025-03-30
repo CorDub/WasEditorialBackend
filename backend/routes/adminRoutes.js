@@ -63,8 +63,45 @@ router.post('/user', async (req, res) => {
       email,
       category } = req.body;
 
+    const existing = await prisma.user.findUnique({
+      where: {
+        first_name_last_name: {
+          first_name: firstName,
+          last_name: lastName
+        }
+      }
+    });
+
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Este usuario ya existe"})
+        return;
+      }
+
+      const exhumedUser = await prisma.user.update({
+        where: {id: existing.id},
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          country: country,
+          referido: referido,
+          email: email,
+          password: hashedPassword,
+          categoryId: parseInt(category),
+          isDeleted: false
+        }
+      });
+      res.status(201).json({
+        firstName: exhumedUser.first_name,
+        lastName: exhumedUser.last_name,
+        email: exhumedUser.email});
+      sendSetPasswordMail(email, firstName, password);
+      return;
+    }
+
     const new_author =  await prisma.user.create({
       data: {
         first_name: firstName,
@@ -228,6 +265,33 @@ router.post('/category', async (req, res) => {
       regalias,
       gestionTiendas,
       gestionMinima } = req.body;
+
+    const existing = await prisma.category.findUnique({
+      where: {
+        type: {type}
+      }
+    });
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Esta categoria ya existe"})
+        return;
+      }
+
+      const exhumedUser = await prisma.user.update({
+        where: {id: existing.id},
+        data: {
+          type: tipo,
+          percentage_royalties: parseFloat(regalias),
+          percentage_management_stores: parseFloat(gestionTiendas),
+          management_min: parseFloat(gestionMinima),
+          isDeleted: false
+        }
+      });
+      res.status(201).json({name: exhumedUser.type});
+      return;
+    }
+
     const new_category =  await prisma.category.create({
       data: {
         type: tipo,
@@ -612,6 +676,37 @@ router.post('/inventory', async (req, res) => {
       country,
       inicial
     } = req.body;
+    const existing = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: book,
+          bookstoreId: bookstore,
+          country: country
+        }
+      }
+    });
+
+    if (existing) {
+      if (existing.isDeleted === false) {
+        res.status(500).json({message: "Este inventario ya existe"})
+        return;
+      }
+
+      const exhumedInventory = await prisma.inventory.update({
+        where: {id: existing.id},
+        data: {
+          bookId: book,
+          bookstoreId: bookstore,
+          country: country,
+          initial: inicial,
+          current: inicial,
+          isDeleted: false
+        }
+      });
+      res.status(201).json(exhumedInventory);
+      return;
+    }
+
     const createdInventory = await prisma.inventory.create({
       data: {
         bookId: book,
@@ -642,7 +737,11 @@ router.patch('/inventory', async (req, res) => {
       country,
       inicial
     } = req.body;
-    const updatedInventory = await prisma.inventory.update({
+    const currentInventory = await prisma.inventory.findUnique({
+      where: {id: id}
+    });
+    const difference = inicial - currentInventory.initial
+    let updatedInventory = await prisma.inventory.update({
       where: {id: id},
       data: {
         bookId: book,
@@ -651,6 +750,17 @@ router.patch('/inventory', async (req, res) => {
         initial: inicial
       }
     });
+    if (updatedInventory.current > updatedInventory.initial) {
+      updatedInventory = await prisma.inventory.update({
+        where: {id: id},
+        data: {current: updatedInventory.initial}
+      })
+    } else {
+      updatedInventory = await prisma.inventory.update({
+        where: {id: id},
+        data: {current: updatedInventory.current + difference}
+      })
+    }
 
     console.log(updatedInventory);
     if (updatedInventory) {

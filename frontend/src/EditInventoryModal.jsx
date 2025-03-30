@@ -192,7 +192,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
     const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
     const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-    const errorsInicial = checkForErrors("Cantidad inicial", inicial, expectationsInicial, inicialRef);
+    const errorsInicial = checkForErrors("Cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef);
     const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -229,7 +229,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
           book: bookId,
           bookstore: bookstoreId,
           country: country,
-          inicial: inicial
+          inicial: parseInt(inicial)
         }),
       });
 
@@ -243,7 +243,6 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
         const alertMessage = 'No se pudó editar el inventario.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        console.log("Yeah created");
         const alertMessage = `El inventario ha sido editado con exito.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
@@ -282,7 +281,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
         </select>
         <input type="text" placeholder="Cantidad inicial de libros"
           className="global-input" value={inicial}
-          ref={inicialRef} onChange={(e) => setInicial(parseInt(e.target.value))}></input>
+          ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

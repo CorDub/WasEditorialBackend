@@ -6,7 +6,13 @@ import AdminNavbar from "./AdminNavbar";
 import SuperAdminNavbar from "./SuperAdminNavbar";
 import AuthorNavbar from "./AuthorNavbar";
 
-function Navbar({ subNav, active, setBookstoreInventoryOpen, setSelectedBookstore, retreat, setRetreat }) {
+function Navbar({
+    subNav,
+    active,
+    setBookstoreInventoryOpen,
+    setSelectedBookstore,
+    retreat,
+    setRetreat }) {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 

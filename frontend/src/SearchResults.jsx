@@ -1,5 +1,4 @@
-import { useRef, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useRef, useEffect, useState } from "react";
 import "./SearchResults.scss";
 
 function SearchResults({
@@ -11,7 +10,6 @@ function SearchResults({
   setRetreat,
   setSearchTerms}) {
   const searchResultsRef = useRef();
-  // const navigate = useNavigate();
 
   function determineSearchResultsPosition() {
     const searchBarRefPosition = searchBarRef.current.getBoundingClientRect()
@@ -24,15 +22,8 @@ function SearchResults({
     determineSearchResultsPosition();
   }, [searchResults]);
 
-  // function redirectToRelevant(name, type) {
-  //   if (type === "book") {
-  //     navigate("/admin/bookInventory", {state: {name: name,  type: type}})
-  //   } else if (type === "bookstore") {
-  //     navigate("/admin/bookstoreInventory", {state: {name: name,  type: type}})
-  //   }
-  // }
-
   function openSelectedBookstoreInventory(name) {
+    setBookstoreInventoryOpen(false);
     setSearchTerms("");
     setRetreat(true);
     setTimeout(() => {

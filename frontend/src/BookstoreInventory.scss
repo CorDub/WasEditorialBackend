@@ -3,13 +3,80 @@
   top: 60px;
   left: 10px;
   border-radius: 15px;
-  background-color: white;
+  background-color: #fff;
   transition: 0.5s;
   width: 0;
   height: 0;
+  // padding: 1rem;
 }
 
 .bookstore-inventory-extended {
   width: calc(100vw - 20px);
   height: calc(100vh - 70px);
+}
+
+.bookstore-inventory-book {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 15px;
+  background-color: #E2E2E2;
+  width: 50%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  p {
+    margin: 0;
+    font-size: 0.9em;
+  }
+}
+
+.bookstore-inventory-book-title {
+  width: 30%;
+}
+
+.bookstore-inventory-book-vendidos {
+  width: 20%;
+}
+
+.bookstore-inventory-book-disponibles {
+  width: 20%;
+}
+
+.bookstore-inventory-total {
+  margin-left: 1rem;
+  margin-top: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 15px;
+  height: 60px;
+  width: 97.5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #E2E2E2;
+}
+
+.bookstore-inventory-img {
+  height: 30px;
+  margin-left: 0.5rem;
+}
+
+.inventory-back-button {
+  color: #4E5981;
+  margin-left: 0.5rem;
+}
+
+.inventory-back-button:hover {
+  cursor: pointer;
+}
+
+.bookstore-progress-return {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

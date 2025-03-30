@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
@@ -6,7 +6,11 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
-function TableActions({openModal, row}) {
+function TableActions ({
+    openModal,
+    row,
+    isTableActionsOpen,
+    setTableActionsOpen}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -35,6 +39,15 @@ function TableActions({openModal, row}) {
     }
   }
 
+  //Cleaning up state after closing a modal
+  useEffect(() => {
+    if (!isTableActionsOpen) {
+      gearRef.current.classList.remove("displaying");
+      buttonsRef.current.classList.remove("visible");
+      buttonsRef.current.classList.add("hidden");
+    }
+  }, [isTableActionsOpen, gearRef, buttonsRef])
+
   function toggleTooltip(message, elementId) {
     if (x === null || y === null) {
       const element = document.getElementById(elementId);
@@ -53,6 +66,7 @@ function TableActions({openModal, row}) {
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
         onClick={displayingActions} ref={gearRef}/>
+
       <div className="ta-buttons hidden" ref={buttonsRef}>
         <Tooltip message={tooltipMessage} x={x} y={y}/>
         <FontAwesomeIcon icon={faPen} className="ta-button ta-edit" id={`ta-edit-${row.index}`}
@@ -68,4 +82,4 @@ function TableActions({openModal, row}) {
   )
 }
 
-export default TableActions
+export default TableActions;

@@ -80,41 +80,45 @@ function AuthorSales() {
   return (
     <>
     <Navbar subNav={user.role} active={"autores"} />
-    <div className="sales-container">
+    <div id="author-sales-container">
       <h2>Resumen de ventas</h2>
-      <div className="sales-summary">
-        <div className="total-sales">
-          <h3>Total de libros vendidos</h3>
-          <p>{salesData.totalSales}</p>
+      <div id="author-sales-content">
+        <div id="author-sales-content-left">
+          <div id="total-sales">
+            <h3>Total de libros vendidos</h3>
+             <p>{salesData.totalSales}</p>
+          </div>
+          <div id="books-sold">
+            <h3>Libros vendidos</h3>
+             <ul>
+                {salesData.bookSales.map(book => (
+                  <li key={book.bookId}>
+                    {book.title}: {book.quantity}
+                  </li>
+                ))}
+              </ul>
+          </div>
         </div>
-        <div className="books-sold">
-          <h3>Libros vendidos</h3>
-          <ul>
-            {salesData.bookSales.map(book => (
-              <li key={book.bookId}>
-                {book.title}: {book.quantity}
-              </li>
-            ))}
-          </ul>
+        <div id="author-sales-content-right">
+          <div id="sales-chart">
+            <h3>Ventas mensuales</h3>
+            <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={monthlyData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="quantity"
+                stroke="#8884d8"
+                name="Libros vendidos"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          </div>
         </div>
-      </div>
-      <div className="sales-chart">
-        <h3>Ventas mensuales</h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={monthlyData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="quantity"
-              stroke="#8884d8"
-              name="Libros vendidos"
-            />
-          </LineChart>
-        </ResponsiveContainer>
       </div>
     </div>
   </>

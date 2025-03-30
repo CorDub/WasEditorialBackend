@@ -1,60 +1,75 @@
-//  .sales-container {
-//   padding: 20px;
-//   background-color: white;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-//   margin: 20px;
-// }
+ #author-sales-container {
+  padding-top: 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  height: 100%;
+  width: 90%;
+}
 
-// .sales-container h2 {
-//   color: #333;
-//   margin-bottom: 20px;
-// }
 
-// .sales-summary {
-//   display: flex;
-//   justify-content: space-between;
-//   margin-bottom: 30px;
-//   gap: 20px;
-// }
+#sales-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
 
-// .total-sales, .books-sold {
-//   flex: 1;
-//   padding: 20px;
-//   background-color: #f8f9fa;
-//   border-radius: 6px;
-// }
+#author-sales-content {
+  display: flex;
+  margin-bottom: 30px;
+  gap: 20px;
+}
 
-// .total-sales h3, .books-sold h3 {
-//   color: #666;
-//   margin-bottom: 10px;
-// }
+#author-sales-content-left {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
+}
 
-// .total-sales p {
-//   font-size: 24px;
-//   font-weight: bold;
-//   color: #333;
-// }
+#author-sales-content-right {
+  flex: 1;
 
-// .books-sold ul {
-//   list-style: none;
-//   padding: 0;
-//   margin: 0;
-// }
+}
 
-// .books-sold li {
-//   padding: 8px 0;
-//   border-bottom: 1px solid #eee;
-//   color: #666;
-// }
+#total-sales, #books-sold {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
 
-// .books-sold li:last-child {
-//   border-bottom: none;
-// }
+#books-sold {
+  flex-grow: 1;
+}
 
-// .sales-chart {
-//   margin-top: 30px;
-//   padding: 20px;
-//   background-color: #f8f9fa;
-//   border-radius: 6px;
-// }  
+#total-sales h3, #books-sold h3 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+#total-sales p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+#books-sold ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#books-sold li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  color: #666;
+}
+
+#books-sold li:last-child {
+  border-bottom: none;
+}
+
+#sales-chart {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}  

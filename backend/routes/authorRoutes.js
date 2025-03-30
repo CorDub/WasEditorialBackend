@@ -159,15 +159,12 @@ router.get('/inventories', async (req, res) => {
 });
 
 
-// Endpoint for getting inventories of a specific book
 router.get('/books/:bookId/inventories', async (req, res) => {
   try {
-    // Check if user is authenticated
     if (!req.session.user_id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // Get the book to verify user ownership
     const book = await prisma.book.findFirst({
       where: {
         id: parseInt(req.params.bookId),
@@ -177,12 +174,10 @@ router.get('/books/:bookId/inventories', async (req, res) => {
       }
     });
 
-    // If book doesn't exist or user doesn't have access
     if (!book) {
       return res.status(404).json({ message: "Book not found or access denied" });
     }
 
-    // Get inventories for the book
     const inventories = await prisma.inventory.findMany({
       where: { bookId: parseInt(req.params.bookId) },
       include: {
@@ -192,7 +187,6 @@ router.get('/books/:bookId/inventories', async (req, res) => {
 
     console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
     
-    // Calculate the aggregated data
     const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
     const soldTotal = inventories.reduce((sum, inv) => {
       const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
@@ -218,6 +212,9 @@ router.get('/sales', async (req, res) => {
   try {
     const authorId = req.session.user_id;
     
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    
     const sales = await prisma.sale.findMany({
       where: {
         inventory: {
@@ -228,6 +225,9 @@ router.get('/sales', async (req, res) => {
               }
             }
           }
+        },
+        createdAt: {
+          gte: twelveMonthsAgo
         }
       },
       include: {

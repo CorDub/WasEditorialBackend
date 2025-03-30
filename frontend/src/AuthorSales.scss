@@ -1,4 +1,4 @@
- #author-sales-container {
+#author-sales-container {
   padding-top: 100px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 20px;
@@ -72,4 +72,16 @@
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 6px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-header h3 {
+  margin: 0;
+  color: #666;
 }  

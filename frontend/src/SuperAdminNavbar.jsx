@@ -52,18 +52,18 @@ function SuperAdminNavbar({
       return;
     };
 
-    if (active === "inventorias") {
-      buttons[5].classList.add("active-button");
+    // if (active === "inventorias") {
+    //   buttons[5].classList.add("active-button");
+    //   return;
+    // }
+
+    if (active === "inventories2") {
+      searchBarRef.current.focus();
       return;
     }
 
     if (active === "ventas") {
       buttons[6].classList.add("active-button");
-      return;
-    }
-
-    if (active === "inventories2") {
-      searchBarRef.current.focus();
       return;
     }
   }
@@ -129,8 +129,7 @@ function SuperAdminNavbar({
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
-      <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
-      <Link to='/admin/sales' className="navbar-button">Ventas</Link>
+      {/* <Link to='/admin/inventories' className="navbar-button">Inventarios</Link> */}
       {active === "inventories2" ?
         <>
           <input
@@ -156,8 +155,9 @@ function SuperAdminNavbar({
             null
           }
         </>:
-        <Link to='/admin/inventories2' className="navbar-button">Inventory2</Link>
+        <Link to='/admin/inventories2' className="navbar-button">Inventarios</Link>
       }
+      <Link to='/admin/sales' className="navbar-button">Ventas</Link>
     </div>
   )
 }

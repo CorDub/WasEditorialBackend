@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import AdminPage from './AdminPage.jsx';
 import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorsList from './AuthorsList.jsx';
@@ -11,7 +10,7 @@ import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
 import AdminsList from "./AdminsList.jsx";
-import InventoriesList from './InventoriesList.jsx';
+// import InventoriesList from './InventoriesList.jsx';
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
@@ -27,11 +26,9 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage/>} />
           <Route path="/superadmin/admins" element={<AdminsList />} />
-          {/* <Route path='/admin' element={<AdminPage />} /> */}
-          {/* <Route path='/author' element={<AuthorPage />} /> */}
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />
-          <Route path="/admin/inventories" element={<InventoriesList />} />
+          {/* <Route path="/admin/inventories" element={<InventoriesList />} /> */}
           <Route path="/admin/inventories2" element={<InventoriesAreaDashboard />} />
           <Route path="/admin/bookstoreInventory" element={<BookstoreInventory />} />
           <Route path="/admin/bookInventory" element={<BookInventory />} />

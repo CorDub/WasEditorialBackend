@@ -12,7 +12,8 @@ function TableActions ({
     row,
     isTableActionsOpen,
     setTableActionsOpen,
-    setModalType}) {
+    setModalType,
+    type}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -69,6 +70,10 @@ function TableActions ({
     openModal("adding", row.original)
   }
 
+  useEffect(() => {
+    console.log(type);
+  }, [type])
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
@@ -90,10 +95,12 @@ function TableActions ({
           onClick={() => openModal("delete", row.original)}
           onMouseEnter={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}
           onMouseLeave={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}/>
-        <FontAwesomeIcon icon={faDollarSign}
-          className='ta-button ta-sale'
-          id={`ta-sale-${row.index}`}
-          onClick={addSale}/>
+        {type && type === "inventory" &&
+          <FontAwesomeIcon icon={faDollarSign}
+            className='ta-button ta-sale'
+            id={`ta-sale-${row.index}`}
+            onClick={addSale}/>
+        }
       </div>
     </div>
   )

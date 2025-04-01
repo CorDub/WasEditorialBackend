@@ -11,6 +11,7 @@ function Navbar({
     active,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBookstoreNoSpaces,
     setSelectedBook,
     setBookInventoryOpen,
     retreat,
@@ -42,6 +43,7 @@ function Navbar({
                   active={active}
                   setBookstoreInventoryOpen={setBookstoreInventoryOpen}
                   setSelectedBookstore={setSelectedBookstore}
+                  setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
                   setSelectedBook={setSelectedBook}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}

@@ -7,6 +7,7 @@ function SuperAdminNavbar({
     active,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBookstoreNoSpaces,
     setSelectedBook,
     setBookInventoryOpen,
     retreat,
@@ -146,6 +147,7 @@ function SuperAdminNavbar({
               searchBarRef={searchBarRef}
               setBookstoreInventoryOpen={setBookstoreInventoryOpen}
               setSelectedBookstore={setSelectedBookstore}
+              setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
               setSelectedBook={setSelectedBook}
               setBookInventoryOpen={setBookInventoryOpen}
               retreat={retreat}

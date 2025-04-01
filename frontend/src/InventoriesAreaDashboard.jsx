@@ -313,6 +313,7 @@ function InventoriesAreaDashboard() {
         active={"inventories2"}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
         setSelectedBookstore={setSelectedBookstore}
+        setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
         setSelectedBook={setSelectedBook}
         setBookInventoryOpen={setBookInventoryOpen}
         retreat={retreat}

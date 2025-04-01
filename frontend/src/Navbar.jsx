@@ -11,6 +11,8 @@ function Navbar({
     active,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBook,
+    setBookInventoryOpen,
     retreat,
     setRetreat }) {
   const { user, setUser } = useContext(UserContext);
@@ -40,6 +42,8 @@ function Navbar({
                   active={active}
                   setBookstoreInventoryOpen={setBookstoreInventoryOpen}
                   setSelectedBookstore={setSelectedBookstore}
+                  setSelectedBook={setSelectedBook}
+                  setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
                   setRetreat={setRetreat}/>
       case "admin":

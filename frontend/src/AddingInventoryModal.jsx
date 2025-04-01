@@ -43,6 +43,15 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
     "Zambia", "Zimbabue"
   ];
 
+  // set book title or bookstore name depending on what clickedRow provides
+  useEffect(() => {
+    if (clickedRow.bookstore) {
+      setBookstore(clickedRow.bookstore);
+    } else {
+      setBook(clickedRow.book);
+    }
+  }, [clickedRow])
+
   let bookTitlesList = []
   for (const book of existingBooks) {
     bookTitlesList.push(book.title)
@@ -142,7 +151,6 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         };
         return;
       } else {
-        // inputs[input_name]["function"](input_index, e);
         if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
           inputs[input_name]["element"].current.classList.add("selected")
         };
@@ -189,11 +197,19 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
       range: "positive"
     }
 
-    const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-    const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
+    let errorInputs;
+    let errorsBookstore;
+    let errorsBook;
     const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
     const errorsInicial = checkForErrors("Cantidad inicial", inicial, expectationsInicial, inicialRef);
-    const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
+    if (clickedRow.book) {
+      errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
+      errorInputs = [errorsBookstore, errorsPais, errorsInicial];
+    } else {
+      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
+      errorInputs = [errorsBook, errorsPais, errorsInicial];
+    }
+
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -242,7 +258,6 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         const alertMessage = 'No se pudó crear un nuevo inventario.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        console.log("Yeah created");
         const alertMessage = `Un nuevo inventario ha sido creado.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
@@ -252,35 +267,33 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
     }
   }
 
-  useEffect(() => {
-    setBookstore(clickedRow.bookstore);
-  }, [clickedRow])
-
-  useEffect(() => {
-    console.log(bookstore);
-  }, [bookstore])
-
   return(
     <div className="modal-proper">
       <div className="form-title">
         <p>Nuevo inventario</p>
+        <p>{ clickedRow.book ? book : bookstore}</p>
       </div>
       <form className="global-form">
-        <select onChange={(e) => dropDownChange(e, "Book")}
-          className="select-global" ref={bookRef}>
-          <option value="null">Selecciona libro</option>
-          {existingBooks && existingBooks.map((book, index) => (
-            <option key={index} value={book.title}>{book.title}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Bookstore")}
+        { clickedRow.book ?
+          null :
+          <select onChange={(e) => dropDownChange(e, "Book")}
+            className="select-global" ref={bookRef}>
+            <option value="null">Selecciona libro</option>
+            {existingBooks && existingBooks.map((book, index) => (
+              <option key={index} value={book.title}>{book.title}</option>
+            ))}
+          </select>
+        }
+        { clickedRow.bookstore ?
+          null :
+          <select onChange={(e) => dropDownChange(e, "Bookstore")}
           className="select-global" ref={bookstoreRef}>
-          <option value={clickedRow.bookstore}>{clickedRow.bookstore}</option>
+          <option value="null">Selecciona librería</option>
           {existingBookstores && existingBookstores.map((bookstore, index) => (
-            bookstore.name !== clickedRow.bookstore &&
-              <option key={index} value={bookstore.title}>{bookstore.name}</option>
+            <option key={index} value={bookstore.title}>{bookstore.name}</option>
           ))}
         </select>
+        }
         <select onChange={(e) => dropDownChange(e, "Country")}
           className="select-global" ref={countryRef}>
           <option value="null">Selecciona pais</option>

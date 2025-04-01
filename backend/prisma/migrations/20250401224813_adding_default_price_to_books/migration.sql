@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Book" ALTER COLUMN "price" SET DEFAULT 199.99;

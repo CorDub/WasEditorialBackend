@@ -824,13 +824,15 @@ router.get('/sales', async (req, res) => {
             bookId: true,
             book: {
               select: {
-                title: true
+                title: true,
+                price: true
               }
             },
             bookstoreId: true,
             bookstore: {
               select: {
-                name: true
+                name: true,
+                deal_percentage: true
               }
             },
             country: true,

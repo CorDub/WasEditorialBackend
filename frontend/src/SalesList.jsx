@@ -10,6 +10,7 @@ function SalesList () {
   useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [prices, setPrices] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
@@ -39,6 +40,29 @@ function SalesList () {
     {
       header: "Cantidad",
       accessorKey: "quantity"
+    },
+    {
+      header: "Ingresos",
+      Cell: ({row}) => {
+        const number = row.original.quantity * row.original.inventory.book.price
+        return (
+          <div>
+            {"$ " + number.toLocaleString()}
+          </div>
+        )
+      }
+    },
+    {
+      header: "Ganancia de Was",
+      Cell: ({row}) => {
+        const ingresos = row.original.quantity * row.original.inventory.book.price
+        const remainings = ingresos * row.original.inventory.bookstore.deal_percentage / 100
+        return (
+          <div>
+            {"$ " + remainings.toLocaleString()}
+          </div>
+        )
+      }
     },
     {
       header: "Inventario",
@@ -151,6 +175,10 @@ function SalesList () {
   useEffect(() => {
     fetchSales();
   }, [forceRender]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data])
 
   return (
     <div>

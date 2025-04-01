@@ -43,7 +43,7 @@ model Book {
   id          Int         @id @default(autoincrement())
   title       String
   pasta       String?
-  price       Float?
+  price       Float?      @default(199.99)
   isbn        String?     @unique
   users       User[]
   inventories Inventory[]

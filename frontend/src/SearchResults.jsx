@@ -6,6 +6,7 @@ function SearchResults({
   searchBarRef,
   setBookstoreInventoryOpen,
   setSelectedBookstore,
+  setSelectedBookstoreNoSpaces,
   setSelectedBook,
   setBookInventoryOpen,
   retreat,
@@ -32,6 +33,7 @@ function SearchResults({
     setTimeout(() => {
       if (type === "bookstore") {
         setSelectedBookstore(name);
+        setSelectedBookstoreNoSpaces(name.replace(' ', ''));
         setBookstoreInventoryOpen(true);
       } else {
         setSelectedBook(name);

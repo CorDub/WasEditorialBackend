@@ -11,6 +11,7 @@ function Navbar({
     active,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBookstoreNoSpaces,
     setSelectedBook,
     setBookInventoryOpen,
     retreat,
@@ -42,12 +43,21 @@ function Navbar({
                   active={active}
                   setBookstoreInventoryOpen={setBookstoreInventoryOpen}
                   setSelectedBookstore={setSelectedBookstore}
+                  setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
                   setSelectedBook={setSelectedBook}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
                   setRetreat={setRetreat}/>
       case "admin":
-        return <AdminNavbar active={active}/>
+        return <AdminNavbar
+                  active={active}
+                  setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+                  setSelectedBookstore={setSelectedBookstore}
+                  setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
+                  setSelectedBook={setSelectedBook}
+                  setBookInventoryOpen={setBookInventoryOpen}
+                  retreat={retreat}
+                  setRetreat={setRetreat}/>
       case "author":
         return <AuthorNavbar active={active}/>
       default:

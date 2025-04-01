@@ -2,7 +2,7 @@ import { useContext, useState, useEffect, useRef, useMemo } from "react";
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import InventoriesContext from "./InventoriesContext";
 import "./BookstoreInventory.scss";
-import BookstoreInventoryBook from "./BookstoreInventoryBook";
+// import BookstoreInventoryBook from "./BookstoreInventoryBook";
 import BookstoreInventoryTotal from "./BookstoreInventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
@@ -42,7 +42,9 @@ function BookstoreInventory({
             openModal={openModal}
             row={row}
             isTableActionsOpen={isTableActionsOpen}
-            setTableActionsOpen={setTableActionsOpen}/>
+            setTableActionsOpen={setTableActionsOpen}
+            setModalType={setModalType}
+            type={"inventory"}/>
         </div>
       )
     },
@@ -180,6 +182,7 @@ function BookstoreInventory({
 
   function closeModal(globalFilter, reload, alertMessage, alertType) {
     setModalOpen(false);
+    setModalType("inventory");
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {

@@ -22,7 +22,7 @@ function BookstoreInventoryTotal({
   useEffect(() => {
     import (`./assets/${selectedBookstoreNoSpaces}.png`)
       .then((image) => setLogo(image.default));
-  }, [selectedLogo])
+  }, [selectedBookstoreNoSpaces])
 
   //assign name based on either bookstore name or book title
   useEffect(() => {

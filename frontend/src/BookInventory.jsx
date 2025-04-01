@@ -38,7 +38,8 @@ function BookInventory({
             openModal={openModal}
             row={row}
             isTableActionsOpen={isTableActionsOpen}
-            setTableActionsOpen={setTableActionsOpen}/>
+            setTableActionsOpen={setTableActionsOpen}
+            type={"inventory"}/>
         </div>
       )
     },

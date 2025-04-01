@@ -59,3 +59,10 @@
     color: red;
   }
 }
+
+.ta-sale {
+  &:hover {
+    cursor: pointer;
+    color: green;
+  }
+}

@@ -54,7 +54,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setData(data);
       }
     } catch (error) {
@@ -149,11 +148,23 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       range: "positive"
     }
 
-    const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-    const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
-    const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-    const errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
-    const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
+    let errorsBook;
+    let errorsBookstore;
+    let errorsPais;
+    let errorsQuantity;
+    let errorInputs;
+
+    if (clickedRow) {
+      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+      errorInputs = [errorsQuantity];
+    } else {
+      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
+      errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
+      errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
+      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+      errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
+    }
+
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -179,7 +190,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      const chosenInventory = data.find(inventory => inventory.book.title === book);
+      const chosenInventory = data.find(inventory => inventory.book.title === book && inventory.bookstore.name === bookstore);
       console.log(chosenInventory);
 
       const response = await fetch('http://localhost:3000/admin/sale', {
@@ -206,7 +217,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         const alertMessage = 'No se pudó crear una nueva venta.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        console.log("Yeah created");
         const alertMessage = `Una nueva venta ha sido creada.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
@@ -216,33 +226,46 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
+  useEffect(() => {
+    if (clickedRow) {
+      setBook(clickedRow.book.title);
+      setBookstore(clickedRow.bookstore.name);
+      setCountry(clickedRow.country);
+    }
+  }, [clickedRow])
+
   return (
     <div className="modal-proper">
       <div className="form-title">
         <p>Nueva venta</p>
       </div>
       <form className="global-form">
-        <select onChange={(e) => dropDownChange(e, "Book")}
-          className="select-global" ref={bookRef}>
-          <option value="null">Selecciona libro</option>
-          {existingBooks && existingBooks.map((book, index) => (
-            <option key={index} value={book}>{book}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Bookstore")}
-          className="select-global" ref={bookstoreRef}>
-          <option value="null">Selecciona libreria</option>
-          {existingBookstores && existingBookstores.map((bookstore, index) => (
-            <option key={index} value={bookstore}>{bookstore}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Country")}
-          className="select-global" ref={countryRef}>
-          <option value="null">Selecciona pais</option>
-          {countries && countries.map((country, index) => (
-            <option key={index} value={country}>{country}</option>
-          ))}
-        </select>
+        {clickedRow ?
+          null :
+           <>
+           <select onChange={(e) => dropDownChange(e, "Book")}
+             className="select-global" ref={bookRef}>
+             <option value="null">Selecciona libro</option>
+             {existingBooks && existingBooks.map((book, index) => (
+               <option key={index} value={book}>{book}</option>
+             ))}
+           </select>
+           <select onChange={(e) => dropDownChange(e, "Bookstore")}
+             className="select-global" ref={bookstoreRef}>
+             <option value="null">Selecciona libreria</option>
+             {existingBookstores && existingBookstores.map((bookstore, index) => (
+               <option key={index} value={bookstore}>{bookstore}</option>
+             ))}
+           </select>
+           <select onChange={(e) => dropDownChange(e, "Country")}
+             className="select-global" ref={countryRef}>
+             <option value="null">Selecciona pais</option>
+             {countries && countries.map((country, index) => (
+               <option key={index} value={country}>{country}</option>
+             ))}
+           </select>
+         </>
+        }
         <input type="text" placeholder="Cantidad vendida" className="global-input"
           ref={quantityRef} onChange={(e) => setQuantity(parseInt(e.target.value))}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>

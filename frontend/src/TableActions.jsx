@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -10,7 +11,8 @@ function TableActions ({
     openModal,
     row,
     isTableActionsOpen,
-    setTableActionsOpen}) {
+    setTableActionsOpen,
+    setModalType}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -62,6 +64,11 @@ function TableActions ({
     }
   }
 
+  function addSale() {
+    setModalType("sale");
+    openModal("adding", row.original)
+  }
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
@@ -69,14 +76,24 @@ function TableActions ({
 
       <div className="ta-buttons hidden" ref={buttonsRef}>
         <Tooltip message={tooltipMessage} x={x} y={y}/>
-        <FontAwesomeIcon icon={faPen} className="ta-button ta-edit" id={`ta-edit-${row.index}`}
+        <FontAwesomeIcon
+          icon={faPen}
+          className="ta-button ta-edit"
+          id={`ta-edit-${row.index}`}
           onClick={() => openModal("edit", row.original)}
           onMouseEnter={() => toggleTooltip("Editar", `ta-edit-${row.index}`)}
           onMouseLeave={() => toggleTooltip("Editar", `ta-edit-${row.index}`)}/>
-        <FontAwesomeIcon icon={faCircleXmark} className="ta-button ta-delete" id={`ta-delete-${row.index}`}
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          className="ta-button ta-delete"
+          id={`ta-delete-${row.index}`}
           onClick={() => openModal("delete", row.original)}
           onMouseEnter={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}
           onMouseLeave={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}/>
+        <FontAwesomeIcon icon={faDollarSign}
+          className='ta-button ta-sale'
+          id={`ta-sale-${row.index}`}
+          onClick={addSale}/>
       </div>
     </div>
   )

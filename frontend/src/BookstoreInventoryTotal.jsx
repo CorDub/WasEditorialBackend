@@ -11,17 +11,36 @@ function BookstoreInventoryTotal({
     currentTotal,
     initialTotal,
     isBookstoreInventoryOpen,
-    setBookstoreInventoryOpen}) {
+    setBookstoreInventoryOpen,
+    selectedBook,
+    setBookInventoryOpen}) {
   const [logo, setLogo] = useState(null);
+  const [name, setName] = useState("");
+  const [type, setType] = useState("");
 
   // import only the logo you need based on the name
   useEffect(() => {
-      import (`./assets/${selectedBookstoreNoSpaces}.png`)
-        .then((image) => setLogo(image.default));
+    import (`./assets/${selectedBookstoreNoSpaces}.png`)
+      .then((image) => setLogo(image.default));
   }, [selectedLogo])
 
+  //assign name based on either bookstore name or book title
+  useEffect(() => {
+    if (selectedBook) {
+      setName(selectedBook);
+      setType("book");
+    } else {
+      setName(selectedBookstore)
+      setType("bookstore");
+    }
+  }, [selectedBookstore, selectedBook])
+
   function returnToInventoriesAreaDashboard() {
-    setBookstoreInventoryOpen(false);
+    if (type === "book") {
+      setBookInventoryOpen(false);
+    } else {
+      setBookstoreInventoryOpen(false);
+    }
   }
 
   return(
@@ -34,7 +53,7 @@ function BookstoreInventoryTotal({
             className="inventory-logo"/>
           <div
             className="inventory-name"
-            style={{marginLeft: "0.5rem", marginBottom: "0"}}>{selectedBookstore}</div>
+            style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
         </div>
       }
       <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>

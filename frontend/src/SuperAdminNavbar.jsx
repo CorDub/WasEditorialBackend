@@ -7,6 +7,8 @@ function SuperAdminNavbar({
     active,
     setBookstoreInventoryOpen,
     setSelectedBookstore,
+    setSelectedBook,
+    setBookInventoryOpen,
     retreat,
     setRetreat }) {
   const searchBarRef = useRef();
@@ -144,6 +146,8 @@ function SuperAdminNavbar({
               searchBarRef={searchBarRef}
               setBookstoreInventoryOpen={setBookstoreInventoryOpen}
               setSelectedBookstore={setSelectedBookstore}
+              setSelectedBook={setSelectedBook}
+              setBookInventoryOpen={setBookInventoryOpen}
               retreat={retreat}
               setRetreat={setRetreat}
               setSearchTerms={setSearchTerms}/> :

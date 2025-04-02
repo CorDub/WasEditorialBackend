@@ -13,6 +13,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
   const [pasta, setPasta] = useState('');
   const [price, setPrice] = useState(null);
   const [isbn, setIsbn] = useState('');
+  const [quantity, setQuantity] = useState(null);
   const [authors, setAuthors] = useState([null]);
   const [existingAuthors, setExistingAuthors] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState("");
@@ -59,6 +60,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
           pasta: pasta,
           price: price,
           isbn: isbn,
+          quantity: parseInt(quantity),
           authors: authors,
         }),
       });
@@ -174,13 +176,14 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
     const inputPasta = document.getElementById('pasta-select');
     const inputPrice = document.getElementById('adding-book-price');
     const inputIsbn = document.getElementById('adding-book-isbn');
+    const inputQuantity = document.getElementById('adding-book-quantity');
     const inputAuthors = [];
     authors.map((author, index) => {
       inputAuthors.push(document.getElementById(`author-select-${index}`));
     });
 
     const inputsList = [inputTitle, inputPasta, inputPrice,
-      inputIsbn, inputAuthors];
+      inputIsbn, inputQuantity, inputAuthors];
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
@@ -238,7 +241,17 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
     if (serverError === 42) {
       newErrorList.push(42);
       addErrorClass(inputIsbn);
-    }
+    };
+
+    if (isNaN(parseInt(quantity))) {
+      newErrorList.push(61);
+      addErrorClass(inputQuantity);
+    };
+
+    if (parseInt(quantity) < 0) {
+      newErrorList.push(62);
+      addErrorClass(inputQuantity);
+    };
 
     authors.map((author, index) => {
       if (author === null) {
@@ -300,6 +313,12 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         <input type='text' placeholder="ISBN"
           className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>
+        <input
+          type='text'
+          placeholder='Cantidad inicial imprimida'
+          className="global-input"
+          id="adding-book-quantity"
+          onChange={(e) => setQuantity(e.target.value)}></input>
         {authors.map((author, index) => (
           <div key={index} className="book-edit-author-dropdown">
             <select onChange={(e) =>dropDownChange(e, "Autor", index)} className="select-global"

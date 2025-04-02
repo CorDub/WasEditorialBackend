@@ -416,6 +416,7 @@ router.post('/book', async (req, res) => {
       pasta,
       price,
       isbn,
+      quantity,
       authors } = req.body;
 
     const authorsIds = []
@@ -434,6 +435,29 @@ router.post('/book', async (req, res) => {
         },
       }
     });
+
+    let new_impression;
+    if (new_book) {
+      new_impression = await prisma.impression.create({
+        data: {
+          bookId: new_book.id,
+          quantity: quantity,
+        }
+      })
+    };
+
+    let new_inventory;
+    if (new_impression) {
+      new_inventory = await prisma.inventory.create({
+        data: {
+          bookId: new_book.id,
+          bookstoreId: 3,
+          country: "México",
+          initial: quantity,
+          current: quantity
+        }
+      })
+    }
 
     res.status(201).json({title: new_book.title});
   } catch(error) {

@@ -130,7 +130,7 @@ async function main() {
     data: {
       name: "Mercado Libre",
       deal_percentage: 30,
-      contact_name: "Jack Wotton",
+      contact_name: "Jean Valdez",
       contact_phone: "525580416352",
       contact_email: "jlwotton17@mercadolibre.co.mx"
     }
@@ -204,7 +204,7 @@ async function main() {
   async function createRandomInventory() {
     const bookId = Math.floor(Math.random() * (booksCount)) + 1;
     const bookstoreId = Math.floor(Math.random() * (bookstoresCount)) + 1;
-    
+
     const existingInventory = await prisma.inventory.findFirst({
       where: {
         bookId: bookId,
@@ -333,7 +333,7 @@ async function main() {
         const monthsAgo = Math.floor(Math.random() * 12);
         const saleDate = new Date();
         saleDate.setMonth(saleDate.getMonth() - monthsAgo);
-        
+
         await prisma.sale.create({
           data: {
             inventoryId: inventory.id,

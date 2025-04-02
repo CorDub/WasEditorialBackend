@@ -27,6 +27,10 @@ function AddingBookErrorList({ errorList, setErrorList }) {
         return (<p className="login-error">Por favor elige un autor en la lista.</p>)
       case 53:
         return (<p className="login-error">No se puede tener dos veces lo mismo autor.</p>)
+      case 61:
+        return (<p className="login-error">La cantidad debe ser un numero.</p>)
+      case 62:
+        return (<p className="login-error">La cantidad debe estar superior a cero.</p>)
       default:
         console.log('Unknown error')
         return;

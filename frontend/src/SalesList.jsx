@@ -10,7 +10,6 @@ function SalesList () {
   useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  const [prices, setPrices] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);

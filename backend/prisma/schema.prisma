@@ -19,6 +19,11 @@ enum Role {
   author
 }
 
+enum TransferType {
+  send
+  return
+}
+
 model User {
   id                  Int       @id @default(autoincrement())
   first_name          String
@@ -40,16 +45,17 @@ model User {
 }
 
 model Book {
-  id          Int         @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   pasta       String?
-  price       Float?      @default(199.99)
-  isbn        String?     @unique
+  price       Float?       @default(199.99)
+  isbn        String?      @unique
   users       User[]
   inventories Inventory[]
-  isDeleted   Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  isDeleted   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  impressions Impression[]
 }
 
 model Category {
@@ -78,18 +84,20 @@ model Bookstore {
 }
 
 model Inventory {
-  id          Int       @id @default(autoincrement())
-  book        Book      @relation(fields: [bookId], references: [id])
-  bookId      Int
-  bookstore   Bookstore @relation(fields: [bookstoreId], references: [id])
-  bookstoreId Int
-  country     String
-  initial     Int
-  current     Int
-  sales       Sale[]
-  isDeleted   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            Int        @id @default(autoincrement())
+  book          Book       @relation(fields: [bookId], references: [id])
+  bookId        Int
+  bookstore     Bookstore  @relation(fields: [bookstoreId], references: [id])
+  bookstoreId   Int
+  country       String
+  initial       Int
+  current       Int
+  sales         Sale[]
+  isDeleted     Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  transfersFrom Transfer[] @relation("TransfersFrom")
+  transferTo    Transfer[] @relation("TransfersTo")
 
   @@unique([bookId, bookstoreId, country])
 }
@@ -102,4 +110,27 @@ model Sale {
   isDeleted   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Impression {
+  id        Int      @id @default(autoincrement())
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  quantity  Int
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transfer {
+  id              Int          @id @default(autoincrement())
+  fromInventory   Inventory    @relation("TransfersFrom", fields: [fromInventoryId], references: [id])
+  fromInventoryId Int
+  toInventory     Inventory    @relation("TransfersTo", fields: [toInventoryId], references: [id])
+  toInventoryId   Int
+  quantity        Int
+  type            TransferType @default(send)
+  isDeleted       Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faStore } from '@fortawesome/free-solid-svg-icons';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 function BookstoreInventoryTotal({
@@ -49,7 +50,7 @@ function BookstoreInventoryTotal({
         <img src={logo} className="bookstore-inventory-img"/> :
         <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
           <FontAwesomeIcon
-            icon={faBookOpen}
+            icon={type === "book" ? faBookOpen : faStore}
             className="inventory-logo"/>
           <div
             className="inventory-name"

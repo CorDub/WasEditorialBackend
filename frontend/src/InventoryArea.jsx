@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import "./InventoriesAreaDashboard.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faStore } from '@fortawesome/free-solid-svg-icons';
 
 function InventoryArea({
     name,
@@ -68,7 +68,7 @@ function InventoryArea({
           <div style={{display: 'flex', flexDirection:'column', marginBottom:'0.5rem'}}>
             <div className="inventory-name">{name}</div>
             <FontAwesomeIcon
-              icon={faBookOpen}
+              icon={faStore}
               className="inventory-logo"/>
           </div>
         }

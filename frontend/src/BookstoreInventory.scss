@@ -88,6 +88,8 @@
 }
 
 .bookstore-inventory-total-impressions {
+  display: flex;
+  align-items: center;
   &:hover {
     cursor: pointer;
   }
@@ -99,4 +101,15 @@
   margin-top: 0.5rem;
   width: 98.5%;
   padding-left: 0.5rem;
+}
+
+.adding-impression {
+  color: #4E6CB3;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.bookstore-inventory-impressions-info {
+  margin-left: 0.5rem;
 }

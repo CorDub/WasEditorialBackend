@@ -54,7 +54,7 @@ model Book {
   inventories Inventory[]
   isDeleted   Boolean      @default(false)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  updatedAt   DateTime     @updatedAt 
   impressions Impression[]
 }
 

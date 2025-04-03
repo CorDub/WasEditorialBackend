@@ -48,13 +48,12 @@
 }
 
 .bookstore-inventory-total {
-  margin-left: 1rem;
   margin-top: 1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   border-radius: 15px;
   height: 60px;
-  width: 97.5%;
+  width: 98%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -79,4 +78,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.total-and-impressions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bookstore-inventory-total-impressions {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.inventory-total-impressions {
+  background-color: #E2E2E2;
+  border-radius: 15px;
+  margin-top: 0.5rem;
+  width: 98.5%;
+  padding-left: 0.5rem;
 }

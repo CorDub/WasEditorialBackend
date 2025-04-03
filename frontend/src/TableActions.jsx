@@ -70,10 +70,6 @@ function TableActions ({
     openModal("adding", row.original)
   }
 
-  useEffect(() => {
-    console.log(type);
-  }, [type])
-
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"

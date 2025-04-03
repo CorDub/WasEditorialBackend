@@ -3,7 +3,7 @@ import useCheckAdmin from './customHooks/useCheckAdmin';
 import InventoriesContext from "./InventoriesContext";
 import "./BookstoreInventory.scss";
 // import BookstoreInventoryBook from "./BookstoreInventoryBook";
-import BookstoreInventoryTotal from "./BookstoreInventoryTotal";
+import InventoryTotal from "./InventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
 import Alert from "./Alert";
@@ -199,7 +199,7 @@ function BookstoreInventory({
     <div
       className="bookstore-inventory"
       ref={bookstoreInventoryRef}>
-      <BookstoreInventoryTotal
+      <InventoryTotal
         selectedBookstore={selectedBookstore}
         selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
         selectedLogo={selectedLogo}

@@ -1,7 +1,7 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useEffect, useRef, useState, useMemo, useContext } from "react";
 import InventoriesContext from "./InventoriesContext";
-import BookstoreInventoryTotal from "./BookstoreInventoryTotal";
+import InventoryTotal from "./InventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
 import Alert from "./Alert";
@@ -27,6 +27,15 @@ function BookInventory({
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
+  const [impressions, setImpressions] = useState([]);
+  const inventoryTotalRef = useRef();
+  const [tableTop, setTableTop] = useState([]);
+
+  useEffect(() => {
+    if (inventoryTotalRef.current) {
+      setTableTop(inventoryTotalRef.current.getBoundingClientRect().height + 140);
+    }
+  }, [inventoryTotalRef])
 
   const columns = useMemo(() => [
     {
@@ -94,7 +103,7 @@ function BookInventory({
         borderRadius: '15px',
         backgroundColor: "#fff",
         position: "fixed",
-        top: "140px",
+        top: `${tableTop}px`,
         left: "25px",
         width: "97vw"
       }
@@ -149,6 +158,7 @@ function BookInventory({
     setInitialTotal(initialTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     setData(sortedRelevantInventories);
+    setImpressions(sortedRelevantInventories[0].book.impressions);
   }
 
   useEffect(() => {
@@ -192,12 +202,14 @@ function BookInventory({
 
   return(
     <div className="bookstore-inventory" ref={bookInventoryRef}>
-      <BookstoreInventoryTotal
+      <InventoryTotal
         selectedBook={selectedBook}
         currentTotal={currentTotal}
         initialTotal={initialTotal}
         isBookInventoryOpen={isBookInventoryOpen}
-        setBookInventoryOpen={setBookInventoryOpen}/>
+        setBookInventoryOpen={setBookInventoryOpen}
+        impressions={impressions}
+        ref={inventoryTotalRef}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

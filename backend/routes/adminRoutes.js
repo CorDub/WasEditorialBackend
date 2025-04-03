@@ -663,7 +663,13 @@ router.get('/inventories', async (req, res) => {
         bookId: true,
         book: {
           select: {
-            title: true
+            title: true,
+            impressions: {
+              select: {
+                id: true,
+                quantity: true,
+              }
+            }
           }
         },
         bookstoreId: true,

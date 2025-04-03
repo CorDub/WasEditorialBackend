@@ -2,4 +2,50 @@
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 0.5rem;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.impression-gear {
+  color: #4E6CB3;
+  transition: 0.3s;
+}
+
+.impression-gear:hover {
+  cursor: pointer;
+}
+
+.opened {
+  color: grey;
+  transform: rotate(360deg);
+  transition: 0.3s;
+  &:hover {
+    color: #4E6CB3;
+  }
+}
+
+.impression-info {
+  margin-left: 0.5rem;
+}
+
+.impression-actions {
+  margin-left: 0.5rem;
+  transition: 0.2s;
+  color: grey;
+}
+
+.impression-edit {
+  &:hover {
+    cursor: pointer;
+    color: #4E6CB3;
+  }
+}
+
+.impression-delete {
+  margin-left: 0.5rem;
+  &:hover {
+    cursor: pointer;
+    color: red;
+  }
 }

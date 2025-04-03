@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { faStore } from '@fortawesome/free-solid-svg-icons';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import ImpressionsList from "./ImpressionsList";
 
 function InventoryTotal({
@@ -62,10 +63,17 @@ function InventoryTotal({
           </div>
         }
         {impressions &&
-          <div
-            onClick={() => setImpressionsOpen(!isImpressionsOpen)}
-            className="bookstore-inventory-total-impressions"
-            >Impressiones: {impressions.length}</div>}
+          <div className="bookstore-inventory-total-impressions">
+            <div className="adding-impression">
+              <FontAwesomeIcon
+                icon={faCirclePlus} />
+            </div>
+            <div
+              className="bookstore-inventory-impressions-info"
+              onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
+              Impressiones: {impressions.length}
+            </div>
+          </div>}
         <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>
         <div>Total disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">

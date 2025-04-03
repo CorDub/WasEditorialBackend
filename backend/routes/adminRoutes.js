@@ -668,6 +668,7 @@ router.get('/inventories', async (req, res) => {
               select: {
                 id: true,
                 quantity: true,
+                createdAt: true
               }
             }
           }

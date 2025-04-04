@@ -9,6 +9,7 @@ function SuperAdminNavbar({
     setSelectedBookstore,
     setSelectedBookstoreNoSpaces,
     setSelectedBook,
+    setSelectedBookId,
     setBookInventoryOpen,
     retreat,
     setRetreat }) {
@@ -78,11 +79,11 @@ function SuperAdminNavbar({
       const names = inventoryNames.map(item => item.name)
 
       if (!names.includes(inventory.book.title)) {
-        inventoryNames.push({name: inventory.book.title, type: 'book'})
+        inventoryNames.push({name: inventory.book.title, type: 'book', id: inventory.bookId})
       }
 
       if (!names.includes(inventory.bookstore.name)) {
-        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
+        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore", id: inventory.bookstoreId})
       }
     }
     setinventoryNames(inventoryNames);
@@ -148,6 +149,7 @@ function SuperAdminNavbar({
               setSelectedBookstore={setSelectedBookstore}
               setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
               setSelectedBook={setSelectedBook}
+              setSelectedBookId={setSelectedBookId}
               setBookInventoryOpen={setBookInventoryOpen}
               retreat={retreat}
               setRetreat={setRetreat}

@@ -16,12 +16,16 @@ function InventoryTotal({
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
     selectedBook,
+    selectedBookId,
     setBookInventoryOpen,
-    impressions}) {
+    impressions,
+    setModalType,
+    openModal}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [isImpressionsOpen, setImpressionsOpen] = useState(false);
+  const [book, setBook] = useState(null);
 
   // import only the logo you need based on the name
   useEffect(() => {
@@ -48,6 +52,15 @@ function InventoryTotal({
     }
   }
 
+  useEffect(() => {
+    setBook({book: selectedBook, id: selectedBookId});
+  }, [selectedBook, selectedBookId])
+
+  function openAddingModal() {
+    setModalType('impression');
+    openModal("adding", book);
+  };
+
   return(
     <div className="total-and-impressions">
       <div className="bookstore-inventory-total">
@@ -66,7 +79,8 @@ function InventoryTotal({
           <div className="bookstore-inventory-total-impressions">
             <div className="adding-impression">
               <FontAwesomeIcon
-                icon={faCirclePlus} />
+                icon={faCirclePlus}
+                onClick={openAddingModal}/>
             </div>
             <div
               className="bookstore-inventory-impressions-info"

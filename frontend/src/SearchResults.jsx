@@ -8,6 +8,7 @@ function SearchResults({
   setSelectedBookstore,
   setSelectedBookstoreNoSpaces,
   setSelectedBook,
+  setSelectedBookId,
   setBookInventoryOpen,
   retreat,
   setRetreat,
@@ -25,7 +26,7 @@ function SearchResults({
     determineSearchResultsPosition();
   }, [searchResults]);
 
-  function openSelectedInventory(name, type) {
+  function openSelectedInventory(name, type, id) {
     setBookInventoryOpen(false);
     setBookstoreInventoryOpen(false);
     setSearchTerms("");
@@ -37,6 +38,7 @@ function SearchResults({
         setBookstoreInventoryOpen(true);
       } else {
         setSelectedBook(name);
+        setSelectedBookId(id);
         setBookInventoryOpen(true);
       }
     }, 250)
@@ -53,7 +55,7 @@ function SearchResults({
             className="result">
             <p
               className="result-link"
-              onClick={() => openSelectedInventory(result.name, result.type)}
+              onClick={() => openSelectedInventory(result.name, result.type, result.id)}
               >{result.name}</p>
           </div>
         )

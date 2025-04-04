@@ -25,6 +25,7 @@ function InventoriesAreaDashboard() {
   const [selectedBookstoreNoSpaces, setSelectedBookstoreNoSpaces] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
   const [retreat, setRetreat] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
 
   useEffect(() => {
     function handleResize() {
@@ -315,6 +316,7 @@ function InventoriesAreaDashboard() {
         setSelectedBookstore={setSelectedBookstore}
         setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
         setSelectedBook={setSelectedBook}
+        setSelectedBookId = {setSelectedBookId}
         setBookInventoryOpen={setBookInventoryOpen}
         retreat={retreat}
         setRetreat={setRetreat}/>
@@ -354,6 +356,7 @@ function InventoriesAreaDashboard() {
       {isBookInventoryOpen &&
         <BookInventory
           selectedBook={selectedBook}
+          selectedBookId={selectedBookId}
           isBookInventoryOpen={isBookInventoryOpen}
           setBookInventoryOpen={setBookInventoryOpen} />}
     </div>

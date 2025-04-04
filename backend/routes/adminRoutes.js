@@ -1033,6 +1033,16 @@ router.delete('/sale', async (req, res) => {
   }
 })
 
+
+/// Impression routes
+router.get('/impression', async (req, res) => {
+  const quantity = parseInt(req.query.quantity);
+  
+})
+
+
+/// soft delete on cascade
+
 async function softDeleteBooksOnCascade(deletedAuthor) {
   const booksToDelete = await prisma.book.findMany({
     where: {

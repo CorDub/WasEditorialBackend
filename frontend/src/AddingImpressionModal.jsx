@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
 
@@ -7,6 +8,7 @@ function AddingImpressionModal({
     closeModal,
     pageIndex,
     globalFilter}) {
+  useCheckAdmin();
   const quantityRef = useRef();
   const [quantity, setQuantity] = useState(null);
   const [errors, setErrors] = useState([]);

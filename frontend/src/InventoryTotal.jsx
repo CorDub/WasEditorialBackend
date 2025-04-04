@@ -90,7 +90,7 @@ function InventoryTotal({
               Impressiones: {impressions.length}
             </div>
           </div>}
-          
+
         <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>
         <div>Total disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
@@ -104,7 +104,10 @@ function InventoryTotal({
       <div className="inventory-total-impressions">
         {isImpressionsOpen &&
           <ImpressionsList
-            impressions={impressions}/>}
+            impressions={impressions}
+            setModalType={setModalType}
+            openModal={openModal}
+            book={book}/>}
       </div>
     </div>
   )

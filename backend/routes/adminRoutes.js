@@ -1035,9 +1035,24 @@ router.delete('/sale', async (req, res) => {
 
 
 /// Impression routes
-router.get('/impression', async (req, res) => {
-  const quantity = parseInt(req.query.quantity);
-  
+router.post('/impression', async (req, res) => {
+  try {
+    const quantity = parseInt(req.query.quantity);
+    const id = parseInt(req.query.id);
+    console.log("\n QUANTITY:", quantity);
+    console.log("\n ID:", id);
+    const createdImpression = await prisma.impression.create({
+      data: {
+        bookId: id,
+        quantity: quantity
+      }
+    })
+
+    res.status(201).json(createdImpression);
+  } catch (error) {
+    console.error("\n ERROR CREATING THE IMPRESSION: \n", error);
+    res.status(500).json({error: "A server error occurred while creating the impression"});
+  }
 })
 
 

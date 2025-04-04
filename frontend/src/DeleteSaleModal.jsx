@@ -2,7 +2,6 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
-  console.log(clickedRow);
 
   async function deleteSale() {
     try {

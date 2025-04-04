@@ -64,6 +64,7 @@ function InventoryTotal({
   return(
     <div className="total-and-impressions">
       <div className="bookstore-inventory-total">
+
         {logo ?
           <img src={logo} className="bookstore-inventory-img"/> :
           <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
@@ -75,6 +76,7 @@ function InventoryTotal({
               style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
           </div>
         }
+
         {impressions &&
           <div className="bookstore-inventory-total-impressions">
             <div className="adding-impression">
@@ -88,6 +90,7 @@ function InventoryTotal({
               Impressiones: {impressions.length}
             </div>
           </div>}
+
         <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>
         <div>Total disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
@@ -101,7 +104,10 @@ function InventoryTotal({
       <div className="inventory-total-impressions">
         {isImpressionsOpen &&
           <ImpressionsList
-            impressions={impressions}/>}
+            impressions={impressions}
+            setModalType={setModalType}
+            openModal={openModal}
+            book={book}/>}
       </div>
     </div>
   )

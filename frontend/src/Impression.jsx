@@ -5,10 +5,11 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-function Impression({impression}) {
+function Impression({impression, setModalType, openModal, book}) {
   const [date, setDate] = useState("");
   const [isActionsOpen, setActionsOpen] = useState(false);
   const impressionGearRef = useRef();
+  const [completeImpression, setCompleteImpression] = useState(null);
 
   useEffect(() =>{
     const date = new Date(impression.createdAt);
@@ -25,6 +26,15 @@ function Impression({impression}) {
     }
   }
 
+  function openDeleteModal() {
+    setModalType("impression");
+    openModal("delete", completeImpression);
+  }
+
+  useEffect(() => {
+    setCompleteImpression({...impression, bookId: book.id})
+  }, [book])
+
   return(
     <div className="impression">
       <div className="impression-gear">
@@ -40,7 +50,8 @@ function Impression({impression}) {
             className="impression-edit"/>
           <FontAwesomeIcon
             icon={faCircleXmark}
-            className="impression-delete"/>
+            className="impression-delete"
+            onClick={openDeleteModal}/>
         </div>}
       <div className="impression-info">
         {date} - {impression.quantity} copias

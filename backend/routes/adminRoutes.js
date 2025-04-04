@@ -665,6 +665,9 @@ router.get('/inventories', async (req, res) => {
           select: {
             title: true,
             impressions: {
+              where: {
+                isDeleted: false
+              },
               select: {
                 id: true,
                 quantity: true,
@@ -1037,10 +1040,9 @@ router.delete('/sale', async (req, res) => {
 /// Impression routes
 router.post('/impression', async (req, res) => {
   try {
-    const quantity = parseInt(req.query.quantity);
-    const id = parseInt(req.query.id);
-    console.log("\n QUANTITY:", quantity);
-    console.log("\n ID:", id);
+    const quantity = parseInt(req.body.quantity);
+    const id = parseInt(req.body.id);
+
     const createdImpression = await prisma.impression.create({
       data: {
         bookId: id,
@@ -1048,12 +1050,70 @@ router.post('/impression', async (req, res) => {
       }
     })
 
+    const wasInventory = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: id,
+          bookstoreId: 3,
+          country: "México"
+        }
+      }
+    });
+
+    if (wasInventory && !wasInventory.isDeleted) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: wasInventory.id},
+        data: {
+          current: wasInventory.current + quantity,
+          initial: wasInventory.initial + quantity
+        }
+      })
+    };
+
     res.status(201).json(createdImpression);
   } catch (error) {
     console.error("\n ERROR CREATING THE IMPRESSION: \n", error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
   }
 })
+
+router.delete('/impression', async (req, res) => {
+  try {
+    const impression_id = parseInt(req.query.impression_id);
+    const book_id = parseInt(req.query.book_id);
+    const quantity = parseInt(req.query.quantity);
+    const updatedImpression = await prisma.impression.update({
+      where: {id: impression_id},
+      data: {
+        isDeleted: true
+      }
+    })
+
+    const wasInventory = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: book_id,
+          bookstoreId: 3,
+          country: "México"
+        }
+      }
+    });
+
+    if (wasInventory && !wasInventory.isDeleted) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: wasInventory.id},
+        data: {
+          current: wasInventory.current - quantity,
+          initial: wasInventory.initial - quantity
+        }
+      })
+    }
+    res.status(200).json(updatedImpression);
+  } catch (error) {
+    console.error('\n ERROR WHILE DELETING THE IMPRESSION: \n', error);
+    res.status(500).json({error: "A server error occurred while creating the impression"});
+  }
+});
 
 
 /// soft delete on cascade

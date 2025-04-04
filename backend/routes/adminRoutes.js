@@ -1037,16 +1037,35 @@ router.delete('/sale', async (req, res) => {
 /// Impression routes
 router.post('/impression', async (req, res) => {
   try {
-    const quantity = parseInt(req.query.quantity);
-    const id = parseInt(req.query.id);
-    console.log("\n QUANTITY:", quantity);
-    console.log("\n ID:", id);
+    const quantity = parseInt(req.body.quantity);
+    const id = parseInt(req.body.id);
+
     const createdImpression = await prisma.impression.create({
       data: {
         bookId: id,
         quantity: quantity
       }
     })
+
+    const wasInventory = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: id,
+          bookstoreId: 3,
+          country: "México"
+        }
+      }
+    });
+
+    if (wasInventory) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: wasInventory.id},
+        data: {
+          current: wasInventory.current + quantity,
+          initial: wasInventory.initial + quantity
+        }
+      })
+    };
 
     res.status(201).json(createdImpression);
   } catch (error) {

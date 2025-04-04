@@ -43,8 +43,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Zambia", "Zimbabue"
   ];
 
-  console.log(clickedRow);
-
   let bookTitlesList = []
   for (const book of existingBooks) {
     bookTitlesList.push(book.title)

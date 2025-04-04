@@ -31,6 +31,11 @@ function Impression({impression, setModalType, openModal, book}) {
     openModal("delete", completeImpression);
   }
 
+  function openEditModal() {
+    setModalType("impression");
+    openModal("edit", completeImpression);
+  }
+
   useEffect(() => {
     setCompleteImpression({...impression, bookId: book.id})
   }, [book])
@@ -47,7 +52,8 @@ function Impression({impression, setModalType, openModal, book}) {
         <div className="impression-actions">
           <FontAwesomeIcon
             icon={faPen}
-            className="impression-edit"/>
+            className="impression-edit"
+            onClick={openEditModal}/>
           <FontAwesomeIcon
             icon={faCircleXmark}
             className="impression-delete"

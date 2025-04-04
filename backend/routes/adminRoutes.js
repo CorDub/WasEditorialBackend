@@ -1116,6 +1116,50 @@ router.delete('/impression', async (req, res) => {
 });
 
 
+router.patch('/impression', async (req, res) => {
+  try {
+    const {
+      id,
+      quantity,
+      book_id
+    } = req.body;
+
+    const currentImpression = await prisma.impression.findUnique({ where: {id: id}});
+    const diff = parseInt(quantity) - currentImpression.quantity;
+
+    const updatedImpression = await prisma.impression.update({
+      where: {id: id},
+      data: {
+        quantity: parseInt(quantity)
+      }
+    });
+
+    const wasInventory = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: book_id,
+          bookstoreId: 3,
+          country: "México"
+        }
+      }
+    });
+
+    if (wasInventory && !wasInventory.isDeleted) {
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: wasInventory.id},
+        data: {
+          current: wasInventory.current + diff,
+          initial: wasInventory.initial + diff
+        }
+      })
+    }
+    res.status(200).json(updatedImpression);
+  } catch(error) {
+    console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
+    res.status(500).json({error: "A server error occurred while creating the impression"});
+  }
+})
+
 /// soft delete on cascade
 
 async function softDeleteBooksOnCascade(deletedAuthor) {

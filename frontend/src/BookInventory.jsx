@@ -10,6 +10,7 @@ import ProgressBar from "./ProgressBar";
 
 function BookInventory({
     selectedBook,
+    selectedBookId,
     isBookInventoryOpen,
     setBookInventoryOpen}) {
   useCheckAdmin()
@@ -204,12 +205,15 @@ function BookInventory({
     <div className="bookstore-inventory" ref={bookInventoryRef}>
       <InventoryTotal
         selectedBook={selectedBook}
+        selectedBookId={selectedBookId}
         currentTotal={currentTotal}
         initialTotal={initialTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}
-        ref={inventoryTotalRef}/>
+        ref={inventoryTotalRef}
+        setModalType={setModalType}
+        openModal={openModal}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

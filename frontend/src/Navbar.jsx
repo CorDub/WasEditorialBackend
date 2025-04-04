@@ -13,6 +13,7 @@ function Navbar({
     setSelectedBookstore,
     setSelectedBookstoreNoSpaces,
     setSelectedBook,
+    setSelectedBookId,
     setBookInventoryOpen,
     retreat,
     setRetreat }) {
@@ -45,6 +46,7 @@ function Navbar({
                   setSelectedBookstore={setSelectedBookstore}
                   setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
                   setSelectedBook={setSelectedBook}
+                  setSelectedBookId={setSelectedBookId}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
                   setRetreat={setRetreat}/>

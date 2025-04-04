@@ -9,6 +9,7 @@ function AdminNavbar({
     setSelectedBookstore,
     setSelectedBookstoreNoSpaces,
     setSelectedBook,
+    setSelectedBookId,
     setBookInventoryOpen,
     retreat,
     setRetreat }) {
@@ -142,6 +143,7 @@ function AdminNavbar({
               setSelectedBookstore={setSelectedBookstore}
               setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
               setSelectedBook={setSelectedBook}
+              setSelectedBookId={setSelectedBookId}
               setBookInventoryOpen={setBookInventoryOpen}
               retreat={retreat}
               setRetreat={setRetreat}

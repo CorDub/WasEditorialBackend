@@ -4,6 +4,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -70,6 +71,11 @@ function TableActions ({
     openModal("adding", row.original)
   }
 
+  function transfer() {
+    setModalType("trasnfer");
+    openModal("adding", row.original)
+  }
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
@@ -92,10 +98,16 @@ function TableActions ({
           onMouseEnter={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}
           onMouseLeave={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}/>
         {type && type === "inventory" &&
+          <>
           <FontAwesomeIcon icon={faDollarSign}
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
             onClick={addSale}/>
+          <FontAwesomeIcon icon={faArrowRight}
+            className='ta-button ta-transfer'
+            id={`ta-transfer-${row.index}`}
+            onClick={transfer}/>
+          </>
         }
       </div>
     </div>

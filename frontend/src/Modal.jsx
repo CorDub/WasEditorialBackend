@@ -10,6 +10,9 @@ import DeleteSaleModal from './DeleteSaleModal';
 import AddingImpressionModal from './AddingImpressionModal';
 import EditImpressionModal from './EditImpressionModal';
 import DeleteImpressionModal from './DeleteImpressionModal';
+import AddingTransferModal from './AddingTransferModal';
+import EditTransferModal from './EditTransferModal';
+import DeleteTransferModal from './DeleteTransferModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -32,6 +35,11 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
       adding: AddingImpressionModal,
       edit: EditImpressionModal,
       delete: DeleteImpressionModal,
+    },
+    transfer: {
+      adding: AddingTransferModal,
+      edit: EditTransferModal,
+      delete: DeleteTransferModal
     }
   };
 

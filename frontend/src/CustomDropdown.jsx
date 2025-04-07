@@ -75,7 +75,7 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
   );
 };
 
-function BookSelector({ booksInventories, onBookChange }) {
+function BookSelector({ booksInventories, onBookChange, selectedValue = 'total' }) {
     const options = [
       { value: 'total', label: 'INVENTARIO TOTAL' },
       ...(booksInventories?.map(book => ({ 
@@ -91,7 +91,7 @@ function BookSelector({ booksInventories, onBookChange }) {
     return (
       <CustomDropdown 
         options={options} 
-        defaultOption={options[0]} 
+        defaultOption={options.find(opt => opt.value === selectedValue) || options[0]} 
         onChange={handleChange} 
       />
     );

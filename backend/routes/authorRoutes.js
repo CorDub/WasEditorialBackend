@@ -212,8 +212,12 @@ router.get('/sales', async (req, res) => {
   try {
     const authorId = req.session.user_id;
     
-    const twelveMonthsAgo = new Date();
-    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    // Get date range from query parameters
+    const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
+    const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
+    
+    // Set end date to end of day
+    endDate.setHours(23, 59, 59, 999);
     
     const sales = await prisma.sale.findMany({
       where: {
@@ -227,7 +231,8 @@ router.get('/sales', async (req, res) => {
           }
         },
         createdAt: {
-          gte: twelveMonthsAgo
+          gte: startDate,
+          lte: endDate
         }
       },
       include: {
@@ -244,16 +249,26 @@ router.get('/sales', async (req, res) => {
     });
 
     const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
+    const totalValue = sales.reduce((sum, sale) => {
+      const price = sale.inventory.book.price || 199.99;
+      return sum + (price * sale.quantity);
+    }, 0);
 
     const bookSales = sales.reduce((acc, sale) => {
       const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
+      const price = sale.inventory.book.price || 199.99;
+      const saleValue = price * sale.quantity;
+      
       if (existingBook) {
         existingBook.quantity += sale.quantity;
+        existingBook.value += saleValue;
       } else {
         acc.push({
           bookId: sale.inventory.book.id,
           title: sale.inventory.book.title,
-          quantity: sale.quantity
+          quantity: sale.quantity,
+          value: saleValue,
+          price: price
         });
       }
       return acc;
@@ -261,6 +276,7 @@ router.get('/sales', async (req, res) => {
 
     res.json({
       totalSales,
+      totalValue,
       bookSales,
       sales: sales.map(sale => ({
         id: sale.id,
@@ -269,7 +285,9 @@ router.get('/sales', async (req, res) => {
         quantity: sale.quantity,
         created_at: sale.createdAt,
         title: sale.inventory.book.title,
-        bookstore_name: sale.inventory.bookstore.name
+        bookstore_name: sale.inventory.bookstore.name,
+        price: sale.inventory.book.price || 199.99,
+        value: (sale.inventory.book.price || 199.99) * sale.quantity
       }))
     });
   } catch (error) {

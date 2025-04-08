@@ -4,7 +4,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -72,7 +72,7 @@ function TableActions ({
   }
 
   function transfer() {
-    setModalType("trasnfer");
+    setModalType("transfer");
     openModal("adding", row.original)
   }
 
@@ -103,7 +103,7 @@ function TableActions ({
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
             onClick={addSale}/>
-          <FontAwesomeIcon icon={faArrowRight}
+          <FontAwesomeIcon icon={faArrowUp}
             className='ta-button ta-transfer'
             id={`ta-transfer-${row.index}`}
             onClick={transfer}/>

@@ -338,10 +338,10 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
               <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
                 id={`plus-icon-${index}`}
                 onMouseEnter={() => toggleTooltip(
-                  "Añadir autor a la lista de autores del libro",
+                  "Añadir autor",
                   `plus-icon-${index}`)}
                 onMouseLeave={() => toggleTooltip(
-                  "Añadir autor a la lista de autores del libro",
+                  "Añadir autor",
                   `plus-icon-${index}`)}
                 className="button-icon"/>
               {authors.length > 1 &&
@@ -353,10 +353,10 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
                   <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
                     id={`cross-icon-${index}`}
                     onMouseEnter={() => toggleTooltip(
-                      "Eliminar el autor de la lista de autores del libro",
+                      "Eliminar el autor",
                       `cross-icon-${index}`)}
                     onMouseLeave={() => toggleTooltip(
-                      "Eliminar el autor de la lista de autores del libro",
+                      "Eliminar el autor",
                       `cross-icon-${index}`)}
                     className="button-icon"/>
                 </>}

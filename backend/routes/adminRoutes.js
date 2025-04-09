@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
 import { prisma } from "./../server.js"
+import { cp } from "fs";
 
 const router = express.Router();
 
@@ -1115,7 +1116,6 @@ router.delete('/impression', async (req, res) => {
   }
 });
 
-
 router.patch('/impression', async (req, res) => {
   try {
     const {
@@ -1157,6 +1157,120 @@ router.patch('/impression', async (req, res) => {
   } catch(error) {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
+  }
+})
+
+/// Transfer route
+
+router.post("/transfer", async (req, res) => {
+  try {
+    const {
+      bookstoreTo,
+      bookstoreToId,
+      bookstoreFromId,
+      quantity,
+      inventoryFromId,
+      bookId
+    } = req.body;
+
+    let transferType;
+    if (parseInt(bookstoreFromId) === 3) {
+      transferType = "send"
+    } else {
+      transferType = "return"
+    }
+
+    const currentInventoryFrom = await prisma.inventory.findUnique({
+      where: {
+        id: parseInt(inventoryFromId),
+        isDeleted: false
+      }
+    });
+
+    const currentInventoryTo = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId_country: {
+          bookId: parseInt(bookId),
+          bookstoreId: parseInt(bookstoreToId),
+          country: "México"
+        },
+        isDeleted: false
+      }
+    });
+
+    let newInventoryTo;
+    let recoveredInventoryTo;
+
+    if (!currentInventoryTo) {
+      const deletedInventoryMaybe = await prisma.inventory.findUnique({
+        where: {
+          bookId_bookstoreId_country: {
+            bookId: parseInt(bookId),
+            bookstoreId: parseInt(bookstoreToId),
+            country: "México"
+          },
+          isDeleted: true
+        }
+      });
+
+      if (!deletedInventoryMaybe) {
+        newInventoryTo = await prisma.inventory.create({
+          data: {
+            bookId: parseInt(bookId),
+            bookstoreId: parseInt(bookstoreToId),
+            country: "México",
+            initial: quantity,
+            current: quantity
+          }
+        });
+      } else {
+        recoveredInventoryTo = await prisma.inventory.update({
+          where: {id: deletedInventoryMaybe.id},
+          data: {
+            isDeleted: false,
+            current: quantity,
+            initial: quantity
+          }
+        });
+      }
+    };
+
+    const newTransfer = await prisma.transfer.create({
+      data: {
+        fromInventoryId: parseInt(inventoryFromId),
+        toInventoryId: parseInt(currentInventoryFrom.id),
+        quantity: parseInt(quantity),
+        type: transferType
+      }
+    });
+
+    let updatedInventoryFrom;
+    let updatedInventoryTo;
+
+    if (newTransfer) {
+      updatedInventoryFrom = await prisma.inventory.update({
+        where: {id: parseInt(inventoryFromId)},
+        data: {
+          current: currentInventoryFrom.current - quantity,
+          initial: currentInventoryFrom.initial - quantity
+        }
+      });
+
+      if (!newInventoryTo || !recoveredInventoryTo) {
+        updatedInventoryTo = await prisma.inventory.update({
+          where: {id: currentInventoryTo.id},
+          data: {
+            current: currentInventoryTo.current + quantity,
+            initial: currentInventoryTo.linitial + quantity
+          }
+        });
+      }
+    }
+
+    res.status(200).json(newTransfer)
+  } catch (error) {
+    console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
+    res.status(500).json({error: "a server error occurred while creating the transfer"})
   }
 })
 

@@ -5,6 +5,7 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import "./AddingTransferModal.scss"
 
 function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -15,8 +16,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
-  const bookstoreRef = useRef();
-  const quantityRef = useRef();
+  const bookstoreRefs = useRef([]);
+  const quantityRefs = useRef([]);
 
   useEffect(() => {
     let list = [];
@@ -77,13 +78,17 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   function dropDownChange(e, input_index) {
     let soFar = [...bookstoresToTransfer];
-    // const newBookstore = {
-    //   bookstoreId: e.target.value
-    // }
     if (!soFar[input_index]) {
       soFar[input_index] = {};
     }
     soFar[input_index]["bookstoreId"] = e.target.value;
+    let bookstoreName = [];
+    for (const bookstore of existingBookstores) {
+      if (bookstore.id === parseInt(e.target.value)) {
+        bookstoreName = bookstore.name;
+      }
+    }
+    soFar[input_index]["name"] = bookstoreName;
     setBookstoresToTransfer(soFar);
 
     const element = document.getElementById(`bookstore-select-${input_index}`);
@@ -106,7 +111,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     soFar[input_index]["quantity"] = e.target.value;
     setBookstoresToTransfer(soFar);
   }
-
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -132,18 +136,75 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive"
     }
 
-    // const errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
-    // const errorInputs = [errorsQuantity];
+    for (let i = 0; i < bookstoresToTransfer.length; i++) {
+      const bookstoreRef = document.getElementById(`bookstore-select-${i}`)
+      const quantityRef = document.getElementById(`quantity-select-${i}`)
 
-    // for (const errorInput of errorInputs) {
-    //   if (errorInput.length > 0) {
-    //     errorsList.push(errorInput);
-    //     setErrors(prev => [...prev, errorInput]);
-    //   }
-    // }
+      const errorsBookstore = checkForErrors(
+        "librería",
+        bookstoresToTransfer[i].name,
+        expectationsBookstore,
+        bookstoreRef
+      );
+      if (errorsBookstore.length > 0) {
+        errorsList.push(errorsBookstore);
+      };
 
-    // return errorsList
+      const errorsQuantity = checkForErrors(
+        "cantidad",
+        bookstoresToTransfer[i].quantity,
+        expectationsQuantity,
+        quantityRef
+      )
+      if (errorsQuantity.length > 0) {
+        errorsList.push(errorsQuantity);
+      };
+    }
 
+    setErrors(prev => [...prev, errorsList]);
+    return errorsList
+  }
+
+  useEffect(() => {
+    console.log(clickedRow);
+  }, [clickedRow])
+
+  async function sendToServer() {
+    try {
+      for (let i = 0; i < bookstoresToTransfer.length; i++) {
+        const response = await fetch('http://localhost:3000/admin/transfer', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            bookstoreTo: bookstoresToTransfer[i].name,
+            bookstoreToId: bookstoresToTransfer[i].id,
+            bookstoreFromId: clickedRow.bookstoreId,
+            quantity: bookstoresToTransfer[i].quantity,
+            inventoryFromId: clickedRow.id,
+            bookId: clickedRow.bookId
+          }),
+        });
+
+        if (response.ok === false) {
+          const error = await response.json();
+          console.log(error);
+          if (error.message) {
+            setErrors(prev => [...prev, error.message]);
+            return;
+          }
+          const alertMessage = 'No se pudó crear una nueva transferencia.';
+          closeModal(globalFilter, false, alertMessage, "error");
+        } else {
+          const alertMessage = `Una nueva transferencia ha sido creada.`;
+          closeModal(globalFilter, true, alertMessage, "confirmation");
+        }
+      }
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   return(
@@ -158,11 +219,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         {bookstoresToTransfer.map((bookstore, index) => (
           <div
             key={index}
-            className="book-edit-author-dropdown">
+            className="transfer-dropdown">
             <select
-              className="select-global"
+              className="select-transfer"
               id={`bookstore-select-${index}`}
-              ref={bookstoreRef}
+              ref={(element) => (bookstoreRefs.current[index] = element)}
               onChange={(e) => dropDownChange(e, index)}>
               <option
                 key={index}
@@ -181,10 +242,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               type='text'
               placeholder="Cantidad"
               className="global-input"
-              ref={quantityRef}
+              id={`quantity-select-${index}`}
+              ref={(element) => (quantityRefs.current[index] = element)}
               onChange={(e) => updateQuantity(e, index)}>
             </input>
-            <div className="additional-authors-buttons">
+            <div className="additional-transfer-buttons">
             <Tooltip message={tooltipMessage} x={x} y={y}/>
             <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
               id={`plus-icon-${index}`}
@@ -194,7 +256,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               onMouseLeave={() => toggleTooltip(
                 "Añadir una librería",
                 `plus-icon-${index}`)}
-              className="button-icon"/>
+              className="button-icon transfer"/>
             {bookstoresToTransfer.length > 1 &&
               <>
                 <Tooltip
@@ -209,11 +271,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                   onMouseLeave={() => toggleTooltip(
                     "Eliminar la librería",
                     `cross-icon-${index}`)}
-                  className="button-icon"/>
+                  className="button-icon transfer"/>
               </>}
             </div>
           </div>
         ))}
+        <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

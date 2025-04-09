@@ -1115,6 +1115,7 @@ router.delete('/impression', async (req, res) => {
   }
 });
 
+
 router.patch('/impression', async (req, res) => {
   try {
     const {
@@ -1156,130 +1157,6 @@ router.patch('/impression', async (req, res) => {
   } catch(error) {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
-  }
-})
-
-/// Transfer route
-
-router.post('/transfer', async (req, res) => {
-  try {
-    const {
-      bookstoreTo,
-      bookstoreToId,
-      bookstoreFromId,
-      quantity,
-      inventoryFromId,
-      bookId
-    } = req.body;
-
-    let transferType;
-    if (parseInt(bookstoreFromId) === 3) {
-      transferType = "send"
-    } else {
-      transferType = "return"
-    }
-
-    const currentInventoryFrom = await prisma.inventory.findUnique({
-      where: {
-        id: parseInt(inventoryFromId),
-        isDeleted: false
-      }
-    });
-
-    let currentInventoryTo = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: parseInt(bookId),
-          bookstoreId: parseInt(bookstoreToId),
-          country: "México"
-        },
-        isDeleted: false
-      }
-    });
-
-    console.log("\n CURRENT INVENTORY TO \n", currentInventoryTo);
-
-    let newInventoryTo;
-    let recoveredInventoryTo;
-
-    if (!currentInventoryTo) {
-      const deletedInventoryMaybe = await prisma.inventory.findUnique({
-        where: {
-          bookId_bookstoreId_country: {
-            bookId: parseInt(bookId),
-            bookstoreId: parseInt(bookstoreToId),
-            country: "México"
-          },
-          isDeleted: true
-        }
-      });
-
-      if (!deletedInventoryMaybe) {
-        newInventoryTo = await prisma.inventory.create({
-          data: {
-            bookId: parseInt(bookId),
-            bookstoreId: parseInt(bookstoreToId),
-            country: "México",
-            initial: parseInt(quantity),
-            current: parseInt(quantity)
-          }
-        });
-      } else {
-        recoveredInventoryTo = await prisma.inventory.update({
-          where: {id: deletedInventoryMaybe.id},
-          data: {
-            isDeleted: false,
-            current: parseInt(quantity),
-            initial: parseInt(quantity)
-          }
-        });
-      }
-    };
-
-    if (newInventoryTo) {
-      currentInventoryTo = newInventoryTo
-    };
-
-    if (recoveredInventoryTo) {
-      currentInventoryTo = recoveredInventoryTo
-    }
-
-    const newTransfer = await prisma.transfer.create({
-      data: {
-        fromInventoryId: parseInt(inventoryFromId),
-        toInventoryId: parseInt(currentInventoryTo.id),
-        quantity: parseInt(quantity),
-        type: transferType
-      }
-    });
-
-    let updatedInventoryFrom;
-    let updatedInventoryTo;
-
-    if (newTransfer) {
-      updatedInventoryFrom = await prisma.inventory.update({
-        where: {id: parseInt(inventoryFromId)},
-        data: {
-          current: currentInventoryFrom.current - parseInt(quantity),
-          initial: currentInventoryFrom.initial - parseInt(quantity)
-        }
-      });
-
-      if (!newInventoryTo || !recoveredInventoryTo) {
-        updatedInventoryTo = await prisma.inventory.update({
-          where: {id: currentInventoryTo.id},
-          data: {
-            current: currentInventoryTo.current + parseInt(quantity),
-            initial: currentInventoryTo.initial + parseInt(quantity)
-          }
-        });
-      }
-    }
-
-    res.status(200).json(newTransfer)
-  } catch (error) {
-    console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
-    res.status(500).json({error: "a server error occurred while creating the transfer"})
   }
 })
 

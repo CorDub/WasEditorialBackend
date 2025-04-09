@@ -2,11 +2,22 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
 
-  if (fieldRef.current.classList.contains("error-inputs")) {
+  if (fieldRef instanceof HTMLElement) {
+    if (fieldRef.classList.contains("error-inputs")) {
+      fieldRef.classList.remove("error-inputs");
+    };
+  } else if (fieldRef.current.classList.contains("error-inputs")) {
     fieldRef.current.classList.remove("error-inputs");
   }
 
   function addErrorClass(ref) {
+    if (ref instanceof HTMLElement) {
+      if (!ref.classList.contains("error-inputs")) {
+        ref.classList.add("error-inputs");
+      }
+      return;
+    }
+    
     if (!ref.current.classList.contains("error-inputs")) {
       ref.current.classList.add("error-inputs");
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Tooltip from "./Tooltip";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
@@ -15,8 +15,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
-  const bookstoreRef = useRef();
-  const quantityRef = useRef();
 
   useEffect(() => {
     let list = [];

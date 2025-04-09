@@ -166,8 +166,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   }
 
   useEffect(() => {
-    console.log(clickedRow);
-  }, [clickedRow])
+    console.log(bookstoresToTransfer);
+  }, [bookstoresToTransfer])
 
   async function sendToServer() {
     try {
@@ -180,7 +180,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           credentials: "include",
           body: JSON.stringify({
             bookstoreTo: bookstoresToTransfer[i].name,
-            bookstoreToId: bookstoresToTransfer[i].id,
+            bookstoreToId: bookstoresToTransfer[i].bookstoreId,
             bookstoreFromId: clickedRow.bookstoreId,
             quantity: bookstoresToTransfer[i].quantity,
             inventoryFromId: clickedRow.id,

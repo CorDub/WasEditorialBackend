@@ -5,6 +5,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -20,6 +21,15 @@ function TableActions ({
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState('');
+  const [transferType, setTransferType] = useState('');
+
+  useEffect(() => {
+    if (row.original.bookstoreId === 3) {
+      setTransferType('send')
+    } else {
+      setTransferType('return')
+    }
+  }, [row])
 
   function displayingActions() {
     if (gearRef.current.classList.contains("displaying")) {
@@ -103,10 +113,17 @@ function TableActions ({
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
             onClick={addSale}/>
-          <FontAwesomeIcon icon={faArrowUp}
-            className='ta-button ta-transfer'
-            id={`ta-transfer-${row.index}`}
-            onClick={transfer}/>
+          {transferType === "send" ?
+            <FontAwesomeIcon icon={faArrowUp}
+              className='ta-button ta-transfer-send'
+              id={`ta-transfer-${row.index}`}
+              onClick={transfer}/>
+            :
+            <FontAwesomeIcon icon={faArrowDown}
+              className='ta-button ta-transfer-return'
+              id={`ta-transfer-${row.index}`}
+              onClick={transfer}/>
+          }
           </>
         }
       </div>

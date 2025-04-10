@@ -37,6 +37,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok) {
         const data = await response.json();
+        const cleanedUpData = data.filter(element => element.name !== "")
         setExistingBookstores(data);
       }
 

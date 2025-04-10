@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
 import { prisma } from "./../server.js"
-import { cp } from "fs";
 
 const router = express.Router();
 

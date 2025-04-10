@@ -131,12 +131,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     const expectationsQuantity = {
       type: "number",
       presence: "not empty",
-      range: "positive"
+      range: "positive",
+      maximum: clickedRow.current
     }
 
+    let totalQuantities = 0;
+    const quantityElements = document.querySelectorAll('.transfer-quantity');
+
     for (let i = 0; i < bookstoresToTransfer.length; i++) {
-      const bookstoreRef = document.getElementById(`bookstore-select-${i}`)
-      const quantityRef = document.getElementById(`quantity-select-${i}`)
+      const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
+      const quantityRef = document.getElementById(`quantity-select-${i}`);
 
       const errorsBookstore = checkForErrors(
         "librería",
@@ -157,6 +161,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       if (errorsQuantity.length > 0) {
         errorsList.push(errorsQuantity);
       };
+      totalQuantities += bookstoresToTransfer[i].quantity
+    }
+
+    if (totalQuantities > clickedRow.current) {
+      errorsList.push([`El total de las cantidades es superior a lo disponible.`]);
+      for (const element of quantityElements) {
+        if (element.classList.contains("error-inputs")) {
+          element.classList.add("error-inputs");
+        }
+      }
     }
 
     setErrors(prev => [...prev, errorsList]);
@@ -164,8 +178,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   }
 
   useEffect(() => {
-    console.log(bookstoresToTransfer);
-  }, [bookstoresToTransfer])
+    console.log(clickedRow);
+  }, [clickedRow])
 
   async function sendToServer() {
     try {
@@ -221,7 +235,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             <select
               className="select-transfer"
               id={`bookstore-select-${index}`}
-              ref={(element) => (bookstoreRefs.current[index] = element)}
               onChange={(e) => dropDownChange(e, index)}>
               <option
                 key={index}
@@ -239,9 +252,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             <input
               type='text'
               placeholder="Cantidad"
-              className="global-input"
+              className="global-input transfer-quantity"
               id={`quantity-select-${index}`}
-              ref={(element) => (quantityRefs.current[index] = element)}
               onChange={(e) => updateQuantity(e, index)}>
             </input>
             <div className="additional-transfer-buttons">
@@ -249,10 +261,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
               id={`plus-icon-${index}`}
               onMouseEnter={() => toggleTooltip(
-                "Añadir una librería",
+                "Añadir otra transferencia",
                 `plus-icon-${index}`)}
               onMouseLeave={() => toggleTooltip(
-                "Añadir una librería",
+                "Añadir otra transferencia",
                 `plus-icon-${index}`)}
               className="button-icon transfer"/>
             {bookstoresToTransfer.length > 1 &&
@@ -264,10 +276,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherBookstore(index)}
                   id={`cross-icon-${index}`}
                   onMouseEnter={() => toggleTooltip(
-                    "Eliminar la librería",
+                    "Eliminar la transferencia",
                     `cross-icon-${index}`)}
                   onMouseLeave={() => toggleTooltip(
-                    "Eliminar la librería",
+                    "Eliminar la transferencia",
                     `cross-icon-${index}`)}
                   className="button-icon transfer"/>
               </>}

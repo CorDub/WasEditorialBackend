@@ -67,9 +67,16 @@
   }
 }
 
-.ta-transfer {
+.ta-transfer-send {
   &:hover {
     cursor: pointer;
     color: #4E6CB3;
+  }
+}
+
+.ta-transfer-return {
+  &:hover {
+    cursor: pointer;
+    color: red;
   }
 }

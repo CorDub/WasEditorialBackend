@@ -16,6 +16,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [transferType, setTransferType] = useState('');
+
+  useEffect(() => {
+    console.log(clickedRow);
+    if (clickedRow.bookstoreId === 3) {
+      setTransferType('send')
+    } else {
+      setTransferType('return')
+    }
+  }, [clickedRow])
 
   useEffect(() => {
     let list = [];
@@ -37,7 +47,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok) {
         const data = await response.json();
-        setExistingBookstores(data);
+        const cleanedUpData = data.filter(bookstore => bookstore.name !== clickedRow.bookstore.name)
+        setExistingBookstores(cleanedUpData);
       }
 
     } catch (error) {
@@ -47,7 +58,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   useEffect(() => {
     fetchExistingBookstores();
-  }, []);
+  }, [clickedRow]);
 
   function toggleTooltip(message, elementId) {
     if (x === null || y === null) {
@@ -106,7 +117,14 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     if (!soFar[input_index]) {
       soFar[input_index] = {};
     }
+
     soFar[input_index]["quantity"] = e.target.value;
+
+    if (transferType === "return") {
+      soFar[input_index]["name"] = 'Plataforma Was';
+      soFar[input_index]["bookstoreId"] = 3;
+    };
+
     setBookstoresToTransfer(soFar);
   }
 
@@ -123,6 +141,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   function checkInputs() {
     let errorsList = []
+
     const expectationsBookstore = {
       type: "string",
       presence: "not empty",
@@ -139,19 +158,20 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     const quantityElements = document.querySelectorAll('.transfer-quantity');
 
     for (let i = 0; i < bookstoresToTransfer.length; i++) {
-      const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
+      if (transferType === "send") {
+        const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
+        const errorsBookstore = checkForErrors(
+          "librería",
+          bookstoresToTransfer[i].name,
+          expectationsBookstore,
+          bookstoreRef
+        );
+        if (errorsBookstore.length > 0) {
+          errorsList.push(errorsBookstore);
+        };
+      }
+
       const quantityRef = document.getElementById(`quantity-select-${i}`);
-
-      const errorsBookstore = checkForErrors(
-        "librería",
-        bookstoresToTransfer[i].name,
-        expectationsBookstore,
-        bookstoreRef
-      );
-      if (errorsBookstore.length > 0) {
-        errorsList.push(errorsBookstore);
-      };
-
       const errorsQuantity = checkForErrors(
         "cantidad",
         bookstoresToTransfer[i].quantity,
@@ -177,10 +197,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     return errorsList
   }
 
-  useEffect(() => {
-    console.log(clickedRow);
-  }, [clickedRow])
-
   async function sendToServer() {
     try {
       for (let i = 0; i < bookstoresToTransfer.length; i++) {
@@ -196,7 +212,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             bookstoreFromId: clickedRow.bookstoreId,
             quantity: bookstoresToTransfer[i].quantity,
             inventoryFromId: clickedRow.id,
-            bookId: clickedRow.bookId
+            bookId: clickedRow.bookId,
+            type: transferType
           }),
         });
 
@@ -222,70 +239,81 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva transferencia</p>
+        <p>{transferType && transferType === "send" ? 'Nueva transferencia' : 'Nueva devolución'}</p>
         <p>{clickedRow && clickedRow.book.title }</p>
       </div>
       <form
         onSubmit={handleSubmit}
         className="global-form">
-        {bookstoresToTransfer.map((bookstore, index) => (
-          <div
-            key={index}
-            className="transfer-dropdown">
-            <select
-              className="select-transfer"
-              id={`bookstore-select-${index}`}
-              onChange={(e) => dropDownChange(e, index)}>
-              <option
-                key={index}
-                value="null">
-                Libreria
-              </option>
-              {existingBookstores && existingBookstores.map((bookstore, index) => (
+        {transferType === "send" ?
+          (bookstoresToTransfer.map((bookstore, index) => (
+            <div
+              key={index}
+              className="transfer-dropdown">
+              <select
+                className="select-transfer"
+                id={`bookstore-select-${index}`}
+                onChange={(e) => dropDownChange(e, index)}>
                 <option
                   key={index}
-                  value={`${bookstore.id}`}>
-                  {bookstore.name}
+                  value="null">
+                  Libreria
                 </option>
-                ))};
-            </select>
-            <input
-              type='text'
-              placeholder="Cantidad"
-              className="global-input transfer-quantity"
-              id={`quantity-select-${index}`}
-              onChange={(e) => updateQuantity(e, index)}>
-            </input>
-            <div className="additional-transfer-buttons">
-            <Tooltip message={tooltipMessage} x={x} y={y}/>
-            <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
-              id={`plus-icon-${index}`}
-              onMouseEnter={() => toggleTooltip(
-                "Añadir otra transferencia",
-                `plus-icon-${index}`)}
-              onMouseLeave={() => toggleTooltip(
-                "Añadir otra transferencia",
-                `plus-icon-${index}`)}
-              className="button-icon transfer"/>
-            {bookstoresToTransfer.length > 1 &&
-              <>
-                <Tooltip
-                  message={tooltipMessage}
-                  x={x}
-                  y={y}/>
-                <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherBookstore(index)}
-                  id={`cross-icon-${index}`}
-                  onMouseEnter={() => toggleTooltip(
-                    "Eliminar la transferencia",
-                    `cross-icon-${index}`)}
-                  onMouseLeave={() => toggleTooltip(
-                    "Eliminar la transferencia",
-                    `cross-icon-${index}`)}
-                  className="button-icon transfer"/>
-              </>}
+                {existingBookstores && existingBookstores.map((bookstore, index) => (
+                  <option
+                    key={index}
+                    value={`${bookstore.id}`}>
+                    {bookstore.name}
+                  </option>
+                  ))};
+              </select>
+              <input
+                type='text'
+                placeholder="Cantidad"
+                className="global-input transfer-quantity"
+                id={`quantity-select-${index}`}
+                onChange={(e) => updateQuantity(e, index)}>
+              </input>
+              <div className="additional-transfer-buttons">
+              <Tooltip message={tooltipMessage} x={x} y={y}/>
+              <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
+                id={`plus-icon-${index}`}
+                onMouseEnter={() => toggleTooltip(
+                  "Añadir otra transferencia",
+                  `plus-icon-${index}`)}
+                onMouseLeave={() => toggleTooltip(
+                  "Añadir otra transferencia",
+                  `plus-icon-${index}`)}
+                className="button-icon transfer"/>
+              {bookstoresToTransfer.length > 1 &&
+                <>
+                  <Tooltip
+                    message={tooltipMessage}
+                    x={x}
+                    y={y}/>
+                  <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherBookstore(index)}
+                    id={`cross-icon-${index}`}
+                    onMouseEnter={() => toggleTooltip(
+                      "Eliminar la transferencia",
+                      `cross-icon-${index}`)}
+                    onMouseLeave={() => toggleTooltip(
+                      "Eliminar la transferencia",
+                      `cross-icon-${index}`)}
+                    className="button-icon transfer"/>
+                </>}
+              </div>
             </div>
-          </div>
-        ))}
+          )))
+          :
+          <input
+            type='text'
+            placeholder="Cantidad"
+            className="global-input transfer-quantity"
+            id={`quantity-select-0`}
+            onChange={(e) => updateQuantity(e, 0)}>
+          </input>
+        }
+
         <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="form-actions">
           <button type="button" className='blue-button'

@@ -17,7 +17,7 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
       }
       return;
     }
-    
+
     if (!ref.current.classList.contains("error-inputs")) {
       ref.current.classList.add("error-inputs");
     }
@@ -74,6 +74,13 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
           };
           addErrorClass(fieldRef);
         }
+        break;
+
+      case "maximum":
+        if (fieldExpectations.maximum < fieldValue) {
+          errorList.push(`${fieldName} es superior al maximo disponible.`);
+          addErrorClass(fieldRef);
+        };
         break;
 
       default:

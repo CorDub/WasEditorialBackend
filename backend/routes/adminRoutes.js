@@ -1169,15 +1169,16 @@ router.post('/transfer', async (req, res) => {
       bookstoreFromId,
       quantity,
       inventoryFromId,
-      bookId
+      bookId,
+      transferType
     } = req.body;
 
-    let transferType;
-    if (parseInt(bookstoreFromId) === 3) {
-      transferType = "send"
-    } else {
-      transferType = "return"
-    }
+    // let transferType;
+    // if (parseInt(bookstoreFromId) === 3) {
+    //   transferType = "send"
+    // } else {
+    //   transferType = "return"
+    // }
 
     const currentInventoryFrom = await prisma.inventory.findUnique({
       where: {

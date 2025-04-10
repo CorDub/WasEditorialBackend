@@ -37,8 +37,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok) {
         const data = await response.json();
-        const cleanedUpData = data.filter(element => element.name !== "")
-        setExistingBookstores(data);
+        const cleanedUpData = data.filter(bookstore => bookstore.name !== clickedRow.bookstore.name)
+        setExistingBookstores(cleanedUpData);
       }
 
     } catch (error) {
@@ -48,7 +48,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   useEffect(() => {
     fetchExistingBookstores();
-  }, []);
+  }, [clickedRow]);
 
   function toggleTooltip(message, elementId) {
     if (x === null || y === null) {
@@ -177,10 +177,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
   }
-
-  useEffect(() => {
-    console.log(clickedRow);
-  }, [clickedRow])
 
   async function sendToServer() {
     try {

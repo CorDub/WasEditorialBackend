@@ -11,6 +11,7 @@
   background-color: grey;
   position: relative;
   z-index: 0;
+  display: flex;
 }
 
 .pb-max-number {
@@ -18,7 +19,7 @@
   color: white;
   right: 5px;
   top: 0px;
-  z-index: 3;
+  z-index: 5;
 }
 
 .progress-bar-current {
@@ -27,7 +28,7 @@
   background-color: #4E5981;
   position: relative;
   transition: 0.3s;
-  z-index: 1;
+  z-index: 2;
 }
 
 .pb-current-number {
@@ -35,5 +36,26 @@
   color: white;
   left: 5px;
   top: 0px;
-  z-index: 2;
+  z-index: 4;
+}
+
+.progress-bar-returns {
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  height: 20px;
+  background-color: red;
+  position: absolute;
+  transition: 0.3s;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pb-returns-number {
+  position: absolute;
+  color: white;
+  right: 6px;
+  top: 0px;
+  z-index: 3;
 }

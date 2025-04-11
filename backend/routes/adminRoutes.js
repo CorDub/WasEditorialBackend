@@ -684,7 +684,8 @@ router.get('/inventories', async (req, res) => {
         },
         country: true,
         initial: true,
-        current: true
+        current: true,
+        returns: true,
       },
       orderBy: {
         book: {
@@ -1173,13 +1174,6 @@ router.post('/transfer', async (req, res) => {
       transferType
     } = req.body;
 
-    // let transferType;
-    // if (parseInt(bookstoreFromId) === 3) {
-    //   transferType = "send"
-    // } else {
-    //   transferType = "return"
-    // }
-
     const currentInventoryFrom = await prisma.inventory.findUnique({
       where: {
         id: parseInt(inventoryFromId),
@@ -1197,8 +1191,6 @@ router.post('/transfer', async (req, res) => {
         isDeleted: false
       }
     });
-
-    console.log("\n CURRENT INVENTORY TO \n", currentInventoryTo);
 
     let newInventoryTo;
     let recoveredInventoryTo;
@@ -1258,23 +1250,45 @@ router.post('/transfer', async (req, res) => {
     let updatedInventoryTo;
 
     if (newTransfer) {
-      updatedInventoryFrom = await prisma.inventory.update({
-        where: {id: parseInt(inventoryFromId)},
-        data: {
-          current: currentInventoryFrom.current - parseInt(quantity),
-          initial: currentInventoryFrom.initial - parseInt(quantity)
-        }
-      });
-
-      if (!newInventoryTo || !recoveredInventoryTo) {
-        updatedInventoryTo = await prisma.inventory.update({
-          where: {id: currentInventoryTo.id},
+      if (newTransfer.transferType === "send") {
+        updatedInventoryFrom = await prisma.inventory.update({
+          where: {id: parseInt(inventoryFromId)},
           data: {
-            current: currentInventoryTo.current + parseInt(quantity),
-            initial: currentInventoryTo.initial + parseInt(quantity)
+            current: currentInventoryFrom.current - parseInt(quantity),
+            initial: currentInventoryFrom.initial - parseInt(quantity)
           }
         });
+
+        if (!newInventoryTo || !recoveredInventoryTo) {
+          updatedInventoryTo = await prisma.inventory.update({
+            where: {id: currentInventoryTo.id},
+            data: {
+              current: currentInventoryTo.current + parseInt(quantity),
+              initial: currentInventoryTo.initial + parseInt(quantity)
+            }
+          });
+        }
+      } else {
+        updatedInventoryFrom = await prisma.inventory.update({
+          where: {id: parseInt(inventoryFromId)},
+          data: {
+            current: currentInventoryFrom.current - parseInt(quantity),
+            returns: currentInventoryFrom.returns + parseInt(quantity),
+          }
+        });
+
+        if (!newInventoryTo || !recoveredInventoryTo) {
+          updatedInventoryTo = await prisma.inventory.update({
+            where: {id: currentInventoryTo.id},
+            data: {
+              current: currentInventoryTo.current + parseInt(quantity),
+              initial: currentInventoryTo.initial + parseInt(quantity),
+              returns: currentInventoryTo.returns + parseInt(quantity)
+            }
+          });
+        }
       }
+
     }
 
     res.status(200).json(newTransfer)

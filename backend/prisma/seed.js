@@ -6,6 +6,8 @@ import books from "../../helpers/books.json" assert {type: 'json'}
 const prisma = new PrismaClient();
 
 async function main() {
+  /// Add all books from DB
+
   async function addAuthorFromDB(author) {
     await prisma.user.create({
       data: {
@@ -29,7 +31,7 @@ async function main() {
       }
     }
 
-    await prisma.book.create({
+    const createdBook = await prisma.book.create({
       data: {
         title: book.Title,
         isbn: checkISBN(book.ISBN),
@@ -38,6 +40,16 @@ async function main() {
         },
       }
     })
+
+    if (createdBook) {
+      const randQuant = Math.round(Math.random() * 500);
+      const createdImpression = await prisma.impression.create({
+        data: {
+          bookId: createdBook.id,
+          quantity: randQuant
+        }
+      });
+    };
   };
 
   async function findAuthorWithFullName(user) {
@@ -55,6 +67,8 @@ async function main() {
     )
     addBookFromDB(book, authorsIndexes)
   });
+
+  /// Create users
 
   await prisma.user.create({
     data: {
@@ -88,6 +102,8 @@ async function main() {
       role: Role.author
     },
   });
+
+  /// Create categories
 
   await prisma.category.create({
     data: {
@@ -178,74 +194,179 @@ async function main() {
     }
   })
 
-  await prisma.inventory.create({
-    data: {
-      bookId: 1,
-      bookstoreId: 1,
-      country: "México",
-      initial: 1000,
-      current: 1000
-    }
-  })
+  /// Create inventories
+  const allImpressions = await prisma.impression.findMany();
 
-  await prisma.inventory.create({
-    data: {
-      bookId: 2,
-      bookstoreId: 1,
-      country: "México",
-      initial: 1000,
-      current: 1000
-    }
-  })
-
-  const booksCount = await prisma.book.count();
-  const bookstoresCount = await prisma.bookstore.count();
-
-  async function createRandomInventory() {
-    const bookId = Math.floor(Math.random() * (booksCount)) + 1;
-    const bookstoreId = Math.floor(Math.random() * (bookstoresCount)) + 1;
-
-    const existingInventory = await prisma.inventory.findFirst({
-      where: {
-        bookId: bookId,
-        bookstoreId: bookstoreId,
-        country: "México"
+  for (const impression of allImpressions) {
+    await prisma.inventory.create({
+      data: {
+        bookId: impression.bookId,
+        bookstoreId: 3,
+        country: "México",
+        initial: impression.quantity,
+        current: impression.quantity
       }
-    });
+    })
+  }
 
-    if (!existingInventory) {
-      const initialInventory = Math.floor(Math.random() * 1000);
-      await prisma.inventory.create({
-        data: {
-          bookId: bookId,
-          bookstoreId: bookstoreId,
-          country: "México",
-          initial: initialInventory,
-          current: Math.floor(Math.random() * initialInventory)
+  // await prisma.inventory.create({
+  //   data: {
+  //     bookId: 1,
+  //     bookstoreId: 1,
+  //     country: "México",
+  //     initial: 1000,
+  //     current: 1000
+  //   }
+  // })
+
+  // await prisma.inventory.create({
+  //   data: {
+  //     bookId: 2,
+  //     bookstoreId: 1,
+  //     country: "México",
+  //     initial: 1000,
+  //     current: 1000
+  //   }
+  // })
+
+  // const booksCount = await prisma.book.count();
+  // const bookstoresCount = await prisma.bookstore.count();
+
+  // async function createRandomInventory() {
+  //   const bookId = Math.floor(Math.random() * (booksCount)) + 1;
+  //   const bookstoreId = Math.floor(Math.random() * (bookstoresCount)) + 1;
+
+  //   const existingInventory = await prisma.inventory.findFirst({
+  //     where: {
+  //       bookId: bookId,
+  //       bookstoreId: bookstoreId,
+  //       country: "México"
+  //     }
+  //   });
+
+  //   if (!existingInventory) {
+  //     const initialInventory = Math.floor(Math.random() * 1000);
+  //     await prisma.inventory.create({
+  //       data: {
+  //         bookId: bookId,
+  //         bookstoreId: bookstoreId,
+  //         country: "México",
+  //         initial: initialInventory,
+  //         current: Math.floor(Math.random() * initialInventory)
+  //       }
+  //     });
+  //   }
+  // }
+
+  // await Promise.all(
+  //   [...Array(30)].map(() =>
+  //     createRandomInventory()
+  //   )
+  // );
+
+  /// Move things around
+
+  const allInventories = await prisma.inventory.findMany();
+  const numBookstores = await prisma.bookstore.count();
+
+  for (const inventory of allInventories) {
+    const randQuantTransfers = Math.floor(Math.random() * numBookstores);
+
+    for (let i = 0; i < randQuantTransfers; i++) {
+      let createdInventory;
+      const randQuantToMove = Math.floor(Math.random() * inventory.current);
+
+      if (randQuantToMove !== 0) {
+        if (i < inventory.bookstoreId - 1) {
+          createdInventory = await prisma.inventory.create({
+            data: {
+              bookId: inventory.bookId,
+              bookstoreId: i+1,
+              country: "México",
+              initial: randQuantToMove,
+              current: randQuantToMove
+            }
+          });
+
+          await prisma.inventory.update({
+            where: {id: inventory.id},
+            data: {
+              current: inventory.current - randQuantToMove
+            }
+          });
+
+        } else {
+          createdInventory = await prisma.inventory.create({
+            data: {
+              bookId: inventory.bookId,
+              bookstoreId: i+2,
+              country: "México",
+              initial: randQuantToMove,
+              current: randQuantToMove
+            }
+          });
+
+          await prisma.inventory.update({
+            where: {id: inventory.id},
+            data: {
+              current: inventory.current - randQuantToMove
+            }
+          });
         }
-      });
+
+        const createdTransfer =  await prisma.transfer.create({
+          data: {
+            fromInventoryId: inventory.id,
+            toInventoryId: createdInventory.id,
+            quantity: randQuantToMove
+          }
+        });
+      }
     }
   }
 
-  await Promise.all(
-    [...Array(30)].map(() =>
-      createRandomInventory()
-    )
-  );
+  /// Create fake sales
 
-  await prisma.sale.create({
-    data: {
-      inventoryId: 1,
-      quantity: 10
-    }
-  })
+  const newAllInventories = await prisma.inventory.findMany();
 
-  await prisma.sale.create({
-    data: {
-      inventoryId: 2,
-      quantity: 18
-    }
-  })
+  for (const inventory of newAllInventories) {
+    const randQuantToSell = Math.floor(Math.random() * inventory.current);
+
+    if (randQuantToSell > 0) {
+      const monthsAgo = Math.floor(Math.random() * 12);
+      const saleDate = new Date();
+      saleDate.setMonth(saleDate.getMonth() - monthsAgo);
+
+      const createdSale = await prisma.sale.create({
+        data: {
+          inventoryId: inventory.id,
+          quantity: randQuantToSell,
+          createdAt: saleDate
+        }
+      });
+
+      const updatedInventory = await prisma.inventory.update({
+        where: {id: inventory.id},
+        data: {
+          current: inventory.current - randQuantToSell
+        }
+      })
+    };
+  }
+
+  // await prisma.sale.create({
+  //   data: {
+  //     inventoryId: 1,
+  //     quantity: 10
+  //   }
+  // })
+
+  // await prisma.sale.create({
+  //   data: {
+  //     inventoryId: 2,
+  //     quantity: 18
+  //   }
+  // })
 
   const user = await prisma.user.findFirst({
     where: {

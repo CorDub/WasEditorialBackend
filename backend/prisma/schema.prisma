@@ -92,6 +92,7 @@ model Inventory {
   country       String
   initial       Int
   current       Int
+  returns       Int        @default(0)
   sales         Sale[]
   isDeleted     Boolean    @default(false)
   createdAt     DateTime   @default(now())

@@ -46,33 +46,93 @@ function BookstoreInventory({
             setModalType={setModalType}
             type={"inventory"}/>
         </div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '3%'
+        }
+      }
     },
     {
       header: "Libro",
-      accessorKey:'book.title'
+      accessorKey:'book.title',
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Vendidos",
       Cell: ({row}) => (
         <div>{row.original.initial - row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Devueltos",
       Cell: ({row}) => (
         <div>{row.original.returns} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Disponibles",
       Cell: ({row}) => (
         <div>{row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "País",
-      accessorKey: "country"
+      accessorKey: "country",
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Progreso",
@@ -81,7 +141,17 @@ function BookstoreInventory({
           current={row.original.current}
           initial={row.original.initial}
           returns={row.original.returns} />
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '10%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '10%'
+        }
+      }
     }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({

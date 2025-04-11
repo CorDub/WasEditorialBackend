@@ -17,7 +17,7 @@ function ProgressBar({current, initial, returns}) {
     const maxBarLeft = maxBarRef.current.getBoundingClientRect().left;
     const actualStart = currentBarRight - maxBarLeft;
     const returnsBarLength = maxBarRef.current.getBoundingClientRect().width * (returns / initial);
-    returnsBarRef.current.style.left = actualStart + "px";
+    returnsBarRef.current.style.left = actualStart - 5 + "px";
     returnsBarRef.current.style.width = returnsBarLength + "px";
 
     const maxBarRight = maxBarRef.current.getBoundingClientRect().right;

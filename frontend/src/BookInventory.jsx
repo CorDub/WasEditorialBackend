@@ -52,33 +52,93 @@ function BookInventory({
             setModalType={setModalType}
             type={"inventory"}/>
         </div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Librería",
-      accessorKey:'bookstore.name'
+      accessorKey:'bookstore.name',
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Vendidos",
       Cell: ({row}) => (
         <div>{row.original.initial - row.original.returns - row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Devueltos",
       Cell: ({row}) => (
         <div>{row.original.returns} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Disponibles",
       Cell: ({row}) => (
         <div>{row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "País",
-      accessorKey: "country"
+      accessorKey: "country",
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Progreso",

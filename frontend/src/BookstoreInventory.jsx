@@ -59,6 +59,12 @@ function BookstoreInventory({
       )
     },
     {
+      header: "Devueltos",
+      Cell: ({row}) => (
+        <div>{row.original.returns} / {row.original.initial}</div>
+      )
+    },
+    {
       header: "Disponibles",
       Cell: ({row}) => (
         <div>{row.original.current} / {row.original.initial}</div>
@@ -71,7 +77,10 @@ function BookstoreInventory({
     {
       header: "Progreso",
       Cell: ({row}) => (
-        <ProgressBar current={row.original.current} initial={row.original.initial} />
+        <ProgressBar
+          current={row.original.current}
+          initial={row.original.initial}
+          returns={row.original.returns} />
       )
     }
   ], [isTableActionsOpen]);

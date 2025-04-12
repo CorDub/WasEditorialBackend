@@ -17,6 +17,7 @@ function BookInventory({
   const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
+  const [returnsTotal, setReturnsTotal] = useState(0);
   const [data, setData] = useState([]);
   const bookInventoryRef = useRef();
   const [clickedRow, setClickedRow] = useState(null);
@@ -52,33 +53,93 @@ function BookInventory({
             setModalType={setModalType}
             type={"inventory"}/>
         </div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Librería",
-      accessorKey:'bookstore.name'
+      accessorKey:'bookstore.name',
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Vendidos",
       Cell: ({row}) => (
         <div>{row.original.initial - row.original.returns - row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Devueltos",
       Cell: ({row}) => (
         <div>{row.original.returns} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Disponibles",
       Cell: ({row}) => (
         <div>{row.original.current} / {row.original.initial}</div>
-      )
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "País",
-      accessorKey: "country"
+      accessorKey: "country",
+      muiTableHeadCellProps: {
+        sx: {
+          width: '7%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '7%'
+        }
+      }
     },
     {
       header: "Progreso",
@@ -157,15 +218,18 @@ function BookInventory({
     const relevantInventories = [];
     let currentTotal = 0;
     let initialTotal = 0;
+    let returnsTotal = 0;
     for (const inventory of inventories) {
       if (inventory.book.title === selectedBook) {
         relevantInventories.push(inventory);
         currentTotal += inventory.current;
         initialTotal += inventory.initial;
+        returnsTotal += inventory.returns;
       }
     }
     setCurrentTotal(currentTotal);
     setInitialTotal(initialTotal);
+    setReturnsTotal(returnsTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     setData(sortedRelevantInventories);
     setImpressions(sortedRelevantInventories[0].book.impressions);
@@ -217,6 +281,7 @@ function BookInventory({
         selectedBookId={selectedBookId}
         currentTotal={currentTotal}
         initialTotal={initialTotal}
+        returnsTotal={returnsTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}

@@ -13,6 +13,7 @@ function InventoryTotal({
     selectedLogo,
     currentTotal,
     initialTotal,
+    returnsTotal,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
     selectedBook,
@@ -91,10 +92,14 @@ function InventoryTotal({
             </div>
           </div>}
 
-        <div>Total vendidos: {initialTotal - currentTotal} / {initialTotal}</div>
+        <div>Total vendidos: {initialTotal - currentTotal - returnsTotal} / {initialTotal}</div>
+        <div>Total devueltos: {returnsTotal} / {initialTotal}</div>
         <div>Total disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
-          <ProgressBar current={currentTotal} initial={initialTotal} />
+          <ProgressBar
+            current={currentTotal}
+            initial={initialTotal}
+            returns={returnsTotal}/>
           <FontAwesomeIcon
             icon={faCircleXmark}
             className="inventory-back-button"

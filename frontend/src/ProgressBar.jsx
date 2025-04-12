@@ -5,20 +5,23 @@ function ProgressBar({current, initial, returns}) {
   const maxBarRef = useRef();
   const currentBarRef = useRef();
   const returnsBarRef = useRef();
+  const returnsNumberRef = useRef();
   const [hideMaxNumber, setHideMaxNumber] = useState(false);
+  // const [returnsBarLength, setReturnsBarLength] = useState(0);
 
   function setCurrentLength() {
     const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * (initial-current-returns) / initial);
     currentBarRef.current.style.width = currentLength + 5 + "px";
   }
 
-  function setReturnsBarLength() {
+  function determineReturnsBarLength() {
     const currentBarRight = currentBarRef.current.getBoundingClientRect().right;
     const maxBarLeft = maxBarRef.current.getBoundingClientRect().left;
     const actualStart = currentBarRight - maxBarLeft;
     const returnsBarLength = maxBarRef.current.getBoundingClientRect().width * (returns / initial);
-    returnsBarRef.current.style.left = actualStart + "px";
+    returnsBarRef.current.style.left = actualStart - 5 + "px";
     returnsBarRef.current.style.width = returnsBarLength + "px";
+    // setReturnsBarLength(returnsBarLength);
 
     const maxBarRight = maxBarRef.current.getBoundingClientRect().right;
     const returnsBarRight = returnsBarRef.current.getBoundingClientRect().right;
@@ -27,12 +30,29 @@ function ProgressBar({current, initial, returns}) {
     }
   }
 
+  // function setReturnsNumberPosition() {
+  //   const middle = returnsBarLength / 2;
+  //   const numberMiddle = returnsNumberRef.current.getBoundingClientRect().width / 2;
+  //   returnsNumberRef.current.style.left = returnsBarRef.current.getBoundingClientRect().left + (middle - numberMiddle) + "px";
+  // }
+
   useEffect(() => {
-    setCurrentLength();
-    if (returns > 0) {
-      setReturnsBarLength();
-    }
-  }, [maxBarRef, currentBarRef, returnsBarRef, current, initial, returns])
+    requestAnimationFrame(() => {
+      setCurrentLength();
+    })
+  }, [initial, current, returns])
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (returns > 0) {
+        determineReturnsBarLength();
+      }
+    })
+  }, [returns, current, initial])
+
+  // useEffect(() => {
+  //   setReturnsNumberPosition();
+  // }, [returnsBarLength])
 
   return(
     <div className="progress-bar">
@@ -42,7 +62,7 @@ function ProgressBar({current, initial, returns}) {
         </div>
         {returns > 0 && (
           <div className="progress-bar-returns" ref={returnsBarRef}>
-            <div className='pb-returns-number'>{returns}</div>
+            <div className='pb-returns-number' ref={returnsNumberRef}>{returns}</div>
           </div>
         )}
         {!hideMaxNumber && (

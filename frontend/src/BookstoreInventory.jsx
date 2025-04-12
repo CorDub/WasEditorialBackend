@@ -22,6 +22,7 @@ function BookstoreInventory({
   const bookstoreInventoryRef = useRef()
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
+  const [returnsTotal, setReturnsTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("inventory");
@@ -75,7 +76,7 @@ function BookstoreInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => (
-        <div>{row.original.initial - row.original.current} / {row.original.initial}</div>
+        <div>{row.original.initial - row.original.current - row.original.returns} / {row.original.initial}</div>
       ),
       muiTableHeadCellProps: {
         sx: {
@@ -221,15 +222,18 @@ function BookstoreInventory({
     const relevantInventories = [];
     let currentTotal = 0;
     let initialTotal = 0;
+    let returnsTotal = 0;
     for (const inventory of inventories) {
       if (inventory.bookstore.name === selectedBookstore) {
         relevantInventories.push(inventory);
         currentTotal += inventory.current;
         initialTotal += inventory.initial;
+        returnsTotal += inventory.returns;
       }
     }
     setCurrentTotal(currentTotal);
     setInitialTotal(initialTotal);
+    setReturnsTotal(returnsTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     setData(sortedRelevantInventories);
   }
@@ -284,6 +288,7 @@ function BookstoreInventory({
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
         initialTotal={initialTotal}
+        returnsTotal={returnsTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}

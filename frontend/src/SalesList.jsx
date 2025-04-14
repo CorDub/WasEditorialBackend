@@ -68,7 +68,7 @@ function SalesList () {
       accessorKey:'completeInventory'
     },
     {
-      header: "Creada",
+      header: "Fecha",
       accessorKey: "createdAt"
     },
   ], []);
@@ -76,6 +76,7 @@ function SalesList () {
     columns,
     data,
     enableDensityToggle: false,
+    enablePagination: false,
     enableFullScreenToggle: false,
     enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
@@ -97,6 +98,12 @@ function SalesList () {
         top: "60px",
         left: "10px",
         width: "99vw"
+      }
+    },
+    muiTableContainerProps: {
+      sx: {
+        maxHeight: '81vh',
+        overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {

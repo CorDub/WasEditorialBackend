@@ -9,6 +9,7 @@ import './AuthorInventory.scss';
 import BookSelector from "./CustomDropdown";
 
 function AuthorInventory(){
+  useCheckUser();
   const { user } = useContext(UserContext);
   const [inventories, setInventories] = useState("")
   const [booksInventories, setBooksInventories] = useState([])
@@ -56,16 +57,15 @@ function AuthorInventory(){
 
   return (
     <>
-    <Navbar subNav={user.role} active={"autores"} />
+    <Navbar subNav={user && user.role} active={"autores"} />
     <div id="author-page-container">
-      <h1 id="author-page-title">Inventario</h1>
       <div id="author-page-content">
         <div id="author-inventory-container">
           <div id="author-inventory-title-container">
             <h2 id='show-inventory-title'>Reporte de Inventario</h2>
               {booksInventories && (
                 <BookSelector
-                  booksInventories={booksInventories} 
+                  booksInventories={booksInventories}
                   onBookChange={handleBookChange}
                 />
               )}
@@ -74,8 +74,8 @@ function AuthorInventory(){
             <ShowInventories inventories={inventories} />
           ) : (
             selectedBookId && (
-              <ShowInventories 
-              inventories={booksInventories.find(book => book.bookId === parseInt(selectedBookId))} 
+              <ShowInventories
+              inventories={booksInventories.find(book => book.bookId === parseInt(selectedBookId))}
               />
             )
           )}

@@ -20,7 +20,9 @@ function UserProvider({ children }) {
         setUser(data);
         return(data);
       } else {
-        setUser(null);
+        setUser(prev => {
+          return null;
+        });
         console.log('no user to fetch');
         return(user);
       }

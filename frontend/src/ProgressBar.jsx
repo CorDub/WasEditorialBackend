@@ -10,7 +10,7 @@ function ProgressBar({current, initial, returns}) {
   // const [returnsBarLength, setReturnsBarLength] = useState(0);
 
   function setCurrentLength() {
-    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * (initial-current-returns) / initial);
+    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * (initial-current) / initial);
     currentBarRef.current.style.width = currentLength + 5 + "px";
   }
 
@@ -58,7 +58,7 @@ function ProgressBar({current, initial, returns}) {
     <div className="progress-bar">
       <div className="progress-bar-max" ref={maxBarRef}>
         <div className="progress-bar-current" ref={currentBarRef}>
-          <div className="pb-current-number">{initial - current - returns}</div>
+          <div className="pb-current-number">{initial - current}</div>
         </div>
         {returns > 0 && (
           <div className="progress-bar-returns" ref={returnsBarRef}>
@@ -66,7 +66,7 @@ function ProgressBar({current, initial, returns}) {
           </div>
         )}
         {!hideMaxNumber && (
-          <div className="pb-max-number">{current}</div>
+          <div className="pb-max-number">{current - returns}</div>
         )}
       </div>
     </div>

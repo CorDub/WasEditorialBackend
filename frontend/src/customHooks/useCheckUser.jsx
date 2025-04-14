@@ -45,7 +45,7 @@ function useCheckUser(page_id) {
 
     fetchUserData();
 
-  }, [])
+  }, [user])
 }
 
 export default useCheckUser;

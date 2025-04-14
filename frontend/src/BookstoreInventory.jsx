@@ -76,7 +76,7 @@ function BookstoreInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => (
-        <div>{row.original.initial - row.original.current - row.original.returns} / {row.original.initial}</div>
+        <div>{row.original.initial - row.original.current} / {row.original.initial}</div>
       ),
       muiTableHeadCellProps: {
         sx: {
@@ -108,7 +108,7 @@ function BookstoreInventory({
     {
       header: "Disponibles",
       Cell: ({row}) => (
-        <div>{row.original.current} / {row.original.initial}</div>
+        <div>{row.original.current - row.original.returns} / {row.original.initial}</div>
       ),
       muiTableHeadCellProps: {
         sx: {

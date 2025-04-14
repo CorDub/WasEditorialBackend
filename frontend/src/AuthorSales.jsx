@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import useCheckUser from "./customHooks/useCheckUser";
 import UserContext from "./UserContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './AuthorSales.scss';
@@ -6,6 +7,7 @@ import Navbar from "./Navbar";
 import BookSelector from './CustomDropdown';
 
 const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
+  useCheckUser();
   const selectedBookSales = selectedBook === 'total'
     ? salesData.totalSales
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;
@@ -71,6 +73,7 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
 };
 
 function AuthorSales() {
+  useCheckUser();
   const { user } = useContext(UserContext);
   const [salesData, setSalesData] = useState(null);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -85,16 +88,16 @@ function AuthorSales() {
   function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
     if (!sales || sales.length === 0) return;
-    
-    const filteredSales = bookId === 'total' 
-      ? sales 
+
+    const filteredSales = bookId === 'total'
+      ? sales
       : sales.filter(sale => sale.book_id === parseInt(bookId));
-    
-    
+
+
     filteredSales.forEach(sale => {
       const date = new Date(sale.created_at);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+
       if (!monthlySales[monthKey]) {
         monthlySales[monthKey] = {
           month: monthKey,
@@ -118,7 +121,7 @@ function AuthorSales() {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate
       });
-      
+
       const response = await fetch(`http://localhost:3000/author/sales?${queryParams}`, {
         credentials: 'include',
         headers: {
@@ -129,7 +132,7 @@ function AuthorSales() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setSalesData(data);
       processMonthlyData(data.sales, selectedBook);
@@ -205,21 +208,21 @@ function AuthorSales() {
               onChange={handleDateChange}
             />
           </div>
-          <button 
+          <button
             className="apply-date-range-btn"
             onClick={handleApplyDateRange}
           >
-            Apply Date Range
+            Aplicar fechas
           </button>
         </div>
-        <SalesContent 
-          salesData={salesData} 
-          selectedBook={selectedBook} 
-          monthlyData={monthlyData} 
+        <SalesContent
+          salesData={salesData}
+          selectedBook={selectedBook}
+          monthlyData={monthlyData}
         />
       </div>
     </>
   );
 }
 
-export default AuthorSales; 
+export default AuthorSales;

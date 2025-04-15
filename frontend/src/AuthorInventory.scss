@@ -1,7 +1,7 @@
 #author-page-container {
-    width: 90%;
-    padding-top: 100px;
-    border: solid 1px black;
+    width: 98%;
+    margin-top: 50px;
+    height: 90%;
 }
 
 #author-page-title {
@@ -14,10 +14,9 @@
 
 #author-page-content {
     display: flex;
-    align-items: center;
+    align-items: start;
     justify-content: space-around;
     width: 100%;
-    border: 1px solid black;
 }
 
 #author-inventory-title-container {
@@ -28,5 +27,10 @@
 }
 
 #author-inventory-container {
-    width: 50%;
+    width: 30%;
+    height: 100%;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    margin: 1rem;
+    padding: 1rem;
 }

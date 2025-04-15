@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './BestSellerGraph.scss';
 
 
 function BestSellerGraph({ bookSales }) {
-  console.log("Received bookSales:", bookSales);
+  // console.log("Received bookSales:", bookSales);
 
   if (!bookSales || bookSales.length === 0) {
     return <div>No sales data available</div>;
@@ -15,9 +15,9 @@ function BestSellerGraph({ bookSales }) {
         title: book.title,
         quantity: book.summary.sold || 0
     }))
-    .sort((a, b) => b.quantity - a.quantity) 
+    .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 3);
-  console.log("Formatted data:", formattedData);
+  // console.log("Formatted data:", formattedData);
 
   const maxSales = Math.max(...formattedData.map(book => book.quantity));
 

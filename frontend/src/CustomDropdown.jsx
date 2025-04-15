@@ -25,6 +25,8 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
     onChange(option.value);
   };
 
+  console.log(options);
+
   return (
     <div className="custom-dropdown" ref={dropdownRef}>
       <button
@@ -32,7 +34,7 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
         className="dropdown-button"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{selectedOption.label}</span>
+        <span>{selectedOption && selectedOption.label}</span>
         <svg
           className={`dropdown-arrow ${isOpen ? 'open' : ''}`}
           xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +51,7 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
 
       {isOpen && (
         <div className="dropdown-menu">
-          {options.map((option) => (
+          {options && options.map((option) => (
             <div
               key={option.value}
               className={`dropdown-item ${selectedOption.value === option.value ? 'selected' : ''}`}

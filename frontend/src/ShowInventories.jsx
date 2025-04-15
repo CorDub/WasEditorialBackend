@@ -1,14 +1,12 @@
-import React from 'react';
 import './ShowInventories.scss';
 
 function ShowInventories(props) {
 
     const { inventories } = props;
 
-    
     return (
       <div id='show-inventory-container'>
-        {inventories && ( 
+        {inventories && (
           <table className="inventory-table">
             <tbody>
               <tr>
@@ -41,6 +39,6 @@ function ShowInventories(props) {
         )}
      </div>
     )
-}  
+}
 
-export default ShowInventories
+export default ShowInventories;

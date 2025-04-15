@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
 import BestSellerGraph from "./BestSellerGraph";
 import './AuthorInventory.scss';
-import BookSelector from "./CustomDropdown";
+import BookSelector from "./BookSelector";
 
 function AuthorInventory(){
   useCheckUser();
@@ -19,7 +19,6 @@ function AuthorInventory(){
   useEffect(()=>{
     fetchInventories()
     setShowTotal(true);
-    console.log(inventories)
   },[])
 
   async function fetchInventories() {
@@ -44,6 +43,9 @@ function AuthorInventory(){
     }
   }
 
+  useEffect(() => {
+    console.log(booksInventories)
+  }, [booksInventories])
 
   const handleBookChange = (event) => {
     if (event.target.value === "total") {

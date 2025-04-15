@@ -18,6 +18,7 @@ import InventoriesProvider from './InventoriesProvider.jsx';
 import BookstoreInventory from './BookstoreInventory.jsx';
 import BookInventory from './BookInventory.jsx';
 import AuthorSales from './AuthorSales.jsx';
+
 function App() {
   return (
     <UserProvider>

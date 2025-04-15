@@ -1,76 +1,10 @@
 import { useEffect, useState, useContext } from 'react';
 import useCheckUser from "./customHooks/useCheckUser";
 import UserContext from "./UserContext";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './AuthorSales.scss';
 import Navbar from "./Navbar";
-import BookSelector from './CustomDropdown';
-
-const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
-  useCheckUser();
-  const selectedBookSales = selectedBook === 'total'
-    ? salesData.totalSales
-    : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;
-
-  const selectedBookValue = selectedBook === 'total'
-    ? salesData.totalValue
-    : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.value || 0;
-
-  return (
-    <div id="author-sales-content">
-      <div id="author-sales-content-left">
-        <div id="total-sales">
-          <h3>Libros vendidos</h3>
-          <p>{selectedBookSales} libros</p>
-          <p className="sales-value">$ {selectedBookValue.toFixed(2)}</p>
-        </div>
-        <div id="books-sold">
-          <h3>Libros vendidos</h3>
-          {selectedBook === 'total' && (
-            <ul>
-              {salesData.bookSales.map(book => (
-                <li key={book.bookId} className='books-sold-item'>
-                  {book.title}: {book.quantity} libros <span>($ {book.value.toFixed(2)})</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-      <div id="author-sales-content-right">
-        <div id="sales-chart">
-          <div className="chart-header">
-            <h3>Ventas mensuales</h3>
-          </div>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="quantity"
-                stroke="#8884d8"
-                name="Libros vendidos"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="value"
-                stroke="#82ca9d"
-                name="Valor de ventas ($)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
-};
+import BookSelector from './BookSelector';
+import SalesContent from './SalesContent';
 
 function AuthorSales() {
   useCheckUser();
@@ -180,16 +114,19 @@ function AuthorSales() {
 
   return (
     <>
-      <Navbar subNav={user.role} active={"autores"} />
+      <Navbar subNav={user.role} active={"ventas"} />
       <div id="author-sales-container">
         <div className="date-range-selector">
+          <div className="date-input">
+          {/* <label>Inventario:</label> */}
           <BookSelector
             booksInventories={salesData.bookSales}
             onBookChange={handleBookChange}
             selectedValue={selectedBook}
           />
+          </div>
           <div className="date-input">
-            <label htmlFor="startDate">Start Date:</label>
+            {/* <label htmlFor="startDate">Start Date:</label> */}
             <input
               type="date"
               id="startDate"
@@ -199,7 +136,7 @@ function AuthorSales() {
             />
           </div>
           <div className="date-input">
-            <label htmlFor="endDate">End Date:</label>
+            {/* <label htmlFor="endDate">End Date:</label> */}
             <input
               type="date"
               id="endDate"

@@ -12,12 +12,12 @@ function AuthorNavbar({ active }) {
       }
     });
 
-    if (active === "inventario") {
+    if (active === "ventas") {
       buttons[0].classList.add("active-button");
       return;
     };
 
-    if (active === "ventas") {
+    if (active === "inventario") {
       buttons[1].classList.add("active-button");
       return;
     };
@@ -34,8 +34,8 @@ function AuthorNavbar({ active }) {
 
   return(
     <div className="admin-navbar">
-      <Link to='/author/inventory' className="navbar-button">Inventario</Link>
       <Link to='/author/sales' className="navbar-button">Ventas</Link>
+      <Link to='/author/inventory' className="navbar-button">Inventario</Link>
       {/* <Link to='/admin/bookstores' className="navbar-button">Kindle</Link> */}
     </div>
   )

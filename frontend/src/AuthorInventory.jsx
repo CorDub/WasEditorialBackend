@@ -57,7 +57,7 @@ function AuthorInventory(){
 
   return (
     <>
-    <Navbar subNav={user && user.role} active={"autores"} />
+    <Navbar subNav={user && user.role} active={"inventario"} />
     <div id="author-page-container">
       <div id="author-page-content">
         <div id="author-inventory-container">

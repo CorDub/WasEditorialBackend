@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './CustomDropdown.scss'; 
+import { useState, useRef, useEffect } from 'react';
+import './CustomDropdown.scss';
 
 const CustomDropdown = ({ options, defaultOption, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,26 +75,4 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
   );
 };
 
-function BookSelector({ booksInventories, onBookChange, selectedValue = 'total' }) {
-    const options = [
-      { value: 'total', label: 'INVENTARIO TOTAL' },
-      ...(booksInventories?.map(book => ({ 
-        value: book.bookId, 
-        label: book.title 
-      })) || [])
-    ];
-  
-    const handleChange = (value) => {
-      onBookChange({ target: { value } });
-    };
-  
-    return (
-      <CustomDropdown 
-        options={options} 
-        defaultOption={options.find(opt => opt.value === selectedValue) || options[0]} 
-        onChange={handleChange} 
-      />
-    );
-  }
-  
-  export default BookSelector;
+export default CustomDropdown;

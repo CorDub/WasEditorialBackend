@@ -328,14 +328,20 @@ async function main() {
   /// Create fake sales
 
   const newAllInventories = await prisma.inventory.findMany();
+  console.log("NEWALLINVENTORIES LENGTH \n", newAllInventories.length)
 
   for (const inventory of newAllInventories) {
-    const randQuantToSell = Math.floor(Math.random() * inventory.current);
+    let randQuantToSell = Math.floor(Math.random() * inventory.current);
+    if (randQuantToSell === 0) {
+      randQuantToSell = 1
+    }
+    console.log('RANDQUANT TO SELL\n', randQuantToSell);
 
     if (randQuantToSell > 0) {
       const monthsAgo = Math.floor(Math.random() * 12);
-      const saleDate = new Date();
+      let saleDate = new Date();
       saleDate.setMonth(saleDate.getMonth() - monthsAgo);
+      console.log("SALE DATE \n", saleDate);
 
       const createdSale = await prisma.sale.create({
         data: {
@@ -345,12 +351,18 @@ async function main() {
         }
       });
 
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: inventory.id},
-        data: {
-          current: inventory.current - randQuantToSell
-        }
-      })
+      if (createdSale) {
+        const updatedInventory = await prisma.inventory.update({
+          where: {id: inventory.id},
+          data: {
+            current: inventory.current - randQuantToSell
+          }
+        });
+      } else {
+        console.log("\n SALE WASNT CREATED \n");
+        console.log("\n INVENTORY \n", inventory);
+        console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
+      }
     };
   }
 
@@ -405,74 +417,74 @@ async function main() {
     });
   }
 
-  const bookstores = await prisma.bookstore.findMany({
-    where: {
-      isDeleted: false
-    }
-  });
+  // const bookstores = await prisma.bookstore.findMany({
+  //   where: {
+  //     isDeleted: false
+  //   }
+  // });
 
-  const inventories = [];
-  for (const book of randomBooks) {
-    for (const bookstore of bookstores) {
-      const existingInventory = await prisma.inventory.findFirst({
-        where: {
-          bookId: book.id,
-          bookstoreId: bookstore.id,
-          country: 'México'
-        }
-      });
+  // const inventories = [];
+  // for (const book of randomBooks) {
+  //   for (const bookstore of bookstores) {
+  //     const existingInventory = await prisma.inventory.findFirst({
+  //       where: {
+  //         bookId: book.id,
+  //         bookstoreId: bookstore.id,
+  //         country: 'México'
+  //       }
+  //     });
 
-      if (!existingInventory) {
-        const inventory = await prisma.inventory.create({
-          data: {
-            bookId: book.id,
-            bookstoreId: bookstore.id,
-            country: 'México',
-            initial: 100,
-            current: 100
-          }
-        });
-        inventories.push(inventory);
-      } else {
-        inventories.push(existingInventory);
-      }
-    }
-  }
+  //     if (!existingInventory) {
+  //       const inventory = await prisma.inventory.create({
+  //         data: {
+  //           bookId: book.id,
+  //           bookstoreId: bookstore.id,
+  //           country: 'México',
+  //           initial: 100,
+  //           current: 100
+  //         }
+  //       });
+  //       inventories.push(inventory);
+  //     } else {
+  //       inventories.push(existingInventory);
+  //     }
+  //   }
+  // }
 
-  for (const inventory of inventories) {
-    const existingSales = await prisma.sale.findFirst({
-      where: {
-        inventoryId: inventory.id
-      }
-    });
+  // for (const inventory of inventories) {
+  //   const existingSales = await prisma.sale.findMany({
+  //     where: {
+  //       inventoryId: inventory.id
+  //     }
+  //   });
 
-    if (!existingSales) {
-      const numSales = Math.floor(Math.random() * 11) + 5;
-      for (let i = 0; i < numSales; i++) {
-        const quantity = Math.floor(Math.random() * 5) + 1;
-        // Generate a random date within the last 12 months
-        const monthsAgo = Math.floor(Math.random() * 12);
-        const saleDate = new Date();
-        saleDate.setMonth(saleDate.getMonth() - monthsAgo);
+  //   if (!existingSales) {
+  //     const numSales = Math.floor(Math.random() * 11) + 5;
+  //     for (let i = 0; i < numSales; i++) {
+  //       const quantity = Math.floor(Math.random() * 5) + 1;
+  //       // Generate a random date within the last 12 months
+  //       const monthsAgo = Math.floor(Math.random() * 12);
+  //       const saleDate = new Date();
+  //       saleDate.setMonth(saleDate.getMonth() - monthsAgo);
 
-        await prisma.sale.create({
-          data: {
-            inventoryId: inventory.id,
-            quantity: quantity,
-            createdAt: saleDate
-          }
-        });
-        await prisma.inventory.update({
-          where: { id: inventory.id },
-          data: {
-            current: {
-              decrement: quantity
-            }
-          }
-        });
-      }
-    }
-  }
+  //       await prisma.sale.create({
+  //         data: {
+  //           inventoryId: inventory.id,
+  //           quantity: quantity,
+  //           createdAt: saleDate
+  //         }
+  //       });
+  //       await prisma.inventory.update({
+  //         where: { id: inventory.id },
+  //         data: {
+  //           current: {
+  //             decrement: quantity
+  //           }
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 }
 
 main()

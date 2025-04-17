@@ -100,7 +100,8 @@ router.get('/inventories', async (req, res) => {
       where: {
         users: {
           some: { id: req.session.user_id }
-        }
+        },
+        isDeleted: false
       },
       include: {
         inventories: {
@@ -114,19 +115,43 @@ router.get('/inventories', async (req, res) => {
     // Calculate overall totals across all books
     let overallInitialTotal = 0;
     let overallSoldTotal = 0;
+    let overallInventoryInBookstores = 0;
+    let overallInventoryInWas = 0;
 
     // Calculate sales summary for each book
     const bookInventories = books.map(book => {
       const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
-      const soldTotal = book.inventories.reduce((sum, inv) => {
-        const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
-        return sum + itemSales;
-      }, 0);
+      // const soldTotal = book.inventories.reduce((sum, inv) => {
+      //   const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
+      //   return sum + itemSales;
+      // }, 0);
+      let soldTotal = 0;
+      for (const inventory of book.inventories) {
+        if (inventory.sales) {
+          for (const sale of inventory.sales) {
+            soldTotal += sale.quantity
+          }
+        }
+      }
+
       const remainingTotal = initialTotal - soldTotal;
+      // const inventoryInBookstores = book.inventories.reduce((sum, inv) => {sum + inv.current}, 0);
+      // const overallInventoryInWas = book.inventories.reduce((sum, inv) => {sum + inv.})
+      let inventoryInBookstores = 0;
+      let inventoryInWas = 0;
+      for (const inventory of book.inventories) {
+        if (inventory.bookstoreId === 3) {
+          inventoryInWas = inventory.current
+        } else {
+          inventoryInBookstores += inventory.current
+        }
+      }
 
       // Add to overall totals
       overallInitialTotal += initialTotal;
       overallSoldTotal += soldTotal;
+      overallInventoryInBookstores += inventoryInBookstores;
+      overallInventoryInWas += inventoryInWas;
 
       return {
         bookId: book.id,
@@ -135,7 +160,9 @@ router.get('/inventories', async (req, res) => {
         summary: {
           initial: initialTotal,
           sold: soldTotal,
-          total: remainingTotal
+          total: remainingTotal,
+          bookstores: inventoryInBookstores,
+          was: inventoryInWas
         }
       };
     });
@@ -143,12 +170,14 @@ router.get('/inventories', async (req, res) => {
     const overallRemainingTotal = overallInitialTotal - overallSoldTotal;
 
     console.log(`Processed sales data for ${books.length} books for user ${req.session.user_id}`);
-    
+
     res.status(200).json({
       summary: {
         initial: overallInitialTotal,
         sold: overallSoldTotal,
-        total: overallRemainingTotal
+        total: overallRemainingTotal,
+        bookstores: overallInventoryInBookstores,
+        was: overallInventoryInWas
       },
       bookInventories: bookInventories
     });
@@ -186,7 +215,7 @@ router.get('/books/:bookId/inventories', async (req, res) => {
     });
 
     console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
-    
+
     const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
     const soldTotal = inventories.reduce((sum, inv) => {
       const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
@@ -211,14 +240,14 @@ router.get('/books/:bookId/inventories', async (req, res) => {
 router.get('/sales', async (req, res) => {
   try {
     const authorId = req.session.user_id;
-    
+
     // Get date range from query parameters
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
-    
+
     // Set end date to end of day
     endDate.setHours(23, 59, 59, 999);
-    
+
     const sales = await prisma.sale.findMany({
       where: {
         inventory: {
@@ -258,7 +287,7 @@ router.get('/sales', async (req, res) => {
       const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
       const price = sale.inventory.book.price || 199.99;
       const saleValue = price * sale.quantity;
-      
+
       if (existingBook) {
         existingBook.quantity += sale.quantity;
         existingBook.value += saleValue;

@@ -1,44 +1,38 @@
 import './ShowInventories.scss';
 
-function ShowInventories(props) {
+function ShowInventories({inventories}) {
+  console.log(inventories)
 
-    const { inventories } = props;
-
-    return (
+  return (
+    inventories && (
       <div id='show-inventory-container'>
-        {inventories && (
-          <table className="inventory-table">
-            <tbody>
-              <tr>
-                <td>INVENTARIO INICIAL</td>
-                <td>{inventories.summary.initial}</td>
-              </tr>
-              <tr>
-                <td>LIBROS ENTREGADOS AL AUTOR</td>
-                <td>{inventories.initial || "?"}</td>
-                <button id='show-inventory-detail-button'>VER DETALLES</button>
-              </tr>
-              <tr>
-                <td>LIBROS VENDIDOS</td>
-                <td>{inventories.summary.sold}</td>
-              </tr>
-              <tr>
-                <td>INVENTARIO EN LIBRERÍAS</td>
-                <td>{inventories.initial || "?"}</td>
-              </tr>
-              <tr>
-                <td>LIBROS EN BODEGA WAS</td>
-                <td>{inventories.initial || "?"}</td>
-              </tr>
-              <tr>
-                <td>INVENTARIO TOTAL</td>
-                <td>{inventories.summary.total}</td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-     </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Inventario inicial</p>
+          <p className="author-inventory-number">{inventories.summary.initial || 0}</p>
+        </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Libros entregados al autor</p>
+          <p className="author-inventory-number">{inventories.initial || 0}</p>
+        </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Libros vendidos</p>
+          <p className="author-inventory-number">{inventories.summary.sold || 0}</p>
+        </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Inventario en librerías</p>
+          <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
+        </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Libros en bodega Was</p>
+          <p className="author-inventory-number">{inventories.summary.was || 0}</p>
+        </div>
+        <div className="author-inventory-line">
+          <p className="author-inventory-label">Inventario total disponible</p>
+          <p className="author-inventory-number">{inventories.summary.total || 0}</p>
+        </div>
+      </div>
     )
+  )
 }
 
 export default ShowInventories;

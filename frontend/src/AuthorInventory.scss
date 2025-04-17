@@ -22,8 +22,13 @@
 #author-inventory-title-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 2rem;
+    justify-content: space-between;
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    // gap: 2rem;
+}
+
+#show-inventory-title {
+  margin: 0;
 }
 
 #author-inventory-container {

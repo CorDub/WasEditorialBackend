@@ -25,8 +25,6 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
     onChange(option.value);
   };
 
-  console.log(options);
-
   return (
     <div className="custom-dropdown" ref={dropdownRef}>
       <button

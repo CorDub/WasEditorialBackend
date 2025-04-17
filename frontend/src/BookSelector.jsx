@@ -7,7 +7,7 @@ function BookSelector({ booksInventories, onBookChange, selectedValue = 'total' 
   }, []);
 
   const options = [
-    { value: 'total', label: 'Total' },
+    { value: 'total', label: 'Inventario total' },
     ...(booksInventories?.map(book => ({
       value: book.bookId,
       label: book.title

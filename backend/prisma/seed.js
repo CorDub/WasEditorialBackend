@@ -291,7 +291,8 @@ async function main() {
           await prisma.inventory.update({
             where: {id: inventory.id},
             data: {
-              current: inventory.current - randQuantToMove
+              current: inventory.current - randQuantToMove,
+              initial: inventory.initial - randQuantToMove
             }
           });
 
@@ -309,12 +310,13 @@ async function main() {
           await prisma.inventory.update({
             where: {id: inventory.id},
             data: {
-              current: inventory.current - randQuantToMove
+              current: inventory.current - randQuantToMove,
+              initial: inventory.initial - randQuantToMove
             }
           });
         }
 
-        const createdTransfer =  await prisma.transfer.create({
+        const createdTransfer = await prisma.transfer.create({
           data: {
             fromInventoryId: inventory.id,
             toInventoryId: createdInventory.id,
@@ -328,20 +330,17 @@ async function main() {
   /// Create fake sales
 
   const newAllInventories = await prisma.inventory.findMany();
-  console.log("NEWALLINVENTORIES LENGTH \n", newAllInventories.length)
 
   for (const inventory of newAllInventories) {
     let randQuantToSell = Math.floor(Math.random() * inventory.current);
     if (randQuantToSell === 0) {
       randQuantToSell = 1
     }
-    console.log('RANDQUANT TO SELL\n', randQuantToSell);
 
     if (randQuantToSell > 0) {
       const monthsAgo = Math.floor(Math.random() * 12);
       let saleDate = new Date();
       saleDate.setMonth(saleDate.getMonth() - monthsAgo);
-      console.log("SALE DATE \n", saleDate);
 
       const createdSale = await prisma.sale.create({
         data: {

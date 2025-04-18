@@ -22,7 +22,8 @@ function InventoryTotal({
     setBookInventoryOpen,
     impressions,
     setModalType,
-    openModal}) {
+    openModal,
+    setRetreat}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
@@ -49,6 +50,7 @@ function InventoryTotal({
   function returnToInventoriesAreaDashboard() {
     if (type === "book") {
       setBookInventoryOpen(false);
+      setRetreat(false);
     } else {
       setBookstoreInventoryOpen(false);
     }

@@ -12,7 +12,8 @@ function BookInventory({
     selectedBook,
     selectedBookId,
     isBookInventoryOpen,
-    setBookInventoryOpen}) {
+    setBookInventoryOpen,
+    setRetreat}) {
   useCheckAdmin()
   const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [currentTotal, setCurrentTotal] = useState(0);
@@ -305,7 +306,8 @@ function BookInventory({
         impressions={impressions}
         ref={inventoryTotalRef}
         setModalType={setModalType}
-        openModal={openModal}/>
+        openModal={openModal}
+        setRetreat={setRetreat}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

@@ -12,7 +12,7 @@ function ShowInventories({inventories}) {
         </div>
         <div className="author-inventory-line">
           <p className="author-inventory-label">Libros entregados al autor</p>
-          <p className="author-inventory-number">{inventories.initial || 0}</p>
+          <p className="author-inventory-number">{inventories.summary.givenToAuthor || 0}</p>
         </div>
         <div className="author-inventory-line">
           <p className="author-inventory-label">Libros vendidos</p>

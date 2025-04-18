@@ -18,6 +18,7 @@ function BookInventory({
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
+  const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [data, setData] = useState([]);
   const bookInventoryRef = useRef();
   const [clickedRow, setClickedRow] = useState(null);
@@ -70,12 +71,12 @@ function BookInventory({
       accessorKey:'bookstore.name',
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       }
     },
@@ -86,12 +87,12 @@ function BookInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       }
     },
@@ -102,12 +103,28 @@ function BookInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
+        }
+      }
+    },
+    {
+      header: "Entregados al autor",
+      Cell: ({row}) => (
+        <div>{row.original.givenToAuthor} / {row.original.initial}</div>
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '3%'
         }
       }
     },
@@ -118,12 +135,12 @@ function BookInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       }
     },
@@ -132,12 +149,12 @@ function BookInventory({
       accessorKey: "country",
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '3%'
         }
       }
     },
@@ -282,6 +299,7 @@ function BookInventory({
         currentTotal={currentTotal}
         initialTotal={initialTotal}
         returnsTotal={returnsTotal}
+        givenToAuthorTotal={givenToAuthorTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}

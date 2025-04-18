@@ -686,6 +686,7 @@ router.get('/inventories', async (req, res) => {
         initial: true,
         current: true,
         returns: true,
+        givenToAuthor: true
       },
       orderBy: {
         book: {

@@ -117,14 +117,11 @@ router.get('/inventories', async (req, res) => {
     let overallSoldTotal = 0;
     let overallInventoryInBookstores = 0;
     let overallInventoryInWas = 0;
+    let overallEntregadosAlAutor = 0;
 
     // Calculate sales summary for each book
     const bookInventories = books.map(book => {
       const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
-      // const soldTotal = book.inventories.reduce((sum, inv) => {
-      //   const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
-      //   return sum + itemSales;
-      // }, 0);
       let soldTotal = 0;
       for (const inventory of book.inventories) {
         if (inventory.sales) {
@@ -133,10 +130,7 @@ router.get('/inventories', async (req, res) => {
           }
         }
       }
-
       const remainingTotal = initialTotal - soldTotal;
-      // const inventoryInBookstores = book.inventories.reduce((sum, inv) => {sum + inv.current}, 0);
-      // const overallInventoryInWas = book.inventories.reduce((sum, inv) => {sum + inv.})
       let inventoryInBookstores = 0;
       let inventoryInWas = 0;
       for (const inventory of book.inventories) {
@@ -146,12 +140,18 @@ router.get('/inventories', async (req, res) => {
           inventoryInBookstores += inventory.current
         }
       }
+      let entregadosAlAutor = 0;
+      for (const inventory of book.inventories) {
+        entregadosAlAutor += inventory.givenToAuthor
+      };
+
 
       // Add to overall totals
       overallInitialTotal += initialTotal;
       overallSoldTotal += soldTotal;
       overallInventoryInBookstores += inventoryInBookstores;
       overallInventoryInWas += inventoryInWas;
+      overallEntregadosAlAutor += entregadosAlAutor;
 
       return {
         bookId: book.id,
@@ -162,7 +162,8 @@ router.get('/inventories', async (req, res) => {
           sold: soldTotal,
           total: remainingTotal,
           bookstores: inventoryInBookstores,
-          was: inventoryInWas
+          was: inventoryInWas,
+          givenToAuthor: entregadosAlAutor
         }
       };
     });
@@ -177,7 +178,8 @@ router.get('/inventories', async (req, res) => {
         sold: overallSoldTotal,
         total: overallRemainingTotal,
         bookstores: overallInventoryInBookstores,
-        was: overallInventoryInWas
+        was: overallInventoryInWas,
+        givenToAuthor: overallEntregadosAlAutor
       },
       bookInventories: bookInventories
     });

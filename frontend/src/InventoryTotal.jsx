@@ -14,6 +14,7 @@ function InventoryTotal({
     currentTotal,
     initialTotal,
     returnsTotal,
+    givenToAuthorTotal,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
     selectedBook,
@@ -92,8 +93,9 @@ function InventoryTotal({
             </div>
           </div>}
 
-        <div>Total vendidos: {initialTotal - currentTotal - returnsTotal} / {initialTotal}</div>
+        <div>Total vendidos: {initialTotal - currentTotal - returnsTotal - givenToAuthorTotal} / {initialTotal}</div>
         <div>Total devueltos: {returnsTotal} / {initialTotal}</div>
+        <div>Total entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
         <div>Total disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
           <ProgressBar

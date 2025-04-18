@@ -23,6 +23,7 @@ function BookstoreInventory({
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
+  const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("inventory");
@@ -76,16 +77,16 @@ function BookstoreInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => (
-        <div>{row.original.initial - row.original.current} / {row.original.initial}</div>
+        <div>{row.original.initial - (row.original.current + row.original.givenToAuthor)} / {row.original.initial}</div>
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       }
     },
@@ -96,12 +97,28 @@ function BookstoreInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
+        }
+      }
+    },
+    {
+      header: "Entregados al autor",
+      Cell: ({row}) => (
+        <div>{row.original.givenToAuthor} / {row.original.initial}</div>
+      ),
+      muiTableHeadCellProps: {
+        sx: {
+          width: '5%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '5%'
         }
       }
     },
@@ -112,12 +129,12 @@ function BookstoreInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       }
     },
@@ -126,12 +143,12 @@ function BookstoreInventory({
       accessorKey: "country",
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       }
     },
@@ -223,17 +240,20 @@ function BookstoreInventory({
     let currentTotal = 0;
     let initialTotal = 0;
     let returnsTotal = 0;
+    let givenToAuthorTotal = 0;
     for (const inventory of inventories) {
       if (inventory.bookstore.name === selectedBookstore) {
         relevantInventories.push(inventory);
         currentTotal += inventory.current;
         initialTotal += inventory.initial;
         returnsTotal += inventory.returns;
+        givenToAuthorTotal += inventory.givenToAuthor;
       }
     }
     setCurrentTotal(currentTotal);
     setInitialTotal(initialTotal);
     setReturnsTotal(returnsTotal);
+    setGivenToAuthorTotal(givenToAuthorTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     setData(sortedRelevantInventories);
   }
@@ -289,6 +309,7 @@ function BookstoreInventory({
         currentTotal={currentTotal}
         initialTotal={initialTotal}
         returnsTotal={returnsTotal}
+        givenToAuthorTotal={givenToAuthorTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}

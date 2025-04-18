@@ -17,9 +17,9 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
+  const [deliverToAuthor, setDeliverToAuthor] = useState(false);
 
   useEffect(() => {
-    console.log(clickedRow);
     if (clickedRow.bookstoreId === 3) {
       setTransferType('send')
     } else {
@@ -158,7 +158,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     const quantityElements = document.querySelectorAll('.transfer-quantity');
 
     for (let i = 0; i < bookstoresToTransfer.length; i++) {
-      if (transferType === "send") {
+      if (transferType === "send" && !deliverToAuthor) {
         const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
         const errorsBookstore = checkForErrors(
           "librería",
@@ -169,7 +169,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         if (errorsBookstore.length > 0) {
           errorsList.push(errorsBookstore);
         };
-      }
+      };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
       const errorsQuantity = checkForErrors(
@@ -245,8 +245,14 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       <form
         onSubmit={handleSubmit}
         className="global-form">
-        {transferType === "send" ?
-          (bookstoresToTransfer.map((bookstore, index) => (
+        <div className="transfer-deliver-to-author">
+          <p>Entrega al autor?</p>
+          <input
+            type="checkbox"
+            onChange={() => setDeliverToAuthor(!deliverToAuthor)}/>
+        </div>
+        {transferType === "send" && !deliverToAuthor ? (
+          bookstoresToTransfer.map((bookstore, index) => (
             <div
               key={index}
               className="transfer-dropdown">

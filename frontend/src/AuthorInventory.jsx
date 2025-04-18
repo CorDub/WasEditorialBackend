@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import useCheckUser from "./customHooks/useCheckUser"
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";

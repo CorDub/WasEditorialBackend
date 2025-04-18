@@ -1171,7 +1171,7 @@ router.post('/transfer', async (req, res) => {
       quantity,
       inventoryFromId,
       bookId,
-      transferType
+      type
     } = req.body;
 
     const currentInventoryFrom = await prisma.inventory.findUnique({
@@ -1180,6 +1180,28 @@ router.post('/transfer', async (req, res) => {
         isDeleted: false
       }
     });
+
+    if (type === "send" && !bookstoreToId) {
+      const newTransferToAuthor = await prisma.transfer.create({
+        data: {
+          fromInventoryId: inventoryFromId,
+          quantity: parseInt(quantity)
+        }
+      });
+
+      if(newTransferToAuthor) {
+        const updatedFromInventory = await prisma.inventory.update({
+          where: {id: inventoryFromId},
+          data: {
+            givenToAuthor: currentInventoryFrom.givenToAuthor + parseInt(quantity),
+            current: currentInventoryFrom.current - parseInt(quantity)
+          }
+        });
+      };
+
+      res.status(200).json(newTransferToAuthor);
+      return;
+    }
 
     let currentInventoryTo = await prisma.inventory.findUnique({
       where: {
@@ -1242,7 +1264,7 @@ router.post('/transfer', async (req, res) => {
         fromInventoryId: parseInt(inventoryFromId),
         toInventoryId: parseInt(currentInventoryTo.id),
         quantity: parseInt(quantity),
-        type: transferType
+        type: type
       }
     });
 
@@ -1250,7 +1272,7 @@ router.post('/transfer', async (req, res) => {
     let updatedInventoryTo;
 
     if (newTransfer) {
-      if (newTransfer.transferType === "send") {
+      if (newTransfer.type === "send") {
         updatedInventoryFrom = await prisma.inventory.update({
           where: {id: parseInt(inventoryFromId)},
           data: {

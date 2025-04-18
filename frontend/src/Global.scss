@@ -131,8 +131,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
   p {
     margin: 0px;
     color: $second-color;
@@ -141,7 +140,7 @@ a {
 }
 
 .form-actions {
-  padding-top: 0.5rem;
+  // padding-top: 0.5rem;
 }
 
 .harddel-checkbox {

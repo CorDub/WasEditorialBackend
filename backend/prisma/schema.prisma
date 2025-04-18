@@ -93,6 +93,7 @@ model Inventory {
   initial       Int
   current       Int
   returns       Int        @default(0)
+  givenToAuthor Int        @default(0)
   sales         Sale[]
   isDeleted     Boolean    @default(false)
   createdAt     DateTime   @default(now())
@@ -127,8 +128,8 @@ model Transfer {
   id              Int          @id @default(autoincrement())
   fromInventory   Inventory    @relation("TransfersFrom", fields: [fromInventoryId], references: [id])
   fromInventoryId Int
-  toInventory     Inventory    @relation("TransfersTo", fields: [toInventoryId], references: [id])
-  toInventoryId   Int
+  toInventory     Inventory?   @relation("TransfersTo", fields: [toInventoryId], references: [id])
+  toInventoryId   Int?
   quantity        Int
   type            TransferType @default(send)
   isDeleted       Boolean      @default(false)

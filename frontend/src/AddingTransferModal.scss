@@ -31,3 +31,16 @@
 .transfer {
   margin-right: 0.25rem;
 }
+
+.transfer-deliver-to-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  p {
+    margin: 0;
+    font-size: 0.95em;
+    
+  }
+}

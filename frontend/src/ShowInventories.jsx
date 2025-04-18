@@ -7,7 +7,7 @@ function ShowInventories({inventories}) {
     inventories && (
       <div id='show-inventory-container'>
         <div className="author-inventory-line">
-          <p className="author-inventory-label">Inventario inicial</p>
+          <p className="author-inventory-label">Inventario total inicial</p>
           <p className="author-inventory-number">{inventories.summary.initial || 0}</p>
         </div>
         <div className="author-inventory-line">

@@ -95,10 +95,10 @@ function InventoryTotal({
             </div>
           </div>}
 
-        <div>Total vendidos: {initialTotal - currentTotal - returnsTotal - givenToAuthorTotal} / {initialTotal}</div>
-        <div>Total devueltos: {returnsTotal} / {initialTotal}</div>
-        <div>Total entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
-        <div>Total disponibles: {currentTotal} / {initialTotal}</div>
+        <div>Vendidos: {initialTotal - currentTotal - returnsTotal - givenToAuthorTotal} / {initialTotal}</div>
+        <div>Devueltos: {returnsTotal} / {initialTotal}</div>
+        <div>Entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
+        <div>Disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
           <ProgressBar
             current={currentTotal}

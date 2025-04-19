@@ -23,6 +23,7 @@ function BookstoreInventory({
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
+  const [soldTotal, setSoldTotal] = useState(0);
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);

@@ -686,7 +686,15 @@ router.get('/inventories', async (req, res) => {
         initial: true,
         current: true,
         returns: true,
-        givenToAuthor: true
+        givenToAuthor: true,
+        sales: {
+          where: {
+            isDeleted: false
+          },
+          select: {
+            quantity: true
+          }
+        }
       },
       orderBy: {
         book: {
@@ -1282,7 +1290,7 @@ router.post('/transfer', async (req, res) => {
           }
         });
 
-        if (!newInventoryTo || !recoveredInventoryTo) {
+        if (!newInventoryTo && !recoveredInventoryTo) {
           updatedInventoryTo = await prisma.inventory.update({
             where: {id: currentInventoryTo.id},
             data: {
@@ -1300,7 +1308,7 @@ router.post('/transfer', async (req, res) => {
           }
         });
 
-        if (!newInventoryTo || !recoveredInventoryTo) {
+        if (!newInventoryTo && !recoveredInventoryTo) {
           updatedInventoryTo = await prisma.inventory.update({
             where: {id: currentInventoryTo.id},
             data: {

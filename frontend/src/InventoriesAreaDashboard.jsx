@@ -320,30 +320,30 @@ function InventoriesAreaDashboard() {
         setBookInventoryOpen={setBookInventoryOpen}
         retreat={retreat}
         setRetreat={setRetreat}/>
-      {!isBookInventoryOpen && !isBookstoreInventoryOpen &&
-      <div className="areas-container">
-        {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
-          const bookstore = bookstoresCounts[index];
-          const noSpaceName = bookstore.name.replace(' ', '');
-          return (
-            <InventoryArea
-              key={index}
-              name={noSpaceName}
-              bookstoreName={bookstore.name}
-              count={bookstore.count}
-              top={area.top}
-              left={area.left}
-              height={area.height}
-              width={area.width}
-              setBookstoreInventoryOpen={setBookstoreInventoryOpen}
-              setSelectedBookstore={setSelectedBookstore}
-              setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
-              setSelectedLogo={setSelectedLogo}
-              retreat={retreat}
-              setRetreat={setRetreat}/>
-            )
-          })}
-      </div>}
+      {!isBookInventoryOpen && !isBookstoreInventoryOpen && (
+        <div className="areas-container">
+          {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
+            const bookstore = bookstoresCounts[index];
+            const noSpaceName = bookstore.name.replace(' ', '');
+            return (
+              <InventoryArea
+                key={index}
+                name={noSpaceName}
+                bookstoreName={bookstore.name}
+                count={bookstore.count}
+                top={area.top}
+                left={area.left}
+                height={area.height}
+                width={area.width}
+                setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+                setSelectedBookstore={setSelectedBookstore}
+                setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
+                setSelectedLogo={setSelectedLogo}
+                retreat={retreat}
+                setRetreat={setRetreat}/>
+              )
+            })}
+        </div>)}
 
       {isBookstoreInventoryOpen &&
         <BookstoreInventory
@@ -358,7 +358,8 @@ function InventoriesAreaDashboard() {
           selectedBook={selectedBook}
           selectedBookId={selectedBookId}
           isBookInventoryOpen={isBookInventoryOpen}
-          setBookInventoryOpen={setBookInventoryOpen} />}
+          setBookInventoryOpen={setBookInventoryOpen}
+          setRetreat={setRetreat} />}
     </div>
   )
 }

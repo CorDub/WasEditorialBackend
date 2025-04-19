@@ -686,7 +686,15 @@ router.get('/inventories', async (req, res) => {
         initial: true,
         current: true,
         returns: true,
-        givenToAuthor: true
+        givenToAuthor: true,
+        sales: {
+          where: {
+            isDeleted: false
+          },
+          select: {
+            quantity: true
+          }
+        }
       },
       orderBy: {
         book: {
@@ -694,6 +702,14 @@ router.get('/inventories', async (req, res) => {
         }
       }
     });
+
+    for (const inventory of inventories) {
+      let totalSales = 0;
+      for (const sale of inventory.sales) {
+        totalSales += sale.quantity
+      }
+      inventory["totalSales"] = totalSales
+    }
 
     // await redisClient.set("authorsList", JSON.stringify(users));
 
@@ -1282,7 +1298,7 @@ router.post('/transfer', async (req, res) => {
           }
         });
 
-        if (!newInventoryTo || !recoveredInventoryTo) {
+        if (!newInventoryTo && !recoveredInventoryTo) {
           updatedInventoryTo = await prisma.inventory.update({
             where: {id: currentInventoryTo.id},
             data: {
@@ -1300,7 +1316,7 @@ router.post('/transfer', async (req, res) => {
           }
         });
 
-        if (!newInventoryTo || !recoveredInventoryTo) {
+        if (!newInventoryTo && !recoveredInventoryTo) {
           updatedInventoryTo = await prisma.inventory.update({
             where: {id: currentInventoryTo.id},
             data: {

@@ -85,11 +85,7 @@ function BookInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => {
-        let totalSales = 0;
-        for (const sale of row.original.sales) {
-          totalSales += sale.quantity
-        }
-        return (<div>{totalSales} / {row.original.initial}</div>)
+        return (<div>{row.original.totalSales} / {row.original.initial}</div>)
       },
       muiTableHeadCellProps: {
         sx: {
@@ -170,7 +166,9 @@ function BookInventory({
         <ProgressBar
           current={row.original.current}
           initial={row.original.initial}
-          returns={row.original.returns}/>
+          returns={row.original.returns}
+          sold={row.original.totalSales}
+          given={row.original.givenToAuthor}/>
       )
     }
   ], [isTableActionsOpen]);
@@ -236,8 +234,6 @@ function BookInventory({
     }
     selectRelevantInventories();
   }, [inventories])
-
-  console.log(inventories);
 
   function selectRelevantInventories() {
     const relevantInventories = [];
@@ -316,6 +312,7 @@ function BookInventory({
         initialTotal={initialTotal}
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
+        soldTotal={soldTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}

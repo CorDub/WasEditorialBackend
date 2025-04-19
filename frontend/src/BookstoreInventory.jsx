@@ -78,11 +78,7 @@ function BookstoreInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => {
-        let totalSales = 0;
-        for (const sale of row.original.sales) {
-          totalSales += sale.quantity
-        }
-        return (<div>{totalSales} / {row.original.initial}</div>)
+        return (<div>{row.original.totalSales} / {row.original.initial}</div>)
       },
       muiTableHeadCellProps: {
         sx: {
@@ -163,7 +159,9 @@ function BookstoreInventory({
         <ProgressBar
           current={row.original.current}
           initial={row.original.initial}
-          returns={row.original.returns} />
+          returns={row.original.returns}
+          sold={row.original.totalSales}
+          given={row.original.givenToAuthor} />
       ),
       muiTableHeadCellProps: {
         sx: {
@@ -320,6 +318,7 @@ function BookstoreInventory({
         initialTotal={initialTotal}
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
+        soldTotal={soldTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}

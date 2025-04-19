@@ -703,6 +703,14 @@ router.get('/inventories', async (req, res) => {
       }
     });
 
+    for (const inventory of inventories) {
+      let totalSales = 0;
+      for (const sale of inventory.sales) {
+        totalSales += sale.quantity
+      }
+      inventory["totalSales"] = totalSales
+    }
+
     // await redisClient.set("authorsList", JSON.stringify(users));
 
     res.json(inventories);

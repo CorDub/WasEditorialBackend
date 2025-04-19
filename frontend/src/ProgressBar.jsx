@@ -1,7 +1,7 @@
 import "./ProgressBar.scss";
 import { useRef, useEffect, useState } from "react";
 
-function ProgressBar({current, initial, returns}) {
+function ProgressBar({current, initial, returns, sold, given}) {
   const maxBarRef = useRef();
   const currentBarRef = useRef();
   const returnsBarRef = useRef();
@@ -10,7 +10,7 @@ function ProgressBar({current, initial, returns}) {
   // const [returnsBarLength, setReturnsBarLength] = useState(0);
 
   function setCurrentLength() {
-    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * (initial-current) / initial);
+    const currentLength = Math.round(maxBarRef.current.getBoundingClientRect().width * sold / initial);
     currentBarRef.current.style.width = currentLength + 5 + "px";
   }
 
@@ -58,7 +58,7 @@ function ProgressBar({current, initial, returns}) {
     <div className="progress-bar">
       <div className="progress-bar-max" ref={maxBarRef}>
         <div className="progress-bar-current" ref={currentBarRef}>
-          <div className="pb-current-number">{initial - current}</div>
+          <div className="pb-current-number">{sold}</div>
         </div>
         {returns > 0 && (
           <div className="progress-bar-returns" ref={returnsBarRef}>

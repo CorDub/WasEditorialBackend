@@ -77,9 +77,13 @@ function BookstoreInventory({
     },
     {
       header: "Vendidos",
-      Cell: ({row}) => (
-        <div>{row.original.initial - (row.original.current + row.original.givenToAuthor)} / {row.original.initial}</div>
-      ),
+      Cell: ({row}) => {
+        let totalSales = 0;
+        for (const sale of row.original.sales) {
+          totalSales += sale.quantity
+        }
+        return (<div>{totalSales} / {row.original.initial}</div>)
+      },
       muiTableHeadCellProps: {
         sx: {
           width: '5%'
@@ -242,6 +246,7 @@ function BookstoreInventory({
     let initialTotal = 0;
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
+    let soldTotal = 0;
     for (const inventory of inventories) {
       if (inventory.bookstore.name === selectedBookstore) {
         relevantInventories.push(inventory);
@@ -249,12 +254,16 @@ function BookstoreInventory({
         initialTotal += inventory.initial;
         returnsTotal += inventory.returns;
         givenToAuthorTotal += inventory.givenToAuthor;
+        for (const sale of inventory.sales) {
+          soldTotal += sale.quantity
+        }
       }
     }
     setCurrentTotal(currentTotal);
     setInitialTotal(initialTotal);
     setReturnsTotal(returnsTotal);
     setGivenToAuthorTotal(givenToAuthorTotal);
+    setSoldTotal(soldTotal);
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     setData(sortedRelevantInventories);
   }

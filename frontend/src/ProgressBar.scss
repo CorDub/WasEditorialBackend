@@ -13,43 +13,61 @@
   color: white;
   right: 5px;
   top: 0px;
-  z-index: 5;
 }
 
-.progress-bar-current {
+.progress-bar-sold {
   border-radius: 15px;
   height: 20px;
   background-color: #4E5981;
-  position: relative;
+  position: absolute;
   transition: 0.3s;
   z-index: 2;
 }
 
-.pb-current-number {
-  position: absolute;
-  color: white;
-  left: 5px;
-  top: 0px;
-  z-index: 4;
-}
+// .pb-sold-number {
+//   position: absolute;
+//   color: white;
+//   left: 5px;
+//   top: 0px;
+// }
 
 .progress-bar-returns {
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
+  // border-top-right-radius: 15px;
+  // border-bottom-right-radius: 15px;
+  border-radius: 15px;
   height: 20px;
   background-color: red;
   position: absolute;
   transition: 0.3s;
   z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
 }
 
-.pb-returns-number {
+// .pb-returns-number {
+//   position: absolute;
+//   color: white;
+//   right: 6px;
+//   top: 0px;
+// }
+
+.progress-bar-given {
+  // border-top-right-radius: 15px;
+  // border-bottom-right-radius: 15px;
+  border-radius: 15px;
+  height: 20px;
+  background-color: #57eafa;
+  position: absolute;
+  transition: 0.3s;
+  z-index: 3;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+}
+
+.pb-number {
   position: absolute;
   color: white;
   right: 6px;
-  top: 0px;
-  z-index: 3;
 }

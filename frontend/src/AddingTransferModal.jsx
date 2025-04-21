@@ -245,14 +245,15 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       <form
         onSubmit={handleSubmit}
         className="global-form">
-        <div className="transfer-deliver-to-author">
-          <p>Entrega al autor?</p>
-          <input
-            type="checkbox"
-            onChange={() => setDeliverToAuthor(!deliverToAuthor)}/>
-        </div>
         {transferType === "send" && !deliverToAuthor ? (
-          bookstoresToTransfer.map((bookstore, index) => (
+          <>
+          <div className="transfer-deliver-to-author">
+            <p>Entrega al autor?</p>
+            <input
+              type="checkbox"
+              onChange={() => setDeliverToAuthor(!deliverToAuthor)}/>
+          </div>
+          {bookstoresToTransfer.map((bookstore, index) => (
             <div
               key={index}
               className="transfer-dropdown">
@@ -309,7 +310,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 </>}
               </div>
             </div>
-          )))
+          ))}</>)
           :
           <input
             type='text'

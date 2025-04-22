@@ -20,7 +20,6 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
           <p className="sales-value">$ {selectedBookValue.toLocaleString()}</p>
         </div>
         <div id="books-sold">
-          <h3>Libros vendidos</h3>
           {selectedBook === 'total' && (
             <ul>
               {salesData.bookSales.map(book => (

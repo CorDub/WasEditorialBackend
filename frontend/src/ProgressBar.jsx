@@ -39,8 +39,11 @@ function ProgressBar({current, initial, returns, sold, given}) {
 
     for (const index in bars) {
       // Set bar length proportionally to the max bar
-      const barLength =  Math.round(maxBarRef.current.getBoundingClientRect().width * (bars[index] + previousBarLength) / initial);
-      potentialBars[index].ref.current.style.width = barLength + "px";
+      const maxBarLength = maxBarRef.current.getBoundingClientRect().width;
+      const barLength =  Math.round(maxBarLength * (bars[index] + previousBarLength) / initial);
+      if (potentialBars[index].ref.current) {
+        potentialBars[index].ref.current.style.width = barLength + "px";
+      }
 
       // Check whether to display the numbers or not
       const availableSpace = barLength - previousBarLength;

@@ -1191,6 +1191,7 @@ router.post('/transfer', async (req, res) => {
       type
     } = req.body;
 
+    // Start by getting the inventoryFrom
     const currentInventoryFrom = await prisma.inventory.findUnique({
       where: {
         id: parseInt(inventoryFromId),
@@ -1198,6 +1199,7 @@ router.post('/transfer', async (req, res) => {
       }
     });
 
+    // Route 1 : delivered to Author
     if (type === "send" && !bookstoreToId) {
       const newTransferToAuthor = await prisma.transfer.create({
         data: {
@@ -1220,6 +1222,7 @@ router.post('/transfer', async (req, res) => {
       return;
     }
 
+    // Get the inventoryTo if it exists
     let currentInventoryTo = await prisma.inventory.findUnique({
       where: {
         bookId_bookstoreId_country: {
@@ -1234,6 +1237,7 @@ router.post('/transfer', async (req, res) => {
     let newInventoryTo;
     let recoveredInventoryTo;
 
+    // if it doesnt exist check if it isn't soft deleted.
     if (!currentInventoryTo) {
       const deletedInventoryMaybe = await prisma.inventory.findUnique({
         where: {
@@ -1246,6 +1250,7 @@ router.post('/transfer', async (req, res) => {
         }
       });
 
+      //If it is not, create it.
       if (!deletedInventoryMaybe) {
         newInventoryTo = await prisma.inventory.create({
           data: {
@@ -1322,7 +1327,6 @@ router.post('/transfer', async (req, res) => {
             data: {
               current: currentInventoryTo.current + parseInt(quantity),
               initial: currentInventoryTo.initial + parseInt(quantity),
-              returns: currentInventoryTo.returns + parseInt(quantity)
             }
           });
         }

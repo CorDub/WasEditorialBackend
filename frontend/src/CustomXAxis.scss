@@ -1,0 +1,19 @@
+.custom-x-axis {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.custom-x-axis-line {
+  border-top: 1px solid black;
+}
+
+.x-axis-points {
+  display: flex;
+  position: relative;
+}
+
+.x-axis-number {
+  position: absolute;
+  top: 5px;
+}

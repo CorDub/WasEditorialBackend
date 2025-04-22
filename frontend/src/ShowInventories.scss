@@ -14,6 +14,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .author-inventory-label {
@@ -51,3 +54,9 @@
 //     padding: 0.5rem 1rem;
 //     margin: 0.5rem;
 //   }
+
+.show-inventory-active {
+  background-color: #4E5981;
+  border-radius: 15px;
+  color: white
+}

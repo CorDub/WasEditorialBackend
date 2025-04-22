@@ -1,32 +1,73 @@
 import './ShowInventories.scss';
+import { useRef, useState, useEffect } from "react";
 
-function ShowInventories({inventories}) {
-  console.log(inventories)
+function ShowInventories({
+    inventories,
+    currentDetailsActive,
+    setCurrentDetailsActive,
+    setBooksSoldGraphOpen}) {
+  const totalRef = useRef();
+  const givenRef = useRef();
+  const soldRef = useRef();
+  const bookstoreRef = useRef();
+  const wasRef = useRef();
+  const availableRef = useRef();
+
+  //ensure that totalRef is the default so that something is displayed
+  useEffect(() => {
+    if (currentDetailsActive === null) {
+      setCurrentDetailsActive(totalRef)
+    }
+  }, [currentDetailsActive])
+
+  function declareActive(ref, toggleFunction) {
+    // highlight clicked detail, and open corresponding component
+    if (ref === currentDetailsActive) {
+      return;
+    };
+
+    currentDetailsActive.current.classList.remove("show-inventory-active");
+    ref.current.classList.add("show-inventory-active");
+    setCurrentDetailsActive(ref);
+    toggleFunction(false);
+  }
 
   return (
     inventories && (
       <div id='show-inventory-container'>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line show-inventory-active"
+          ref={totalRef}
+          onClick={() => declareActive(totalRef, setBooksSoldGraphOpen)}>
           <p className="author-inventory-label">Inventario total inicial</p>
           <p className="author-inventory-number">{inventories.summary.initial || 0}</p>
         </div>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line"
+          ref={givenRef}
+          onClick={() => declareActive(givenRef)}>
           <p className="author-inventory-label">Libros entregados al autor</p>
           <p className="author-inventory-number">{inventories.summary.givenToAuthor || 0}</p>
         </div>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line"
+          ref={soldRef}
+          onClick={() => declareActive(soldRef)}>
           <p className="author-inventory-label">Libros vendidos</p>
           <p className="author-inventory-number">{inventories.summary.sold || 0}</p>
         </div>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line"
+          ref={bookstoreRef}
+          onClick={() => declareActive(bookstoreRef)}>
           <p className="author-inventory-label">Inventario en librerías</p>
           <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
         </div>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line"
+          ref={wasRef}
+          onClick={() => declareActive(wasRef)}>
           <p className="author-inventory-label">Libros en bodega Was</p>
           <p className="author-inventory-number">{inventories.summary.was || 0}</p>
         </div>
-        <div className="author-inventory-line">
+        <div className="author-inventory-line"
+          ref={availableRef}
+          onClick={() => declareActive(availableRef)}>
           <p className="author-inventory-label">Inventario total disponible</p>
           <p className="author-inventory-number">{inventories.summary.total || 0}</p>
         </div>

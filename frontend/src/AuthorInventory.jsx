@@ -4,6 +4,7 @@ import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
 import BestSellerGraph from "./BestSellerGraph";
+import BooksSoldGraph from "./BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
 
@@ -14,6 +15,8 @@ function AuthorInventory(){
   const [booksInventories, setBooksInventories] = useState([])
   const [selectedBookId, setSelectedBookId] = useState("");
   const [showTotal, setShowTotal] = useState(false);
+  const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(true);
+  const [currentDetailsActive, setCurrentDetailsActive] = useState(null);
 
   useEffect(()=>{
     fetchInventories()
@@ -32,8 +35,6 @@ function AuthorInventory(){
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched inventory data:", data);
-        console.log("Book sales data:", data.bookSales);
         setInventories(data);
         setBooksInventories(data.bookInventories)
       }
@@ -41,10 +42,6 @@ function AuthorInventory(){
       console.error(error);
     }
   }
-
-  useEffect(() => {
-    console.log(booksInventories)
-  }, [booksInventories])
 
   const handleBookChange = (event) => {
     if (event.target.value === "total") {
@@ -72,7 +69,11 @@ function AuthorInventory(){
               )}
           </div>
           {showTotal ? (
-            <ShowInventories inventories={inventories} />
+            <ShowInventories
+              inventories={inventories}
+              currentDetailsActive={currentDetailsActive}
+              setCurrentDetailsActive={setCurrentDetailsActive}
+              setBooksSoldGraphOpen={setBooksSoldGraphOpen} />
           ) : (
             selectedBookId && (
               <ShowInventories
@@ -81,7 +82,11 @@ function AuthorInventory(){
             )
           )}
         </div>
-        {inventories && <BestSellerGraph bookSales={inventories.bookInventories} />}
+        {inventories && !isBooksSoldGraphOpen && (
+          <BestSellerGraph bookSales={inventories.bookInventories} /> )}
+        {isBooksSoldGraphOpen && (
+          <BooksSoldGraph booksSales={inventories.bookSales} />
+        )}
       </div>
     </div>
     </>

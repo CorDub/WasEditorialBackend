@@ -85,7 +85,7 @@ function AuthorInventory(){
         {inventories && !isBooksSoldGraphOpen && (
           <BestSellerGraph bookSales={inventories.bookInventories} /> )}
         {isBooksSoldGraphOpen && (
-          <BooksSoldGraph booksSales={inventories.bookSales} />
+          <BooksSoldGraph bookSales={booksInventories} />
         )}
       </div>
     </div>

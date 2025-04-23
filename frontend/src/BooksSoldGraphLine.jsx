@@ -3,14 +3,20 @@ import { useEffect, useRef } from "react";
 
 function BooksSoldGraphLine({bookData, max}) {
   const lineRef = useRef();
-  const titleRef = useRef();
-  const numberRef = useRef();
 
   function determineLength() {
     // Ensure length is proportional to number of sales
+    const parentWidth = lineRef.current.parentElement.getBoundingClientRect().width;
+    const style = window.getComputedStyle(lineRef.current);
+    const paddingLeft = parseFloat(style.paddingLeft);
+    const paddingRight = parseFloat(style.paddingRight);
+    const marginLeft = parseFloat(style.marginLeft);
+    const marginRight = parseFloat(style.marginRight);
+    const availableWidth = parentWidth - (paddingLeft + paddingRight + marginLeft + marginRight);
+    console.log(availableWidth);
+
     const lineLength = lineRef.current.getBoundingClientRect().width;
-    const titleLength = titleRef.current.getBoundingClientRect().width;
-    const numberLength = numberRef.current.getBoundingClientRect().width;
+    console.log(lineLength);
 
     const percentOfSold = bookData.summary.sold * 100 / max;
     const newLength = lineLength * percentOfSold / 100;
@@ -23,8 +29,8 @@ function BooksSoldGraphLine({bookData, max}) {
 
   return(
     <div className="books-sold-graph-line" ref={lineRef}>
-      <div className="bsgl-title" ref={titleRef}>{bookData.title}</div>
-      <div className="bsgl-number" ref={numberRef}>{bookData.summary.sold}</div>
+      <div className="bsgl-title">{bookData.title}</div>
+      <div className="bsgl-number">{bookData.summary.sold}</div>
     </div>
   )
 }

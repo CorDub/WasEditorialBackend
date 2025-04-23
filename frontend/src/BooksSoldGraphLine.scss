@@ -7,3 +7,9 @@
   padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
+.bsgl-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -33,12 +33,30 @@ function CustomXAxis({max}) {
     <div className="custom-x-axis">
       <div className="custom-x-axis-line" ref={lineRef}></div>
       <div className="x-axis-points">
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[0] = el)}>{points[0]}</div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[1] = el)}>{points[1]}</div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[2] = el)}>{points[2]}</div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[3] = el)}>{points[3]}</div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[4] = el)}>{points[4]}</div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[5] = el)}>{points[5]}</div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[0] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[0]}</div>
+        </div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[1] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[1]}</div>
+        </div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[2] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[2]}</div>
+        </div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[3] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[3]}</div>
+        </div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[4] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[4]}</div>
+        </div>
+        <div className="x-axis-number" ref={(el) => (pointRefs.current[5] = el)}>
+          <div className="x-axis-notch"></div>
+          <div>{points[5]}</div>
+        </div>
       </div>
     </div>
   )

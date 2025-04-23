@@ -1,14 +1,13 @@
 import "./BooksSoldGraphLine.scss";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 function BooksSoldGraphLine({bookData, max}) {
   const lineRef = useRef();
   const titleRef = useRef();
   const numberRef = useRef();
-  const [title, setTitle] = useState(bookData.title)
 
   function determineLength() {
-    // Ensure length is proportional to number of sales, cuts title if necessary
+    // Ensure length is proportional to number of sales
     const lineLength = lineRef.current.getBoundingClientRect().width;
     const titleLength = titleRef.current.getBoundingClientRect().width;
     const numberLength = numberRef.current.getBoundingClientRect().width;
@@ -20,11 +19,11 @@ function BooksSoldGraphLine({bookData, max}) {
 
   useEffect(() => {
     determineLength();
-  }, [bookData, max])
+  }, [bookData.summary.sold, max])
 
   return(
     <div className="books-sold-graph-line" ref={lineRef}>
-      <div className="bsgl-title" ref={titleRef}>{title}</div>
+      <div className="bsgl-title" ref={titleRef}>{bookData.title}</div>
       <div className="bsgl-number" ref={numberRef}>{bookData.summary.sold}</div>
     </div>
   )

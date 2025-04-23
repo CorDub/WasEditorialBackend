@@ -15,6 +15,14 @@
 
 .x-axis-number {
   position: absolute;
-  top: 5px;
+  top: -4px;
   font-size: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.x-axis-notch {
+  border-left: 1px solid black;
+  height: 0.5rem;
 }

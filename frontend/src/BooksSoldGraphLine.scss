@@ -1,6 +1,8 @@
 .books-sold-graph-line {
   background-color: #4E5981;
-  border-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  // border-radius: 15px;
   color: white;
   display: flex;
   justify-content: space-between;

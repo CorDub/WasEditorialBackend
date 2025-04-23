@@ -45,7 +45,7 @@ function ProgressBar({current, initial, returns, sold, given}) {
         potentialBars[index].ref.current.style.width = barLength + "px";
       }
 
-      // Check whether to display the numbers or not
+      // Check whether to display the numbers or not depending on available space
       const availableSpace = barLength - previousBarLength;
       if (potentialBars[index].numRef.current) {
         const numberLength = potentialBars[index].numRef.current.getBoundingClientRect().width;
@@ -54,7 +54,7 @@ function ProgressBar({current, initial, returns, sold, given}) {
         }
       };
 
-      // Make sure each bar is longer than the previous one
+      // Make sure each bar is longer than the previous one so that they'll show
       previousBarLength += barLength;
 
       // Extra check for the number of the max bar because it's not in the list of bars

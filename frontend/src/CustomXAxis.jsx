@@ -6,12 +6,6 @@ function CustomXAxis({max}) {
   const [totalLength, setTotalLength] = useState(0);
   const lineRef = useRef();
   const pointRefs = useRef([]);
-  // const point0Ref = useRef();
-  // const point1Ref = useRef();
-  // const point2Ref = useRef();
-  // const point3Ref = useRef();
-  // const point4Ref = useRef();
-  // const point5Ref = useRef();
 
   useEffect(() => {
     const multiplicator = 10 ** (max.toString().length - 1)

@@ -1,6 +1,7 @@
 import "./BooksSoldGraph.scss";
 import { useState, useEffect } from "react";
 import CustomXAxis from "./CustomXAxis";
+import BooksSoldGraphLine from "./BooksSoldGraphLine";
 
 function BooksSoldGraph({bookSales}) {
   const [booksListBySales, setBooksListBySales] = useState([]);
@@ -25,7 +26,13 @@ function BooksSoldGraph({bookSales}) {
 
   return(
     <div className="books-sold-graph">
-      {booksListBySales && <CustomXAxis max={max}/>}
+      {booksListBySales && (
+        <>
+          {booksListBySales.map((book, index) => (
+            <BooksSoldGraphLine key={index} bookData={book}/>
+          ))}
+          <CustomXAxis max={max}/>
+        </>)}
     </div>
   )
 }

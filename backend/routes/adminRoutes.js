@@ -1188,7 +1188,8 @@ router.post('/transfer', async (req, res) => {
       quantity,
       inventoryFromId,
       bookId,
-      type
+      type,
+      note
     } = req.body;
 
     // Start by getting the inventoryFrom
@@ -1204,7 +1205,8 @@ router.post('/transfer', async (req, res) => {
       const newTransferToAuthor = await prisma.transfer.create({
         data: {
           fromInventoryId: inventoryFromId,
-          quantity: parseInt(quantity)
+          quantity: parseInt(quantity),
+          note: note
         }
       });
 
@@ -1222,6 +1224,7 @@ router.post('/transfer', async (req, res) => {
       return;
     }
 
+    // Route 2: Return
     // Get the inventoryTo if it exists
     let currentInventoryTo = await prisma.inventory.findUnique({
       where: {
@@ -1290,8 +1293,8 @@ router.post('/transfer', async (req, res) => {
       }
     });
 
-    let updatedInventoryFrom;
-    let updatedInventoryTo;
+    // let updatedInventoryFrom;
+    // let updatedInventoryTo;
 
     if (newTransfer) {
       if (newTransfer.type === "send") {

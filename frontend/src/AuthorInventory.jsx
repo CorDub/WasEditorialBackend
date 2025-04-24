@@ -15,8 +15,11 @@ function AuthorInventory(){
   const [booksInventories, setBooksInventories] = useState([])
   const [selectedBookId, setSelectedBookId] = useState("");
   const [showTotal, setShowTotal] = useState(false);
-  const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(true);
   const [currentDetailsActive, setCurrentDetailsActive] = useState(null);
+  const [nameDetailsActive, setNameDetailsActive] = useState("total");
+  const [isTotalInventoryOpen, setTotalInventoryOpen] = useState(true);
+  const [isGivenToAuthorOpen, setGivenToAuthorOpen] = useState(false);
+  const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(false);
 
   useEffect(()=>{
     fetchInventories()
@@ -72,7 +75,11 @@ function AuthorInventory(){
             <ShowInventories
               inventories={inventories}
               currentDetailsActive={currentDetailsActive}
+              nameDetailsActive={nameDetailsActive}
+              setNameDetailsActive={setNameDetailsActive}
               setCurrentDetailsActive={setCurrentDetailsActive}
+              setTotalInventoryOpen={setTotalInventoryOpen}
+              setGivenToAuthorOpen={setGivenToAuthorOpen}
               setBooksSoldGraphOpen={setBooksSoldGraphOpen} />
           ) : (
             selectedBookId && (
@@ -82,7 +89,7 @@ function AuthorInventory(){
             )
           )}
         </div>
-        {inventories && !isBooksSoldGraphOpen && (
+        {isTotalInventoryOpen && (
           <BestSellerGraph bookSales={inventories.bookInventories} /> )}
         {isBooksSoldGraphOpen && (
           <BooksSoldGraph bookSales={booksInventories} />

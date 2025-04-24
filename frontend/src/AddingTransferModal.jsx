@@ -18,6 +18,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
   const [deliverToAuthor, setDeliverToAuthor] = useState(false);
+  const [note, setNote] = useState('');
 
   useEffect(() => {
     if (clickedRow.bookstoreId === 3) {
@@ -213,7 +214,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             quantity: bookstoresToTransfer[i].quantity,
             inventoryFromId: clickedRow.id,
             bookId: clickedRow.bookId,
-            type: transferType
+            type: transferType,
+            note: note
           }),
         });
 
@@ -235,6 +237,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    console.log(note);
+  }, [note])
 
   return(
     <div className="modal-proper">
@@ -312,13 +318,20 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             </div>
           ))}</>)
           :
-          <input
-            type='text'
-            placeholder="Cantidad"
-            className="global-input transfer-quantity"
-            id={`quantity-select-0`}
-            onChange={(e) => updateQuantity(e, 0)}>
-          </input>
+          <>
+            <input
+              type='text'
+              placeholder="Cantidad"
+              className="global-input transfer-quantity"
+              id={`quantity-select-0`}
+              onChange={(e) => updateQuantity(e, 0)}>
+            </input>
+            <input
+              type="text"
+              placeholder="Comentario para el autor (opcional)"
+              className="global-input"
+              onChange={(e) => setNote(e.target.value)}/>
+          </>
         }
 
         <ErrorsList errors={errors} setErrors={setErrors} />

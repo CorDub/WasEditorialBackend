@@ -7,6 +7,7 @@ import BestSellerGraph from "./BestSellerGraph";
 import BooksSoldGraph from "./BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
+import GivenToAuthorDetails from "./GivenToAuthorDetails";
 
 function AuthorInventory(){
   useCheckUser();
@@ -92,8 +93,9 @@ function AuthorInventory(){
         {isTotalInventoryOpen && (
           <BestSellerGraph bookSales={inventories.bookInventories} /> )}
         {isBooksSoldGraphOpen && (
-          <BooksSoldGraph bookSales={booksInventories} />
-        )}
+          <BooksSoldGraph bookSales={booksInventories} />)}
+        {isGivenToAuthorOpen && (
+          <GivenToAuthorDetails />)}
       </div>
     </div>
     </>

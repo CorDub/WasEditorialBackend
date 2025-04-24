@@ -327,4 +327,37 @@ router.get('/sales', async (req, res) => {
   }
 });
 
+router.get('/givenToAuthorTransfers', async (req, res) => {
+  const currentUserId = req.session.user_id
+  console.log("\n currentUserId \n", currentUserId);
+  try {
+    const relevantTransfers = await prisma.transfer.findMany({
+      where: {
+        isDeleted: false,
+        type: 'send',
+        toInventoryId: null,
+        fromInventory: {
+          book: {
+            users: {
+              some: {
+                id: currentUserId
+              }
+            }
+          }
+        }
+      },
+      select: {
+        id: true,
+        quantity: true,
+        note: true,
+      }
+    })
+
+    res.status(200).json(relevantTransfers);
+  } catch (error) {
+    console.log("\n ERROR FETCHING RELEVENT TRANSFERS FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occurred while fetching relevant transfers"});
+  }
+})
+
 export default router;

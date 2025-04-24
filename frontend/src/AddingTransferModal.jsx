@@ -238,10 +238,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
-  useEffect(() => {
-    console.log(note);
-  }, [note])
-
   return(
     <div className="modal-proper">
       <div className="form-title">

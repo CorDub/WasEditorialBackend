@@ -1293,9 +1293,6 @@ router.post('/transfer', async (req, res) => {
       }
     });
 
-    // let updatedInventoryFrom;
-    // let updatedInventoryTo;
-
     if (newTransfer) {
       if (newTransfer.type === "send") {
         updatedInventoryFrom = await prisma.inventory.update({

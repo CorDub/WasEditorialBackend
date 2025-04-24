@@ -19,6 +19,9 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [transferType, setTransferType] = useState('');
   const [deliverToAuthor, setDeliverToAuthor] = useState(false);
   const [note, setNote] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState(null);
+  const [place, setPlace] = useState('');
+  const [person, setPerson] = useState('');
 
   useEffect(() => {
     if (clickedRow.bookstoreId === 3) {
@@ -215,7 +218,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             inventoryFromId: clickedRow.id,
             bookId: clickedRow.bookId,
             type: transferType,
-            note: note
+            note: note,
+            deliveryDate: deliveryDate,
+            place: place,
+            person: person
           }),
         });
 
@@ -322,6 +328,21 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               id={`quantity-select-0`}
               onChange={(e) => updateQuantity(e, 0)}>
             </input>
+            <input
+              type="date"
+              placeholder="Fecha de entrega"
+              className="global-input"
+              onChange={(e) => setDeliveryDate(e.target.value)}/>
+            <input
+              type="text"
+              placeholder="Lugar"
+              className="global-input"
+              onChange={(e) => setPlace(e.target.value)}/>
+            <input
+              type="text"
+              placeholder="Persona"
+              className="global-input"
+              onChange={(e) => setPerson(e.target.value)}/>
             <input
               type="text"
               placeholder="Comentario para el autor (opcional)"

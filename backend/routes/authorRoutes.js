@@ -350,6 +350,9 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
         id: true,
         quantity: true,
         note: true,
+        deliveryDate: true,
+        place: true,
+        person: true
       }
     })
 

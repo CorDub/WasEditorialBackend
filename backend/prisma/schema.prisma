@@ -133,6 +133,9 @@ model Transfer {
   quantity        Int
   type            TransferType @default(send)
   note            String?
+  deliveryDate    DateTime?
+  place           String?
+  person          String?
   isDeleted       Boolean      @default(false)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt

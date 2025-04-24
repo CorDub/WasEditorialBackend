@@ -1189,8 +1189,13 @@ router.post('/transfer', async (req, res) => {
       inventoryFromId,
       bookId,
       type,
-      note
+      note,
+      deliveryDate,
+      place,
+      person
     } = req.body;
+
+    const dateInDateTime = new Date(deliveryDate);
 
     // Start by getting the inventoryFrom
     const currentInventoryFrom = await prisma.inventory.findUnique({
@@ -1206,7 +1211,10 @@ router.post('/transfer', async (req, res) => {
         data: {
           fromInventoryId: inventoryFromId,
           quantity: parseInt(quantity),
-          note: note
+          note: note,
+          deliveryDate: dateInDateTime,
+          place: place,
+          person: person
         }
       });
 

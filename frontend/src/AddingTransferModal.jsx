@@ -335,12 +335,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               onChange={(e) => setDeliveryDate(e.target.value)}/>
             <input
               type="text"
-              placeholder="Lugar"
+              placeholder="Lugar (opcional)"
               className="global-input"
               onChange={(e) => setPlace(e.target.value)}/>
             <input
               type="text"
-              placeholder="Persona"
+              placeholder="Persona (opcional)"
               className="global-input"
               onChange={(e) => setPerson(e.target.value)}/>
             <input

@@ -414,9 +414,12 @@ router.get('/bookstoreInventories', async (req, res) => {
       if (relevantInventoriesByBookstore.hasOwnProperty(inventory.bookstoreId)) {
         relevantInventoriesByBookstore[inventory.bookstoreId].current += inventory.current
       } else {
-        relevantInventoriesByBookstore[inventory.bookstoreId] = {
-          name: inventory.bookstore.name,
-          current: inventory.current
+        /// 3 = BookstoreId of Plataforma Was
+        if (inventory.bookstoreId !== 3) {
+          relevantInventoriesByBookstore[inventory.bookstoreId] = {
+            name: inventory.bookstore.name,
+            current: inventory.current
+          }
         }
       };
 

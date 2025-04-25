@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
+import BooksSoldGraphLine from "./BooksSoldGraphLine";
+import CustomXAxis from "./CustomXAxis";
+import './AuthorBookstoreInventory.scss';
 
 function AuthorBookstoreInventory() {
   const [data, setData] = useState(null);
+  const [max, setMax] = useState(0);
 
   async function fetchAuthorBookstoreInventories() {
     try{
@@ -15,7 +19,10 @@ function AuthorBookstoreInventory() {
 
       if (response.ok) {
         const data = await response.json();
-        setData(data);
+        const byBookstores = Object.values(data.inventoriesByBookstores);
+        const sorted = byBookstores.sort((a, b) => b.current - a.current);
+        setData(sorted);
+        setMax(sorted[0].current);
       }
     } catch (error) {
       console.log(error);
@@ -26,13 +33,17 @@ function AuthorBookstoreInventory() {
     fetchAuthorBookstoreInventories();
   }, [])
 
-  useEffect(() => {
-    console.log(data);
-  }, [data])
-
   return(
     <div className="author-bookstore-inventory">
-      <div>Yeah author bookstore inventory</div>
+      {data && (
+        <>
+          {data.map((bookstore, index) => (
+            <BooksSoldGraphLine
+              key={index}
+              bookstoreData={bookstore}
+              max={max} />))}
+          <CustomXAxis max={max}/>
+        </>)}
     </div>
   )
 }

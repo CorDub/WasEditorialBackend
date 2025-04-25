@@ -29,9 +29,7 @@ function BooksSoldGraph({bookSales}) {
       {booksListBySales && (
         <>
           {booksListBySales.map((book, index) => (
-            <BooksSoldGraphLine key={index} bookData={book} max={max}/>
-
-          ))}
+            <BooksSoldGraphLine key={index} bookData={book} max={max}/>))}
           <CustomXAxis max={max}/>
         </>)}
     </div>

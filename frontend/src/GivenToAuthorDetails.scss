@@ -7,6 +7,46 @@
   border-radius: 15px;
   margin: 1rem;
   padding: 1rem;
-  padding-bottom: 2rem;
-  padding-right: 2rem;
+}
+
+.gtad-header {
+  border-radius: 15px;
+  padding: 0.5rem;
+  display: flex;
+  background-color: #4E5981;
+  color: white;
+  font-size: 1em;
+}
+
+.gtad-name {
+  border-right: 1px solid white;
+  margin-right: 0.5rem;
+}
+
+#fecha {
+  width: 11%;
+}
+
+#cantidad {
+  width: 9%;
+}
+
+#lugar {
+  width: 20%;
+}
+
+#person {
+  width: 15%;
+}
+
+#comentario {
+  width: 45%;
+  border-right: none;
+}
+
+.gtad-table {
+  padding-top: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 0.95em;
 }

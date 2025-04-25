@@ -352,8 +352,18 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
         note: true,
         deliveryDate: true,
         place: true,
-        person: true
-      }
+        person: true,
+        fromInventory: {
+          select: {
+            book: {
+              select: {
+                title: true
+              }
+            }
+          }
+        }
+      },
+
     })
 
     res.status(200).json(relevantTransfers);

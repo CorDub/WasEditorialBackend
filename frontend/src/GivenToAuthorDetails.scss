@@ -23,24 +23,28 @@
   margin-right: 0.5rem;
 }
 
-#fecha {
+.fecha {
   width: 11%;
 }
 
-#cantidad {
+.libro {
+  width: 20%
+}
+
+.cantidad {
   width: 9%;
 }
 
-#lugar {
-  width: 20%;
-}
-
-#person {
+.lugar {
   width: 15%;
 }
 
-#comentario {
-  width: 45%;
+.person {
+  width: 15%;
+}
+
+.comentario {
+  width: 30%;
   border-right: none;
 }
 

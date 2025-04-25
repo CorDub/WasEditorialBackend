@@ -4,7 +4,6 @@ import DeliveryToAuthorDetails from "./DeliveryToAuthorDetails";
 
 function GivenToAuthorDetails() {
   const [data, setData] = useState([]);
-  const [columnNames, setColumnNames] = useState([]);
 
   async function fetchRelevantTransfers() {
     try {
@@ -19,8 +18,6 @@ function GivenToAuthorDetails() {
       if (response.ok) {
         const data = await response.json();
         setData(data);
-        const columnNames = Object.keys(data[0]);
-        setColumnNames(columnNames);
       };
     } catch (error) {
       console.error("Error when fetching the relevantTransfers", error);
@@ -31,14 +28,19 @@ function GivenToAuthorDetails() {
     fetchRelevantTransfers();
   }, [])
 
+  useEffect(() => {
+    console.log(data);
+  }, [data])
+
   return(
     <div className="given-to-author-details">
       <div className="gtad-header">
-        <div className="gtad-name" id="fecha">Fecha</div>
-        <div className="gtad-name" id="cantidad">Cantidad</div>
-        <div className="gtad-name" id="person">Person</div>
-        <div className="gtad-name" id="lugar">Lugar</div>
-        <div className="gtad-name" id="comentario">Comentario</div>
+        <div className="gtad-name fecha">Fecha</div>
+        <div className="gtad-name libro">Libro</div>
+        <div className="gtad-name cantidad">Cantidad</div>
+        <div className="gtad-name person">Person</div>
+        <div className="gtad-name lugar">Lugar</div>
+        <div className="gtad-name comentario">Comentario</div>
       </div>
       <div className="gtad-table">
         {data ?

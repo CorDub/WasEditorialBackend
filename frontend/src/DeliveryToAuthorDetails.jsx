@@ -16,11 +16,12 @@ function DeliveryToAuthorDetails({transferData, last}) {
 
   return (
     <div className={last ? "dtad-last" : "delivery-to-author-details"}>
-      <div className="dtad-value" id="fecha">{readableDate}</div>
-      <div className="dtad-value" id="cantidad">{transferData.quantity || ""}</div>
-      <div className="dtad-value" id="person">{transferData.person || ""}</div>
-      <div className="dtad-value" id="lugar">{transferData.place || ""}</div>
-      <div className="dtad-value" id="comentario">{transferData.note || ""}</div>
+      <div className="dtad-value fecha">{readableDate}</div>
+      <div className="dtad-value libro">{transferData.fromInventory.book.title || ""}</div>
+      <div className="dtad-value cantidad">{transferData.quantity || ""}</div>
+      <div className="dtad-value person">{transferData.person || ""}</div>
+      <div className="dtad-value lugar">{transferData.place || ""}</div>
+      <div className="dtad-value comentario">{transferData.note || ""}</div>
     </div>
   )
 }

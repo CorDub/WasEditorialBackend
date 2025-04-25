@@ -13,10 +13,14 @@ function CustomXAxis({max}) {
     setPoints([0, maxAxis/4, maxAxis/2, maxAxis*0.75, maxAxis, max])
   }, [max])
 
-  function placePoint(pointValue, ref) {
+  function placePoint(pointValue, ref, last) {
     const position = totalLength * (pointValue * 100 / max) / 100;
     const halfPointLength = ref.getBoundingClientRect().width / 2;
-    ref.style.left = position - halfPointLength + "px";
+    if (last) {
+      ref.style.left = position + "px";
+    } else {
+      ref.style.left = position - halfPointLength + "px";
+    }
   }
 
   useEffect(() => {
@@ -25,7 +29,11 @@ function CustomXAxis({max}) {
 
   useEffect(() => {
     for (let i = 0; i < points.length; i++) {
-      placePoint(points[i], pointRefs.current[i]);
+      if (i == points.length - 1) {
+        placePoint(points[i], pointRefs.current[i], true);
+      } else {
+        placePoint(points[i], pointRefs.current[i]);
+      }
     }
   }, [points])
 

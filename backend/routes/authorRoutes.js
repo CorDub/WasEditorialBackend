@@ -373,4 +373,82 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
   }
 })
 
+router.get('/bookstoreInventories', async (req, res) => {
+  try {
+    // fetch all inventories from the author
+    const relevantInventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false,
+        book: {
+          users: {
+            some: {
+              id: req.session.user_id
+            }
+          }
+        }
+      },
+      select: {
+        id: true,
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true,
+        bookstore: {
+          select: {
+            name: true,
+          }
+        },
+        bookstoreId: true,
+        current: true
+      }
+    });
+
+    // group the results by bookstore and books
+    let relevantInventoriesByBookstore = {};
+    let relevantInventoriesByBook = {};
+
+    for (const inventory of relevantInventories) {
+      // grouping by bookstores
+      if (relevantInventoriesByBookstore.hasOwnProperty(inventory.bookstoreId)) {
+        relevantInventoriesByBookstore[inventory.bookstoreId].current += inventory.current
+      } else {
+        relevantInventoriesByBookstore[inventory.bookstoreId] = {
+          name: inventory.bookstore.name,
+          current: inventory.current
+        }
+      };
+
+      // grouping by book
+      if (relevantInventoriesByBook.hasOwnProperty(inventory.bookId)) {
+        if (relevantInventoriesByBook[inventory.bookId].hasOwnProperty(inventory.bookstoreId)) {
+          relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId].current += inventory.current
+        } else {
+          relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId] = {
+            bookstoreName: inventory.bookstore.name,
+            current: inventory.current
+          }
+        }
+      } else {
+        relevantInventoriesByBook[inventory.bookId] = {
+          title: inventory.book.title,
+          [inventory.bookstoreId] : {
+            bookstoreName : inventory.bookstore.name,
+            current: inventory.current
+          }
+        }
+      }
+    }
+
+    res.status(200).json({
+      "inventoriesByBookstores" : relevantInventoriesByBookstore,
+      "inventoriesByBook": relevantInventoriesByBook
+    });
+  } catch (error) {
+    console.log("\n ERROR FETCHING RELEVANT INVENTORIES FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occured while fetching relevant inventories"});
+  }
+})
+
 export default router;

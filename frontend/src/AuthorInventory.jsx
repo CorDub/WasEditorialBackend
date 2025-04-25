@@ -8,6 +8,7 @@ import BooksSoldGraph from "./BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
 import GivenToAuthorDetails from "./GivenToAuthorDetails";
+import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 
 function AuthorInventory(){
   useCheckUser();
@@ -21,6 +22,9 @@ function AuthorInventory(){
   const [isTotalInventoryOpen, setTotalInventoryOpen] = useState(true);
   const [isGivenToAuthorOpen, setGivenToAuthorOpen] = useState(false);
   const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(false);
+  const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
+  const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
+  const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
 
   useEffect(()=>{
     fetchInventories()
@@ -81,7 +85,8 @@ function AuthorInventory(){
               setCurrentDetailsActive={setCurrentDetailsActive}
               setTotalInventoryOpen={setTotalInventoryOpen}
               setGivenToAuthorOpen={setGivenToAuthorOpen}
-              setBooksSoldGraphOpen={setBooksSoldGraphOpen} />
+              setBooksSoldGraphOpen={setBooksSoldGraphOpen}
+              setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}/>
           ) : (
             selectedBookId && (
               <ShowInventories
@@ -96,6 +101,8 @@ function AuthorInventory(){
           <BooksSoldGraph bookSales={booksInventories} />)}
         {isGivenToAuthorOpen && (
           <GivenToAuthorDetails />)}
+        {isAuthorBookstoreInventoryOpen && (
+          <AuthorBookstoreInventory />)}
       </div>
     </div>
     </>

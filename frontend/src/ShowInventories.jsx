@@ -1,5 +1,6 @@
 import './ShowInventories.scss';
 import { useRef, useEffect } from "react";
+import useCheckUser from './customHooks/useCheckUser';
 
 function ShowInventories({
     inventories,
@@ -9,7 +10,9 @@ function ShowInventories({
     setCurrentDetailsActive,
     setTotalInventoryOpen,
     setGivenToAuthorOpen,
-    setBooksSoldGraphOpen}) {
+    setBooksSoldGraphOpen,
+    setAuthorBookstoreInventoryOpen}) {
+  useCheckUser();
   const totalRef = useRef();
   const givenRef = useRef();
   const soldRef = useRef();
@@ -34,6 +37,7 @@ function ShowInventories({
       total: setTotalInventoryOpen,
       given: setGivenToAuthorOpen,
       sold: setBooksSoldGraphOpen,
+      bookstore: setAuthorBookstoreInventoryOpen,
     }
 
     currentDetailsActive.current.classList.remove("show-inventory-active");
@@ -68,19 +72,19 @@ function ShowInventories({
         </div>
         <div className="author-inventory-line"
           ref={bookstoreRef}
-          onClick={() => declareActive(bookstoreRef)}>
+          onClick={() => declareActive(bookstoreRef, "bookstore", setAuthorBookstoreInventoryOpen)}>
           <p className="author-inventory-label">Inventario en librerías</p>
           <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
         </div>
         <div className="author-inventory-line"
           ref={wasRef}
-          onClick={() => declareActive(wasRef)}>
+          onClick={() => declareActive(wasRef, "was", setAuthorWasInventoryOpen)}>
           <p className="author-inventory-label">Libros en bodega Was</p>
           <p className="author-inventory-number">{inventories.summary.was || 0}</p>
         </div>
         <div className="author-inventory-line"
           ref={availableRef}
-          onClick={() => declareActive(availableRef)}>
+          onClick={() => declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)}>
           <p className="author-inventory-label">Inventario total disponible</p>
           <p className="author-inventory-number">{inventories.summary.total || 0}</p>
         </div>

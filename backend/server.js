@@ -12,7 +12,7 @@ import superAdminRoutes from "./routes/superAdminRoutes.js";
 dotenv.config();
 const app = express();
 export const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
+  log: ['error'],
 });
 // export const redisClient = redis.createClient();
 // redisClient.on("error", (err) => console.error("Redis Error:", err));

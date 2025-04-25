@@ -28,10 +28,6 @@ function GivenToAuthorDetails() {
     fetchRelevantTransfers();
   }, [])
 
-  useEffect(() => {
-    console.log(data);
-  }, [data])
-
   return(
     <div className="given-to-author-details">
       <div className="gtad-header">

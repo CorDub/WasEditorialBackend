@@ -9,6 +9,7 @@ import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
 import GivenToAuthorDetails from "./GivenToAuthorDetails";
 import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
+import AuthorWasInventory from "./AuthorWasInventory";
 
 function AuthorInventory(){
   useCheckUser();
@@ -86,7 +87,8 @@ function AuthorInventory(){
               setTotalInventoryOpen={setTotalInventoryOpen}
               setGivenToAuthorOpen={setGivenToAuthorOpen}
               setBooksSoldGraphOpen={setBooksSoldGraphOpen}
-              setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}/>
+              setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
+              setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}/>
           ) : (
             selectedBookId && (
               <ShowInventories
@@ -103,6 +105,8 @@ function AuthorInventory(){
           <GivenToAuthorDetails />)}
         {isAuthorBookstoreInventoryOpen && (
           <AuthorBookstoreInventory />)}
+        {isAuthorWasInventoryOpen && (
+          <AuthorWasInventory />)}
       </div>
     </div>
     </>

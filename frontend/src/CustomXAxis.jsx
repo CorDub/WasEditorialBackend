@@ -30,6 +30,10 @@ function CustomXAxis({max}) {
   useEffect(() => {
     for (let i = 0; i < points.length; i++) {
       if (i == points.length - 1) {
+        // if (points[i] === points[i-1]) {
+        //   return;
+        // }
+
         placePoint(points[i], pointRefs.current[i], true);
       } else {
         placePoint(points[i], pointRefs.current[i]);

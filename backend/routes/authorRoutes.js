@@ -414,7 +414,7 @@ router.get('/bookstoreInventories', async (req, res) => {
       if (relevantInventoriesByBookstore.hasOwnProperty(inventory.bookstoreId)) {
         relevantInventoriesByBookstore[inventory.bookstoreId].current += inventory.current
       } else {
-        /// 3 = BookstoreId of Plataforma Was
+        /// 3 = BookstoreId of Plataforma Was that we'll be excluding here.
         if (inventory.bookstoreId !== 3) {
           relevantInventoriesByBookstore[inventory.bookstoreId] = {
             name: inventory.bookstore.name,
@@ -423,8 +423,9 @@ router.get('/bookstoreInventories', async (req, res) => {
         }
       };
 
-      // grouping by book
+      // grouping by book and populating summary
       if (relevantInventoriesByBook.hasOwnProperty(inventory.bookId)) {
+        relevantInventoriesByBook[inventory.bookId].summary += inventory.current;
         if (relevantInventoriesByBook[inventory.bookId].hasOwnProperty(inventory.bookstoreId)) {
           relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId].current += inventory.current
         } else {
@@ -439,7 +440,8 @@ router.get('/bookstoreInventories', async (req, res) => {
           [inventory.bookstoreId] : {
             bookstoreName : inventory.bookstore.name,
             current: inventory.current
-          }
+          },
+          summary: inventory.current
         }
       }
     }
@@ -450,6 +452,61 @@ router.get('/bookstoreInventories', async (req, res) => {
     });
   } catch (error) {
     console.log("\n ERROR FETCHING RELEVANT INVENTORIES FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occured while fetching relevant inventories"});
+  }
+})
+
+router.get("/wasInventories", async (req, res) => {
+  try {
+    // fetch all was inventories from the author
+    const relevantInventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false,
+        book: {
+          users: {
+            some: {
+              id: req.session.user_id
+            }
+          }
+        },
+        bookstoreId: 3
+      },
+      select: {
+        id: true,
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true,
+        bookstore: {
+          select: {
+            name: true,
+          }
+        },
+        bookstoreId: true,
+        current: true
+      }
+    });
+
+    console.log("\n RELEVANT INVENTORIES \n", relevantInventories);
+
+    let relevantInventoriesByBook = {};
+
+    for (const inventory of relevantInventories) {
+      if (relevantInventoriesByBook.hasOwnProperty(inventory.bookId)) {
+        relevantInventoriesByBook[inventory.bookId].current += inventory.current
+      } else {
+        relevantInventoriesByBook[inventory.bookId] = {
+          title: inventory.book.title,
+          current: inventory.current
+        }
+      }
+    }
+
+    res.status(200).json(relevantInventoriesByBook);
+  } catch (error) {
+    console.log('\n ERROR WHILE FETCHING THE WAS INVENTORIES FROM SERVER \n', error);
     res.status(500).json({error: "a server error occured while fetching relevant inventories"});
   }
 })

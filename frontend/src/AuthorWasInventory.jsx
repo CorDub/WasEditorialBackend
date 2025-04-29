@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import useCheckUser from "./customHooks/useCheckUser";
-import BooksSoldGraphLine from "./BooksSoldGraphLine";
-import CustomXAxis from "./CustomXAxis";
+import HorizontalGraphLine from "./HorizontalGraphLine";
+import XAxis from "./XAxis";
 import "./AuthorWasInventory.scss";
 
 function AuthorWasInventory() {
   useCheckUser();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
 
   async function fetchAuthorBookstoreInventories() {
@@ -38,11 +38,12 @@ function AuthorWasInventory() {
   return(
     <div className="author-was-inventory">
       {data && data.map((book, index) => (
-        <BooksSoldGraphLine
-        key={index}
-        bookData={book}
-        max={max} />))}
-      <CustomXAxis max={max}/>
+        <HorizontalGraphLine
+          key={index}
+          max={max}
+          number={book.current}
+          legend={book.title} />))}
+      <XAxis max={max}/>
     </div>
   )
 }

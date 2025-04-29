@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import "./CustomXAxis.scss";
+import "./XAxis.scss";
 
-function CustomXAxis({max}) {
+function XAxis({max}) {
   const [points, setPoints] = useState([]);
   const [totalLength, setTotalLength] = useState(0);
   const lineRef = useRef();
@@ -42,8 +42,8 @@ function CustomXAxis({max}) {
   }, [points])
 
   return(
-    <div className="custom-x-axis">
-      <div className="custom-x-axis-line" ref={lineRef}></div>
+    <div className="x-axis">
+      <div className="x-axis-line" ref={lineRef}></div>
       <div className="x-axis-points">
         <div className="x-axis-number" ref={(el) => (pointRefs.current[0] = el)}>
           <div className="x-axis-notch"></div>
@@ -74,4 +74,4 @@ function CustomXAxis({max}) {
   )
 }
 
-export default CustomXAxis;
+export default XAxis;

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import BooksSoldGraphLine from "./BooksSoldGraphLine";
-import CustomXAxis from "./CustomXAxis";
+import HorizontalGraphLine from "./HorizontalGraphLine";
+import XAxis from "./XAxis";
 import './AuthorBookstoreInventory.scss';
+import useCheckUser from "./customHooks/useCheckUser";
 
 function AuthorBookstoreInventory() {
+  useCheckUser();
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
 
@@ -35,15 +37,13 @@ function AuthorBookstoreInventory() {
 
   return(
     <div className="author-bookstore-inventory">
-      {data && (
-        <>
-          {data.map((bookstore, index) => (
-            <BooksSoldGraphLine
-              key={index}
-              bookstoreData={bookstore}
-              max={max} />))}
-          <CustomXAxis max={max}/>
-        </>)}
+      {data && data.map((bookstore, index) => (
+        <HorizontalGraphLine
+          key={index}
+          max={max}
+          number={bookstore.current}
+          legend={bookstore.name} />))}
+      <XAxis max={max}/>
     </div>
   )
 }

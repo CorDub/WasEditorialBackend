@@ -1,7 +1,7 @@
 import "./BooksSoldGraph.scss";
 import { useState, useEffect } from "react";
-import CustomXAxis from "./CustomXAxis";
-import BooksSoldGraphLine from "./BooksSoldGraphLine";
+import XAxis from "./XAxis";
+import HorizontalGraphLine from "./HorizontalGraphLine";
 
 function BooksSoldGraph({bookSales}) {
   const [booksListBySales, setBooksListBySales] = useState([]);
@@ -29,8 +29,12 @@ function BooksSoldGraph({bookSales}) {
       {booksListBySales && (
         <>
           {booksListBySales.map((book, index) => (
-            <BooksSoldGraphLine key={index} bookData={book} max={max}/>))}
-          <CustomXAxis max={max}/>
+            <HorizontalGraphLine
+              key={index}
+              max={max}
+              number={book.summary.sold}
+              legend={book.title}/>))}
+          <XAxis max={max}/>
         </>)}
     </div>
   )

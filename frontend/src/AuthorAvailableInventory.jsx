@@ -1,7 +1,7 @@
 import "./AuthorAvailableInventory.scss"
 import { useEffect, useState } from "react";
-import BooksSoldGraphLine from "./BooksSoldGraphLine";
-import CustomXAxis from "./CustomXAxis";
+import HorizontalGraphLine from "./HorizontalGraphLine";
+import XAxis from "./XAxis";
 
 function AuthorAvailableInventory({bookSales}) {
   const [data, setData] = useState(null);
@@ -20,12 +20,12 @@ function AuthorAvailableInventory({bookSales}) {
   return (
     <div className="author-available-inventory">
       {data && data.map((book, index) =>(
-        <BooksSoldGraphLine
+        <HorizontalGraphLine
           key={index}
-          bookData={book}
           max={max}
-          number={book.summary.total} />))}
-      <CustomXAxis max={max} />
+          number={book.summary.total}
+          legend={book.title} />))}
+      <XAxis max={max} />
     </div>
   )
 }

@@ -12,7 +12,8 @@ function ShowInventories({
     setGivenToAuthorOpen,
     setBooksSoldGraphOpen,
     setAuthorBookstoreInventoryOpen,
-    setAuthorWasInventoryOpen}) {
+    setAuthorWasInventoryOpen,
+    setAuthorAvailableInventoryOpen}) {
   useCheckUser();
   const totalRef = useRef();
   const givenRef = useRef();
@@ -40,6 +41,7 @@ function ShowInventories({
       sold: setBooksSoldGraphOpen,
       bookstore: setAuthorBookstoreInventoryOpen,
       was: setAuthorWasInventoryOpen,
+      available: setAuthorAvailableInventoryOpen
     }
 
     currentDetailsActive.current.classList.remove("show-inventory-active");

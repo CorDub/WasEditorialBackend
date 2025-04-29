@@ -130,7 +130,11 @@ router.get('/inventories', async (req, res) => {
           }
         }
       }
-      const remainingTotal = initialTotal - soldTotal;
+      let entregadosAlAutor = 0;
+      for (const inventory of book.inventories) {
+        entregadosAlAutor += inventory.givenToAuthor
+      };
+      const remainingTotal = initialTotal - soldTotal - entregadosAlAutor;
       let inventoryInBookstores = 0;
       let inventoryInWas = 0;
       for (const inventory of book.inventories) {
@@ -140,11 +144,6 @@ router.get('/inventories', async (req, res) => {
           inventoryInBookstores += inventory.current
         }
       }
-      let entregadosAlAutor = 0;
-      for (const inventory of book.inventories) {
-        entregadosAlAutor += inventory.givenToAuthor
-      };
-
 
       // Add to overall totals
       overallInitialTotal += initialTotal;
@@ -168,7 +167,7 @@ router.get('/inventories', async (req, res) => {
       };
     });
 
-    const overallRemainingTotal = overallInitialTotal - overallSoldTotal;
+    const overallRemainingTotal = overallInitialTotal - overallSoldTotal - overallEntregadosAlAutor;
 
     console.log(`Processed sales data for ${books.length} books for user ${req.session.user_id}`);
 

@@ -10,6 +10,7 @@ import BookSelector from "./BookSelector";
 import GivenToAuthorDetails from "./GivenToAuthorDetails";
 import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
+import AuthorAvailableInventory from "./AuthorAvailableInventory";
 
 function AuthorInventory(){
   useCheckUser();
@@ -88,7 +89,8 @@ function AuthorInventory(){
               setGivenToAuthorOpen={setGivenToAuthorOpen}
               setBooksSoldGraphOpen={setBooksSoldGraphOpen}
               setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
-              setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}/>
+              setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
+              setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}/>
           ) : (
             selectedBookId && (
               <ShowInventories
@@ -107,6 +109,8 @@ function AuthorInventory(){
           <AuthorBookstoreInventory />)}
         {isAuthorWasInventoryOpen && (
           <AuthorWasInventory />)}
+        {isAuthorAvailableInventoryOpen && (
+          <AuthorAvailableInventory bookSales={inventories.bookInventories}/>)}
       </div>
     </div>
     </>

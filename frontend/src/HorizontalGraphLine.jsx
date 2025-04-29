@@ -1,30 +1,19 @@
 import "./HorizontalGraphLine.scss";
-import { useEffect, useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 function HorizontalGraphLine({ max, number, legend }) {
   const lineRef = useRef();
-
-  function determineLength() {
-    // Ensure length is proportional to number of sales
-    const lineLength = lineRef.current.getBoundingClientRect().width;
-
-    let percentOfSold = 0;
-    percentOfSold = number * 100 / max;
-
-    const newLength = lineLength * percentOfSold / 100;
-    lineRef.current.style.width = newLength + "px";
-  }
+  const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
-    if (max && number) {
-      requestAnimationFrame(() => {
-        determineLength();
-      });
-    }
-  }, [max, number]);
+    setPercentage(number *100 /max);
+  }, [max, number])
 
   return(
-    <div className="horizontal-graph-line" ref={lineRef}>
+    <div
+      className="horizontal-graph-line"
+      style={{ width: `${percentage}%` }}
+      ref={lineRef}>
       <div className="bsgl-title">{legend}</div>
       <div className="bsgl-number">{number}</div>
     </div>

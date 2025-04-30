@@ -4,11 +4,13 @@ import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import Table from "./Table";
 import CommissionMonthSelector from "./CommissionMonthSelector";
+import "./AuthorCommissions.scss"
 
 function AuthorCommissions() {
   useCheckUser();
   const { user } = useContext(UserContext);
   const [dataByMonths, setDataByMonths] = useState(null);
+  const [activeMonth, setActiveMonth] = useState(0);
 
   async function fetchAuthorBookSales() {
     try {
@@ -22,7 +24,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
-        setDataByMonths(data);
+        setDataByMonths(Object.entries(data));
       };
     } catch(error) {
       console.log("Error when fetching the data", error);
@@ -34,10 +36,18 @@ function AuthorCommissions() {
   }, [])
 
   return(
-    <div className="author-commisions">
-      <Navbar subNav={user && user.role} active={"comisiones"} />
-      <CommissionMonthSelector data={dataByMonths}/>
-      <Table data={dataByMonths && dataByMonths}/>
+    <div className="author-commissions">
+      <Navbar
+        subNav={user && user.role}
+        active={"comisiones"} />
+      <CommissionMonthSelector
+        data={dataByMonths}
+        activeMonth={activeMonth}
+        setActiveMonth={setActiveMonth}/>
+      <Table
+        data={dataByMonths}
+        activeMonth={activeMonth}
+        setActiveMonth={setActiveMonth}/>
     </div>
   )
 }

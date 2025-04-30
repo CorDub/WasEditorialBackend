@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
+import { cp } from "fs";
 
 const router = express.Router();
 
@@ -169,8 +170,6 @@ router.get('/inventories', async (req, res) => {
 
     const overallRemainingTotal = overallInitialTotal - overallSoldTotal - overallEntregadosAlAutor;
 
-    console.log(`Processed sales data for ${books.length} books for user ${req.session.user_id}`);
-
     res.status(200).json({
       summary: {
         initial: overallInitialTotal,
@@ -246,37 +245,34 @@ router.get('/sales', async (req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
 
-    // Set end date to end of day
-    endDate.setHours(23, 59, 59, 999);
-
     const sales = await prisma.sale.findMany({
-      where: {
-        inventory: {
-          book: {
-            users: {
-              some: {
-                id: authorId
+        where: {
+          inventory: {
+            book: {
+              users: {
+                some: {
+                  id: authorId
+                }
               }
+            }
+          },
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
+        include: {
+          inventory: {
+            include: {
+              book: true,
+              bookstore: true
             }
           }
         },
-        createdAt: {
-          gte: startDate,
-          lte: endDate
+        orderBy: {
+          createdAt: 'desc'
         }
-      },
-      include: {
-        inventory: {
-          include: {
-            book: true,
-            bookstore: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
+      });
 
     const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
     const totalValue = sales.reduce((sum, sale) => {
@@ -325,6 +321,74 @@ router.get('/sales', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+router.get('/monthlySales', async (req, res) => {
+  try {
+    const data = await prisma.sale.findMany({
+      where: {
+        inventory: {
+          book: {
+            users: {
+              some: {
+                id: req.session.user_id
+              }
+            }
+          }
+        },
+        isDeleted: false,
+      },
+      include: {
+        inventory: {
+          include: {
+            book: true,
+            bookstore: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.user_id
+      }
+    });
+
+    const userCategory = await prisma.category.findUnique({
+      where: {
+        id: user.categoryId
+      }
+    });
+
+    let salesByMonths = {};
+    for (const sale of data) {
+      if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
+        salesByMonths[sale.createdAt.toISOString().substring(0,7)]["sales"].push(sale);
+        salesByMonths[sale.createdAt.toISOString().substring(0,7)]["total"] += (
+          (sale.inventory.book.price * sale.quantity)
+          * (userCategory.percentage_management_stores / 100)
+          * (userCategory.percentage_royalties / 100)
+        )
+      } else {
+        salesByMonths[sale.createdAt.toISOString().substring(0,7)] = {
+          sales: [sale],
+          total: (
+            (sale.inventory.book.price * sale.quantity)
+            * (userCategory.percentage_management_stores / 100)
+            * (userCategory.percentage_royalties / 100)
+          )
+        }
+      }
+    }
+
+    res.status(200).json(salesByMonths);
+  } catch(error) {
+    console.error("error fetching monthly sales", error);
+    res.status(500).json({error: 'Internal server error'});
+  }
+})
 
 router.get('/givenToAuthorTransfers', async (req, res) => {
   const currentUserId = req.session.user_id

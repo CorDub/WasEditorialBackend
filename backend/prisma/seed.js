@@ -68,6 +68,35 @@ async function main() {
     addBookFromDB(book, authorsIndexes)
   });
 
+  /// Create categories
+
+  await prisma.category.create({
+    data: {
+      type: "1",
+      percentage_royalties: 100,
+      percentage_management_stores: 50,
+      management_min: 180.00
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      type: "2",
+      percentage_royalties: 100,
+      percentage_management_stores: 55,
+      management_min: 150.00
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      type: "3",
+      percentage_royalties: 20,
+      percentage_management_stores: 20,
+      management_min: 0.00
+    }
+  })
+
   /// Create users
 
   await prisma.user.create({
@@ -98,39 +127,11 @@ async function main() {
       last_name: "Adorno",
       country: "México",
       email: "adorno@gmail.com",
+      categoryId: 1,
       password: await bcrypt.hash("bookboi3", 10),
       role: Role.author
     },
   });
-
-  /// Create categories
-
-  await prisma.category.create({
-    data: {
-      type: "1",
-      percentage_royalties: 100,
-      percentage_management_stores: 50,
-      management_min: 180.00
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "2",
-      percentage_royalties: 100,
-      percentage_management_stores: 55,
-      management_min: 150.00
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "3",
-      percentage_royalties: 20,
-      percentage_management_stores: 20,
-      management_min: 0.00
-    }
-  })
 
   await prisma.bookstore.create({
     data: {

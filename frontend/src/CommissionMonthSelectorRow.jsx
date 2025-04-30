@@ -1,9 +1,33 @@
-function CommissionMonthSelectorRow({month}) {
+import "./CommissionMonthSelectorRow.scss"
+
+function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
+
+  function changeDateFormat(date) {
+    const months = {
+      "01": "Ene",
+      "02": "Feb",
+      "03": "Mar",
+      "04": "Abr",
+      "05": "May",
+      "06": "Jun",
+      "07": "Jul",
+      "08": "Ago",
+      "09": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dic"
+    }
+
+    return months[date.substring(5,7)] + " " + date.substring(0,4);
+  }
+
   return(
-    <div className="cms-row">
-      <div className="cms-month">{month[0]}</div>
+    <div
+      className={active ? "cms-row-active" : "cms-row"}
+      onClick={() => setActiveMonth(index)}>
+      <div className="cms-month">{changeDateFormat(month[0])}</div>
       <div className="cms-status"></div>
-      <div className="cms-total">{month[1].total}</div>
+      <div className="cms-total">${month[1].total.toLocaleString()}</div>
     </div>
   )
 }

@@ -1,22 +1,17 @@
 import CommissionMonthSelectorRow from "./CommissionMonthSelectorRow";
-import { useEffect, useState } from "react";
+import "./CommissionMonthSelector.scss";
 
-function CommissionMonthSelector({data}) {
-  const [listData, setListData] = useState(null);
-
-  useEffect(() => {
-    if (data) {
-      setListData(Object.entries(data));
-    }
-  }, [data])
-
-
+function CommissionMonthSelector({data, activeMonth, setActiveMonth}) {
   return(
     <div className="commission-month-selector">
-      {listData && listData.map((month, index) => (
+      <div className="cms-title"><h2>Selecciona mes</h2></div>
+      {data && data.map((month, index) => (
         <CommissionMonthSelectorRow
           key={index}
-          month={month}/>
+          index={index}
+          month={month}
+          active={index === activeMonth ? true : false}
+          setActiveMonth={setActiveMonth}/>
       ))}
 
     </div>

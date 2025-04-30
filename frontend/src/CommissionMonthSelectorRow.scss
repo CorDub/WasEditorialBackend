@@ -1,0 +1,31 @@
+.cms-row {
+  display: flex;
+  justify-content: space-between;
+  // margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.cms-row-active {
+  background-color: #4E5981;
+  color: white;
+  border-radius: 15px;
+  display: flex;
+  padding: 0.5rem;
+  // margin-bottom: 0.5rem;
+}
+
+.cms-month {
+  width: 20%;
+}
+
+.cms-status {
+  width: 50%;
+}
+
+.cms-total {
+  width: 30%;
+  text-align: right;
+}

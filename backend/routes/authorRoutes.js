@@ -337,11 +337,23 @@ router.get('/monthlySales', async (req, res) => {
         },
         isDeleted: false,
       },
-      include: {
+      select: {
+        id: true,
+        quantity: true,
+        createdAt: true,
         inventory: {
-          include: {
-            book: true,
-            bookstore: true
+          select: {
+            bookstore: {
+              select: {
+                name: true
+              }
+            },
+            book: {
+              select: {
+                title: true,
+                price: true
+              }
+            }
           }
         }
       },
@@ -349,6 +361,8 @@ router.get('/monthlySales', async (req, res) => {
         createdAt: 'desc'
       }
     });
+
+    console.log("DATA", data)
 
     const user = await prisma.user.findUnique({
       where: {
@@ -374,6 +388,11 @@ router.get('/monthlySales', async (req, res) => {
       } else {
         salesByMonths[sale.createdAt.toISOString().substring(0,7)] = {
           sales: [sale],
+          ganancia: (
+            sale.inventory.book.price
+            * (userCategory.percentage_management_stores / 100)
+            * (userCategory.percentage_royalties / 100)
+          ),
           total: (
             (sale.inventory.book.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)

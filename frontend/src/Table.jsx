@@ -4,12 +4,12 @@ import TableTotal from "./TableTotal";
 import { useState, useEffect } from "react";
 import "./Table.scss";
 
-function Table({data, activeMonth, setActiveMonth}) {
+function Table({data, activeMonth}) {
   const [monthData, setMonthData] = useState(null);
   const [headerList, setHeaderList] = useState([
     "Canal",
     "Vendidos",
-    "En tienda",
+    "Ganancia por libro",
     "Total"
   ])
   const [canalList, setCanalList] = useState([]);
@@ -22,6 +22,7 @@ function Table({data, activeMonth, setActiveMonth}) {
         canalList.push({
           name: sale.inventory.bookstore.name,
           quantity: sale.quantity,
+          ganancia: monthData.ganancia,
           total: monthData.ganancia * sale.quantity
         });
       } else {
@@ -36,6 +37,7 @@ function Table({data, activeMonth, setActiveMonth}) {
           canalList.push({
             name: sale.inventory.bookstore.name,
             quantity: sale.quantity,
+            ganancia: monthData.ganancia,
             total: monthData.ganancia * sale.quantity
           });
         }
@@ -75,6 +77,8 @@ function Table({data, activeMonth, setActiveMonth}) {
     }
   }, [canalList])
 
+  console.log(canalList);
+
   return (
     <div className="table">
       <TableHeader headerList={headerList}/>
@@ -84,6 +88,7 @@ function Table({data, activeMonth, setActiveMonth}) {
           headerList={headerList}
           name={canal.name}
           quantity={canal.quantity}
+          ganancia={canal.ganancia}
           total={canal.total}/>
       ))}
       {totalData && (

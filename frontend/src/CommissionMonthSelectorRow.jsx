@@ -1,3 +1,4 @@
+import formatNumber from "./customHooks/formatNumber";
 import "./CommissionMonthSelectorRow.scss"
 
 function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
@@ -27,7 +28,7 @@ function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
       onClick={() => setActiveMonth(index)}>
       <div className="cms-month">{changeDateFormat(month[0])}</div>
       <div className="cms-status"></div>
-      <div className="cms-total">${month[1].total.toLocaleString()}</div>
+      <div className="cms-total">${formatNumber(month[1].total)}</div>
     </div>
   )
 }

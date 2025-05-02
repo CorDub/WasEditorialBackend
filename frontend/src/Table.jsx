@@ -1,5 +1,6 @@
 import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
+import TableTotal from "./TableTotal";
 import { useState, useEffect } from "react";
 import "./Table.scss";
 
@@ -12,6 +13,7 @@ function Table({data, activeMonth, setActiveMonth}) {
     "Total"
   ])
   const [canalList, setCanalList] = useState([]);
+  const [totalData, setTotalData] = useState(null);
 
   function createCanalList() {
     let canalList = [];
@@ -52,7 +54,26 @@ function Table({data, activeMonth, setActiveMonth}) {
     if (data) {
       setMonthData(data[activeMonth][1])
     }
-  }, [data, activeMonth])
+  }, [data, activeMonth]);
+
+  function createTotalData() {
+    let totalData = {
+      quantity: 0,
+      total: 0
+    };
+
+    for (const canal of canalList) {
+      totalData.quantity += canal.quantity,
+      totalData.total += canal.total
+    }
+    setTotalData(totalData);
+  }
+
+  useEffect(() => {
+    if (canalList) {
+      createTotalData();
+    }
+  }, [canalList])
 
   return (
     <div className="table">
@@ -63,9 +84,14 @@ function Table({data, activeMonth, setActiveMonth}) {
           headerList={headerList}
           name={canal.name}
           quantity={canal.quantity}
-          total={canal.total}
-          last={index === canalList.length - 1 ? true : false}/>
+          total={canal.total}/>
       ))}
+      {totalData && (
+        <TableTotal
+          headerList={headerList}
+          quantity={totalData.quantity}
+          total={totalData.total}/>
+      )}
     </div>
   )
 }

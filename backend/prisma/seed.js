@@ -6,6 +6,35 @@ import books from "../../helpers/books.json" assert {type: 'json'}
 const prisma = new PrismaClient();
 
 async function main() {
+  /// Create categories
+
+  await prisma.category.create({
+    data: {
+      type: "1",
+      percentage_royalties: 100,
+      percentage_management_stores: 50,
+      management_min: 180.00
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      type: "2",
+      percentage_royalties: 100,
+      percentage_management_stores: 55,
+      management_min: 150.00
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      type: "3",
+      percentage_royalties: 20,
+      percentage_management_stores: 20,
+      management_min: 0.00
+    }
+  })
+
   /// Add all books from DB
 
   async function addAuthorFromDB(author) {
@@ -14,6 +43,7 @@ async function main() {
         first_name: author.first_name,
         last_name: author.last_name,
         country: "México",
+        categoryId: 1
       }
     })
   };
@@ -68,35 +98,6 @@ async function main() {
     addBookFromDB(book, authorsIndexes)
   });
 
-  /// Create categories
-
-  await prisma.category.create({
-    data: {
-      type: "1",
-      percentage_royalties: 100,
-      percentage_management_stores: 50,
-      management_min: 180.00
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "2",
-      percentage_royalties: 100,
-      percentage_management_stores: 55,
-      management_min: 150.00
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "3",
-      percentage_royalties: 20,
-      percentage_management_stores: 20,
-      management_min: 0.00
-    }
-  })
-
   /// Create users
 
   await prisma.user.create({
@@ -132,6 +133,8 @@ async function main() {
       role: Role.author
     },
   });
+
+  /// Create Bookstores
 
   await prisma.bookstore.create({
     data: {
@@ -416,6 +419,98 @@ async function main() {
       }
     });
   }
+
+  // Create fake payments
+
+  let monthlySalesByAuthor = [];
+
+  /// First get every author
+  const allAuthors =  await prisma.user.findMany({
+    where: {
+      isDeleted: false,
+      role: Role.author
+    }
+  })
+  console.log("AUTHORS LENGTH", allAuthors.length);
+
+  ///Then get all sales for each author
+  for (const author of allAuthors) {
+    let salesByMonths = {};
+    const data = await prisma.sale.findMany({
+      where: {
+        inventory: {
+          book: {
+            users: {
+              some: {
+                id: author.id
+              }
+            }
+          }
+        },
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        quantity: true,
+        createdAt: true,
+        inventory: {
+          select: {
+            book: {
+              select: {
+                price: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    console.log("AUTHOR", author);
+
+    const userCategory = await prisma.category.findUnique({
+      where: {
+        id: author.categoryId
+      }
+    });
+
+    /// Then group them by month
+    for (const sale of data) {
+      if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
+        salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
+          (sale.inventory.book.price * sale.quantity)
+          * (userCategory.percentage_management_stores / 100)
+          * (userCategory.percentage_royalties / 100)
+        )
+      } else {
+        salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
+          (sale.inventory.book.price * sale.quantity)
+          * (userCategory.percentage_management_stores / 100)
+          * (userCategory.percentage_royalties / 100)
+        )
+      }
+    }
+
+    console.log("sales by months length", salesByMonths.length);
+    // Make that a list
+    const salesByMonthsList = Object.entries(salesByMonths);
+    console.log("salesByMonthsList[0]", salesByMonthsList[0]);
+
+    // Create a new payment for each month
+    for (const month of salesByMonthsList) {
+      console.log("MONTH", month);
+      const newPayment = await prisma.payment.create({
+        data: {
+          userId: author.id,
+          amount: month[1],
+          forMonth: month[0],
+        }
+      })
+    }
+  }
+
 
   // const bookstores = await prisma.bookstore.findMany({
   //   where: {

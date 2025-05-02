@@ -1,7 +1,6 @@
 .cms-row {
   display: flex;
   justify-content: space-between;
-  // margin-bottom: 0.5rem;
   padding: 0.5rem;
   &:hover {
     cursor: pointer;
@@ -14,15 +13,14 @@
   border-radius: 15px;
   display: flex;
   padding: 0.5rem;
-  // margin-bottom: 0.5rem;
 }
 
 .cms-month {
-  width: 20%;
+  width: 30%;
 }
 
 .cms-status {
-  width: 50%;
+  width: 40%;
 }
 
 .cms-total {

@@ -1,0 +1,28 @@
+.table-header {
+  background-color: #4E5981;
+  color: white;
+  border-radius: 15px;
+  display: flex;
+  padding: 0.5rem;
+}
+
+.table-header-name {
+  border-right: 1px solid white;
+  margin-right: 0.5rem;
+}
+
+.Canal {
+  width: 25%;
+}
+
+.Vendidos {
+  width: 25%;
+}
+
+.En.tienda {
+  width: 25%;
+}
+
+.Total {
+  width: 25%;
+}

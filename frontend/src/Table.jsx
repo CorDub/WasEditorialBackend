@@ -30,6 +30,7 @@ function Table({data, activeMonth}) {
         for (const obj of canalList) {
           if (obj.name === sale.inventory.bookstore.name) {
             obj.quantity += sale.quantity
+            obj.total += monthData.ganancia * sale.quantity
             existing = true;
           };
         }
@@ -76,8 +77,6 @@ function Table({data, activeMonth}) {
       createTotalData();
     }
   }, [canalList])
-
-  console.log(canalList);
 
   return (
     <div className="table">

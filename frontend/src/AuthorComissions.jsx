@@ -11,6 +11,7 @@ function AuthorCommissions() {
   const { user } = useContext(UserContext);
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
+  const [payments, setPayments] = useState(null);
 
   async function fetchAuthorBookSales() {
     try {
@@ -33,6 +34,29 @@ function AuthorCommissions() {
 
   useEffect(() => {
     fetchAuthorBookSales();
+  }, [])
+
+  async function fetchPayments() {
+    try {
+      const response = await fetch("http://localhost:3000/author/payments", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPayments(data);
+      };
+    } catch(error) {
+      console.log("Error when fetching the data", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchPayments();
   }, [])
 
   return(

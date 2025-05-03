@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
 import { cp } from "fs";
+import { json } from "stream/consumers";
 
 const router = express.Router();
 
@@ -590,6 +591,22 @@ router.get("/wasInventories", async (req, res) => {
   } catch (error) {
     console.log('\n ERROR WHILE FETCHING THE WAS INVENTORIES FROM SERVER \n', error);
     res.status(500).json({error: "a server error occured while fetching relevant inventories"});
+  }
+})
+
+router.get("/payments", async (req, res) => {
+  try {
+    const allPayments = await prisma.payment.findMany({
+      where: {
+        isDeleted: false,
+        userId: req.session.user_id
+      }
+    });
+
+    res.status(200).json(allPayments);
+  } catch(error) {
+    console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occurred while fetching relevant transfers"})
   }
 })
 

@@ -8,92 +8,95 @@ function Table({data, activeMonth}) {
   const [monthData, setMonthData] = useState(null);
   const [headerList, setHeaderList] = useState([
     "Canal",
+    "Entregados",
     "Vendidos",
     "Ganancia por libro",
     "Total"
   ])
-  const [canalList, setCanalList] = useState([]);
+  const [rowData, setRowData] = useState(null);
   const [totalData, setTotalData] = useState(null);
 
-  function createCanalList() {
-    let canalList = [];
-    for (const sale of monthData.sales) {
-      if (canalList.length === 0) {
-        canalList.push({
-          name: sale.inventory.bookstore.name,
-          quantity: sale.quantity,
-          ganancia: monthData.ganancia,
-          total: monthData.ganancia * sale.quantity
-        });
-      } else {
-        let existing = false;
-        for (const obj of canalList) {
-          if (obj.name === sale.inventory.bookstore.name) {
-            obj.quantity += sale.quantity
-            obj.total += monthData.ganancia * sale.quantity
-            existing = true;
-          };
-        }
-        if (!existing) {
-          canalList.push({
-            name: sale.inventory.bookstore.name,
-            quantity: sale.quantity,
-            ganancia: monthData.ganancia,
-            total: monthData.ganancia * sale.quantity
-          });
-        }
-      }
-    }
-    setCanalList(canalList);
-  }
-
-  useEffect(() => {
-    if (monthData !== null) {
-      createCanalList();
-    }
-  }, [monthData]);
-
+  /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {
       setMonthData(data[activeMonth][1])
     }
   }, [data, activeMonth]);
 
+  function formatRowData() {
+  // From the month data, format it so you can display it in rows
+    let rowData = [];
+
+    // MonthData.ransfers has all existing libraries,
+    // so this will create all necessary objects to hold row data
+    for (const bookstore of monthData.transfers) {
+      rowData.push({
+        name: bookstore.name,
+        delivered: bookstore.quantity,
+        sold: 0,
+        total: 0
+      })
+    }
+
+    // Now adding sold numbers and total for each line
+    for (const sale of monthData.sales) {
+      const bookstoreName = sale.inventory.bookstore.name;
+      for (const row of rowData) {
+        if (bookstoreName === row.name) {
+          row.sold += sale.quantity
+          row.total += sale.quantity * monthData.ganancia
+        }
+      }
+    }
+    setRowData(rowData);
+  }
+
+  useEffect(() => {
+    if (monthData !== null) {
+      formatRowData();
+    }
+  }, [monthData]);
+
+  // Get total data for each column
   function createTotalData() {
     let totalData = {
-      quantity: 0,
+      delivered: 0,
+      sold: 0,
       total: 0
     };
 
-    for (const canal of canalList) {
-      totalData.quantity += canal.quantity,
-      totalData.total += canal.total
+    for (const row of rowData) {
+      totalData.delivered += row.delivered,
+      totalData.sold += row.sold,
+      totalData.total += row.total
     }
     setTotalData(totalData);
   }
 
   useEffect(() => {
-    if (canalList) {
+    if (rowData) {
       createTotalData();
     }
-  }, [canalList])
+  }, [rowData])
 
   return (
     <div className="table">
       <TableHeader headerList={headerList}/>
-      {canalList.map((canal, index) => (
+      {rowData && rowData.map((row, index) => (
         <TableRow
           key={index}
           headerList={headerList}
-          name={canal.name}
-          quantity={canal.quantity}
-          ganancia={canal.ganancia}
-          total={canal.total}/>
+          name={row.name}
+          delivered={row.delivered}
+          sold={row.sold}
+          // ganancia={row.ganancia}
+          total={row.total}/>
       ))}
       {totalData && (
         <TableTotal
           headerList={headerList}
-          quantity={totalData.quantity}
+          delivered={totalData.delivered}
+          sold={totalData.sold}
           total={totalData.total}/>
       )}
     </div>

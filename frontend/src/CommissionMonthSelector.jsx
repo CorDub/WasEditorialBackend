@@ -1,11 +1,12 @@
 import CommissionMonthSelectorRow from "./CommissionMonthSelectorRow";
 import "./CommissionMonthSelector.scss";
 
-function CommissionMonthSelector({data, activeMonth, setActiveMonth}) {
+function CommissionMonthSelector({activeMonth, setActiveMonth, payments}) {
+
   return(
     <div className="commission-month-selector">
       <div className="cms-title"><h2>Selecciona mes</h2></div>
-      {data && data.map((month, index) => (
+      {payments && payments.map((month, index) => (
         <CommissionMonthSelectorRow
           key={index}
           index={index}

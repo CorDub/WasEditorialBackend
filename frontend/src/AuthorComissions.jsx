@@ -13,6 +13,8 @@ function AuthorCommissions() {
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
 
+  console.log(dataByMonths);
+
   async function fetchAuthorBookSales() {
     try {
       const response = await fetch("http://localhost:3000/author/monthlySales", {
@@ -65,9 +67,9 @@ function AuthorCommissions() {
         subNav={user && user.role}
         active={"comisiones"} />
       <CommissionMonthSelector
-        data={dataByMonths}
         activeMonth={activeMonth}
-        setActiveMonth={setActiveMonth}/>
+        setActiveMonth={setActiveMonth}
+        payments={payments}/>
       <Table
         data={dataByMonths}
         activeMonth={activeMonth}

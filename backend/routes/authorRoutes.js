@@ -363,8 +363,6 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
-    console.log("DATA", data)
-
     const user = await prisma.user.findUnique({
       where: {
         id: req.session.user_id
@@ -398,10 +396,73 @@ router.get('/monthlySales', async (req, res) => {
             (sale.inventory.book.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
-          )
+          ),
+          transfers: [],
+          transfersTotal: 0
         }
       }
     }
+
+    /// Adding transfers for the "entregado" column
+    const allAuthorTransfers = await prisma.transfer.findMany({
+      where: {
+        isDeleted: false,
+        fromInventory: {
+          book: {
+            users: {
+              some: {
+                id: req.session.user_id
+              }
+            }
+          }
+        }
+      },
+      select: {
+        id: true,
+        quantity: true,
+        createdAt: true,
+        toInventory: {
+          select: {
+            bookstore: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    for (const transfer of allAuthorTransfers) {
+      const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+
+      if (salesByMonths[transferMonth]['transfers'].length > 0) {
+        let existing = false;
+        for (const element of salesByMonths[transferMonth]['transfers']) {
+          if (element.bookstore === transfer.toInventory.bookstore.id) {
+            element.quantity += transfer.quantity
+            existing = true
+          };
+        }
+        if (!existing) {
+          salesByMonths[transferMonth]['transfers'].push({
+            bookstore: transfer.toInventory.bookstore.id,
+            name: transfer.toInventory.bookstore.name,
+            quantity: transfer.quantity
+          })
+        }
+      } else {
+        salesByMonths[transferMonth]['transfers'].push({
+          bookstore: transfer.toInventory.bookstore.id,
+          name: transfer.toInventory.bookstore.name,
+          quantity: transfer.quantity
+        })
+      }
+      salesByMonths[transferMonth]['transfersTotal'] += transfer.quantity
+    }
+
+    console.log("ALL AUTHOR TRANSFERS", allAuthorTransfers);
 
     res.status(200).json(salesByMonths);
   } catch(error) {

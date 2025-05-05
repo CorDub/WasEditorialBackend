@@ -447,37 +447,22 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
-    // for (const transfer of allAuthorTransfers) {
-    //   const transferMonth = transfer.createdAt.toISOString().substring(0,7);
-    //   if (salesByMonths[transferMonth]['transfers'].length > 0) {
-    //     let existing = false;
-    //     for (const element of salesByMonths[transferMonth]['transfers']) {
-    //       if (element.bookstore === transfer.toInventory.bookstore.id) {
-    //         element.quantity += transfer.quantity
-    //         existing = true
-    //       };
-    //     }
-    //     if (!existing) {
-    //       salesByMonths[transferMonth]['transfers'].push({
-    //         bookstore: transfer.toInventory.bookstore.id,
-    //         name: transfer.toInventory.bookstore.name,
-    //         quantity: transfer.quantity
-    //       })
-    //     }
-    //   } else {
-    //     salesByMonths[transferMonth]['transfers'].push({
-    //       bookstore: transfer.toInventory.bookstore.id,
-    //       name: transfer.toInventory.bookstore.name,
-    //       quantity: transfer.quantity
-    //     })
-    //   }
-    //   salesByMonths[transferMonth]['transfersTotal'] += transfer.quantity
-    // }
-
     for (const transfer of allAuthorTransfers) {
       const transferMonth = transfer.createdAt.toISOString().substring(0,7);
 
       console.log("TRANSFER MONTH", transferMonth);
+      if (!salesByMonths[transferMonth]) {
+        salesByMonths[transferMonth] = {
+          sales: [],
+          ganancia: 0,
+          total: 0,
+          // deep cloning the bookstores to avoid having the same object being mutated later
+          // and shared across different months instead of a different object every time
+          transfers: bookstores.map(bookstore => ({...bookstore})),
+          transfersTotal: 0
+        }
+      };
+
       for (const bookstore of salesByMonths[transferMonth]['transfers']) {
         if (bookstore.id === transfer.toInventory.bookstore.id) {
           bookstore.quantity += transfer.quantity
@@ -485,6 +470,28 @@ router.get('/monthlySales', async (req, res) => {
       }
       salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
+
+    // Getting tienda data
+    const allAuthorInventories = await prisma.inventory.findMany({
+      where:{
+        book:{
+          users:{
+            some:{
+              id: req.session.user_id
+            }
+          }
+        },
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        bookstoreId: true,
+        initial: true,
+        current: true
+      }
+    });
+
+
 
     res.status(200).json(salesByMonths);
   } catch(error) {

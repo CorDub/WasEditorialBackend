@@ -8,12 +8,17 @@ const prisma = new PrismaClient();
 async function main() {
   /// Create categories
 
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+  twelveMonthsAgo.setDate(1);
+
   await prisma.category.create({
     data: {
       type: "1",
       percentage_royalties: 100,
       percentage_management_stores: 50,
-      management_min: 180.00
+      management_min: 180.00,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -22,7 +27,8 @@ async function main() {
       type: "2",
       percentage_royalties: 100,
       percentage_management_stores: 55,
-      management_min: 150.00
+      management_min: 150.00,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -31,7 +37,8 @@ async function main() {
       type: "3",
       percentage_royalties: 20,
       percentage_management_stores: 20,
-      management_min: 0.00
+      management_min: 0.00,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -43,7 +50,8 @@ async function main() {
         first_name: author.first_name,
         last_name: author.last_name,
         country: "México",
-        categoryId: 1
+        categoryId: 1,
+        createdAt: twelveMonthsAgo
       }
     })
   };
@@ -68,6 +76,7 @@ async function main() {
         users: {
           connect: authorsIndexes,
         },
+        createdAt: twelveMonthsAgo
       }
     })
 
@@ -76,7 +85,8 @@ async function main() {
       const createdImpression = await prisma.impression.create({
         data: {
           bookId: createdBook.id,
-          quantity: randQuant
+          quantity: randQuant,
+          createdAt: twelveMonthsAgo
         }
       });
     };
@@ -107,7 +117,8 @@ async function main() {
       country: "México",
       email: "Imake@books.com",
       password: await bcrypt.hash("bookboi", 10),
-      role: Role.superadmin
+      role: Role.superadmin,
+      createdAt: twelveMonthsAgo
     },
   });
 
@@ -118,7 +129,8 @@ async function main() {
       country: "México",
       email: "yessir@gmail.com",
       password: await bcrypt.hash("bookboi2", 10),
-      role: Role.admin
+      role: Role.admin,
+      createdAt: twelveMonthsAgo
     },
   });
 
@@ -130,7 +142,8 @@ async function main() {
       email: "adorno@gmail.com",
       categoryId: 1,
       password: await bcrypt.hash("bookboi3", 10),
-      role: Role.author
+      role: Role.author,
+      createdAt: twelveMonthsAgo
     },
   });
 
@@ -142,7 +155,8 @@ async function main() {
       deal_percentage: 50,
       contact_name: "Gerardo Rivera",
       contact_phone: "525524518965",
-      contact_email: "gerardo_rivera@gandhi.com"
+      contact_email: "gerardo_rivera@gandhi.com",
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -152,7 +166,8 @@ async function main() {
       deal_percentage: 30,
       contact_name: "Jean Valdez",
       contact_phone: "525580416352",
-      contact_email: "jlwotton17@mercadolibre.co.mx"
+      contact_email: "jlwotton17@mercadolibre.co.mx",
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -160,6 +175,7 @@ async function main() {
     data: {
       name: "Plataforma Was",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -167,6 +183,7 @@ async function main() {
     data: {
       name: "Amazon",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -174,6 +191,7 @@ async function main() {
     data: {
       name: "Gonvill",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -181,6 +199,7 @@ async function main() {
     data: {
       name: "Sanborns",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -188,6 +207,7 @@ async function main() {
     data: {
       name: "Central de",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -195,6 +215,7 @@ async function main() {
     data: {
       name: "Aeropuerto CDMX",
       deal_percentage: 30,
+      createdAt: twelveMonthsAgo
     }
   })
 
@@ -208,7 +229,8 @@ async function main() {
         bookstoreId: 3,
         country: "México",
         initial: impression.quantity,
-        current: impression.quantity
+        current: impression.quantity,
+        createdAt: twelveMonthsAgo
       }
     })
   }
@@ -324,7 +346,8 @@ async function main() {
           data: {
             fromInventoryId: inventory.id,
             toInventoryId: createdInventory.id,
-            quantity: randQuantToMove
+            quantity: randQuantToMove,
+            createdAt: twelveMonthsAgo
           }
         });
       }
@@ -342,7 +365,7 @@ async function main() {
     }
 
     if (randQuantToSell > 0) {
-      const monthsAgo = Math.floor(Math.random() * 12);
+      const monthsAgo = Math.floor(Math.random() * 13);
       let saleDate = new Date();
       saleDate.setMonth(saleDate.getMonth() - monthsAgo);
 

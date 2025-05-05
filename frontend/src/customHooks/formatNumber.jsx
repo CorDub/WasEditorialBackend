@@ -1,4 +1,8 @@
 function formatNumber(total) {
+  if (total === 0) {
+    return;
+  }
+
   const strTotal = total.toString();
   const splitTotal = strTotal.split(".");
   let firstPart = '';
@@ -10,7 +14,7 @@ function formatNumber(total) {
     }
   }
   const secondPart = splitTotal[1].substring(0,2);
-  return firstPart + "," + secondPart
+  return "$ " + firstPart + "," + secondPart
 }
 
 export default formatNumber;

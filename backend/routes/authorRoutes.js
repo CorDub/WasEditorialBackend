@@ -375,6 +375,17 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    let bookstores = await prisma.bookstore.findMany({
+      select: {
+        id: true,
+        name: true
+      }
+    });
+
+    for (const bookstore of bookstores) {
+      bookstore["quantity"] = 0;
+    }
+
     let salesByMonths = {};
     for (const sale of data) {
       if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
@@ -397,7 +408,7 @@ router.get('/monthlySales', async (req, res) => {
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           ),
-          transfers: [],
+          transfers: bookstores,
           transfersTotal: 0
         }
       }
@@ -434,32 +445,41 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    // for (const transfer of allAuthorTransfers) {
+    //   const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+    //   if (salesByMonths[transferMonth]['transfers'].length > 0) {
+    //     let existing = false;
+    //     for (const element of salesByMonths[transferMonth]['transfers']) {
+    //       if (element.bookstore === transfer.toInventory.bookstore.id) {
+    //         element.quantity += transfer.quantity
+    //         existing = true
+    //       };
+    //     }
+    //     if (!existing) {
+    //       salesByMonths[transferMonth]['transfers'].push({
+    //         bookstore: transfer.toInventory.bookstore.id,
+    //         name: transfer.toInventory.bookstore.name,
+    //         quantity: transfer.quantity
+    //       })
+    //     }
+    //   } else {
+    //     salesByMonths[transferMonth]['transfers'].push({
+    //       bookstore: transfer.toInventory.bookstore.id,
+    //       name: transfer.toInventory.bookstore.name,
+    //       quantity: transfer.quantity
+    //     })
+    //   }
+    //   salesByMonths[transferMonth]['transfersTotal'] += transfer.quantity
+    // }
+
     for (const transfer of allAuthorTransfers) {
       const transferMonth = transfer.createdAt.toISOString().substring(0,7);
-
-      if (salesByMonths[transferMonth]['transfers'].length > 0) {
-        let existing = false;
-        for (const element of salesByMonths[transferMonth]['transfers']) {
-          if (element.bookstore === transfer.toInventory.bookstore.id) {
-            element.quantity += transfer.quantity
-            existing = true
-          };
+      for (const bookstore of salesByMonths[transferMonth]['transfers']) {
+        if (bookstore.id === transfer.toInventory.bookstore.id) {
+          bookstore.quantity += transfer.quantity
         }
-        if (!existing) {
-          salesByMonths[transferMonth]['transfers'].push({
-            bookstore: transfer.toInventory.bookstore.id,
-            name: transfer.toInventory.bookstore.name,
-            quantity: transfer.quantity
-          })
-        }
-      } else {
-        salesByMonths[transferMonth]['transfers'].push({
-          bookstore: transfer.toInventory.bookstore.id,
-          name: transfer.toInventory.bookstore.name,
-          quantity: transfer.quantity
-        })
       }
-      salesByMonths[transferMonth]['transfersTotal'] += transfer.quantity
+      salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
 
     console.log("ALL AUTHOR TRANSFERS", allAuthorTransfers);

@@ -408,7 +408,9 @@ router.get('/monthlySales', async (req, res) => {
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           ),
-          transfers: bookstores,
+          // deep cloning the bookstores to avoid having the same object being mutated later
+          // and shared across different months instead of a different object every time
+          transfers: bookstores.map(bookstore => ({...bookstore})),
           transfersTotal: 0
         }
       }
@@ -474,6 +476,8 @@ router.get('/monthlySales', async (req, res) => {
 
     for (const transfer of allAuthorTransfers) {
       const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+
+      console.log("TRANSFER MONTH", transferMonth);
       for (const bookstore of salesByMonths[transferMonth]['transfers']) {
         if (bookstore.id === transfer.toInventory.bookstore.id) {
           bookstore.quantity += transfer.quantity
@@ -481,8 +485,6 @@ router.get('/monthlySales', async (req, res) => {
       }
       salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
-
-    console.log("ALL AUTHOR TRANSFERS", allAuthorTransfers);
 
     res.status(200).json(salesByMonths);
   } catch(error) {

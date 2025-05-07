@@ -471,11 +471,13 @@ async function main() {
     // Create a new payment for each month
     for (const month of salesByMonthsList) {
       console.log("MONTH", month);
+
       const newPayment = await prisma.payment.create({
         data: {
           userId: author.id,
           amount: month[1],
           forMonth: month[0],
+          createdAt: new Date(month[0]+'-25')
         }
       })
     }

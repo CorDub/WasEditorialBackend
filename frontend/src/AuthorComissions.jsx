@@ -12,6 +12,7 @@ function AuthorCommissions() {
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
+  console.log(payments);
 
   async function fetchAuthorBookSales() {
     try {

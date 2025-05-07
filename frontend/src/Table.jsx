@@ -17,6 +17,8 @@ function Table({data, activeMonth}) {
   const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
 
+  console.log(monthData);
+
   /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {

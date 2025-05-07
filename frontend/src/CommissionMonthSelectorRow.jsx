@@ -22,8 +22,6 @@ function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
     return months[date.substring(5,7)] + " " + date.substring(0,4);
   }
 
-  console.log(index);
-  
   return(
     <div
       className={active ? "cms-row-active" : "cms-row"}

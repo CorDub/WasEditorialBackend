@@ -13,8 +13,13 @@ function formatNumber(total) {
       firstPart += splitTotal[0][i];
     }
   }
+
+  if (splitTotal.length < 2) {
+    return "$ " + firstPart;
+  };
+
   const secondPart = splitTotal[1].substring(0,2);
-  return "$ " + firstPart + "," + secondPart
+  return "$ " + firstPart + "," + secondPart;
 }
 
 export default formatNumber;

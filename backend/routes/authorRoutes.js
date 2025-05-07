@@ -1,8 +1,6 @@
 import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
-import { cp } from "fs";
-import { json } from "stream/consumers";
 
 const router = express.Router();
 
@@ -450,7 +448,6 @@ router.get('/monthlySales', async (req, res) => {
     for (const transfer of allAuthorTransfers) {
       const transferMonth = transfer.createdAt.toISOString().substring(0,7);
 
-      console.log("TRANSFER MONTH", transferMonth);
       if (!salesByMonths[transferMonth]) {
         salesByMonths[transferMonth] = {
           sales: [],
@@ -471,33 +468,172 @@ router.get('/monthlySales', async (req, res) => {
       salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
 
-    // Getting tienda data
-    const allAuthorInventories = await prisma.inventory.findMany({
-      where:{
-        book:{
-          users:{
-            some:{
-              id: req.session.user_id
-            }
-          }
-        },
-        isDeleted: false
-      },
-      select: {
-        id: true,
-        bookstoreId: true,
-        initial: true,
-        current: true
-      }
-    });
-
-
-
     res.status(200).json(salesByMonths);
   } catch(error) {
     console.error("error fetching monthly sales", error);
     res.status(500).json({error: 'Internal server error'});
   }
+})
+
+router.get('/currentTienda', async (req, res) => {
+  try {
+    const month = req.query.month;
+    // let nextMonth;
+    // if (parseInt(month.substring(5,7)) === 12) {
+    //   nextMonth = 1
+    // } else {
+    //   nextMonth = parseInt(month.substring(5,7)) + 1
+    // }
+    // const monthDateTime = new Date(`${month.substring(0,4)}-${nextMonth}-01`);
+
+    let monthDateTime;
+    if (parseInt(month.substring(5,7)) === 12) {
+      monthDateTime = new Date(`${parseInt(month.substring(0,4))+1}-01-01`)
+    } else {
+      const nextMonth = parseInt(month.substring(5,7)) + 1
+      monthDateTime = new Date(`${month.substring(0,4)}-${nextMonth}-01`);
+    }
+
+    console.log("SUBSTRING", month.substring(5,7));
+    // console.log('NEXT MONTH', nextMonth);
+    console.log("MONTH DATE TIME", monthDateTime);
+
+    const inventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false,
+        createdAt: {
+          lt: monthDateTime
+        },
+        book: {
+          users: {
+            some: {
+              id: req.session.user_id
+            }
+          }
+        }
+      },
+      // select: {
+      //   bookstore: {
+      //     select: {
+      //       id: true,
+      //       name: true
+      //     }
+      //   }
+      // }
+      include: {
+        bookstore: {
+          select: {
+            id: true,
+            name: true
+          },
+        },
+        sales: {
+          where: {
+            isDeleted: false
+          }
+        },
+        transfersFrom: {
+          where: {
+            isDeleted : false
+          }
+        },
+        transfersTo: {
+          where: {
+            isDeleted : false
+          }
+        },
+      }
+    });
+
+    console.log("INVENTORIES LENGTH", inventories.length);
+
+    let inventoriesReconstructed = [];
+    for (const inventory of inventories) {
+      // if (inventory.id !== inventories[0].id) {
+      //   continue;
+      // }
+      console.log('\n NEW START \n');
+      console.log('----------------');
+      console.log("INVENTORY TRANSFERS FROM", inventory.transfersFrom);
+      console.log("INVENTORY SALES", inventory.sales);
+      console.log("INVENTORY TRANSFERS TO", inventory.transfersTo);
+      let existing = false;
+
+      for (const obj of inventoriesReconstructed) {
+        if (obj.id === inventory.bookstore.id) {
+          obj.total += inventory.initial,
+          obj.current += inventory.current
+          console.log("EXISTING - INSTANCIATION", obj);
+
+          for (const transfer of inventory.transfersFrom) {
+            if (transfer.createdAt >= monthDateTime) {
+              obj.current += transfer.quantity
+              obj.initial += transfer.quantity
+            }
+          };
+          console.log("EXISTING - AFTER TRANSFERS FROM", obj);
+
+          for (const sale of inventory.sales) {
+            if (sale.createdAt >= monthDateTime) {
+              obj.current += sale.quantity
+            }
+          };
+          console.log("EXISTING - AFTER SALES", obj);
+
+          for (const transfer of inventory.transfersTo) {
+            if (transfer.createdAt > monthDateTime) {
+              obj.current -= transfer.quantity
+              obj.initial -= transfer.quantity
+            }
+          }
+          console.log("EXISTING - AFTER TRANSFERS TO - FINAL", obj);
+
+          existing = true;
+          break;
+        }
+      }
+
+      if (!existing) {
+        let tbp = {
+          name: inventory.bookstore.name,
+          total: inventory.initial,
+          current: inventory.current
+        };
+        console.log("NEW - INSTANCIATION", tbp)
+
+        // initial should be more appropriately renamed to total
+        for (const transfer of inventory.transfersFrom) {
+          if (transfer.createdAt >= monthDateTime) {
+            tbp.current += transfer.quantity
+            tbp.initial += transfer.quantity
+          }
+        };
+        console.log("NEW - AFTER TRANSFERS FROM", tbp)
+
+        for (const sale of inventory.sales) {
+          if (sale.createdAt >= monthDateTime) {
+            tbp.current += sale.quantity
+          }
+        };
+        console.log("NEW - AFTER SALES", tbp)
+
+        for (const transfer of inventory.transfersTo) {
+          if (transfer.createdAt >= monthDateTime) {
+            tbp.current -= transfer.quantity
+            tbp.initial -= transfer.quantity
+          }
+        };
+        console.log("NEW - AFTER TRANSFERS TO - FINAL", tbp)
+
+        inventoriesReconstructed.push(tbp);
+      }
+    }
+
+    res.status(200).json(inventoriesReconstructed);
+  } catch (error) {
+    console.log("\n ERROR PROVIDING RELEVANT INVENTORIES \n",error);
+    res.status(500).json({error: "There was a server error fetching the relevant data"});
+  };
 })
 
 router.get('/givenToAuthorTransfers', async (req, res) => {

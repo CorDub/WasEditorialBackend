@@ -100,7 +100,7 @@ model Inventory {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   transfersFrom Transfer[] @relation("TransfersFrom")
-  transferTo    Transfer[] @relation("TransfersTo")
+  transfersTo   Transfer[] @relation("TransfersTo")
 
   @@unique([bookId, bookstoreId, country])
 }

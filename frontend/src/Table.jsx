@@ -10,10 +10,11 @@ function Table({data, activeMonth}) {
     "Canal",
     "Entregados",
     "Vendidos",
-    "Ganancia por libro",
+    "En tienda",
     "Total"
   ])
   const [rowData, setRowData] = useState(null);
+  const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
 
   /// Select only the data for the month displayed
@@ -34,6 +35,7 @@ function Table({data, activeMonth}) {
         name: bookstore.name,
         delivered: bookstore.quantity,
         sold: 0,
+        enTienda: 0,
         total: 0
       })
     }
@@ -48,26 +50,37 @@ function Table({data, activeMonth}) {
         }
       }
     }
+
+    // Add the inTienda number for each line
+    for (const bookstore of tiendaData) {
+      for (const row of rowData) {
+        if (row.name === bookstore.name) {
+          row.enTienda = bookstore.current
+        }
+      }
+    }
     setRowData(rowData);
   }
 
   useEffect(() => {
-    if (monthData !== null) {
+    if (monthData !== null && tiendaData !== null) {
       formatRowData();
     }
-  }, [monthData]);
+  }, [monthData, tiendaData]);
 
   // Get total data for each column
   function createTotalData() {
     let totalData = {
       delivered: 0,
       sold: 0,
+      enTienda: 0,
       total: 0
     };
 
     for (const row of rowData) {
       totalData.delivered += row.delivered,
       totalData.sold += row.sold,
+      totalData.enTienda += row.enTienda,
       totalData.total += row.total
     }
     setTotalData(totalData);
@@ -79,6 +92,40 @@ function Table({data, activeMonth}) {
     }
   }, [rowData])
 
+  // Get data for the "in tienda" column
+  async function fetchTiendaData() {
+    try {
+      const response = await fetch(`http://localhost:3000/author/currentTienda?month=${data[activeMonth][0]}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        let groupedTiendaData = data.reduce((groupedByTienda, {name, total, current}) => {
+          if (!groupedByTienda[name]) {
+            groupedByTienda[name] = { name, total: 0, current: 0};
+          }
+          groupedByTienda[name].total += total;
+          groupedByTienda[name].current += current;
+          return groupedByTienda;
+        }, {});
+        setTiendaData(Object.values(groupedTiendaData));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (data !== null && data !== undefined) {
+      fetchTiendaData();
+    }
+  }, [data, activeMonth])
+
   return (
     <div className="table">
       <TableHeader headerList={headerList}/>
@@ -89,7 +136,7 @@ function Table({data, activeMonth}) {
           name={row.name}
           delivered={row.delivered}
           sold={row.sold}
-          // ganancia={row.ganancia}
+          enTienda={row.enTienda}
           total={row.total}/>
       ))}
       {totalData && (
@@ -97,6 +144,7 @@ function Table({data, activeMonth}) {
           headerList={headerList}
           delivered={totalData.delivered}
           sold={totalData.sold}
+          enTienda={totalData.enTienda}
           total={totalData.total}/>
       )}
     </div>

@@ -494,10 +494,6 @@ router.get('/currentTienda', async (req, res) => {
       monthDateTime = new Date(`${month.substring(0,4)}-${nextMonth}-01`);
     }
 
-    console.log("SUBSTRING", month.substring(5,7));
-    // console.log('NEXT MONTH', nextMonth);
-    console.log("MONTH DATE TIME", monthDateTime);
-
     const inventories = await prisma.inventory.findMany({
       where: {
         isDeleted: false,
@@ -545,25 +541,17 @@ router.get('/currentTienda', async (req, res) => {
       }
     });
 
-    console.log("INVENTORIES LENGTH", inventories.length);
-
     let inventoriesReconstructed = [];
     for (const inventory of inventories) {
       // if (inventory.id !== inventories[0].id) {
       //   continue;
       // }
-      console.log('\n NEW START \n');
-      console.log('----------------');
-      console.log("INVENTORY TRANSFERS FROM", inventory.transfersFrom);
-      console.log("INVENTORY SALES", inventory.sales);
-      console.log("INVENTORY TRANSFERS TO", inventory.transfersTo);
       let existing = false;
 
       for (const obj of inventoriesReconstructed) {
         if (obj.id === inventory.bookstore.id) {
           obj.total += inventory.initial,
           obj.current += inventory.current
-          console.log("EXISTING - INSTANCIATION", obj);
 
           for (const transfer of inventory.transfersFrom) {
             if (transfer.createdAt >= monthDateTime) {
@@ -571,14 +559,12 @@ router.get('/currentTienda', async (req, res) => {
               obj.initial += transfer.quantity
             }
           };
-          console.log("EXISTING - AFTER TRANSFERS FROM", obj);
 
           for (const sale of inventory.sales) {
             if (sale.createdAt >= monthDateTime) {
               obj.current += sale.quantity
             }
           };
-          console.log("EXISTING - AFTER SALES", obj);
 
           for (const transfer of inventory.transfersTo) {
             if (transfer.createdAt > monthDateTime) {
@@ -586,7 +572,6 @@ router.get('/currentTienda', async (req, res) => {
               obj.initial -= transfer.quantity
             }
           }
-          console.log("EXISTING - AFTER TRANSFERS TO - FINAL", obj);
 
           existing = true;
           break;
@@ -599,7 +584,6 @@ router.get('/currentTienda', async (req, res) => {
           total: inventory.initial,
           current: inventory.current
         };
-        console.log("NEW - INSTANCIATION", tbp)
 
         // initial should be more appropriately renamed to total
         for (const transfer of inventory.transfersFrom) {
@@ -608,14 +592,12 @@ router.get('/currentTienda', async (req, res) => {
             tbp.initial += transfer.quantity
           }
         };
-        console.log("NEW - AFTER TRANSFERS FROM", tbp)
 
         for (const sale of inventory.sales) {
           if (sale.createdAt >= monthDateTime) {
             tbp.current += sale.quantity
           }
         };
-        console.log("NEW - AFTER SALES", tbp)
 
         for (const transfer of inventory.transfersTo) {
           if (transfer.createdAt >= monthDateTime) {
@@ -623,7 +605,6 @@ router.get('/currentTienda', async (req, res) => {
             tbp.initial -= transfer.quantity
           }
         };
-        console.log("NEW - AFTER TRANSFERS TO - FINAL", tbp)
 
         inventoriesReconstructed.push(tbp);
       }
@@ -822,12 +803,80 @@ router.get("/wasInventories", async (req, res) => {
 
 router.get("/payments", async (req, res) => {
   try {
+    // Getting our range ready by setting it 12m ago
+    const ltm = new Date();
+    ltm.setMonth(ltm.getMonth()-12);
+    ltm.setDate(1);
+
+    // Getting all payments from that date to now
     const allPayments = await prisma.payment.findMany({
       where: {
         isDeleted: false,
-        userId: req.session.user_id
+        userId: req.session.user_id,
+        createdAt: {
+          gt: ltm
+        }
       }
     });
+
+    // Fill in empty months with 0s if necessary
+    if (allPayments.length < 12) {
+      console.log("LESS THAN 12");
+      // Get the YYYY-MM combination 12m ago
+      const now = new Date();
+      let currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      console.log("CURRENT YEAR", currentYear);
+      console.log("Current MONTH", currentMonth);
+
+      // Get an array of all the 12 monhts Y + M combination
+      let ltmStrings = [];
+      for (let i = 0; i < 12; i++) {
+        let monthString = "";
+        if ((currentMonth - i) <= 0) {
+          let newCurrentMonth = currentMonth - i + 12;
+          if (newCurrentMonth.toString().length === 1) {
+            newCurrentMonth = "0" + newCurrentMonth.toString();
+          } else {
+            newCurrentMonth = newCurrentMonth.toString();
+          }
+
+          monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
+        } else {
+          let newCurrentMonth = (currentMonth-i).toString();
+          if (newCurrentMonth.toString().length === 1) {
+            newCurrentMonth = "0" + newCurrentMonth.toString();
+          } else {
+            newCurrentMonth = newCurrentMonth.toString();
+          }
+
+          monthString = currentYear.toString() + '-'+ newCurrentMonth;
+        }
+        ltmStrings.push(monthString);
+      }
+
+      console.log("ALL PAYMENTS 0", allPayments[0]);
+      console.log("LTM STRINGS LENGTH", ltmStrings.length);
+      // Compare with allPayments and fill in if missing
+      for (let i = 0; i < ltmStrings.length; i++) {
+        let existing = false;
+
+        for (const payment of allPayments) {
+          console.log("PAYMENT FOR MONTH", payment.forMonth);
+          if (ltmStrings[i] === payment.forMonth) {
+            existing = true;
+          }
+        }
+
+        if (!existing) {
+          allPayments.splice(i, 0, {
+            amount: 0,
+            forMonth: ltmStrings[i],
+            isPaid: false
+          });
+        }
+      };
+    }
 
     res.status(200).json(allPayments);
   } catch(error) {

@@ -12,7 +12,6 @@ function AuthorCommissions() {
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
-  console.log(payments);
 
   async function fetchAuthorBookSales() {
     try {
@@ -26,7 +25,8 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
-        setDataByMonths(Object.entries(data));
+        // setDataByMonths(Object.entries(data));
+        setDataByMonths(data);
       };
     } catch(error) {
       console.log("Error when fetching the data", error);

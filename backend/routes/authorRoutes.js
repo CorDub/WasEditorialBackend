@@ -323,6 +323,14 @@ router.get('/sales', async (req, res) => {
 
 router.get('/monthlySales', async (req, res) => {
   try {
+    // Get the last twelfth month first day as a cutoff date
+    const ltm = new Date();
+    ltm.setMonth(ltm.getMonth()-12);
+    ltm.setDate(1);
+
+    // console.log("LTM", ltm);
+
+    // Get all sales for that user based on that;
     const data = await prisma.sale.findMany({
       where: {
         inventory: {
@@ -335,6 +343,9 @@ router.get('/monthlySales', async (req, res) => {
           }
         },
         isDeleted: false,
+        createdAt: {
+          gt: ltm
+        }
       },
       select: {
         id: true,
@@ -361,18 +372,22 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    // Need this for the category of the author,
+    // which is used in how much author make from the sales
     const user = await prisma.user.findUnique({
       where: {
         id: req.session.user_id
       }
     });
 
+    // Now getting the category
     const userCategory = await prisma.category.findUnique({
       where: {
         id: user.categoryId
       }
     });
 
+    // Preparing a 'scaffold' to reuse later, basically empty models
     let bookstores = await prisma.bookstore.findMany({
       select: {
         id: true,
@@ -380,10 +395,14 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    // Adding quantity to the scaffold
     for (const bookstore of bookstores) {
       bookstore["quantity"] = 0;
     }
 
+    // Ensuring sales are grouped by month.
+    // If the month already exist within salesByMonths we add the numbers of the current sale
+    // If not, we create the month with the data of the current sale and the previous scaffold for bookstores
     let salesByMonths = {};
     for (const sale of data) {
       if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
@@ -414,7 +433,8 @@ router.get('/monthlySales', async (req, res) => {
       }
     }
 
-    /// Adding transfers for the "entregado" column
+    /// Adding transfers for the "entregado" column - same process
+    // Get all the transfers from the last 12 months
     const allAuthorTransfers = await prisma.transfer.findMany({
       where: {
         isDeleted: false,
@@ -426,6 +446,9 @@ router.get('/monthlySales', async (req, res) => {
               }
             }
           }
+        },
+        createdAt: {
+          gte: ltm
         }
       },
       select: {
@@ -445,6 +468,8 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    // Then add the transfer data to salesBymonth if the month of the transfer exist
+    // Otherwise create it
     for (const transfer of allAuthorTransfers) {
       const transferMonth = transfer.createdAt.toISOString().substring(0,7);
 
@@ -468,8 +493,65 @@ router.get('/monthlySales', async (req, res) => {
       salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
 
-    res.status(200).json(salesByMonths);
-  } catch(error) {
+    // Fill in the missing months with phantom data (0s) so that it will display
+    // correctly with the month chosen (based on index)
+
+    let salesByMonthsList = Object.entries(salesByMonths);
+    if (Object.keys(salesByMonths).length < 12) {
+      // Get the YYYY-MM combination 12m ago
+      const now = new Date();
+      let currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+
+      // Get an array of all the 12 monhts Y + M combination
+      let ltmStrings = [];
+      for (let i = 0; i < 12; i++) {
+        let monthString = "";
+        if ((currentMonth - i) <= 0) {
+          let newCurrentMonth = currentMonth - i + 12;
+          if (newCurrentMonth.toString().length === 1) {
+            newCurrentMonth = "0" + newCurrentMonth.toString();
+          } else {
+            newCurrentMonth = newCurrentMonth.toString();
+          }
+
+          monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
+        } else {
+          let newCurrentMonth = (currentMonth-i).toString();
+          if (newCurrentMonth.toString().length === 1) {
+            newCurrentMonth = "0" + newCurrentMonth.toString();
+          } else {
+            newCurrentMonth = newCurrentMonth.toString();
+          }
+
+          monthString = currentYear.toString() + '-'+ newCurrentMonth;
+        }
+        ltmStrings.push(monthString);
+      }
+
+      // Compare with salesByMonths and fill in if missing
+      for (let i = 0; i < ltmStrings.length; i++) {
+        let existing = false;
+
+        for (const month of salesByMonthsList) {
+          if (ltmStrings[i] === month[0]) {
+            existing = true;
+          }
+        }
+
+        if (!existing) {
+          salesByMonthsList.splice(i, 0, [ltmStrings[i], {
+            ganancia: 0,
+            sales: [],
+            total: 0,
+            transfers: [],
+            transfersTotal: 0
+          }]);
+        }
+      };
+    }
+    res.status(200).json(salesByMonthsList);
+  } catch (error) {
     console.error("error fetching monthly sales", error);
     res.status(500).json({error: 'Internal server error'});
   }
@@ -821,13 +903,10 @@ router.get("/payments", async (req, res) => {
 
     // Fill in empty months with 0s if necessary
     if (allPayments.length < 12) {
-      console.log("LESS THAN 12");
       // Get the YYYY-MM combination 12m ago
       const now = new Date();
       let currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
-      console.log("CURRENT YEAR", currentYear);
-      console.log("Current MONTH", currentMonth);
 
       // Get an array of all the 12 monhts Y + M combination
       let ltmStrings = [];
@@ -855,14 +934,11 @@ router.get("/payments", async (req, res) => {
         ltmStrings.push(monthString);
       }
 
-      console.log("ALL PAYMENTS 0", allPayments[0]);
-      console.log("LTM STRINGS LENGTH", ltmStrings.length);
       // Compare with allPayments and fill in if missing
       for (let i = 0; i < ltmStrings.length; i++) {
         let existing = false;
 
         for (const payment of allPayments) {
-          console.log("PAYMENT FOR MONTH", payment.forMonth);
           if (ltmStrings[i] === payment.forMonth) {
             existing = true;
           }

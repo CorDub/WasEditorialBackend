@@ -398,16 +398,22 @@ async function main() {
 
   let counter = 0;
   for (const inventory of testAuthorInventories) {
-    for (let i = 0; i < 30; i++) {
+    let current = inventory.current;
+
+    for (let i = 0; i < 5; i++) {
       const randQuant = Math.floor(Math.random() * 20);
       const saleDate = new Date(lastThirtyDays);
-      saleDate.setDate(saleDate.getDate() + i);
-      
-      if (i < 5) {
-        console.log("SALE DATE", saleDate);
-      }
 
-      if (randQuant > 0) {
+      const randDate = Math.floor(Math.random() * 30)
+      saleDate.setDate(saleDate.getDate() + randDate);
+
+      if (inventory === testAuthorInventories[0]) {
+        console.log("SALE DATE", saleDate);
+        console.log("CURRENT", current);
+        console.log("INVENTORY ID", inventory.id);
+      };
+
+      if (randQuant > 0 && current > randQuant) {
         const createdSale = await prisma.sale.create({
           data: {
             inventoryId: inventory.id,
@@ -416,6 +422,22 @@ async function main() {
           }
         })
         counter += 1;
+        current -= randQuant;
+
+        if (createdSale) {
+          const updtInv = await prisma.inventory.update({
+            where: {
+              id: inventory.id
+            },
+            data: {
+              current: current
+            }
+          })
+          if (inventory === testAuthorInventories[0]) {
+            console.log('UPDT INV CURRENT', updtInv.current);
+            console.log("------------------------------");
+          };
+        }
       }
     }
   }

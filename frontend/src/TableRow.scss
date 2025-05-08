@@ -1,5 +1,28 @@
+.enveloppe-table-row {
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  transition: ease-out 0.3s;
+}
+
+.envtr-open {
+  background-color: #E2E2E2;
+  border-radius: 15px;
+  padding-top: 0.25rem;
+}
+
 .table-row {
   display: flex;
   margin: 0.5rem;
   padding: 0.5rem;
+  background-color: #f8f9fa;
+}
+
+.table-row-sales {
+  transition: 0.3s;
+  border-radius: 15px;
+}
+
+.table-row-sales:hover {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }

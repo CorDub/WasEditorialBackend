@@ -17,8 +17,6 @@ function Table({data, activeMonth}) {
   const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
 
-  console.log(monthData);
-
   /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {
@@ -37,6 +35,7 @@ function Table({data, activeMonth}) {
         name: bookstore.name,
         delivered: bookstore.quantity,
         sold: 0,
+        sales: [],
         enTienda: 0,
         total: 0
       })
@@ -49,6 +48,12 @@ function Table({data, activeMonth}) {
         if (bookstoreName === row.name) {
           row.sold += sale.quantity
           row.total += sale.quantity * monthData.ganancia
+          row.sales.push({
+            book: sale.inventory.book.title,
+            price: sale.inventory.book.price,
+            ganancia: monthData.ganancia,
+            quantity: sale.quantity
+          })
         }
       }
     }
@@ -65,6 +70,7 @@ function Table({data, activeMonth}) {
   }
 
   useEffect(() => {
+    // We only start formatting the data when we received everything from the server
     if (monthData !== null && tiendaData !== null) {
       formatRowData();
     }
@@ -138,6 +144,7 @@ function Table({data, activeMonth}) {
           name={row.name}
           delivered={row.delivered}
           sold={row.sold}
+          sales={row.sales}
           enTienda={row.enTienda}
           total={row.total}/>
       ))}

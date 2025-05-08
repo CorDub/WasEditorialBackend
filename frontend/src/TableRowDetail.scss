@@ -1,0 +1,34 @@
+.table-row-detail {
+  display: flex;
+  padding: 0 0.5rem 0.5rem 1rem;
+}
+
+.tbd-data {
+  display: flex;
+  width: 80%;
+}
+
+.tbd-book {
+  width: 30%;
+  font-style: italic;
+}
+
+.tbd-quantity {
+  width: 30%;
+  p {
+    margin: 0;
+    font-style: italic;
+  };
+}
+
+.tbd-ganancia {
+  width: 30%;
+  p {
+    margin: 0;
+    font-style: italic;
+  };
+}
+
+.tbd-total {
+  width: 20%;
+}

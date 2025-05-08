@@ -6,6 +6,7 @@ import TableRowDetails from "./TableRowDetails";
 function TableRow({headerList, name, delivered, sold, sales, enTienda, total}) {
   const [isDetailsOpen, setDetailsOpen] = useState(false);
 
+  // Makes sure the row resets (changes back to white visual state) when changing months
   useEffect(() => {
     setDetailsOpen(false);
   }, [sales])

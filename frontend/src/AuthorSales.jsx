@@ -14,10 +14,24 @@ function AuthorSales() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('total');
+  // const [dateRange, setDateRange] = useState(null);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)).toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0]
   });
+
+  // function setDefaultRange() {
+  //   const now = new Date();
+  //   const startDateDT = new Date(now.setDate(now.getDate() - 30));
+  //   setDateRange({
+  //     startDate: startDateDT.toISOString().split('T')[0],
+  //     endDate: new Date().toISOString().split('T')[0]
+  //   })
+  // }
+
+  // useEffect(() => {
+  //   setDefaultRange();
+  // }, []);
 
   function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
@@ -79,7 +93,9 @@ function AuthorSales() {
   };
 
   useEffect(() => {
-    fetchSales();
+    if (dateRange !== null) {
+      fetchSales();
+    }
   }, []);
 
   const handleBookChange = (event) => {
@@ -118,7 +134,6 @@ function AuthorSales() {
       <div id="author-sales-container">
         <div className="date-range-selector">
           <div className="date-input">
-          {/* <label>Inventario:</label> */}
           <BookSelector
             booksInventories={salesData.bookSales}
             onBookChange={handleBookChange}
@@ -126,7 +141,6 @@ function AuthorSales() {
           />
           </div>
           <div className="date-input">
-            {/* <label htmlFor="startDate">Start Date:</label> */}
             <input
               type="date"
               id="startDate"
@@ -136,7 +150,6 @@ function AuthorSales() {
             />
           </div>
           <div className="date-input">
-            {/* <label htmlFor="endDate">End Date:</label> */}
             <input
               type="date"
               id="endDate"

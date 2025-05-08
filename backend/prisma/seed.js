@@ -339,20 +339,7 @@ async function main() {
     };
   }
 
-  // await prisma.sale.create({
-  //   data: {
-  //     inventoryId: 1,
-  //     quantity: 10
-  //   }
-  // })
-
-  // await prisma.sale.create({
-  //   data: {
-  //     inventoryId: 2,
-  //     quantity: 18
-  //   }
-  // })
-
+  // Add test author to 5 books as an author
   const user = await prisma.user.findFirst({
     where: {
       email: {
@@ -390,6 +377,50 @@ async function main() {
     });
   }
 
+  /// Create more fake sales specifically for the test author in the last month
+  const now = new Date();
+  const lastThirtyDays = new Date(now.setDate(now.getDate()-30));
+  console.log("LAST THRIRTY DAYS", lastThirtyDays);
+
+  const testAuthorInventories = await prisma.inventory.findMany({
+    where: {
+      book: {
+        users: {
+          some: {
+            id: 148
+          }
+        }
+      }
+    }
+  });
+
+  console.log(" TEST AUTHOR INVENTORIES LENGTH", testAuthorInventories.length);
+
+  let counter = 0;
+  for (const inventory of testAuthorInventories) {
+    for (let i = 0; i < 30; i++) {
+      const randQuant = Math.floor(Math.random() * 20);
+      const saleDate = new Date(lastThirtyDays);
+      saleDate.setDate(saleDate.getDate() + i);
+      
+      if (i < 5) {
+        console.log("SALE DATE", saleDate);
+      }
+
+      if (randQuant > 0) {
+        const createdSale = await prisma.sale.create({
+          data: {
+            inventoryId: inventory.id,
+            quantity: randQuant,
+            createdAt: saleDate,
+          }
+        })
+        counter += 1;
+      }
+    }
+  }
+  console.log(`${counter} SALES CREATED IN THE LAST THIRTY DAYS`);
+
   // Create fake payments
 
   let monthlySalesByAuthor = [];
@@ -401,7 +432,6 @@ async function main() {
       role: Role.author
     }
   })
-  console.log("AUTHORS LENGTH", allAuthors.length);
 
   ///Then get all sales for each author
   for (const author of allAuthors) {
@@ -438,8 +468,6 @@ async function main() {
       }
     });
 
-    console.log("AUTHOR", author);
-
     const userCategory = await prisma.category.findUnique({
       where: {
         id: author.categoryId
@@ -463,15 +491,11 @@ async function main() {
       }
     }
 
-    console.log("sales by months length", salesByMonths.length);
     // Make that a list
     const salesByMonthsList = Object.entries(salesByMonths);
-    console.log("salesByMonthsList[0]", salesByMonthsList[0]);
 
     // Create a new payment for each month
     for (const month of salesByMonthsList) {
-      console.log("MONTH", month);
-
       const newPayment = await prisma.payment.create({
         data: {
           userId: author.id,

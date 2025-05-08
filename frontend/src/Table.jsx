@@ -48,12 +48,25 @@ function Table({data, activeMonth}) {
         if (bookstoreName === row.name) {
           row.sold += sale.quantity
           row.total += sale.quantity * monthData.ganancia
-          row.sales.push({
-            book: sale.inventory.book.title,
-            price: sale.inventory.book.price,
-            ganancia: monthData.ganancia,
-            quantity: sale.quantity
-          })
+
+          // Fill in sales details for TableRowDetails
+          // If the book object already exists, add the quantity
+          // If not, create the object for the book
+          let existing = false;
+          for (const object of row.sales) {
+            if (object.book === sale.inventory.book.title) {
+              object.quantity += sale.quantity;
+              existing = true;
+            }
+          }
+          if (!existing) {
+            row.sales.push({
+              book: sale.inventory.book.title,
+              price: sale.inventory.book.price,
+              ganancia: monthData.ganancia,
+              quantity: sale.quantity
+            })
+          }
         }
       }
     }

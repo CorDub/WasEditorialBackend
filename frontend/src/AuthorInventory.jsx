@@ -11,6 +11,7 @@ import GivenToAuthorDetails from "./GivenToAuthorDetails";
 import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
+import AuthorInventoryGlobal from "./AuthorInventoryGlobal";
 
 function AuthorInventory(){
   useCheckUser();
@@ -100,7 +101,8 @@ function AuthorInventory(){
           )}
         </div>
         {isTotalInventoryOpen && (
-          <BestSellerGraph bookSales={inventories.bookInventories} /> )}
+          // <BestSellerGraph bookSales={inventories.bookInventories} /> )}
+          <AuthorInventoryGlobal bookSales={booksInventories} />)}
         {isBooksSoldGraphOpen && (
           <BooksSoldGraph bookSales={booksInventories} />)}
         {isGivenToAuthorOpen && (

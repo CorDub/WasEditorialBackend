@@ -5,15 +5,13 @@ function XAxis({max}) {
   const [points, setPoints] = useState([]);
   const [percentages, setPercentages] = useState([]);
 
-  // choose the value of points that will be set
+  // choose the value of points and where they'll be set
   useEffect(() => {
     const multiplicator = 10 ** (max.toString().length - 1)
     const maxAxis = Math.round(max / multiplicator) * multiplicator;
-    setPoints([0, maxAxis/4, maxAxis/2, maxAxis*0.75, maxAxis, max])
-  }, [max])
+    let points = [0, maxAxis/4, maxAxis/2, maxAxis*0.75, maxAxis, max];
 
-  // calculate where to place based on percentages they represent vs max
-  useEffect(() => {
+    // calculate where to place based on percentages they represent vs max
     if (points.length > 0) {
       let percentages = [];
       let newPoints = [];
@@ -31,7 +29,7 @@ function XAxis({max}) {
       setPercentages(percentages);
       setPoints(newPoints);
     }
-  }, [points])
+  }, [max])
 
   return(
     <div className="x-axis">

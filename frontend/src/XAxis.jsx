@@ -1,74 +1,52 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./XAxis.scss";
 
 function XAxis({max}) {
   const [points, setPoints] = useState([]);
-  const [totalLength, setTotalLength] = useState(0);
-  const lineRef = useRef();
-  const pointRefs = useRef([]);
+  const [percentages, setPercentages] = useState([]);
 
+  // choose the value of points that will be set
   useEffect(() => {
     const multiplicator = 10 ** (max.toString().length - 1)
-    const maxAxis = Math.floor(max / multiplicator) * multiplicator;
+    const maxAxis = Math.round(max / multiplicator) * multiplicator;
     setPoints([0, maxAxis/4, maxAxis/2, maxAxis*0.75, maxAxis, max])
   }, [max])
 
-  function placePoint(pointValue, ref, last) {
-    const position = totalLength * (pointValue * 100 / max) / 100;
-    const halfPointLength = ref.getBoundingClientRect().width / 2;
-    if (last) {
-      ref.style.left = position + "px";
-    } else {
-      ref.style.left = position - halfPointLength + "px";
-    }
-  }
-
+  // calculate where to place based on percentages they represent vs max
   useEffect(() => {
-    setTotalLength(lineRef.current.getBoundingClientRect().width);
-  }, [])
+    if (points.length > 0) {
+      let percentages = [];
+      let newPoints = [];
 
-  useEffect(() => {
-    for (let i = 0; i < points.length; i++) {
-      if (i == points.length - 1) {
-        // if (points[i] === points[i-1]) {
-        //   return;
-        // }
-
-        placePoint(points[i], pointRefs.current[i], true);
-      } else {
-        placePoint(points[i], pointRefs.current[i]);
+      // Do not keep points out of range (> 100)
+      // or that would create a visual interlap (between 90 and 99)
+      // Resetting the points as well to make sure points and percentages match
+      for (const point of points) {
+        if (Math.round(point*100/max) < 90 || Math.round(point*100/max) === 100) {
+          percentages.push(Math.round(point*100/max));
+          newPoints.push(point)
+        }
       }
+
+      setPercentages(percentages);
+      setPoints(newPoints);
     }
   }, [points])
 
   return(
     <div className="x-axis">
-      <div className="x-axis-line" ref={lineRef}></div>
+      <div className="x-axis-line"></div>
       <div className="x-axis-points">
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[0] = el)}>
+        {percentages.length > 0 && percentages.map((percent, index) => (
+          <div
+            key={index}
+            className="x-axis-number"
+            style={{ left: `${percent}%` }}>
+
           <div className="x-axis-notch"></div>
-          <div>{points[0]}</div>
+          <div>{points[index]}</div>
         </div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[1] = el)}>
-          <div className="x-axis-notch"></div>
-          <div>{points[1]}</div>
-        </div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[2] = el)}>
-          <div className="x-axis-notch"></div>
-          <div>{points[2]}</div>
-        </div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[3] = el)}>
-          <div className="x-axis-notch"></div>
-          <div>{points[3]}</div>
-        </div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[4] = el)}>
-          <div className="x-axis-notch"></div>
-          <div>{points[4]}</div>
-        </div>
-        <div className="x-axis-number" ref={(el) => (pointRefs.current[5] = el)}>
-          <div className="x-axis-notch"></div>
-          <div>{points[5]}</div>
-        </div>
+        ))}
       </div>
     </div>
   )

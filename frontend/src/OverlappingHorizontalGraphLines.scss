@@ -1,0 +1,45 @@
+.overlapping-horizontal-graph-lines {
+  padding: 0.5rem;
+}
+
+.ohgl-title {
+  font-style: italic;
+}
+
+.ohgl-actual-lines {
+  display:flex;
+  width: 100%;
+  height: 25px;
+  position: relative;
+}
+
+.ohgl-initial {
+  position: absolute;
+  background-color: #E2E2E2;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  display: flex;
+  justify-content: end;
+}
+
+.ohgl-sold {
+  position: absolute;
+  background-color: #4E5981;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  color: white;
+  display: flex;
+  justify-content: end;
+}
+
+.ohgl-given {
+  position: absolute;
+  background-color: #57eafa;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  display: flex;
+  justify-content: end;
+}

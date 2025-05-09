@@ -1,8 +1,7 @@
 import "./HorizontalGraphLine.scss";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function HorizontalGraphLine({ max, number, legend }) {
-  // const lineRef = useRef();
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {

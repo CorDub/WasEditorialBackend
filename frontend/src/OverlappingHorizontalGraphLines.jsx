@@ -42,6 +42,7 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
     <div className="overlapping-horizontal-graph-lines">
       <div className="ohgl-title">{title} - {initial}</div>
         <div className="ohgl-actual-lines">
+        {initial > 0 && (
           <div
             className="ohgl-initial"
             style={{
@@ -49,6 +50,7 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
               zIndex:`${displayOrder.initial}`}}>
             {initial - sold - given}
           </div>
+        )}
         {sold > 0 && (
           <div
             className="ohgl-sold"

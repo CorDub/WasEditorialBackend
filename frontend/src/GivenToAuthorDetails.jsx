@@ -72,7 +72,7 @@ function GivenToAuthorDetails({selectedBookId}) {
                 return (<DeliveryToAuthorDetails transferData={transferData} key={index} last={true}/>)
               };
               return (<DeliveryToAuthorDetails transferData={transferData} key={index}/>)})
-            : "No copias de este libro entregadas al autor.")
+            : "No copias de este libro han estado entregadas al autor.")
         }
       </div>
     </div>

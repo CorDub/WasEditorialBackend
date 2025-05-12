@@ -25,7 +25,7 @@ function ShowInventories({
   //ensure that totalRef is the default so that something is displayed
   useEffect(() => {
     if (currentDetailsActive === null) {
-      setCurrentDetailsActive(totalRef)
+      setCurrentDetailsActive(totalRef);
     }
   }, [currentDetailsActive])
 
@@ -52,6 +52,8 @@ function ShowInventories({
     setNameDetailsActive(name);
     toggleFunction(true);
   }
+
+  console.log(currentDetailsActive);
 
   return (
     inventories && (

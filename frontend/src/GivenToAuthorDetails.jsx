@@ -44,7 +44,7 @@ function GivenToAuthorDetails({selectedBookId}) {
       setBookData(null);
       setBookDataOpen(false);
     }
-  }, [selectedBookId])
+  }, [selectedBookId, data])
 
   return(
     <div className="given-to-author-details">

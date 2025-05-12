@@ -58,7 +58,7 @@ function AuthorInventory(){
   const handleBookChange = (event) => {
     if (event.target.value === "total") {
       setShowTotal(true);
-      setSelectedBookId(null);
+      setSelectedBookId('');
     } else {
       setShowTotal(false);
       setSelectedBookId(event.target.value);

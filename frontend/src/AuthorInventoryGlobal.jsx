@@ -12,8 +12,26 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
     ['Vendidos', '#4E5981'],
     ['Disponibles', '#E2E2E2'],
   ]
+  const [legendDisplays, setLegendDisplays] = useState({
+    'Entregados al autor': true,
+    'Vendidos': true,
+    'Disponibles': true
+  });
   const [bookData, setBookData] = useState(null);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
+
+  useEffect(() => {
+    console.log(legendDisplays);
+  }, [legendDisplays])
+
+  // useEffect(() => {
+  //   let legendDisplays = {};
+  //   for (const value in legendValues) {
+  //     console.log(value);
+  //     legendDisplays[value[0]] = true;
+  //   }
+  //   setLegendDisplays(legendDisplays);
+  // }, [legendValues])
 
   useEffect(() => {
     if (bookSales.length !== 0) {
@@ -70,21 +88,26 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
         <OverlappingHorizontalGraphLines
           key={index}
           title={book.title}
-          initial={book.summary.initial}
-          sold={book.summary.sold}
-          given={book.summary.givenToAuthor}
+          initial={legendDisplays['Disponibles'] ? book.summary.initial : 0}
+          sold={legendDisplays['Vendidos'] ? book.summary.sold : 0}
+          given={legendDisplays['Entregados al autor'] ? book.summary.givenToAuthor : 0}
           max={max} />))}
       {bookData && bookData.map((bookstore, index) => (
         <OverlappingHorizontalGraphLines
           key={index}
           title={bookstore.name}
-          initial={bookstore.initial}
-          sold={bookstore.initial - (bookstore.current + bookstore.given + bookstore.returns)}
-          given={bookstore.given}
+          initial={legendDisplays['Disponibles'] ? bookstore.initial : 0}
+          sold={legendDisplays['Vendidos']
+            ? bookstore.initial - (bookstore.current + bookstore.given + bookstore.returns)
+            : 0}
+          given={legendDisplays['Entregados al autor'] ? bookstore.given : 0}
           max={max}/>
       ))}
       <XAxis max={max} />
-      <Legend values={legendValues}/>
+      <Legend
+        values={legendValues}
+        displays={legendDisplays}
+        setDisplays={setLegendDisplays}/>
     </div>
   )
 }

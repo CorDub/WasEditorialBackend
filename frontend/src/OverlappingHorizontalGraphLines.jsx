@@ -29,26 +29,31 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
     setDisplayOrder(displayOrder);
   }, [initial, sold, given])
 
-  function getPercent(number, max) {
+  function getPercent(number, name, max) {
+    if (name === "sold" && displayOrder[name] === "1") {
+      return ((number + given) * 100 / max)
+    } else if (name === "given" && displayOrder[name] === "1") {
+      return ((number + sold) * 100 / max)
+    }
     return (number * 100 / max)
   }
 
   return(
     <div className="overlapping-horizontal-graph-lines">
-      <div className="ohgl-title">{title}</div>
-      <div className="ohgl-actual-lines">
-        <div
-          className="ohgl-initial"
-          style={{
-            width: `${getPercent(initial, max)}%`,
-            zIndex:`${displayOrder.initial}`}}>
-          {initial}
-        </div>
+      <div className="ohgl-title">{title} - {initial}</div>
+        <div className="ohgl-actual-lines">
+          <div
+            className="ohgl-initial"
+            style={{
+              width: `${getPercent(initial, "initial", max)}%`,
+              zIndex:`${displayOrder.initial}`}}>
+            {initial - sold - given}
+          </div>
         {sold > 0 && (
           <div
             className="ohgl-sold"
             style={{
-              width: `${getPercent(sold, max)}%`,
+              width: `${getPercent(sold, "sold", max)}%`,
               zIndex:`${displayOrder.sold}`}}>
             {sold}
           </div>)}
@@ -56,11 +61,11 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
           <div
             className="ohgl-given"
             style={{
-              width: `${getPercent(given, max)}%`,
+              width: `${getPercent(given, "given", max)}%`,
               zIndex:`${displayOrder.given}`}}>
             {given}
           </div>)}
-      </div>
+        </div>
     </div>
   )
 }

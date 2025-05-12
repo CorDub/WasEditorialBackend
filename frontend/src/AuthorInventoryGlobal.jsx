@@ -14,8 +14,6 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   ]
   const [bookData, setBookData] = useState(null);
 
-  console.log(data);
-
   useEffect(() => {
     if (bookSales.length !== 0) {
       const newArrayBookSales = [...bookSales];
@@ -50,15 +48,20 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   useEffect(() => {
     if (selectedBookId !== "") {
         fetchAuthorBookInventories();
+    } else {
+      setBookData(null);
+      if (data) {
+        setMax(data[0].summary.initial);
+      }
     }
   }, [selectedBookId])
 
-  console.log("BOOK DATA", data);
+  console.log("BOOK DATA", bookData);
 
   return(
     <div className="author-inventory-global">
-      <div className="aig-title"><h2>Inventario global</h2></div>
-      {data && data.map((book, index) => (
+      <div className="aig-title"><h2>Todos los titulos</h2></div>
+      {data && !bookData && data.map((book, index) => (
         <OverlappingHorizontalGraphLines
           key={index}
           title={book.title}
@@ -66,6 +69,15 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
           sold={book.summary.sold}
           given={book.summary.givenToAuthor}
           max={max} />))}
+      {bookData && bookData.map((bookstore, index) => (
+        <OverlappingHorizontalGraphLines
+          key={index}
+          title={bookstore.name}
+          initial={bookstore.initial}
+          sold={bookstore.initial - (bookstore.current + bookstore.given + bookstore.returns)}
+          given={bookstore.given}
+          max={max}/>
+      ))}
       <XAxis max={max} />
       <Legend values={legendValues}/>
     </div>

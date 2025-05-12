@@ -1,9 +1,8 @@
-import { useEffect } from "react";
 import CustomDropdown from "./CustomDropdown";
 
 function BookSelector({ booksInventories, onBookChange, selectedValue = 'total' }) {
   const options = [
-    { value: 'total', label: 'Inventario total' },
+    { value: 'total', label: 'Todos los titulos' },
     ...(booksInventories?.map(book => ({
       value: book.bookId,
       label: book.title

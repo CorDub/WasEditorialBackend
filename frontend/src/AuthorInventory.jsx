@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
-import BestSellerGraph from "./BestSellerGraph";
 import BooksSoldGraph from "./BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
@@ -33,6 +32,8 @@ function AuthorInventory(){
     fetchInventories()
     setShowTotal(true);
   },[])
+
+  console.log(inventories);
 
   async function fetchInventories() {
     try {
@@ -101,8 +102,9 @@ function AuthorInventory(){
           )}
         </div>
         {isTotalInventoryOpen && (
-          // <BestSellerGraph bookSales={inventories.bookInventories} /> )}
-          <AuthorInventoryGlobal bookSales={booksInventories} />)}
+          <AuthorInventoryGlobal
+            bookSales={booksInventories}
+            selectedBookId={selectedBookId} />)}
         {isBooksSoldGraphOpen && (
           <BooksSoldGraph bookSales={booksInventories} />)}
         {isGivenToAuthorOpen && (

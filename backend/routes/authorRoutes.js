@@ -883,6 +883,59 @@ router.get("/wasInventories", async (req, res) => {
   }
 })
 
+router.get("/bookInventories", async (req, res) => {
+  try {
+    const bookId = parseInt(req.query.bookId);
+
+    // Get all inventories for that specific book
+    const bookInventories = await prisma.inventory.findMany({
+      where: {
+        bookId: bookId,
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        bookstoreId: true,
+        bookstore: {
+          select: {
+            name: true
+          }
+        },
+        initial: true,
+        current: true,
+        returns: true,
+        givenToAuthor: true
+      }
+    });
+
+    // Group by bookstore
+    let groupedByBookstore = {}
+    // create the object if it doesn't exist, add things if it does
+    for (const inventory of bookInventories) {
+      if (inventory.bookstore.name in groupedByBookstore) {
+        groupedByBookstore[inventory.bookstore.name].initial += inventory.initial;
+        groupedByBookstore[inventory.bookstore.name].current += inventory.current;
+        groupedByBookstore[inventory.bookstore.name].returns += inventory.returns;
+        groupedByBookstore[inventory.bookstore.name].given += inventory.givenToAuthor;
+      } else {
+        groupedByBookstore[inventory.bookstore.name] = {
+          bookstoreId: inventory.bookstoreId,
+          name: inventory.bookstore.name,
+          initial: inventory.initial,
+          current: inventory.current,
+          returns: inventory.returns,
+          given: inventory.givenToAuthor
+        }
+      }
+    }
+
+    res.status(200).json(Object.values(groupedByBookstore));
+  } catch (error) {
+    console.log("\n ERROR WHILE FETCHING THE BOOK INVENTORIES FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occurred while fetching relevant book inventories"});
+  }
+})
+
 router.get("/payments", async (req, res) => {
   try {
     // Getting our range ready by setting it 12m ago

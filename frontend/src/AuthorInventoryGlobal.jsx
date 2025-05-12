@@ -47,7 +47,7 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   }
 
   useEffect(() => {
-    if (selectedBookId !== "") {
+    if (selectedBookId !== "" && data) {
       fetchAuthorBookInventories();
       for (const book of data) {
         if (book.bookId === selectedBookId) {
@@ -61,7 +61,7 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
         setMax(data[0].summary.initial);
       }
     }
-  }, [selectedBookId])
+  }, [selectedBookId, data])
 
   return(
     <div className="author-inventory-global">

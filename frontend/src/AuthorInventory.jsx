@@ -78,7 +78,7 @@ function AuthorInventory(){
                 />
               )}
           </div>
-          {showTotal ? (
+          {/* {showTotal ? (
             <ShowInventories
               inventories={inventories}
               currentDetailsActive={currentDetailsActive}
@@ -97,7 +97,19 @@ function AuthorInventory(){
               inventories={booksInventories.find(book => book.bookId === parseInt(selectedBookId))}
               />
             )
-          )}
+          )} */}
+        <ShowInventories
+          inventories={showTotal ? inventories : booksInventories.find(book => book.bookId === parseInt(selectedBookId))}
+          currentDetailsActive={currentDetailsActive}
+          nameDetailsActive={nameDetailsActive}
+          setNameDetailsActive={setNameDetailsActive}
+          setCurrentDetailsActive={setCurrentDetailsActive}
+          setTotalInventoryOpen={setTotalInventoryOpen}
+          setGivenToAuthorOpen={setGivenToAuthorOpen}
+          setBooksSoldGraphOpen={setBooksSoldGraphOpen}
+          setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
+          setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
+          setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}/>
         </div>
         {isTotalInventoryOpen && (
           <AuthorInventoryGlobal

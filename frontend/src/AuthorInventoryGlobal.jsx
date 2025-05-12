@@ -4,7 +4,7 @@ import "./AuthorInventoryGlobal.scss";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import Legend from "./Legend";
 
-function AuthorInventoryGlobal({bookSales}) {
+function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
   const legendValues = [
@@ -12,17 +12,48 @@ function AuthorInventoryGlobal({bookSales}) {
     ['Vendidos', '#4E5981'],
     ['Inicial', '#E2E2E2'],
   ]
+  const [bookData, setBookData] = useState(null);
+
+  console.log(data);
 
   useEffect(() => {
-    setData(bookSales.sort((a, b) => b.summary.initial - a.summary.initial));
-  }, [bookSales]);
-
-  useEffect(() => {
-    console.log(data);
-    if (data !== null && data !== undefined && data.length > 0) {
+    if (bookSales.length !== 0) {
+      const newArrayBookSales = [...bookSales];
+      const data = newArrayBookSales.sort((a, b) => b.summary.initial - a.summary.initial);
+      setData(data);
       setMax(data[0].summary.initial);
     }
-  }, [data]);
+  }, [bookSales]);
+
+  async function fetchAuthorBookInventories() {
+    try{
+      const response = await fetch(`http://localhost:3000/author/bookInventories?bookId=${selectedBookId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": 'application/json',
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // const byBookstores = Object.values(data.inventoriesByBookstores);
+        const sorted = data.sort((a, b) => b.initial - a.initial);
+        setBookData(sorted);
+        setMax(sorted[0].initial);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedBookId !== "") {
+        fetchAuthorBookInventories();
+    }
+  }, [selectedBookId])
+
+  console.log("BOOK DATA", data);
 
   return(
     <div className="author-inventory-global">

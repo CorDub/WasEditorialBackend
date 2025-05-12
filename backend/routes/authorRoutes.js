@@ -729,7 +729,8 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
           select: {
             book: {
               select: {
-                title: true
+                title: true,
+                id: true
               }
             }
           }

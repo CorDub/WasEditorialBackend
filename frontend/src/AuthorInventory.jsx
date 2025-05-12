@@ -106,7 +106,8 @@ function AuthorInventory(){
         {isBooksSoldGraphOpen && (
           <BooksSoldGraph bookSales={booksInventories} />)}
         {isGivenToAuthorOpen && (
-          <GivenToAuthorDetails />)}
+          <GivenToAuthorDetails
+            selectedBookId={selectedBookId}/>)}
         {isAuthorBookstoreInventoryOpen && (
           <AuthorBookstoreInventory />)}
         {isAuthorWasInventoryOpen && (

@@ -10,9 +10,10 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   const legendValues = [
     ['Entregados al autor', '#57eafa'],
     ['Vendidos', '#4E5981'],
-    ['Inicial', '#E2E2E2'],
+    ['Disponibles', '#E2E2E2'],
   ]
   const [bookData, setBookData] = useState(null);
+  const [selectedBookTitle, setSelectedBookTitle] = useState("");
 
   useEffect(() => {
     if (bookSales.length !== 0) {
@@ -47,7 +48,13 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
 
   useEffect(() => {
     if (selectedBookId !== "") {
-        fetchAuthorBookInventories();
+      fetchAuthorBookInventories();
+      for (const book of data) {
+        if (book.bookId === selectedBookId) {
+          setSelectedBookTitle(book.title);
+          break;
+        }
+      }
     } else {
       setBookData(null);
       if (data) {
@@ -56,11 +63,9 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
     }
   }, [selectedBookId])
 
-  console.log("BOOK DATA", bookData);
-
   return(
     <div className="author-inventory-global">
-      <div className="aig-title"><h2>Todos los titulos</h2></div>
+      <div className="aig-title"><h2>{data && !bookData ? "Todos los titulos" : selectedBookTitle}</h2></div>
       {data && !bookData && data.map((book, index) => (
         <OverlappingHorizontalGraphLines
           key={index}

@@ -33,8 +33,6 @@ function AuthorInventory(){
     setShowTotal(true);
   },[])
 
-  console.log(inventories);
-
   async function fetchInventories() {
     try {
       const response = await fetch('http://localhost:3000/author/inventories', {

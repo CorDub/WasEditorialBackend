@@ -4,6 +4,7 @@
 
 .ohgl-title {
   font-style: italic;
+  margin-bottom: 0.25rem;
 }
 
 .ohgl-actual-lines {
@@ -42,4 +43,8 @@
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   display: flex;
   justify-content: end;
+}
+
+.ohgl-lines-and-total {
+  display: flex;
 }

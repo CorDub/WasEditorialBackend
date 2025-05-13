@@ -2,8 +2,10 @@ import "./BooksSoldGraph.scss";
 import { useState, useEffect } from "react";
 import XAxis from "./XAxis";
 import HorizontalGraphLine from "./HorizontalGraphLine";
+import useCheckUser from "./customHooks/useCheckUser";
 
 function BooksSoldGraph({bookSales, selectedBookId}) {
+  useCheckUser();
   const [booksListBySales, setBooksListBySales] = useState([]);
   const [max, setMax] = useState(0);
   const [bookstoreData, setBookstoreData] = useState(null);
@@ -55,9 +57,11 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
       setBookstoreDataDisplayed(true);
     } else {
       setBookstoreDataDisplayed(false);
-      setMax(booksListBySales[0].summary.sold)
+      if (booksListBySales.length > 0) {
+        setMax(booksListBySales[0].summary.sold)
+      }
     }
-  }, [selectedBookId]);
+  }, [selectedBookId, bookSales]);
 
   useEffect(() => {
     console.log(bookstoreData)

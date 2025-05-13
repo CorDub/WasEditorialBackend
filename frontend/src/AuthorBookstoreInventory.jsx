@@ -11,7 +11,7 @@ function AuthorBookstoreInventory({selectedBookId}) {
 
   async function fetchAuthorBookstoreInventories() {
     try{
-      const response = await fetch("http://localhost:3000/author/bookstoreInventories", {
+      const response = await fetch(`http://localhost:3000/author/bookstoreInventories?bookId=${selectedBookId}`, {
         method: "GET",
         headers: {
           "Content-Type": 'application/json',
@@ -33,7 +33,7 @@ function AuthorBookstoreInventory({selectedBookId}) {
 
   useEffect(() => {
     fetchAuthorBookstoreInventories();
-  }, [])
+  }, [selectedBookId])
 
   return(
     <div className="author-bookstore-inventory">

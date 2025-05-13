@@ -20,9 +20,9 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
   const [bookData, setBookData] = useState(null);
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
 
-  useEffect(() => {
-    console.log(legendDisplays);
-  }, [legendDisplays])
+  // useEffect(() => {
+  //   console.log(legendDisplays);
+  // }, [legendDisplays])
 
   // useEffect(() => {
   //   let legendDisplays = {};

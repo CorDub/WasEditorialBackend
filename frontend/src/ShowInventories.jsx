@@ -53,8 +53,6 @@ function ShowInventories({
     toggleFunction(true);
   }
 
-  console.log(currentDetailsActive);
-
   return (
     inventories && (
       <div id='show-inventory-container'>

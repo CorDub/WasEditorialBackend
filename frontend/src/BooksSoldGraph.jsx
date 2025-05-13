@@ -86,7 +86,8 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
               key={index}
               max={max}
               number={bookstore.initial - bookstore.current - bookstore.given - bookstore.returns}
-              legend={bookstore.name}/>))}
+              legend={bookstore.name}
+              color={bookstore.color}/>))}
           <XAxis max={max}/>
         </>
       )}

@@ -79,6 +79,7 @@ model Bookstore {
   contact_phone   String?
   contact_email   String?
   inventories     Inventory[]
+  color           String?     @default("#E2E2E2")
   isDeleted       Boolean     @default(false)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt

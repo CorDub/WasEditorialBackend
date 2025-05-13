@@ -42,7 +42,8 @@ function AuthorBookstoreInventory({selectedBookId}) {
           key={index}
           max={max}
           number={bookstore.current}
-          legend={bookstore.name} />))}
+          legend={bookstore.name}
+          color={bookstore.color} />))}
       <XAxis max={max}/>
     </div>
   )

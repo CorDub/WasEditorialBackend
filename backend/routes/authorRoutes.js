@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
+import { truncateSync } from "fs";
 
 const router = express.Router();
 
@@ -470,27 +471,29 @@ router.get('/monthlySales', async (req, res) => {
 
     // Then add the transfer data to salesBymonth if the month of the transfer exist
     // Otherwise create it
-    for (const transfer of allAuthorTransfers) {
-      const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+    if (allAuthorTransfers.length > 0) {
+      for (const transfer of allAuthorTransfers) {
+        const transferMonth = transfer.createdAt.toISOString().substring(0,7);
 
-      if (!salesByMonths[transferMonth]) {
-        salesByMonths[transferMonth] = {
-          sales: [],
-          ganancia: 0,
-          total: 0,
-          // deep cloning the bookstores to avoid having the same object being mutated later
-          // and shared across different months instead of a different object every time
-          transfers: bookstores.map(bookstore => ({...bookstore})),
-          transfersTotal: 0
-        }
-      };
+        if (!salesByMonths[transferMonth]) {
+          salesByMonths[transferMonth] = {
+            sales: [],
+            ganancia: 0,
+            total: 0,
+            // deep cloning the bookstores to avoid having the same object being mutated later
+            // and shared across different months instead of a different object every time
+            transfers: bookstores.map(bookstore => ({...bookstore})),
+            transfersTotal: 0
+          }
+        };
 
-      for (const bookstore of salesByMonths[transferMonth]['transfers']) {
-        if (bookstore.id === transfer.toInventory.bookstore.id) {
-          bookstore.quantity += transfer.quantity
+        for (const bookstore of salesByMonths[transferMonth]['transfers']) {
+          if (bookstore.id === transfer.toInventory.bookstore.id) {
+            bookstore.quantity += transfer.quantity
+          }
         }
+        salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
       }
-      salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
     }
 
     // Fill in the missing months with phantom data (0s) so that it will display
@@ -769,6 +772,7 @@ router.get('/bookstoreInventories', async (req, res) => {
           bookstore: {
             select: {
               name: true,
+              color: true
             }
           },
           bookstoreId: true,
@@ -798,6 +802,7 @@ router.get('/bookstoreInventories', async (req, res) => {
           bookstore: {
             select: {
               name: true,
+              color: true
             }
           },
           bookstoreId: true,
@@ -819,7 +824,8 @@ router.get('/bookstoreInventories', async (req, res) => {
         if (inventory.bookstoreId !== 3) {
           relevantInventoriesByBookstore[inventory.bookstoreId] = {
             name: inventory.bookstore.name,
-            current: inventory.current
+            current: inventory.current,
+            color: inventory.bookstore.color
           }
         }
       };
@@ -832,7 +838,8 @@ router.get('/bookstoreInventories', async (req, res) => {
         } else {
           relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId] = {
             bookstoreName: inventory.bookstore.name,
-            current: inventory.current
+            current: inventory.current,
+            color: inventory.bookstore.color
           }
         }
       } else {
@@ -842,7 +849,8 @@ router.get('/bookstoreInventories', async (req, res) => {
             bookstoreName : inventory.bookstore.name,
             current: inventory.current
           },
-          summary: inventory.current
+          summary: inventory.current,
+          color: inventory.bookstore.color
         }
       }
     }
@@ -927,7 +935,8 @@ router.get("/bookInventories", async (req, res) => {
         bookstoreId: true,
         bookstore: {
           select: {
-            name: true
+            name: true,
+            color: true
           }
         },
         initial: true,
@@ -950,6 +959,7 @@ router.get("/bookInventories", async (req, res) => {
         groupedByBookstore[inventory.bookstore.name] = {
           bookstoreId: inventory.bookstoreId,
           name: inventory.bookstore.name,
+          color: inventory.bookstore.color,
           initial: inventory.initial,
           current: inventory.current,
           returns: inventory.returns,

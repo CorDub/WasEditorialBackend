@@ -156,7 +156,8 @@ async function main() {
       contact_name: "Gerardo Rivera",
       contact_phone: "525524518965",
       contact_email: "gerardo_rivera@gandhi.com",
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#fff200"
     }
   })
 
@@ -167,7 +168,8 @@ async function main() {
       contact_name: "Jean Valdez",
       contact_phone: "525580416352",
       contact_email: "jlwotton17@mercadolibre.co.mx",
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#ffe600"
     }
   })
 
@@ -175,7 +177,8 @@ async function main() {
     data: {
       name: "Plataforma Was",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#4E5981"
     }
   })
 
@@ -183,7 +186,8 @@ async function main() {
     data: {
       name: "Amazon",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#f08804"
     }
   })
 
@@ -191,7 +195,8 @@ async function main() {
     data: {
       name: "Gonvill",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#22ace3"
     }
   })
 
@@ -199,7 +204,8 @@ async function main() {
     data: {
       name: "Sanborns",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#ff0203"
     }
   })
 
@@ -207,7 +213,7 @@ async function main() {
     data: {
       name: "Central de",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
     }
   })
 
@@ -215,7 +221,8 @@ async function main() {
     data: {
       name: "Aeropuerto CDMX",
       deal_percentage: 30,
-      createdAt: twelveMonthsAgo
+      createdAt: twelveMonthsAgo,
+      color: "#323E48"
     }
   })
 

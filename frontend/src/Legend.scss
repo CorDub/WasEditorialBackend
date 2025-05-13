@@ -22,6 +22,9 @@
   width: 15px;
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
   border-radius: 15px;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .legend-value-name {

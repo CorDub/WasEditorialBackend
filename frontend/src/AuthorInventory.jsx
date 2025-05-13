@@ -78,26 +78,7 @@ function AuthorInventory(){
                 />
               )}
           </div>
-          {/* {showTotal ? (
-            <ShowInventories
-              inventories={inventories}
-              currentDetailsActive={currentDetailsActive}
-              nameDetailsActive={nameDetailsActive}
-              setNameDetailsActive={setNameDetailsActive}
-              setCurrentDetailsActive={setCurrentDetailsActive}
-              setTotalInventoryOpen={setTotalInventoryOpen}
-              setGivenToAuthorOpen={setGivenToAuthorOpen}
-              setBooksSoldGraphOpen={setBooksSoldGraphOpen}
-              setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
-              setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
-              setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}/>
-          ) : (
-            selectedBookId && (
-              <ShowInventories
-              inventories={booksInventories.find(book => book.bookId === parseInt(selectedBookId))}
-              />
-            )
-          )} */}
+
         <ShowInventories
           inventories={showTotal ? inventories : booksInventories.find(book => book.bookId === parseInt(selectedBookId))}
           currentDetailsActive={currentDetailsActive}
@@ -115,13 +96,16 @@ function AuthorInventory(){
           <AuthorInventoryGlobal
             bookSales={booksInventories}
             selectedBookId={selectedBookId} />)}
-        {isBooksSoldGraphOpen && (
-          <BooksSoldGraph bookSales={booksInventories} />)}
         {isGivenToAuthorOpen && (
           <GivenToAuthorDetails
             selectedBookId={selectedBookId}/>)}
+        {isBooksSoldGraphOpen && (
+          <BooksSoldGraph
+            bookSales={booksInventories}
+            selectedBookId={selectedBookId} />)}
         {isAuthorBookstoreInventoryOpen && (
-          <AuthorBookstoreInventory />)}
+          <AuthorBookstoreInventory
+            selectedBookId={selectedBookId}/>)}
         {isAuthorWasInventoryOpen && (
           <AuthorWasInventory />)}
         {isAuthorAvailableInventoryOpen && (

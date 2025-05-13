@@ -4,7 +4,7 @@ import XAxis from "./XAxis";
 import './AuthorBookstoreInventory.scss';
 import useCheckUser from "./customHooks/useCheckUser";
 
-function AuthorBookstoreInventory() {
+function AuthorBookstoreInventory({selectedBookId}) {
   useCheckUser();
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);

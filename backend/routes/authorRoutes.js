@@ -748,35 +748,63 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
 
 router.get('/bookstoreInventories', async (req, res) => {
   try {
+    const bookId = parseInt(req.query.bookId);
     // fetch all inventories from the author
-    const relevantInventories = await prisma.inventory.findMany({
-      where: {
-        isDeleted: false,
-        book: {
-          users: {
-            some: {
-              id: req.session.user_id
+
+    let relevantInventories;
+    if (bookId) {
+      relevantInventories = await prisma.inventory.findMany({
+        where: {
+          isDeleted: false,
+          bookId: bookId
+        },
+        select: {
+          id: true,
+          book: {
+            select: {
+              title: true
+            }
+          },
+          bookId: true,
+          bookstore: {
+            select: {
+              name: true,
+            }
+          },
+          bookstoreId: true,
+          current: true
+        }
+      });
+    } else {
+      relevantInventories = await prisma.inventory.findMany({
+        where: {
+          isDeleted: false,
+          book: {
+            users: {
+              some: {
+                id: req.session.user_id
+              }
             }
           }
+        },
+        select: {
+          id: true,
+          book: {
+            select: {
+              title: true
+            }
+          },
+          bookId: true,
+          bookstore: {
+            select: {
+              name: true,
+            }
+          },
+          bookstoreId: true,
+          current: true
         }
-      },
-      select: {
-        id: true,
-        book: {
-          select: {
-            title: true
-          }
-        },
-        bookId: true,
-        bookstore: {
-          select: {
-            name: true,
-          }
-        },
-        bookstoreId: true,
-        current: true
-      }
-    });
+      });
+    }
 
     // group the results by bookstore and books
     let relevantInventoriesByBookstore = {};

@@ -103,25 +103,49 @@ router.get('/inventories', async (req, res) => {
         },
         isDeleted: false
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        users: {
+          select: {
+            first_name: true,
+            last_name: true
+          }
+        },
         inventories: {
-          include: {
-            sales: true
+          select: {
+            sales: {
+              select: {
+                quantity: true
+              }
+            },
+            country: true,
+            initial: true,
+            givenToAuthor: true,
+            current: true,
+            bookstoreId: true
           }
         }
       }
     });
+
+    // console.log("books length", books.length);
+    // console.log(books[0]);
 
     // Calculate overall totals across all books
     let overallInitialTotal = 0;
     let overallSoldTotal = 0;
     let overallInventoryInBookstores = 0;
     let overallInventoryInWas = 0;
+    let overallInventoryInWasPerCountry = {};
     let overallEntregadosAlAutor = 0;
 
     // Calculate sales summary for each book
     const bookInventories = books.map(book => {
+      // initial
       const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
+
+      // sold
       let soldTotal = 0;
       for (const inventory of book.inventories) {
         if (inventory.sales) {
@@ -130,16 +154,32 @@ router.get('/inventories', async (req, res) => {
           }
         }
       }
+
+      //givenToAuthor
       let entregadosAlAutor = 0;
       for (const inventory of book.inventories) {
         entregadosAlAutor += inventory.givenToAuthor
       };
+
+      // remaining (disponibles)
       const remainingTotal = initialTotal - soldTotal - entregadosAlAutor;
+
+      // bookstores
       let inventoryInBookstores = 0;
+
+      // was + wasbyCountry
       let inventoryInWas = 0;
+      let inventoryInWasPerCountry = {};
       for (const inventory of book.inventories) {
+        // 3 = Plataforma Was Id
         if (inventory.bookstoreId === 3) {
           inventoryInWas = inventory.current
+          // create key:value if doesn't exist, add if it does
+          if (inventory.country in inventoryInWasPerCountry) {
+            inventoryInWasPerCountry[inventory.country] += inventory.current
+          } else {
+            inventoryInWasPerCountry[inventory.country] = inventory.current
+          }
         } else {
           inventoryInBookstores += inventory.current
         }
@@ -151,6 +191,14 @@ router.get('/inventories', async (req, res) => {
       overallInventoryInBookstores += inventoryInBookstores;
       overallInventoryInWas += inventoryInWas;
       overallEntregadosAlAutor += entregadosAlAutor;
+      // have to use a for loop for overallInventoryInWasPerCountry
+      for (const [country, number] of Object.entries(inventoryInWasPerCountry)) {
+        if (country in overallInventoryInWasPerCountry) {
+          overallInventoryInWasPerCountry[country] += number;
+        } else {
+          overallInventoryInWasPerCountry[country] = number;
+        }
+      }
 
       return {
         bookId: book.id,
@@ -162,6 +210,7 @@ router.get('/inventories', async (req, res) => {
           total: remainingTotal,
           bookstores: inventoryInBookstores,
           was: inventoryInWas,
+          wasPerCountry: inventoryInWasPerCountry,
           givenToAuthor: entregadosAlAutor
         }
       };
@@ -176,6 +225,7 @@ router.get('/inventories', async (req, res) => {
         total: overallRemainingTotal,
         bookstores: overallInventoryInBookstores,
         was: overallInventoryInWas,
+        wasPerCountry: overallInventoryInWasPerCountry,
         givenToAuthor: overallEntregadosAlAutor
       },
       bookInventories: bookInventories

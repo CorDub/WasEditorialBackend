@@ -22,6 +22,30 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [deliveryDate, setDeliveryDate] = useState(null);
   const [place, setPlace] = useState('');
   const [person, setPerson] = useState('');
+  const countries = [
+    "México", "Estados Unidos",
+    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
+    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
+    "Filipinas", "Finlandia", "Fiyi", "Francia",
+    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
+    "Haití", "Honduras", "Hungría",
+    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+    "Jamaica", "Japón", "Jordania",
+    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+    "Omán",
+    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
+    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+    "Yemen",
+    "Zambia", "Zimbabue"
+  ];
 
   useEffect(() => {
     if (clickedRow.bookstoreId === 3) {
@@ -51,8 +75,9 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok) {
         const data = await response.json();
-        const cleanedUpData = data.filter(bookstore => bookstore.name !== clickedRow.bookstore.name)
-        setExistingBookstores(cleanedUpData);
+        // const cleanedUpData = data.filter(bookstore => bookstore.name !== clickedRow.bookstore.name)
+        // setExistingBookstores(cleanedUpData);
+        setExistingBookstores(data);
       }
 
     } catch (error) {
@@ -89,22 +114,33 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     setTooltipMessage("");
   }
 
-  function dropDownChange(e, input_index) {
+  function dropDownChange(e, input_index, type) {
+    // copies the current bookstoresToTransfer
     let soFar = [...bookstoresToTransfer];
+
+    // create a new object if bookstoresToTransfer is empty
     if (!soFar[input_index]) {
       soFar[input_index] = {};
     }
-    soFar[input_index]["bookstoreId"] = e.target.value;
-    let bookstoreName = [];
-    for (const bookstore of existingBookstores) {
-      if (bookstore.id === parseInt(e.target.value)) {
-        bookstoreName = bookstore.name;
-      }
-    }
-    soFar[input_index]["name"] = bookstoreName;
-    setBookstoresToTransfer(soFar);
 
-    const element = document.getElementById(`bookstore-select-${input_index}`);
+    // add the value to the new object depending on type
+    if (type === "bookstore") {
+      soFar[input_index]["bookstoreId"] = e.target.value;
+      // find and add the bookstore name to the new object based on the bookstoreId
+      let bookstoreName = [];
+      for (const bookstore of existingBookstores) {
+        if (bookstore.id === parseInt(e.target.value)) {
+          bookstoreName = bookstore.name;
+        }
+      }
+      soFar[input_index]["name"] = bookstoreName;
+    } else {
+      soFar[input_index]["country"] = e.target.value;
+    }
+
+    setBookstoresToTransfer(soFar);
+    // Change the appearance to make it look selected
+    const element = document.getElementById(`${type}-select-${input_index}`);
     if (e.target.value === "null") {
       if (element.classList.contains("selected") === true) {
         element.classList.remove("selected");
@@ -115,6 +151,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       }
     }
   };
+
+  useEffect(() => {
+    console.log(bookstoresToTransfer);
+  }, [bookstoresToTransfer])
 
   function updateQuantity(e, input_index) {
     let soFar = [...bookstoresToTransfer];
@@ -144,8 +184,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   }
 
   function checkInputs() {
+    // Prepare an error list that will be displayed if any
     let errorsList = []
 
+    // Set expectations for each field being tested
     const expectationsBookstore = {
       type: "string",
       presence: "not empty",
@@ -157,10 +199,19 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive",
       maximum: clickedRow.current
     }
+    const expectationsCountry = {
+      type: "string",
+      presence: "not empty",
+      value: countries
+    }
 
     let totalQuantities = 0;
     const quantityElements = document.querySelectorAll('.transfer-quantity');
 
+    // for each bookstore within BookstoresToTransfer
+    // - prepare the ref
+    // send everything to global function checkForErrrors
+    // if the result come back positive, add all errors to the list
     for (let i = 0; i < bookstoresToTransfer.length; i++) {
       if (transferType === "send" && !deliverToAuthor) {
         const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
@@ -186,6 +237,17 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         errorsList.push(errorsQuantity);
       };
       totalQuantities += bookstoresToTransfer[i].quantity
+
+      const countryRef = document.getElementById(`country-select-${i}`);
+      const errorsCountry = checkForErrors(
+        "país",
+        bookstoresToTransfer[i].country,
+        expectationsCountry,
+        countryRef
+      )
+      if (errorsCountry.length > 0) {
+        errorsList.push(errorsCountry);
+      }
     }
 
     if (totalQuantities > clickedRow.current) {
@@ -221,7 +283,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             note: note,
             deliveryDate: deliveryDate,
             place: place,
-            person: person
+            person: person,
+            country: bookstoresToTransfer[i].country
           }),
         });
 
@@ -268,7 +331,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               <select
                 className="select-transfer"
                 id={`bookstore-select-${index}`}
-                onChange={(e) => dropDownChange(e, index)}>
+                onChange={(e) => dropDownChange(e, index, 'bookstore')}>
                 <option
                   key={index}
                   value="null">
@@ -281,6 +344,23 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                     {bookstore.name}
                   </option>
                   ))};
+              </select>
+              <select
+                className="select-transfer"
+                id={`country-select-${index}`}
+                onChange={(e) => dropDownChange(e, index, 'country')}>
+                <option
+                  key={index}
+                  value="null">
+                  País
+                  </option>
+                {countries.map((country, index) => (
+                  <option
+                    key={index}
+                    value={country}>
+                      {country}
+                    </option>
+                ))}
               </select>
               <input
                 type='text'

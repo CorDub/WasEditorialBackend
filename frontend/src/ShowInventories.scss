@@ -27,6 +27,22 @@
   margin: 0;
 }
 
+.author-inventory-was {
+  display: flex;
+  margin: 0.5rem 0.75rem 0.25rem 0.75rem;
+  font-style: italic;
+  font-size: 0.95em;
+  justify-content: space-between;
+}
+
+.author-inventory-was-country {
+  margin: 0;
+}
+
+.author-inventory-was-number {
+  margin: 0;
+}
+
 .show-inventory-active {
   background-color: #4E5981;
   border-radius: 15px;

@@ -1,5 +1,5 @@
 import './ShowInventories.scss';
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import useCheckUser from './customHooks/useCheckUser';
 
 function ShowInventories({
@@ -21,6 +21,7 @@ function ShowInventories({
   const bookstoreRef = useRef();
   const wasRef = useRef();
   const availableRef = useRef();
+  const [isWasPerCountryOpen, setWasPerCountryOpen] = useState(false);
 
   //ensure that totalRef is the default so that something is displayed
   useEffect(() => {
@@ -82,10 +83,20 @@ function ShowInventories({
         </div>
         <div className="author-inventory-line"
           ref={wasRef}
-          onClick={() => declareActive(wasRef, "was", setAuthorWasInventoryOpen)}>
+          onClick={() => {
+            declareActive(wasRef, "was", setAuthorWasInventoryOpen)
+            setWasPerCountryOpen(!isWasPerCountryOpen)}}>
           <p className="author-inventory-label">Libros en bodega Was</p>
           <p className="author-inventory-number">{inventories.summary.was || 0}</p>
         </div>
+        {isWasPerCountryOpen && Object.entries(inventories.summary.wasPerCountry).map((country, index) => (
+          <div
+            className="author-inventory-was"
+            key={index}>
+            <p className="author-inventory-was-country">{country[0]}</p>
+            <p className="author-inventory-was-number">{country[1]}</p>
+          </div>
+        ))}
         <div className="author-inventory-line"
           ref={availableRef}
           onClick={() => declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)}>

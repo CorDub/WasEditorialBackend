@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
-import { truncateSync } from "fs";
 
 const router = express.Router();
 

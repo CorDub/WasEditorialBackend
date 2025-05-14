@@ -1192,7 +1192,8 @@ router.post('/transfer', async (req, res) => {
       note,
       deliveryDate,
       place,
-      person
+      person,
+      country
     } = req.body;
 
     const dateInDateTime = new Date(deliveryDate);
@@ -1232,14 +1233,14 @@ router.post('/transfer', async (req, res) => {
       return;
     }
 
-    // Route 2: Return
+    // Route 2: Return and Send
     // Get the inventoryTo if it exists
     let currentInventoryTo = await prisma.inventory.findUnique({
       where: {
         bookId_bookstoreId_country: {
           bookId: parseInt(bookId),
           bookstoreId: parseInt(bookstoreToId),
-          country: "México"
+          country: country
         },
         isDeleted: false
       }
@@ -1248,30 +1249,31 @@ router.post('/transfer', async (req, res) => {
     let newInventoryTo;
     let recoveredInventoryTo;
 
-    // if it doesnt exist check if it isn't soft deleted.
+    // if it doesnt exist check if it isn't soft deleted. 1/ Get it if deleted
     if (!currentInventoryTo) {
       const deletedInventoryMaybe = await prisma.inventory.findUnique({
         where: {
           bookId_bookstoreId_country: {
             bookId: parseInt(bookId),
             bookstoreId: parseInt(bookstoreToId),
-            country: "México"
+            country: country
           },
           isDeleted: true
         }
       });
 
-      //If it is not, create it.
+      // 2/ If it is not, create it.
       if (!deletedInventoryMaybe) {
         newInventoryTo = await prisma.inventory.create({
           data: {
             bookId: parseInt(bookId),
             bookstoreId: parseInt(bookstoreToId),
-            country: "México",
+            country: country,
             initial: parseInt(quantity),
             current: parseInt(quantity)
           }
         });
+      // 3/ Otherwise recover it
       } else {
         recoveredInventoryTo = await prisma.inventory.update({
           where: {id: deletedInventoryMaybe.id},
@@ -1284,6 +1286,7 @@ router.post('/transfer', async (req, res) => {
       }
     };
 
+    // 4/ Set it to current
     if (newInventoryTo) {
       currentInventoryTo = newInventoryTo
     };
@@ -1292,6 +1295,7 @@ router.post('/transfer', async (req, res) => {
       currentInventoryTo = recoveredInventoryTo
     }
 
+    // 5-Create the actual transfer now that you got the proper inventory To and From
     const newTransfer = await prisma.transfer.create({
       data: {
         fromInventoryId: parseInt(inventoryFromId),
@@ -1301,7 +1305,10 @@ router.post('/transfer', async (req, res) => {
       }
     });
 
+    // 6- If creating the inventory succeeded, proceed further
+    // (don't want to proceed further if that step fails for whichever reason)
     if (newTransfer) {
+      // If it's a send - update both From and To inventories
       if (newTransfer.type === "send") {
         const updatedInventoryFrom = await prisma.inventory.update({
           where: {id: parseInt(inventoryFromId)},
@@ -1310,7 +1317,7 @@ router.post('/transfer', async (req, res) => {
             initial: currentInventoryFrom.initial - parseInt(quantity)
           }
         });
-
+        // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
         if (!newInventoryTo && !recoveredInventoryTo) {
           const updatedInventoryTo = await prisma.inventory.update({
             where: {id: currentInventoryTo.id},
@@ -1320,6 +1327,7 @@ router.post('/transfer', async (req, res) => {
             }
           });
         }
+      // If it's a return - same process
       } else {
         const updatedInventoryFrom = await prisma.inventory.update({
           where: {id: parseInt(inventoryFromId)},

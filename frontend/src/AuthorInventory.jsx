@@ -109,7 +109,9 @@ function AuthorInventory(){
         {isAuthorWasInventoryOpen && (
           <AuthorWasInventory />)}
         {isAuthorAvailableInventoryOpen && (
-          <AuthorAvailableInventory bookSales={inventories.bookInventories}/>)}
+          <AuthorAvailableInventory
+            bookSales={inventories.bookInventories}
+            selectedBookId={selectedBookId}/>)}
       </div>
     </div>
     </>

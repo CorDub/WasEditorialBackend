@@ -41,7 +41,6 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
       if (response.ok) {
         const data = await response.json();
         const sorted = data.sort((a, b) => (b.initial - b.current -b.given - b.returns) - (a.initial - a.current - a.given - a.returns));
-        console.log(sorted);
         setBookstoreData(sorted);
         setMax(sorted[0].initial - sorted[0].current - sorted[0].given - sorted[0].returns);
       }

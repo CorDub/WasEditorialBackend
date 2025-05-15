@@ -52,6 +52,7 @@ function ShowInventories({
     setCurrentDetailsActive(ref);
     setNameDetailsActive(name);
     toggleFunction(true);
+    setWasPerCountryOpen(false);
   }
 
   return (

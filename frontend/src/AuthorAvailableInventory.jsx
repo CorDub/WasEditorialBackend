@@ -8,6 +8,7 @@ function AuthorAvailableInventory({bookSales, selectedBookId}) {
   const [max, setMax] = useState(0);
   const [bookstoreData, setBookstoreData] = useState(null);
   const [isBookstoreDataDisplayed, setBookstoreDataDisplayed] = useState(false);
+  const [selectedBookTitle, setSelectedBookTitle] = useState("");
 
   useEffect(() => {
     setData(bookSales.sort((a, b) => b.summary.total - a.summary.total));
@@ -35,6 +36,7 @@ function AuthorAvailableInventory({bookSales, selectedBookId}) {
         const sorted = data.sort((a, b) => (b.current - a.current));
         setBookstoreData(sorted);
         setMax(sorted[0].current);
+        setSelectedBookTitle(sorted[0].title);
       }
     } catch (error) {
       console.log(error)
@@ -55,6 +57,7 @@ function AuthorAvailableInventory({bookSales, selectedBookId}) {
 
   return (
     <div className="author-available-inventory">
+      <div className="aig-title"><h2>{data && !bookstoreData ? "Todos los titulos" : selectedBookTitle}</h2></div>
       {data && !isBookstoreDataDisplayed && (
         <>
           {data.map((book, index) =>(

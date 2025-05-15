@@ -24,6 +24,7 @@ function AuthorWasInventory() {
         const dataArray = Object.values(data);
         const sorted = dataArray.sort((a, b) => b.current - a.current);
         setData(sorted);
+        console.log(sorted);
         setMax(sorted[0].current);
       }
     } catch (error) {
@@ -37,6 +38,7 @@ function AuthorWasInventory() {
 
   return(
     <div className="author-was-inventory">
+      <div className="aig-title"><h2>Todos los titulos</h2></div>
       {data && data.map((book, index) => (
         <HorizontalGraphLine
           key={index}

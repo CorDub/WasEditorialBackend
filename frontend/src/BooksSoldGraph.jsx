@@ -10,6 +10,7 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
   const [max, setMax] = useState(0);
   const [bookstoreData, setBookstoreData] = useState(null);
   const [isBookstoreDataDisplayed, setBookstoreDataDisplayed] = useState(false);
+  const [selectedBookTitle, setSelectedBookTitle] = useState('');
 
   function sortBooksBySales() {
     let sorted = [...bookSales];
@@ -43,6 +44,7 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
         const sorted = data.sort((a, b) => (b.initial - b.current -b.given - b.returns) - (a.initial - a.current - a.given - a.returns));
         setBookstoreData(sorted);
         setMax(sorted[0].initial - sorted[0].current - sorted[0].given - sorted[0].returns);
+        setSelectedBookTitle(sorted[0].title);
       }
 
     } catch(error) {
@@ -62,12 +64,9 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
     }
   }, [selectedBookId, bookSales]);
 
-  useEffect(() => {
-    console.log(bookstoreData)
-  }, [bookstoreData]);
-
   return(
     <div className="books-sold-graph">
+      <div className="aig-title"><h2>{booksListBySales && !bookstoreData ? "Todos los titulos" : selectedBookTitle}</h2></div>
       {booksListBySales && !isBookstoreDataDisplayed && (
         <>
           {booksListBySales.map((book, index) => (

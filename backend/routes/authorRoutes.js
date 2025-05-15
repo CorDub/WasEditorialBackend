@@ -874,7 +874,8 @@ router.get('/bookstoreInventories', async (req, res) => {
           relevantInventoriesByBookstore[inventory.bookstoreId] = {
             name: inventory.bookstore.name,
             current: inventory.current,
-            color: inventory.bookstore.color
+            color: inventory.bookstore.color,
+            title: inventory.book.title
           }
         }
       };
@@ -988,6 +989,11 @@ router.get("/bookInventories", async (req, res) => {
             color: true
           }
         },
+        book: {
+          select: {
+            title: true
+          }
+        },
         initial: true,
         current: true,
         returns: true,
@@ -1008,6 +1014,7 @@ router.get("/bookInventories", async (req, res) => {
         groupedByBookstore[inventory.bookstore.name] = {
           bookstoreId: inventory.bookstoreId,
           name: inventory.bookstore.name,
+          title: inventory.book.title,
           color: inventory.bookstore.color,
           initial: inventory.initial,
           current: inventory.current,

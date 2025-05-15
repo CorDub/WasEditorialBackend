@@ -63,6 +63,8 @@ function AuthorInventory(){
     }
   };
 
+  console.log(booksInventories);
+
   return (
     <>
     <Navbar subNav={user && user.role} active={"inventario"} />
@@ -107,7 +109,9 @@ function AuthorInventory(){
           <AuthorBookstoreInventory
             selectedBookId={selectedBookId}/>)}
         {isAuthorWasInventoryOpen && (
-          <AuthorWasInventory />)}
+          <AuthorWasInventory
+            booksInventories={booksInventories}
+            selectedBookId={selectedBookId}/>)}
         {isAuthorAvailableInventoryOpen && (
           <AuthorAvailableInventory
             bookSales={inventories.bookInventories}

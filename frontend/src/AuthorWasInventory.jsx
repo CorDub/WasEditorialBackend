@@ -4,10 +4,13 @@ import HorizontalGraphLine from "./HorizontalGraphLine";
 import XAxis from "./XAxis";
 import "./AuthorWasInventory.scss";
 
-function AuthorWasInventory() {
+function AuthorWasInventory({booksInventories, selectedBookId}) {
   useCheckUser();
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
+  const [selectedBookTitle, setSelectedBookTitle] = useState('');
+  const [isBookDataDisplayed, setBookDataDisplayed] = useState(false);
+  const [bookData, setBookData] = useState(null);
 
   async function fetchAuthorBookstoreInventories() {
     try{
@@ -24,7 +27,6 @@ function AuthorWasInventory() {
         const dataArray = Object.values(data);
         const sorted = dataArray.sort((a, b) => b.current - a.current);
         setData(sorted);
-        console.log(sorted);
         setMax(sorted[0].current);
       }
     } catch (error) {
@@ -36,15 +38,42 @@ function AuthorWasInventory() {
     fetchAuthorBookstoreInventories();
   }, [])
 
+  useEffect(() => {
+    if (selectedBookId !== '') {
+      for (const book of booksInventories) {
+        if (book.bookId === selectedBookId) {
+          const bookDataArray = Object.entries(book.summary.wasPerCountry);
+          const sorted = bookDataArray.sort((a, b) => b[1] - a[1]);
+          setBookData(sorted);
+          setMax(sorted[0][1]);
+          setSelectedBookTitle(book.title);
+          setBookDataDisplayed(true);
+        }
+      }
+    } else {
+      setSelectedBookTitle('Todos los titulos');
+      setBookDataDisplayed(false);
+    }
+  }, [booksInventories, selectedBookId])
+
+  console.log(max);
+
   return(
     <div className="author-was-inventory">
-      <div className="aig-title"><h2>Todos los titulos</h2></div>
-      {data && data.map((book, index) => (
+      <div className="aig-title"><h2>{selectedBookTitle}</h2></div>
+      {data && !isBookDataDisplayed && data.map((book, index) => (
         <HorizontalGraphLine
           key={index}
           max={max}
           number={book.current}
           legend={book.title} />))}
+      {isBookDataDisplayed && bookData && bookData.map((country, index) => (
+        country[1] > 0 && (
+          <HorizontalGraphLine
+            key={index}
+            max={max}
+            number={country[1]}
+            legend={country[0]} />)))}
       <XAxis max={max}/>
     </div>
   )

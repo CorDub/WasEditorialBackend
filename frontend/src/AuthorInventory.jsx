@@ -65,8 +65,6 @@ function AuthorInventory(){
     }
   };
 
-  console.log(booksInventories);
-
   return (
     <>
     <Navbar subNav={user && user.role} active={"inventario"} />
@@ -120,7 +118,8 @@ function AuthorInventory(){
             bookSales={inventories.bookInventories}
             selectedBookId={selectedBookId}/>)}
         {isAuthorTrialInventoryOpen && (
-          <AuthorTrialInventory />
+          <AuthorTrialInventory
+            selectedBookId={selectedBookId}/>
         )}
       </div>
     </div>

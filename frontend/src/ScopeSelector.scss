@@ -1,0 +1,42 @@
+.scope-selector {
+  border-radius: 25px;
+  background-color: #E2E2E2;
+  width: 80px;
+  height: 19px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  position: relative;
+  z-index: 0;
+}
+
+.scope-selector-slider {
+  background-color: #4E5981;
+  position: absolute;
+  z-index: 1;
+  width: 27px;
+  height: 27px;
+  top: 4px;
+  left: 3px;
+  border-radius: 50%;
+  transition: 0.15s;
+}
+
+.scope-selector-moving::before {
+  content: "";
+}
+
+.scope-selector-icon {
+  color: #4E5981;
+  z-index: 2;
+}
+
+.ssi-active {
+  color: white;
+  z-index: 2;
+}
+
+.scope-selector-icon:hover {
+  cursor: pointer;
+}

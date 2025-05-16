@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import XAxis from "./XAxis";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
+import ScopeSelector from "./ScopeSelector";
 
 function AuthorTrialInventory({selectedBookId}) {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [max, setMax] = useState(0);
+  const [scope, setScope] = useState("book");
 
   async function fetchAllAuthorInventories() {
     try {
@@ -18,12 +20,12 @@ function AuthorTrialInventory({selectedBookId}) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setData(data);
-        const filteredData = filterData(data, 'book');
-        const sorted = filteredData.sort((a, b) => b[1].initial - a[1].initial);
-        setFilteredData(sorted);
-        setMax(sorted[0][1].initial);
+        const parsedData = await response.json();
+        filterData(parsedData, scope, selectedBookId);
+        setData(parsedData);
+        // const sorted = filteredData.sort((a, b) => b[1].initial - a[1].initial);
+        // setFilteredData(sorted);
+        // setMax(sorted[0][1].initial);
       };
 
     } catch (error) {
@@ -31,11 +33,15 @@ function AuthorTrialInventory({selectedBookId}) {
     }
   }
 
+  // fetch all inventories with relevant data on load
   useEffect(() => {
     fetchAllAuthorInventories();
   }, []);
 
-  function filterData(data, scope) {
+  function filterData(data, scope, selectedBookId) {
+    if (!data) {
+      return;
+    }
     // defining options depending on the chosen scope
     // will fetch the correct data to groupBy later in the loop
     // created here to not recreate an object every loop
@@ -50,12 +56,23 @@ function AuthorTrialInventory({selectedBookId}) {
         return inventory.country;
       }
     }
+    // console.log("selectedBookId", selectedBookId);
+    // console.log("data", data);
+    // first pass on filtering the data if a book is selected
+    let bookFilterData;
+    if (selectedBookId) {
+      bookFilterData = data.filter(inventory => inventory.book.id !== selectedBookId);
+    } else {
+      bookFilterData = data;
+    }
+    console.log("bookFilteredData", bookFilterData);
 
     let results = {};
-    for (const inventory of data) {
+    for (const inventory of bookFilterData) {
       //get the correct groupBy with possibleScopes
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
+
       // getting the sales total first for this inventory,
       // as we'll add it either way
       let sumSales = 0;
@@ -83,27 +100,30 @@ function AuthorTrialInventory({selectedBookId}) {
         }
       }
     }
+    // console.log("results", results);
 
     // storing it as a list instead of an object to be able to map
     const listResults = Object.entries(results);
-    setFilteredData(listResults);
-    return listResults;
+    const sorted = listResults.sort((a, b) => b[1].initial - a[1].initial);
+    setFilteredData(sorted);
+    setMax(sorted[0][1].initial);
+    // return listResults;
   }
 
   useEffect(() => {
-    console.log(filteredData);
-  }, [filteredData]);
+    if (selectedBookId) {
+      filterData(data, "bookstore", selectedBookId);
+    } else {
+      filterData(data, scope, selectedBookId);
+    }
+  }, [selectedBookId, scope, data]);
+
 
   return(
     <div className="author-inventory-global">
-      <div>
-        <input type="radio" name="scope" value="book"
-          onClick={() => filterData(data, "book")}></input>
-        <input type="radio" name="scope" value="bookstore"
-          onClick={() => filterData(data, "bookstore")}></input>
-        <input type="radio" name="scope" value="country"
-          onClick={() => filterData(data, "country")}></input>
-      </div>
+      <ScopeSelector
+        scope={scope}
+        setScope={setScope}/>
       {filteredData && filteredData.map((dataPoint, index) => (
         <OverlappingHorizontalGraphLines
           key={index}
@@ -112,7 +132,7 @@ function AuthorTrialInventory({selectedBookId}) {
           sold={dataPoint[1].sold}
           given={dataPoint[1].givenToAuthor}
           max={max} />))}
-      <XAxis max={max}/>
+      {/* <XAxis max={max}/> */}
     </div>
   )
 }

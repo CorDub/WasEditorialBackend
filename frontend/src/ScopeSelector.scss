@@ -40,3 +40,33 @@
 .scope-selector-icon:hover {
   cursor: pointer;
 }
+
+.scope-selector-tooltip-libro {
+  position: absolute;
+  top: -40px;
+  left: -10px;
+  border-radius: 15px;
+  background-color: #4e6cb3;
+  padding: 0.5rem;
+  color: white;
+}
+
+.scope-selector-tooltip-libreria {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  border-radius: 15px;
+  background-color: #4e6cb3;
+  padding: 0.5rem;
+  color: white;
+}
+
+.scope-selector-tooltip-pais {
+  position: absolute;
+  top: -40px;
+  left: 57px;
+  border-radius: 15px;
+  background-color: #4e6cb3;
+  padding: 0.5rem;
+  color: white;
+}

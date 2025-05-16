@@ -13,7 +13,8 @@ function ShowInventories({
     setBooksSoldGraphOpen,
     setAuthorBookstoreInventoryOpen,
     setAuthorWasInventoryOpen,
-    setAuthorAvailableInventoryOpen}) {
+    setAuthorAvailableInventoryOpen,
+    setAuthorTrialInventoryOpen}) {
   useCheckUser();
   const totalRef = useRef();
   const givenRef = useRef();
@@ -21,6 +22,7 @@ function ShowInventories({
   const bookstoreRef = useRef();
   const wasRef = useRef();
   const availableRef = useRef();
+  const trialRef = useRef();
   const [isWasPerCountryOpen, setWasPerCountryOpen] = useState(false);
 
   //ensure that totalRef is the default so that something is displayed
@@ -42,7 +44,8 @@ function ShowInventories({
       sold: setBooksSoldGraphOpen,
       bookstore: setAuthorBookstoreInventoryOpen,
       was: setAuthorWasInventoryOpen,
-      available: setAuthorAvailableInventoryOpen
+      available: setAuthorAvailableInventoryOpen,
+      trial: setAuthorTrialInventoryOpen
     }
 
     currentDetailsActive.current.classList.remove("show-inventory-active");
@@ -103,6 +106,12 @@ function ShowInventories({
           onClick={() => declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)}>
           <p className="author-inventory-label">Inventario total disponible</p>
           <p className="author-inventory-number">{inventories.summary.total || 0}</p>
+        </div>
+        <div className="author-inventory-line"
+          ref={trialRef}
+          onClick={() => declareActive(trialRef, "trial", setAuthorTrialInventoryOpen)}>
+          <p className="author-inventory-label">trial</p>
+          <p className="author-inventory-number">TRIAL</p>
         </div>
       </div>
     )

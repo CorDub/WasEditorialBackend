@@ -1109,4 +1109,55 @@ router.get("/payments", async (req, res) => {
   }
 })
 
+router.get("/completeInventory", async (req, res) => {
+  try {
+    const allAuthorInventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false,
+        book: {
+          users: {
+            some: {
+              id: req.session.user_id
+            }
+          }
+        }
+      },
+      select: {
+        book: {
+          select: {
+            id: true,
+            title: true,
+            price: true,
+            isDeleted: true
+          },
+        },
+        bookstore: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            isDeleted: true
+          }
+        },
+        country: true,
+        initial: true,
+        current: true,
+        returns: true,
+        givenToAuthor: true,
+        sales: {
+          select: {
+            quantity: true,
+            isDeleted: true
+          }
+        }
+      }
+    });
+
+    res.status(200).json(allAuthorInventories);
+  } catch (error) {
+    console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
+    res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})
+  }
+})
+
 export default router;

@@ -11,6 +11,7 @@ import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
 import AuthorInventoryGlobal from "./AuthorInventoryGlobal";
+import AuthorTrialInventory from "./AuthorTrialInventory";
 
 function AuthorInventory(){
   useCheckUser();
@@ -27,6 +28,7 @@ function AuthorInventory(){
   const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
   const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
   const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
+  const [isAuthorTrialInventoryOpen, setAuthorTrialInventoryOpen] = useState(false);
 
   useEffect(()=>{
     fetchInventories()
@@ -92,7 +94,8 @@ function AuthorInventory(){
           setBooksSoldGraphOpen={setBooksSoldGraphOpen}
           setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
           setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
-          setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}/>
+          setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
+          setAuthorTrialInventoryOpen={setAuthorTrialInventoryOpen}/>
         </div>
         {isTotalInventoryOpen && (
           <AuthorInventoryGlobal
@@ -116,6 +119,9 @@ function AuthorInventory(){
           <AuthorAvailableInventory
             bookSales={inventories.bookInventories}
             selectedBookId={selectedBookId}/>)}
+        {isAuthorTrialInventoryOpen && (
+          <AuthorTrialInventory />
+        )}
       </div>
     </div>
     </>

@@ -1,9 +1,13 @@
 import "./ScopeSelector.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faShop, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
-import { useEffect } from "react";
+import { useState } from "react";
 
 function ScopeSelector({scope, setScope}) {
+  const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
+  const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
+  const [isCountryTooltipOpen, setCountryTooltipOpen] = useState(false);
+
   function determineLeft() {
     switch (scope) {
       case "book":
@@ -20,15 +24,27 @@ function ScopeSelector({scope, setScope}) {
       <FontAwesomeIcon
         icon={faBook}
         className={scope === "book" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("book")} />
+        onClick={() => setScope("book")}
+        onMouseEnter={() => setBookTooltipOpen(true)}
+        onMouseLeave={() => setBookTooltipOpen(false)} />
+      {isBookTooltipOpen && (
+        <div className="scope-selector-tooltip-libro">Libro</div>)}
       <FontAwesomeIcon
         icon={faShop}
         className={scope === "bookstore" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("bookstore")} />
+        onClick={() => setScope("bookstore")}
+        onMouseEnter={() => setBookstoreTooltipOpen(true)}
+        onMouseLeave={() => setBookstoreTooltipOpen(false)} />
+      {isBookstoreTooltipOpen && (
+        <div className="scope-selector-tooltip-libreria">Librería</div>)}
       <FontAwesomeIcon
         icon={faEarthAmericas}
         className={scope === "country" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("country")} />
+        onClick={() => setScope("country")}
+        onMouseEnter={() => setCountryTooltipOpen(true)}
+        onMouseLeave={() => setCountryTooltipOpen(false)} />
+      {isCountryTooltipOpen && (
+        <div className="scope-selector-tooltip-pais">País</div>)}
       <div
         className="scope-selector-slider"
         style={{ left: `${determineLeft()}`}}></div>

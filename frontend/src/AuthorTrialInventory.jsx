@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import XAxis from "./XAxis";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 
@@ -61,7 +60,7 @@ function AuthorTrialInventory({selectedBookId}) {
     // first pass on filtering the data if a book is selected
     let bookFilterData;
     if (selectedBookId) {
-      bookFilterData = data.filter(inventory => inventory.book.id !== selectedBookId);
+      bookFilterData = data.filter(inventory => inventory.book.id === selectedBookId);
     } else {
       bookFilterData = data;
     }
@@ -112,7 +111,13 @@ function AuthorTrialInventory({selectedBookId}) {
 
   useEffect(() => {
     if (selectedBookId) {
-      filterData(data, "bookstore", selectedBookId);
+      if (scope === "book" || scope === "bookstore") {
+        setScope("bookstore");
+        filterData(data, "bookstore", selectedBookId);
+      } else {
+        setScope("country");
+        filterData(data, "country", selectedBookId);
+      }
     } else {
       filterData(data, scope, selectedBookId);
     }

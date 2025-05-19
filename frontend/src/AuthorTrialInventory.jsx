@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 
-function AuthorTrialInventory({selectedBookId}) {
+function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [max, setMax] = useState(0);
@@ -22,9 +22,6 @@ function AuthorTrialInventory({selectedBookId}) {
         const parsedData = await response.json();
         filterData(parsedData, scope, selectedBookId);
         setData(parsedData);
-        // const sorted = filteredData.sort((a, b) => b[1].initial - a[1].initial);
-        // setFilteredData(sorted);
-        // setMax(sorted[0][1].initial);
       };
 
     } catch (error) {
@@ -55,8 +52,7 @@ function AuthorTrialInventory({selectedBookId}) {
         return inventory.country;
       }
     }
-    // console.log("selectedBookId", selectedBookId);
-    // console.log("data", data);
+
     // first pass on filtering the data if a book is selected
     let bookFilterData;
     if (selectedBookId) {
@@ -64,7 +60,6 @@ function AuthorTrialInventory({selectedBookId}) {
     } else {
       bookFilterData = data;
     }
-    console.log("bookFilteredData", bookFilterData);
 
     let results = {};
     for (const inventory of bookFilterData) {
@@ -128,7 +123,8 @@ function AuthorTrialInventory({selectedBookId}) {
     <div className="author-inventory-global">
       <ScopeSelector
         scope={scope}
-        setScope={setScope}/>
+        setScope={setScope}
+        setSelectedBookId={setSelectedBookId}/>
       {filteredData && filteredData.map((dataPoint, index) => (
         <OverlappingHorizontalGraphLines
           key={index}

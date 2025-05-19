@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faShop, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
 import { useState } from "react";
 
-function ScopeSelector({scope, setScope}) {
+function ScopeSelector({scope, setScope, setSelectedBookId}) {
   const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
   const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
   const [isCountryTooltipOpen, setCountryTooltipOpen] = useState(false);
@@ -24,7 +24,10 @@ function ScopeSelector({scope, setScope}) {
       <FontAwesomeIcon
         icon={faBook}
         className={scope === "book" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("book")}
+        onClick={() => {
+          setScope("book");
+          setSelectedBookId('');
+        }}
         onMouseEnter={() => setBookTooltipOpen(true)}
         onMouseLeave={() => setBookTooltipOpen(false)} />
       {isBookTooltipOpen && (

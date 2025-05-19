@@ -1,8 +1,11 @@
 import "./OverlappingHorizontalGraphLines.scss";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
   const [displayOrder, setDisplayOrder] = useState({});
+  const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
+  const titleRef = useRef();
+  const [isEllipsed, setEllipsed] = useState(false);
 
   // Getting the index in descending order for our values
   // so that we can map to z-index
@@ -38,36 +41,65 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
     return (number * 100 / max)
   }
 
+  useEffect(() => {
+    console.log(isTitleTooltipOpen)
+  }, [isTitleTooltipOpen]);
+
+  // make sure we display a tooltip only if the text is ellipsed
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (titleRef.current) {
+        if (titleRef.current.scrollWidth > titleRef.current.clientWidth) {
+          setEllipsed(true);
+        }
+      }
+    })
+  }, []);
+
   return(
-    <div className="overlapping-horizontal-graph-lines">
-      <div className="ohgl-title">{title} - {initial}</div>
-        <div className="ohgl-actual-lines">
-        {initial > 0 && (
-          <div
-            className="ohgl-initial"
-            style={{
-              width: `${getPercent(initial, "initial", max)}%`,
-              zIndex:`${displayOrder.initial}`}}>
-            {initial - sold - given}
-          </div>
-        )}
-        {sold > 0 && (
-          <div
-            className="ohgl-sold"
-            style={{
-              width: `${getPercent(sold, "sold", max)}%`,
-              zIndex:`${displayOrder.sold}`}}>
-            {sold}
-          </div>)}
-        {given > 0 && (
-          <div
-            className="ohgl-given"
-            style={{
-              width: `${getPercent(given, "given", max)}%`,
-              zIndex:`${displayOrder.given}`}}>
-            {given}
-          </div>)}
+    <div className="ohgl-global">
+      <div className="ohgl-title-container"
+        onMouseEnter={() => setTitleTooltipOpen(true)}
+        onMouseLeave={() => setTitleTooltipOpen(false)}>
+        <div className="ohgl-title2"
+          ref={titleRef}>
+          {title}
         </div>
+        {isTitleTooltipOpen && isEllipsed && (
+          <div className="ohgl-tooltip-title">{title}</div>
+        )}
+      </div>
+      <div className="overlapping-horizontal-graph-lines">
+        {/* <div className="ohgl-title">{title} - {initial}</div> */}
+
+          <div className="ohgl-actual-lines">
+          {initial > 0 && (
+            <div
+              className="ohgl-initial"
+              style={{
+                width: `${getPercent(initial, "initial", max)}%`,
+                zIndex:`${displayOrder.initial}`}}>
+              {initial - sold - given}
+            </div>
+          )}
+          {sold > 0 && (
+            <div
+              className="ohgl-sold"
+              style={{
+                width: `${getPercent(sold, "sold", max)}%`,
+                zIndex:`${displayOrder.sold}`}}>
+              {sold}
+            </div>)}
+          {given > 0 && (
+            <div
+              className="ohgl-given"
+              style={{
+                width: `${getPercent(given, "given", max)}%`,
+                zIndex:`${displayOrder.given}`}}>
+              {given}
+            </div>)}
+          </div>
+      </div>
     </div>
   )
 }

@@ -15,7 +15,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
       case "bookstore":
         return "34px";
       case "country":
-        return "67px";
+        return "66px";
     }
   }
 

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
+import "./AuthorTrialInventory.scss";
 
 function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
+  const [selectedBookName, setSelectedBookName] = useState("");
   const [max, setMax] = useState(0);
   const [scope, setScope] = useState("book");
 
@@ -61,6 +63,7 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
       bookFilterData = data;
     }
 
+    setSelectedBookName(bookFilterData[0].book.title);
     let results = {};
     for (const inventory of bookFilterData) {
       //get the correct groupBy with possibleScopes
@@ -94,14 +97,12 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
         }
       }
     }
-    // console.log("results", results);
 
     // storing it as a list instead of an object to be able to map
     const listResults = Object.entries(results);
     const sorted = listResults.sort((a, b) => b[1].initial - a[1].initial);
     setFilteredData(sorted);
     setMax(sorted[0][1].initial);
-    // return listResults;
   }
 
   useEffect(() => {
@@ -118,13 +119,31 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
     }
   }, [selectedBookId, scope, data]);
 
+  function displayScopeInTitle() {
+    const title = selectedBookId === "" ? "Todos los titulos" : selectedBookName;
+    switch (scope) {
+      case "book":
+        return `${title} por libro`;
+      case "bookstore":
+        return `${title} por librería`;
+      case "country":
+        return `${title} por país`;
+    }
+  }
+
+  useEffect(() => {
+    console.log(filteredData);
+  }, [filteredData]);
 
   return(
     <div className="author-inventory-global">
-      <ScopeSelector
-        scope={scope}
-        setScope={setScope}
-        setSelectedBookId={setSelectedBookId}/>
+      <div className="aig-scope-and-title">
+        <ScopeSelector
+          scope={scope}
+          setScope={setScope}
+          setSelectedBookId={setSelectedBookId}/>
+        <div className="aig-title"><h2>{displayScopeInTitle()}</h2></div>
+      </div>
       {filteredData && filteredData.map((dataPoint, index) => (
         <OverlappingHorizontalGraphLines
           key={index}

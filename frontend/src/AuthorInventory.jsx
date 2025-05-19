@@ -67,7 +67,6 @@ function AuthorInventory(){
   };
 
   useEffect(() => {
-    console.log(reset);
     if (selectedBookId === "") {
       setShowTotal(true);
       setReset(true);

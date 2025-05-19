@@ -29,6 +29,7 @@ function AuthorInventory(){
   const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
   const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
   const [isAuthorTrialInventoryOpen, setAuthorTrialInventoryOpen] = useState(false);
+  const [reset, setReset] = useState(false);
 
   useEffect(()=>{
     fetchInventories()
@@ -65,6 +66,14 @@ function AuthorInventory(){
     }
   };
 
+  useEffect(() => {
+    console.log(reset);
+    if (selectedBookId === "") {
+      setShowTotal(true);
+      setReset(true);
+    }
+  }, [selectedBookId]);
+
   return (
     <>
     <Navbar subNav={user && user.role} active={"inventario"} />
@@ -77,6 +86,8 @@ function AuthorInventory(){
                 <BookSelector
                   booksInventories={booksInventories}
                   onBookChange={handleBookChange}
+                  reset={reset}
+                  setReset={setReset}
                 />
               )}
           </div>
@@ -119,7 +130,8 @@ function AuthorInventory(){
             selectedBookId={selectedBookId}/>)}
         {isAuthorTrialInventoryOpen && (
           <AuthorTrialInventory
-            selectedBookId={selectedBookId}/>
+            selectedBookId={selectedBookId}
+            setSelectedBookId={setSelectedBookId}/>
         )}
       </div>
     </div>

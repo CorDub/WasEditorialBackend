@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './CustomDropdown.scss';
 
-const CustomDropdown = ({ options, defaultOption, onChange }) => {
+const CustomDropdown = ({ options, defaultOption, onChange, reset, setReset }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
   const dropdownRef = useRef(null);
@@ -24,6 +24,13 @@ const CustomDropdown = ({ options, defaultOption, onChange }) => {
     setIsOpen(false);
     onChange(option.value);
   };
+
+  useEffect(() => {
+    if (reset) {
+      setSelectedOption(defaultOption);
+      setReset(false);
+    }
+  }, [reset])
 
   return (
     <div className="custom-dropdown" ref={dropdownRef}>

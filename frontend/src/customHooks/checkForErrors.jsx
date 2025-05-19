@@ -2,6 +2,8 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
 
+  console.log("fieldRef", fieldRef);
+
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
       fieldRef.classList.remove("error-inputs");

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./AuthorTrialInventory.scss";
+import Legend from "./Legend";
 
 function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
   const [data, setData] = useState(null);
@@ -9,6 +10,16 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
   const [selectedBookName, setSelectedBookName] = useState("");
   const [max, setMax] = useState(0);
   const [scope, setScope] = useState("book");
+  const legendValues = [
+    ['Entregados al autor', '#57eafa'],
+    ['Vendidos', '#4E5981'],
+    ['Disponibles', '#E2E2E2'],
+  ]
+  const [legendDisplays, setLegendDisplays] = useState({
+    'Entregados al autor': true,
+    'Vendidos': true,
+    'Disponibles': true
+  });
 
   async function fetchAllAuthorInventories() {
     try {
@@ -131,9 +142,9 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
     }
   }
 
-  useEffect(() => {
-    console.log(filteredData);
-  }, [filteredData]);
+  // useEffect(() => {
+  //   console.log(filteredData);
+  // }, [filteredData]);
 
   return(
     <div className="author-inventory-global">
@@ -148,11 +159,15 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
         <OverlappingHorizontalGraphLines
           key={index}
           title={dataPoint[0]}
-          initial={dataPoint[1].initial}
-          sold={dataPoint[1].sold}
-          given={dataPoint[1].givenToAuthor}
+          initial={legendDisplays['Disponibles'] && dataPoint[1].initial}
+          sold={legendDisplays['Vendidos'] && dataPoint[1].sold}
+          given={legendDisplays['Entregados al autor'] && dataPoint[1].givenToAuthor}
           max={max} />))}
       {/* <XAxis max={max}/> */}
+      <Legend
+        values={legendValues}
+        displays={legendDisplays}
+        setDisplays={setLegendDisplays}/>
     </div>
   )
 }

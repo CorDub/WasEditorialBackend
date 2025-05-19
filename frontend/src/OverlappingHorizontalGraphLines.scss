@@ -1,5 +1,7 @@
 .overlapping-horizontal-graph-lines {
   padding: 0.5rem 0.5rem 0.5rem 0;
+  // position: relative;
+  width: 100%;
 }
 
 .ohgl-title {
@@ -12,6 +14,7 @@
   width: 100%;
   height: 25px;
   position: relative;
+  align-items: center;
 }
 
 .ohgl-initial {
@@ -19,9 +22,12 @@
   background-color: #E2E2E2;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
+  // border-radius: 15px;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   display: flex;
   justify-content: end;
+  align-items: center;
+  height: 30px;
 }
 
 .ohgl-sold {
@@ -29,10 +35,13 @@
   background-color: #4E5981;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
+  // border-radius: 15px;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   color: white;
   display: flex;
   justify-content: end;
+  align-items: center;
+  height: 30px;
 }
 
 .ohgl-given {
@@ -43,8 +52,48 @@
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   display: flex;
   justify-content: end;
+  align-items: center;
+  height: 30px;
 }
 
 .ohgl-lines-and-total {
   display: flex;
+}
+
+.ohgl-title-container {
+  border-radius: 15px;
+  background-color: #E2E2E2;
+  padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+  // width: 125px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  position: relative;
+}
+
+.ohgl-title2 {
+  color: black;
+  white-space: nowrap;
+  overflow-x: clip;
+  overflow-y: visible;
+  text-overflow: ellipsis;
+  width: 125px;
+
+}
+
+.ohgl-global {
+  display: flex;
+  align-items: center;
+}
+
+.ohgl-tooltip-title {
+  position: absolute;
+  top: -30px;
+  color: white;
+  background-color: #4e6cb3;
+  border-radius: 15px;
+  z-index: 10;
+  white-space: nowrap;
+  padding: 0.5rem;
 }

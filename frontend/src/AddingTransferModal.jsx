@@ -224,9 +224,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         if (errorsBookstore.length > 0) {
           errorsList.push(errorsBookstore);
         };
+        console.log("errorsBookstore", errorsBookstore);
       };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
+      console.log("quantityRef", quantityRef);
       const errorsQuantity = checkForErrors(
         "cantidad",
         bookstoresToTransfer[i].quantity,
@@ -236,6 +238,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       if (errorsQuantity.length > 0) {
         errorsList.push(errorsQuantity);
       };
+      console.log("errorsQuantity", errorsQuantity);
       totalQuantities += bookstoresToTransfer[i].quantity
 
       const countryRef = document.getElementById(`country-select-${i}`);
@@ -248,7 +251,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       if (errorsCountry.length > 0) {
         errorsList.push(errorsCountry);
       }
+      console.log("errorsCountry", errorsCountry);
     }
+
+    console.log("clickedRow.current", clickedRow.current);
 
     if (totalQuantities > clickedRow.current) {
       errorsList.push([`El total de las cantidades es superior a lo disponible.`]);

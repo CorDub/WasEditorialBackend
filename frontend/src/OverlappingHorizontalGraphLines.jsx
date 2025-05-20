@@ -80,6 +80,12 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
               style={{width: `${newLengths.given}%`}}>
               {given}
             </div>)}
+          {returns > 0 && (
+            <div
+              className="ohgl-returns"
+              style={{width: `${newLengths.returns}%`}}>
+              {returns}
+            </div>)}
           </div>
       </div>
     </div>

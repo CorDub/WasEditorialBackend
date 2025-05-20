@@ -216,7 +216,13 @@ function BookstoreInventory({
     },
     muiTableHeadCellProps: {
       sx: {
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
+        overflow: "visible",
+      }
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        overflow: "visible"
       }
     },
     muiTopToolbarProps: {

@@ -6,7 +6,8 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
-import { faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faPersonArrowUpFromLine } from "@fortawesome/free-solid-svg-icons";
+import { faPersonArrowDownToLine } from '@fortawesome/free-solid-svg-icons';
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -23,6 +24,13 @@ function TableActions ({
   const [y, setY] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState('');
   const [transferType, setTransferType] = useState('');
+  const [isEditTooltipOpen, setEditTooltipOpen] = useState(false);
+  const [isDeleteTooltipOpen, setDeleteTooltipOpen] = useState(false);
+  const [isSaleTooltipOpen, setSaleTooltipOpen ] = useState(false);
+  const [isSendTooltipOpen, setSendTooltipOpen ] = useState(false);
+  const [isReturnTooltipOpen, setReturnTooltipOpen ] = useState(false);
+  const [isGivenToAuthorTooltipOpen, setGivenToAuthorTooltipOpen ] = useState(false);
+  const [isReceivedFromAuthorTooltipOpen, setReceivedFromAuthorTooltipOpen ] = useState(false);
 
   useEffect(() => {
     if (row.original.bookstoreId === 3) {
@@ -87,6 +95,16 @@ function TableActions ({
     openModal("adding", row.original)
   }
 
+  function transferToAuthor() {
+    setModalType("transferToAuthor");
+    openModal("adding", row.original)
+  }
+
+  function transferFromAuthor() {
+    setModalType("transferFromAuthor");
+    openModal("adding", row.original);
+  }
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
@@ -99,36 +117,68 @@ function TableActions ({
           className="ta-button ta-edit"
           id={`ta-edit-${row.index}`}
           onClick={() => openModal("edit", row.original)}
-          onMouseEnter={() => toggleTooltip("Editar", `ta-edit-${row.index}`)}
-          onMouseLeave={() => toggleTooltip("Editar", `ta-edit-${row.index}`)}/>
+          onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+          onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+        {isEditTooltipOpen && (
+          <div className="ta-tooltip">Editar</div>)}
         <FontAwesomeIcon
           icon={faCircleXmark}
           className="ta-button ta-delete"
           id={`ta-delete-${row.index}`}
           onClick={() => openModal("delete", row.original)}
-          onMouseEnter={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}
-          onMouseLeave={() => toggleTooltip("Eliminar", `ta-delete-${row.index}`)}/>
+          onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+          onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+        {isDeleteTooltipOpen && (
+          <div className="ta-tooltip">Eliminar</div>)}
         {type && type === "inventory" &&
           <>
           <FontAwesomeIcon icon={faDollarSign}
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
-            onClick={addSale}/>
+            onClick={addSale}
+            onMouseEnter={() => setSaleTooltipOpen(!isSaleTooltipOpen)}
+            onMouseLeave={() => setSaleTooltipOpen(!isSaleTooltipOpen)}/>
+          {isSaleTooltipOpen && (
+            <div className="ta-tooltip">Añadir venta</div>)}
           {transferType === "send" ?
-            <FontAwesomeIcon icon={faArrowUp}
-              className='ta-button ta-transfer-send'
-              id={`ta-transfer-${row.index}`}
-              onClick={transfer}/>
+            <>
+              <FontAwesomeIcon icon={faArrowUp}
+                className='ta-button ta-transfer-send'
+                id={`ta-transfer-${row.index}`}
+                onClick={transfer}
+                onMouseEnter={() => setSendTooltipOpen(!isSendTooltipOpen)}
+                onMouseLeave={() => setSendTooltipOpen(!isSendTooltipOpen)}/>
+              {isSendTooltipOpen && (
+                <div className="ta-tooltip">Añadir entrega</div>)}
+            </>
             :
-            <FontAwesomeIcon icon={faArrowDown}
-              className='ta-button ta-transfer-return'
-              id={`ta-transfer-${row.index}`}
-              onClick={transfer}/>
+            <>
+              <FontAwesomeIcon icon={faArrowDown}
+                className='ta-button ta-transfer-return'
+                id={`ta-transfer-${row.index}`}
+                onClick={transfer}
+                onMouseEnter={() => setReturnTooltipOpen(!isReturnTooltipOpen)}
+                onMouseLeave={() => setReturnTooltipOpen(!isReturnTooltipOpen)}/>
+              {isReturnTooltipOpen && (
+                <div className="ta-tooltip">Añadir devolución</div>)}
+            </>
           }
-          <FontAwesomeIcon icon={faArrowRightArrowLeft}
+          <FontAwesomeIcon icon={faPersonArrowUpFromLine}
             className='ta-button ta-givenToAuthor'
             id={`ta-transfer-${row.index}`}
-            onClick={transfer}/>
+            onClick={transferToAuthor}
+            onMouseEnter={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}
+            onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
+          {isGivenToAuthorTooltipOpen && (
+            <div className="ta-tooltip">Añadir entrega a autor</div>)}
+          <FontAwesomeIcon icon={faPersonArrowDownToLine}
+            className='ta-button ta-receivedFromAuthor'
+            id={`ta-transfer-${row.index}`}
+            onClick={transferFromAuthor}
+            onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
+            onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
+          {isReceivedFromAuthorTooltipOpen && (
+            <div className="ta-tooltip">Añadir entrega de autor</div>)}
           </>
         }
       </div>

@@ -72,7 +72,8 @@ function InventoriesList() {
         position: "fixed",
         top: "60px",
         left: "10px",
-        width: "99vw"
+        width: "99vw",
+        zIndex: "0",
       }
     },
     muiTableBodyRowProps: {

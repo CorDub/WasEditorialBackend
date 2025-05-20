@@ -2,6 +2,9 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
 
+  console.log("fieldName", fieldName);
+  console.log("fieldValue", fieldValue);
+  console.log("fieldExpectations", fieldExpectations);
   console.log("fieldRef", fieldRef);
 
   if (fieldRef instanceof HTMLElement) {

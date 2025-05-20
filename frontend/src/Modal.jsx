@@ -13,6 +13,8 @@ import DeleteImpressionModal from './DeleteImpressionModal';
 import AddingTransferModal from './AddingTransferModal';
 import EditTransferModal from './EditTransferModal';
 import DeleteTransferModal from './DeleteTransferModal';
+import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
+import AddingTransferFromAuthorModal from './AddingTransferToAuthorModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -40,6 +42,12 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
       adding: AddingTransferModal,
       edit: EditTransferModal,
       delete: DeleteTransferModal
+    },
+    transferToAuthor: {
+      adding: AddingTransferToAuthorModal,
+    },
+    transferFromAuthor: {
+      adding: AddingTransferFromAuthorModal,
     }
   };
 

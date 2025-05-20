@@ -26,6 +26,7 @@
   z-index: 0;
   transition: transform 0.2s, opacity 0.2s;
   transform: translateX(-10px);
+  position: relative
 }
 
 .invisible {
@@ -53,6 +54,16 @@
   }
 }
 
+.ta-tooltip {
+  background-color: #4e6cb3;
+  position: absolute;
+  padding: 0.5rem;
+  top: -40px;
+  z-index: 9999;
+  color: white;
+  border-radius: 15px;
+}
+
 .ta-delete {
   &:hover {
     cursor: pointer;
@@ -78,5 +89,19 @@
   &:hover {
     cursor: pointer;
     color: red;
+  }
+}
+
+.ta-givenToAuthor {
+  &:hover {
+    cursor: pointer;
+    color: #4E6CB3;
+  }
+}
+
+.ta-receivedFromAuthor {
+  &:hover {
+    cursor: pointer;
+    color: #4E6CB3;
   }
 }

@@ -17,11 +17,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
-  const [deliverToAuthor, setDeliverToAuthor] = useState(false);
-  const [note, setNote] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState(null);
-  const [place, setPlace] = useState('');
-  const [person, setPerson] = useState('');
   const countries = [
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -167,6 +162,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     if (transferType === "return") {
       soFar[input_index]["name"] = 'Plataforma Was';
       soFar[input_index]["bookstoreId"] = 3;
+      soFar[input_index]["country"] = "México";
     };
 
     setBookstoresToTransfer(soFar);
@@ -213,7 +209,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     // send everything to global function checkForErrrors
     // if the result come back positive, add all errors to the list
     for (let i = 0; i < bookstoresToTransfer.length; i++) {
-      if (transferType === "send" && !deliverToAuthor) {
+      if (transferType === "send") {
         const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
         const errorsBookstore = checkForErrors(
           "librería",
@@ -225,6 +221,18 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           errorsList.push(errorsBookstore);
         };
         console.log("errorsBookstore", errorsBookstore);
+
+        const countryRef = document.getElementById(`country-select-${i}`);
+        const errorsCountry = checkForErrors(
+          "país",
+          bookstoresToTransfer[i].country,
+          expectationsCountry,
+          countryRef
+        )
+        if (errorsCountry.length > 0) {
+          errorsList.push(errorsCountry);
+        }
+        console.log("errorsCountry", errorsCountry);
       };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
@@ -240,21 +248,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       };
       console.log("errorsQuantity", errorsQuantity);
       totalQuantities += bookstoresToTransfer[i].quantity
-
-      const countryRef = document.getElementById(`country-select-${i}`);
-      const errorsCountry = checkForErrors(
-        "país",
-        bookstoresToTransfer[i].country,
-        expectationsCountry,
-        countryRef
-      )
-      if (errorsCountry.length > 0) {
-        errorsList.push(errorsCountry);
-      }
-      console.log("errorsCountry", errorsCountry);
     }
-
-    console.log("clickedRow.current", clickedRow.current);
 
     if (totalQuantities > clickedRow.current) {
       errorsList.push([`El total de las cantidades es superior a lo disponible.`]);
@@ -286,10 +280,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             inventoryFromId: clickedRow.id,
             bookId: clickedRow.bookId,
             type: transferType,
-            note: note,
-            deliveryDate: deliveryDate,
-            place: place,
-            person: person,
             country: bookstoresToTransfer[i].country
           }),
         });
@@ -322,14 +312,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       <form
         onSubmit={handleSubmit}
         className="global-form">
-        {transferType === "send" && !deliverToAuthor ? (
+        {transferType === "send" ? (
           <>
-          <div className="transfer-deliver-to-author">
-            <p>Entrega al autor?</p>
-            <input
-              type="checkbox"
-              onChange={() => setDeliverToAuthor(!deliverToAuthor)}/>
-          </div>
           {bookstoresToTransfer.map((bookstore, index) => (
             <div
               key={index}
@@ -414,26 +398,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               id={`quantity-select-0`}
               onChange={(e) => updateQuantity(e, 0)}>
             </input>
-            <input
-              type="date"
-              placeholder="Fecha de entrega"
-              className="global-input"
-              onChange={(e) => setDeliveryDate(e.target.value)}/>
-            <input
-              type="text"
-              placeholder="Lugar (opcional)"
-              className="global-input"
-              onChange={(e) => setPlace(e.target.value)}/>
-            <input
-              type="text"
-              placeholder="Persona (opcional)"
-              className="global-input"
-              onChange={(e) => setPerson(e.target.value)}/>
-            <input
-              type="text"
-              placeholder="Comentario para el autor (opcional)"
-              className="global-input"
-              onChange={(e) => setNote(e.target.value)}/>
           </>
         }
 

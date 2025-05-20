@@ -5,6 +5,12 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
   const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
   const titleRef = useRef();
   const [isEllipsed, setEllipsed] = useState(false);
+  const [newLengths, setNewLengths] = useState({
+    current: 0,
+    returns: 0,
+    sold: 0,
+    given: 0
+  })
 
   function getLength(type, max) {
     switch (type) {
@@ -27,8 +33,22 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
           setEllipsed(true);
         }
       }
+
+      const newLengths = {
+        current: getLength(current, max),
+        returns: getLength(returns, max),
+        sold: getLength(sold, max),
+        given: getLength(given, max)
+      }
+      // newLengths.current = getLength(current, max);
+      // newLengths.current = getLength(current, max);
+      // newLengths.sold = getLength(sold, max);
+      // newLengths.given = getLength(given, max);
+      setNewLengths(newLengths);
     })
-  }, []);
+  }, [sold, given, current, returns, max]);
+
+  console.log(newLengths);
 
   return(
     <div className="ohgl-global">
@@ -48,20 +68,20 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
           {current > 0 && (
             <div
               className="ohgl-current"
-              style={{width: `${getLength(current, max)}%`}}>
+              style={{width: `${newLengths.current}%`}}>
               {current}
             </div>
           )}
           {sold > 0 && (
             <div
               className="ohgl-sold"
-              style={{width: `${getLength(sold, max)}%`}}>
+              style={{width: `${newLengths.sold}%`}}>
               {sold}
             </div>)}
           {given > 0 && (
             <div
               className="ohgl-given"
-              style={{width: `${getLength(given, max)}%`}}>
+              style={{width: `${newLengths.given}%`}}>
               {given}
             </div>)}
           </div>

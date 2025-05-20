@@ -6,6 +6,7 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -124,6 +125,10 @@ function TableActions ({
               id={`ta-transfer-${row.index}`}
               onClick={transfer}/>
           }
+          <FontAwesomeIcon icon={faArrowRightArrowLeft}
+            className='ta-button ta-givenToAuthor'
+            id={`ta-transfer-${row.index}`}
+            onClick={transfer}/>
           </>
         }
       </div>

@@ -22,12 +22,41 @@
   background-color: #E2E2E2;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
-  // border-radius: 15px;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   display: flex;
   justify-content: end;
   align-items: center;
   height: 30px;
+  z-index: 1;
+}
+
+.ohgl-current {
+  position: absolute;
+  background-color: #E2E2E2;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  height: 30px;
+  z-index: 2;
+  transition: 0.3s;
+}
+
+.ohgl-returns {
+  position: absolute;
+  background-color: black;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  height: 30px;
+  color: white;
+  z-index: 3;
+  transition: 0.3s;
 }
 
 .ohgl-sold {
@@ -35,13 +64,14 @@
   background-color: #4E5981;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
-  // border-radius: 15px;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   color: white;
   display: flex;
   justify-content: end;
   align-items: center;
   height: 30px;
+  z-index: 4;
+  transition: 0.3s;
 }
 
 .ohgl-given {
@@ -54,6 +84,8 @@
   justify-content: end;
   align-items: center;
   height: 30px;
+  z-index: 5;
+  transition: 0.3s;
 }
 
 .ohgl-lines-and-total {
@@ -64,7 +96,6 @@
   border-radius: 15px;
   background-color: #E2E2E2;
   padding: 0.1rem 0.5rem 0.1rem 0.5rem;
-  // width: 125px;
   height: 30px;
   display: flex;
   align-items: center;

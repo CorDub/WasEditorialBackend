@@ -1,49 +1,23 @@
 import "./OverlappingHorizontalGraphLines.scss";
 import { useState, useEffect, useRef } from "react";
 
-function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
-  const [displayOrder, setDisplayOrder] = useState({});
+function OverlappingHorizontalGraphLines({title, initial, sold, given, current, returns, max}) {
   const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
   const titleRef = useRef();
   const [isEllipsed, setEllipsed] = useState(false);
 
-  // Getting the index in descending order for our values
-  // so that we can map to z-index
-  // and make sure the smallest value is displayed on top of the others
-  useEffect(() => {
-    let displayOrder = {};
-    let values = [initial, given, sold];
-    values.sort((a, b) => b - a);
-
-    for (const index in values) {
-      if (values[index] === initial) {
-        displayOrder['initial'] = index;
-      };
-
-      if (values[index] === sold) {
-        displayOrder['sold'] = index;
-      };
-
-      if (values[index] === given) {
-        displayOrder['given'] = index;
-      };
+  function getLength(type, max) {
+    switch (type) {
+      case current:
+        return ((current + sold + returns + given) * 100) / max
+      case returns:
+        return ((given + sold + returns) * 100) / max
+      case sold:
+        return ((given + sold) * 100) / max
+      case given:
+        return (given * 100) / max
     }
-
-    setDisplayOrder(displayOrder);
-  }, [initial, sold, given])
-
-  function getPercent(number, name, max) {
-    if (name === "sold" && displayOrder[name] === "1") {
-      return ((number + given) * 100 / max)
-    } else if (name === "given" && displayOrder[name] === "1") {
-      return ((number + sold) * 100 / max)
-    }
-    return (number * 100 / max)
   }
-
-  useEffect(() => {
-    console.log(isTitleTooltipOpen)
-  }, [isTitleTooltipOpen]);
 
   // make sure we display a tooltip only if the text is ellipsed
   useEffect(() => {
@@ -70,32 +44,24 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, max}) {
         )}
       </div>
       <div className="overlapping-horizontal-graph-lines">
-        {/* <div className="ohgl-title">{title} - {initial}</div> */}
-
           <div className="ohgl-actual-lines">
-          {initial > 0 && (
+          {current > 0 && (
             <div
-              className="ohgl-initial"
-              style={{
-                width: `${getPercent(initial, "initial", max)}%`,
-                zIndex:`${displayOrder.initial}`}}>
-              {initial - sold - given}
+              className="ohgl-current"
+              style={{width: `${getLength(current, max)}%`}}>
+              {current}
             </div>
           )}
           {sold > 0 && (
             <div
               className="ohgl-sold"
-              style={{
-                width: `${getPercent(sold, "sold", max)}%`,
-                zIndex:`${displayOrder.sold}`}}>
+              style={{width: `${getLength(sold, max)}%`}}>
               {sold}
             </div>)}
           {given > 0 && (
             <div
               className="ohgl-given"
-              style={{
-                width: `${getPercent(given, "given", max)}%`,
-                zIndex:`${displayOrder.given}`}}>
+              style={{width: `${getLength(given, max)}%`}}>
               {given}
             </div>)}
           </div>

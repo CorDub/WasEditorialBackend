@@ -1,6 +1,11 @@
 import "./Legend.scss";
 
 function Legend({values, displays, setDisplays}) {
+  const valuesToDisplay = {
+    0: "givenToAuthor",
+    1: "sold",
+    2: "current"
+  }
 
   return(
     <div className="legend-box">
@@ -11,12 +16,12 @@ function Legend({values, displays, setDisplays}) {
           className="legend-value">
           <div
             className='legend-value-square'
-            style={displays[value[0]]
+            style={displays[valuesToDisplay[index]]
               ? {backgroundColor: `${value[1]}`}
               : {backgroundColor: "#f8f9fa", border: `1px solid ${value[1]}`}}
             onClick={() => setDisplays(prev => ({
               ...prev,
-              [value[0]]: !displays[value[0]]
+              [valuesToDisplay[index]]: !displays[valuesToDisplay[index]]
             }))}>
           </div>
           <div className="legend-value-name">{value[0]}</div>

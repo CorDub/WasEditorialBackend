@@ -40,13 +40,9 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
         sold: getLength(sold, max),
         given: getLength(given, max)
       }
-      // newLengths.current = getLength(current, max);
-      // newLengths.current = getLength(current, max);
-      // newLengths.sold = getLength(sold, max);
-      // newLengths.given = getLength(given, max);
       setNewLengths(newLengths);
     })
-  }, [sold, given, current, returns, max]);
+  }, [max]);
 
   console.log(newLengths);
 

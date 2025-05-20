@@ -116,48 +116,7 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
       }
     }
 
-    // let newMaxKey = "initial";
-    // // second pass on filtering based on legendDisplays
-    // if (legendDisplays) {
-    //   // make sure one of the options has been turned off
-    //   // if not we go back to the initial situation
-    //   let allTrue = true;
-    //   for (const display of Object.values(legendDisplays)) {
-    //     if (display === false) {
-    //       allTrue = false;
-    //     }
-    //   }
-    //   if (allTrue) {
-    //     newMaxKey = "initial";
-    //   } else {
-    //     const legendDisplaysList = Object.entries(legendDisplays);
-    //     let maxes = {
-    //       current: 0,
-    //       sold: 0,
-    //       givenToAuthor: 0,
-    //       returns: 0
-    //     }
-    //     for (const display of legendDisplaysList) {
-    //       if (display[1] === true) {
-    //         for (const result of Object.entries(results)) {
-    //           if (result[1][display[0]] > maxes[display[0]]) {
-    //             maxes[display[0]] = result[1][display[0]]
-    //           }
-    //         }
-    //       }
-    //     }
-
-    //     const newMax = Math.max(...Object.values(maxes));
-    //     for (const max of Object.entries(maxes)) {
-    //       if (max[1] === newMax) {
-    //         newMaxKey = max[0];
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-    // console.log("results", results);
-
+    // second filtering pass based on selectedDisplays
     let generalMax = 0;
     let keyList = [];
     if (legendDisplays) {

@@ -206,7 +206,7 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
           sold={legendDisplays['sold'] && dataPoint[1].sold}
           given={legendDisplays['givenToAuthor'] && dataPoint[1].givenToAuthor}
           current={legendDisplays['current'] && dataPoint[1].current}
-          returns={dataPoint[1].returns}
+          returns={legendDisplays['returns'] && dataPoint[1].returns}
           max={max} />))}
       <Legend
         values={legendValues}

@@ -671,6 +671,7 @@ router.get('/inventories', async (req, res) => {
               select: {
                 id: true,
                 quantity: true,
+                note: true,
                 createdAt: true
               }
             }
@@ -1060,11 +1061,13 @@ router.post('/impression', async (req, res) => {
   try {
     const quantity = parseInt(req.body.quantity);
     const id = parseInt(req.body.id);
+    const note = (req.body.note);
 
     const createdImpression = await prisma.impression.create({
       data: {
         bookId: id,
-        quantity: quantity
+        quantity: quantity,
+        note: note
       }
     })
 

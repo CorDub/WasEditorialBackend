@@ -1,7 +1,6 @@
 import Impression from "./Impression";
 
 function ImpressionsList({impressions, setModalType, openModal, book}) {
-  console.log(impressions);
 
   return(
     <div className="impressions-list">

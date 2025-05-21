@@ -21,7 +21,7 @@ export const prisma = new PrismaClient({
 // Middleware
 
 const allowedOrigins = [
-  "https://waseditorialbackend.onrender.com/",
+  "https://plataformawaseditorialstaging.onrender.com/",
   "http://localhost:5173"
 ]
 app.use(cors({

@@ -6,6 +6,7 @@ function InventoriesProvider({ children }) {
   const [inventories, setInventories] = useState("");
 
   async function fetchInventories() {
+    console.log(baseURL);
     try {
       const response = await fetch(`${baseURL}/admin/inventories`, {
         method: "GET",

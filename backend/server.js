@@ -19,6 +19,11 @@ export const prisma = new PrismaClient({
 // redisClient.connect().then(() => console.log("Connected to Redis"));
 
 // Middleware
+
+const allowedOrigins = [
+  "https://waseditorialbackend.onrender.com/",
+  "http://localhost:5173"
+]
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
@@ -115,5 +120,5 @@ app.get('/', (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
+  console.log(`Backend running on ${PORT}`);
 });

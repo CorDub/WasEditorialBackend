@@ -44,8 +44,6 @@ function OverlappingHorizontalGraphLines({title, initial, sold, given, current, 
     })
   }, [max]);
 
-  console.log(newLengths);
-
   return(
     <div className="ohgl-global">
       <div className="ohgl-title-container"

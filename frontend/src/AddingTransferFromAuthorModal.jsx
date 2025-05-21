@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -50,8 +51,6 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   }
 
   async function sendToServer() {
-    const newNote = "Entrega del autor - " + note;
-    console.log(note);
     try {
       const response = await fetch('http://localhost:3000/admin/impression', {
         method: "POST",
@@ -62,7 +61,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         body: JSON.stringify({
           quantity: quantity,
           id: clickedRow.bookId,
-          note: "Entrega del autor - " + note
+          note: "- Entrega del autor - " + note
         }),
       });
 
@@ -90,6 +89,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         <p>Nueva entrega del autor</p>
         <p>{clickedRow && clickedRow.book.title }</p>
       </div>
+      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor es considerada como una impression y sera visible en las impresiones</p>
       <form
         onSubmit={handleSubmit}
         className="global-form">

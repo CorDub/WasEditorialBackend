@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import adminRoutes from "./routes/adminRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
+import('./prisma/seed.js');
 
 dotenv.config();
 const app = express();

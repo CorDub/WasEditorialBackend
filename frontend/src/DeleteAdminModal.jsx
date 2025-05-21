@@ -1,11 +1,12 @@
 import useCheckSuperAdmin from "./customHooks/useCheckSuperAdmin";
 
 function DeleteAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckSuperAdmin();
 
   async function deleteAdmin() {
     try {
-      const response = await fetch(`http://localhost:3000/superadmin/admin?user_id=${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/superadmin/admin?user_id=${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

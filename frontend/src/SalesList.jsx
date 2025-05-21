@@ -8,6 +8,7 @@ import UserContext from "./UserContext";
 
 function SalesList () {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -161,7 +162,7 @@ function SalesList () {
 
   async function fetchSales() {
     try {
-      const response = await fetch('http://localhost:3000/admin/sales', {
+      const response = await fetch(`${baseURL}/admin/sales`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

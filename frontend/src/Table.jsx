@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import "./Table.scss";
 
 function Table({data, activeMonth}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [monthData, setMonthData] = useState(null);
   const [headerList, setHeaderList] = useState([
     "Canal",
@@ -116,7 +117,7 @@ function Table({data, activeMonth}) {
   // Get data for the "in tienda" column
   async function fetchTiendaData() {
     try {
-      const response = await fetch(`http://localhost:3000/author/currentTienda?month=${data[activeMonth][0]}`, {
+      const response = await fetch(`${baseURL}/author/currentTienda?month=${data[activeMonth][0]}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

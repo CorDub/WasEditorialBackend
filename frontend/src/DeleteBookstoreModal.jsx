@@ -7,8 +7,9 @@ function DeleteBookstoreModal({ row, closeDeleteModal, pageIndex, globalFilter }
   useCheckAdmin();
 
   async function deleteBookstore() {
+    const baseURL = import.meta.env.VITE_API_URL || '';
     try {
-      const response = await fetch(`http://localhost:3000/admin/bookstore?bookstore_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/admin/bookstore?bookstore_id=${row.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

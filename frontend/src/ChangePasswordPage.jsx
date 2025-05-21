@@ -5,6 +5,7 @@ import ChangePasswordPageErrors from "./ChangePasswordPageErrors";
 import Alert from "./Alert";
 
 function ChangePasswordPage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [cs1, setCs1] = useState('');
   const [cs2, setCs2] = useState('');
   const location = useLocation();
@@ -20,7 +21,7 @@ function ChangePasswordPage() {
       return;
     };
 
-    const response = await fetch('http://localhost:3000/author/change_password', {
+    const response = await fetch(`${baseURL}/author/change_password`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"

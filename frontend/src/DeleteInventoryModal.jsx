@@ -2,10 +2,11 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteInventory() {
     try {
-      const response = await fetch(`http://localhost:3000/admin/inventory?inventory_id=${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/admin/inventory?inventory_id=${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

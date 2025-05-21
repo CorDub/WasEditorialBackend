@@ -3,10 +3,11 @@ import UserContext from "./UserContext";
 
 function UserProvider({ children }) {
   const [user, setUser] = useState("");
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function fetchUser() {
     try {
-      const response = await fetch(`http://localhost:3000/api/checkPermissions`, {
+      const response = await fetch(`${baseURL}/checkPermissions`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

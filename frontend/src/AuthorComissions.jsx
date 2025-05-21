@@ -8,6 +8,7 @@ import "./AuthorCommissions.scss"
 
 function AuthorCommissions() {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
@@ -15,7 +16,7 @@ function AuthorCommissions() {
 
   async function fetchAuthorBookSales() {
     try {
-      const response = await fetch("http://localhost:3000/author/monthlySales", {
+      const response = await fetch(`${baseURL}/author/monthlySales`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +40,7 @@ function AuthorCommissions() {
 
   async function fetchPayments() {
     try {
-      const response = await fetch("http://localhost:3000/author/payments", {
+      const response = await fetch(`${baseURL}/author/payments`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

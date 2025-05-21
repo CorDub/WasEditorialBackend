@@ -8,6 +8,7 @@ import UserContext from "./UserContext";
 import TableActions from "./TableActions";
 
 function InventoriesList() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
@@ -131,7 +132,7 @@ function InventoriesList() {
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
+      const response = await fetch(`${baseURL}/admin/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

@@ -6,13 +6,14 @@ import useCheckUser from "./customHooks/useCheckUser";
 
 function AuthorBookstoreInventory({selectedBookId}) {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
   const [selectedBookTitle, setSelectedBookTitle] = useState("Todos los titulos");
 
   async function fetchAuthorBookstoreInventories() {
     try{
-      const response = await fetch(`http://localhost:3000/author/bookstoreInventories?bookId=${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/author/bookstoreInventories?bookId=${selectedBookId}`, {
         method: "GET",
         headers: {
           "Content-Type": 'application/json',

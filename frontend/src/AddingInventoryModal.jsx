@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -73,7 +74,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/existingBooks', {
+      const response = await fetch(`${baseURL}/admin/existingBooks`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +96,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBookstores() {
     try {
-      const response = await fetch("http://localhost:3000/admin/existingBookstores", {
+      const response = await fetch(`${baseURL}/admin/existingBookstores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -234,7 +235,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventory', {
+      const response = await fetch(`${baseURL}/admin/inventory`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

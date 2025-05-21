@@ -9,6 +9,7 @@ function AddingImpressionModal({
     pageIndex,
     globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const quantityRef = useRef();
   const [quantity, setQuantity] = useState(null);
   const [errors, setErrors] = useState([]);
@@ -48,7 +49,7 @@ function AddingImpressionModal({
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/impression', {
+      const response = await fetch(`${baseURL}/admin/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

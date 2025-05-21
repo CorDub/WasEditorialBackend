@@ -3,13 +3,14 @@ import "./GivenToAuthorDetails.scss";
 import DeliveryToAuthorDetails from "./DeliveryToAuthorDetails";
 
 function GivenToAuthorDetails({selectedBookId}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const [bookData, setBookData] = useState(null);
   const [isBookDataOpen, setBookDataOpen] = useState(false);
 
   async function fetchRelevantTransfers() {
     try {
-      const response = await fetch("http://localhost:3000/author/givenToAuthorTransfers", {
+      const response = await fetch(`${baseURL}/author/givenToAuthorTransfers`, {
         method: "GET",
         headers: {
           "Content-Type": 'application/json',

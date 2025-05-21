@@ -6,6 +6,7 @@ import ErrorsList from "./ErrorsList";
 import Alert from './Alert';
 
 function ForgottenPasswordPage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [correo1, setCorreo1] = useState("")
   const [correo2, setCorreo2] = useState("")
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function ForgottenPasswordPage() {
         setErrors(prev => [...prev, "Los correos ingresados no eran los mismos."])
       }
 
-      const response = await fetch(`http://localhost:3000/api/user?email=${correo1}`, {
+      const response = await fetch(`${baseURL}/api/user?email=${correo1}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

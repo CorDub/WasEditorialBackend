@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [firstName, setFirstName] = useState(clickedRow.first_name);
   const [lastName, setLastName] = useState(clickedRow.last_name);
@@ -19,7 +20,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   async function sendToServer() {
     try {
       console.log(lastName);
-      const response = await fetch('http://localhost:3000/superadmin/admin', {
+      const response = await fetch(`${baseURL}/superadmin/admin`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

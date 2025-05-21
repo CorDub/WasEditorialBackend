@@ -6,6 +6,7 @@ import "./AuthorWasInventory.scss";
 
 function AuthorWasInventory({booksInventories, selectedBookId}) {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
   const [selectedBookTitle, setSelectedBookTitle] = useState('');
@@ -14,7 +15,7 @@ function AuthorWasInventory({booksInventories, selectedBookId}) {
 
   async function fetchAuthorBookstoreInventories() {
     try{
-      const response = await fetch("http://localhost:3000/author/wasInventories", {
+      const response = await fetch(`${baseURL}/author/wasInventories`, {
         method: "GET",
         headers: {
           "Content-Type": 'application/json',

@@ -15,6 +15,7 @@ import AuthorTrialInventory from "./AuthorTrialInventory";
 
 function AuthorInventory(){
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [inventories, setInventories] = useState("")
   const [booksInventories, setBooksInventories] = useState([])
@@ -38,7 +39,7 @@ function AuthorInventory(){
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/author/inventories', {
+      const response = await fetch(`${baseURL}/author/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

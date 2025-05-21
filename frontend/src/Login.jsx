@@ -7,6 +7,7 @@ import LoginError from './LoginError';
 import Alert from './Alert';
 
 function LoginPage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setUser } = useContext(UserContext);
@@ -36,7 +37,7 @@ function LoginPage() {
         return;
       }
 
-      const response = await fetch('/api/login', {
+      const response = await fetch(`${baseURL}/login`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

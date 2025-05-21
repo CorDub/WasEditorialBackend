@@ -9,6 +9,7 @@ import "./AddingTransferModal.scss"
 
 function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [bookstoresToTransfer, setBookstoresToTransfer] = useState([null]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [bookstoreNamesList, setBookstoresNamesList] = useState([]);
@@ -60,7 +61,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function fetchExistingBookstores() {
     try {
-      const response = await fetch('http://localhost:3000/admin/existingBookstores', {
+      const response = await fetch(`${baseURL}/admin/existingBookstores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -266,7 +267,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   async function sendToServer() {
     try {
       for (let i = 0; i < bookstoresToTransfer.length; i++) {
-        const response = await fetch('http://localhost:3000/admin/transfer', {
+        const response = await fetch(`${baseURL}/admin/transfer`, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',

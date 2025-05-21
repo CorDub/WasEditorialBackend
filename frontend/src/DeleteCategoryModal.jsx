@@ -2,10 +2,11 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteCategoryModal( {row, closeDeleteModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteCategory() {
     try {
-      const response = await fetch(`http://localhost:3000/admin/category?category_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/admin/category?category_id=${row.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

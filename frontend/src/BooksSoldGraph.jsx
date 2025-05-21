@@ -6,6 +6,7 @@ import useCheckUser from "./customHooks/useCheckUser";
 
 function BooksSoldGraph({bookSales, selectedBookId}) {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [booksListBySales, setBooksListBySales] = useState([]);
   const [max, setMax] = useState(0);
   const [bookstoreData, setBookstoreData] = useState(null);
@@ -31,7 +32,7 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
 
   async function fetchBookInventoriesByBookstore() {
     try {
-      const response = await fetch(`http://localhost:3000/author/bookInventories?bookId=${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/author/bookInventories?bookId=${selectedBookId}`, {
         method: "GET",
         headers: {
           'Content-Type': "application/json",

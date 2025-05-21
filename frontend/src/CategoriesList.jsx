@@ -10,6 +10,7 @@ import UserContext from './UserContext';
 
 function CategoriesList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
@@ -110,7 +111,7 @@ function CategoriesList() {
 
   async function fetchCategories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/categories', {
+      const response = await fetch(`${baseURL}/admin/categories`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

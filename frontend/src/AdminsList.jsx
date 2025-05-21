@@ -9,6 +9,7 @@ import TableActions from "./TableActions";
 
 function AdminsList() {
   useCheckSuperAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -132,7 +133,7 @@ function AdminsList() {
 
   async function fetchAdmins() {
     try {
-      const response = await fetch("http://localhost:3000/superadmin/admins", {
+      const response = await fetch(`${baseURL}/superadmin/admins`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

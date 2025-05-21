@@ -4,6 +4,7 @@ import AddingCategoryError from './AddingCategoryError';
 
 function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [tipo, setTipo] = useState('');
   const [regalias, setRegalias] = useState('');
@@ -13,7 +14,7 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/category', {
+      const response = await fetch(`${baseURL}/admin/category`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

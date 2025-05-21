@@ -4,6 +4,7 @@ import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 
 function EditAuthorModal({ row, closeEditModal, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [firstName, setFirstName] = useState(row.first_name);
   const [lastName, setLastName] = useState(row.last_name ? row.last_name : "");
@@ -48,7 +49,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
     });
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/admin/user', {
+      const response = await fetch(`${baseURL}/admin/user`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -194,7 +195,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
 
   async function fetchCategoryTypes() {
       try {
-        const response = await fetch('http://localhost:3000/admin/categories-type', {
+        const response = await fetch(`${baseURL}/admin/categories-type`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json"

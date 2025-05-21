@@ -4,6 +4,7 @@ import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
 function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckAdmin();
   const quantityRef = useRef();
   const [quantity, setQuantity] = useState(null);
@@ -44,7 +45,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/impression', {
+      const response = await fetch(`${baseURL}/admin/impression`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

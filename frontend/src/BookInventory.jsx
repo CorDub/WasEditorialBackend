@@ -15,6 +15,7 @@ function BookInventory({
     setBookInventoryOpen,
     setRetreat}) {
   useCheckAdmin()
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);

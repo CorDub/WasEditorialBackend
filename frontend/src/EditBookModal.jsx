@@ -7,6 +7,7 @@ import AddingBookErrorList from "./AddingBookErrorList";
 
 function EditBookModal({ row, closeEditModal, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [title, setTitle] = useState(row.title);
   const [pasta, setPasta] = useState(row.pasta);
@@ -21,7 +22,7 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
 
   async function fetchUsers() {
       try {
-        const response = await fetch('http://localhost:3000/admin/users', {
+        const response = await fetch(`${baseURL}/admin/users`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -64,7 +65,7 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
     // })
 
     try {
-      const response = await fetch('http://localhost:3000/admin/book', {
+      const response = await fetch(`${baseURL}/admin/book`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

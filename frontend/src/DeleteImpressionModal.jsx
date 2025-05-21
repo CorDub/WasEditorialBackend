@@ -2,10 +2,11 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteImpression() {
     try {
-      const response = await fetch(`http://localhost:3000/admin/impression?impression_id=${clickedRow.id}&book_id=${clickedRow.bookId}&quantity=${clickedRow.quantity}`, {
+      const response = await fetch(`${baseURL}/admin/impression?impression_id=${clickedRow.id}&book_id=${clickedRow.bookId}&quantity=${clickedRow.quantity}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

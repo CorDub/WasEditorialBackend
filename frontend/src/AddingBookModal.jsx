@@ -8,6 +8,7 @@ import AddingBookErrorList from "./AddingBookErrorList";
 
 function AddingBookModal({ closeAddingModal, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [title, setTitle] = useState('');
   const [pasta, setPasta] = useState('');
@@ -23,7 +24,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
 
   async function fetchUsers() {
     try {
-      const response = await fetch('http://localhost:3000/admin/users', {
+      const response = await fetch(`${baseURL}/admin/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -49,7 +50,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/admin/book', {
+      const response = await fetch(`${baseURL}/admin/book`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

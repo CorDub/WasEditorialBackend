@@ -2,10 +2,11 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
+
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
@@ -52,7 +53,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/impression', {
+      const response = await fetch(`${baseURL}/admin/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

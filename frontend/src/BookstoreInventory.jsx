@@ -17,6 +17,7 @@ function BookstoreInventory({
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()

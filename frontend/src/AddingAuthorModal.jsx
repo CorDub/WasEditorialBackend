@@ -4,6 +4,7 @@ import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
 function AddingAuthorModal({ closeAddingModal, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState(null);
@@ -43,7 +44,7 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
     const cat = await categories.find(cat => cat.type === category);
 
     try {
-      const response = await fetch('http://localhost:3000/admin/user', {
+      const response = await fetch(`${baseURL}/admin/user`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -207,7 +208,7 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
 
   async function fetchCategoryTypes() {
     try {
-      const response = await fetch('http://localhost:3000/admin/categories-type', {
+      const response = await fetch(`${baseURL}/admin/categories-type`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

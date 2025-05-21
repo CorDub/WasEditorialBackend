@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
@@ -44,7 +45,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
+      const response = await fetch(`${baseURL}/admin/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -193,7 +194,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       const chosenInventory = data.find(inventory => inventory.book.title === book && inventory.bookstore.name === bookstore);
       console.log(chosenInventory);
 
-      const response = await fetch('http://localhost:3000/admin/sale', {
+      const response = await fetch(`${baseURL}/admin/sale`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

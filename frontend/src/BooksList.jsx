@@ -10,6 +10,7 @@ import UserContext from './UserContext';
 
 function BooksList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
@@ -122,7 +123,7 @@ function BooksList() {
 
   async function fetchBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/book', {
+      const response = await fetch(`${baseURL}/admin/book`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

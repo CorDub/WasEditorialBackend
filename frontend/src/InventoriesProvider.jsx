@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import InventoriesContext from "./InventoriesContext";
 
 function InventoriesProvider({ children }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [inventories, setInventories] = useState("");
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
+      const response = await fetch(`${baseURL}/admin/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

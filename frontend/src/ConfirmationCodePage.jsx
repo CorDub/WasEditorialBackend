@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./ConfirmationCodePage.scss";
 
 function ConfirmationCodePage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [cc1, setConfirmationCode1] = useState(null);
   const [cc2, setConfirmationCode2] = useState(null);
   const [cc3, setConfirmationCode3] = useState(null);
@@ -24,7 +25,7 @@ function ConfirmationCodePage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/api/confirmation_code', {
+      const response = await fetch(`${baseURL}/api/confirmation_code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

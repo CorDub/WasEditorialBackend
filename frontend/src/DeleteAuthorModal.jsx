@@ -3,11 +3,12 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteAuthor(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/admin/user?user_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/admin/user?user_id=${row.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

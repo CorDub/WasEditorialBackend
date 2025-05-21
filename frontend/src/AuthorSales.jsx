@@ -8,6 +8,7 @@ import SalesContent from './SalesContent';
 
 function AuthorSales() {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [salesData, setSalesData] = useState(null);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -70,7 +71,7 @@ function AuthorSales() {
         endDate: dateRange.endDate
       });
 
-      const response = await fetch(`http://localhost:3000/author/sales?${queryParams}`, {
+      const response = await fetch(`${baseURL}/author/sales?${queryParams}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'

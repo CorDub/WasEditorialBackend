@@ -4,6 +4,7 @@ import AddingCategoryError from './AddingCategoryError';
 
 function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [tipo, setTipo] = useState(row.type);
   const [regalias, setRegalias] = useState(row.percentage_royalties);
   const [gestionTiendas, setGestionTiendas] = useState(row.percentage_management_stores);
@@ -12,7 +13,7 @@ function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/category', {
+      const response = await fetch(`${baseURL}http://localhost:3000/admin/category`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

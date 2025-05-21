@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/superadmin/admin', {
+      const response = await fetch(`${baseURL}/superadmin/admin`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

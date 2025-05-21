@@ -5,6 +5,7 @@ import "./AuthorTrialInventory.scss";
 import Legend from "./Legend";
 
 function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [selectedBookName, setSelectedBookName] = useState("");
@@ -29,7 +30,7 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
 
   async function fetchAllAuthorInventories() {
     try {
-      const response = await fetch("http://localhost:3000/author/completeInventory", {
+      const response = await fetch(`${baseURL}/author/completeInventory`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

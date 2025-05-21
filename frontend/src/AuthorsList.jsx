@@ -11,6 +11,7 @@ import Alert from './Alert';
 
 function AuthorsList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [fetchedData, setFetchedData] = useState([]);
   const data = useMemo(() => fetchedData, [fetchedData]);
   const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
@@ -195,7 +196,7 @@ function AuthorsList() {
 
   async function fetchUsers() {
     try {
-      const response = await fetch('http://localhost:3000/admin/users', {
+      const response = await fetch(`${baseURL}/admin/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

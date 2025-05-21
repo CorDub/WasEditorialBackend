@@ -5,6 +5,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
@@ -54,7 +55,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/transfer', {
+      const response = await fetch(`${baseURL}/admin/transfer`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

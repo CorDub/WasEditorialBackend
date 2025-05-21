@@ -9,6 +9,7 @@ import BookstoreInventory from "./BookstoreInventory";
 
 function InventoriesAreaDashboard() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const { user } = useContext(UserContext);
   const [currentQuantities, setCurrentQuantities] = useState([]);
@@ -265,7 +266,7 @@ function InventoriesAreaDashboard() {
 
   async function fetchInventories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
+      const response = await fetch(`${baseURL}/admin/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

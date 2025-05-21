@@ -17,11 +17,12 @@ function Navbar({
     setBookInventoryOpen,
     retreat,
     setRetreat }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   async function logout() {
-    const response = fetch("http://localhost:3000/api/logout", {
+    const response = fetch(`${baseURL}/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

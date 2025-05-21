@@ -4,6 +4,7 @@ import AddingBookstoreErrorList from './AddingBookstoreErrorList';
 
 function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [name, setName] = useState('');
   const [dealPercentage, setDealPercentage] = useState('');
@@ -15,7 +16,7 @@ function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
   async function sendToServer() {
 
     try {
-      const response = await fetch('http://localhost:3000/admin/bookstore', {
+      const response = await fetch(`${baseURL}/admin/bookstore`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

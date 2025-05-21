@@ -5,6 +5,7 @@ import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import Legend from "./Legend";
 
 function AuthorInventoryGlobal({bookSales, selectedBookId}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState(null);
   const [max, setMax] = useState(0);
   const legendValues = [
@@ -44,7 +45,7 @@ function AuthorInventoryGlobal({bookSales, selectedBookId}) {
 
   async function fetchAuthorBookInventories() {
     try{
-      const response = await fetch(`http://localhost:3000/author/bookInventories?bookId=${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/author/bookInventories?bookId=${selectedBookId}`, {
         method: "GET",
         headers: {
           "Content-Type": 'application/json',

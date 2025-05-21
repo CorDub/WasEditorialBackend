@@ -78,10 +78,10 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó crear una nueva transferencia.';
+        const alertMessage = 'No se pudó registrar una nueva entrega al autor.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        const alertMessage = `Una nueva transferencia ha sido creada.`;
+        const alertMessage = `Una nueva entrega al autor ha sido registrada.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
     } catch(error) {

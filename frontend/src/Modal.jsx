@@ -14,7 +14,7 @@ import AddingTransferModal from './AddingTransferModal';
 import EditTransferModal from './EditTransferModal';
 import DeleteTransferModal from './DeleteTransferModal';
 import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
-import AddingTransferFromAuthorModal from './AddingTransferToAuthorModal';
+import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {

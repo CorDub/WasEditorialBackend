@@ -36,6 +36,7 @@ function BookInventory({
   const inventoryTotalRef = useRef();
   const [tableTop, setTableTop] = useState([]);
 
+  // slides down the top of the table
   useEffect(() => {
     if (inventoryTotalRef.current) {
       setTableTop(inventoryTotalRef.current.getBoundingClientRect().height + 140);
@@ -263,6 +264,8 @@ function BookInventory({
     setData(sortedRelevantInventories);
     setImpressions(sortedRelevantInventories[0].book.impressions);
   }
+
+  console.log(data)
 
   useEffect(() => {
     requestAnimationFrame(() => {

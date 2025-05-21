@@ -92,7 +92,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva transferencia</p>
+        <p>Nueva entrega a autor</p>
         <p>{clickedRow && clickedRow.book.title }</p>
       </div>
       <form

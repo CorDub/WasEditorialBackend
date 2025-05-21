@@ -11,6 +11,8 @@ function Impression({impression, setModalType, openModal, book}) {
   const impressionGearRef = useRef();
   const [completeImpression, setCompleteImpression] = useState(null);
 
+  console.log(impression)
+
   useEffect(() =>{
     const date = new Date(impression.createdAt);
     const formattedDate = date.toLocaleDateString();
@@ -60,7 +62,7 @@ function Impression({impression, setModalType, openModal, book}) {
             onClick={openDeleteModal}/>
         </div>}
       <div className="impression-info">
-        {date} - {impression.quantity} copias
+        {date} - {impression.quantity} copias - {impression.note}
       </div>
     </div>
   )

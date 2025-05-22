@@ -1,7 +1,7 @@
 import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from "bcrypt";
-import authors from "../../helpers/authors.json" assert {type: 'json'};
-import books from "../../helpers/books.json" assert {type: 'json'}
+import authors from "./authors.json" assert {type: 'json'};
+import books from "./books.json" assert {type: 'json'}
 
 const prisma = new PrismaClient();
 

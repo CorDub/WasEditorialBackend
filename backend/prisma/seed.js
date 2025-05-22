@@ -1,9 +1,20 @@
 import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from "bcrypt";
-import authors from "./authors.json" assert {type: 'json'};
-import books from "./books.json" assert {type: 'json'}
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+// import authors from "./authors.json" assert {type: 'json'};
+// import books from "./books.json" assert {type: 'json'}
 
 const prisma = new PrismaClient();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const authorsRaw = await fs.readFile(path.join(__dirname, './authors.json'), 'utf-8');
+const booksRaw = await fs.readFile(path.join(__dirname, './books.json'), 'utf-8');
+
+const authors = JSON.parse(authorsRaw);
+const books = JSON.parse(booksRaw);
 
 async function main() {
   /// Create categories

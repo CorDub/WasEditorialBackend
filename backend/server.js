@@ -30,13 +30,17 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+const isStaging = process.env.NODE_ENV === "staging"
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: false
+    secure: isStaging,
+    sameSite: isStaging ? "none" : "lax"
   }
 }));
 

@@ -10,8 +10,11 @@ const prisma = new PrismaClient();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const authorsRaw = await fs.readFile(path.join(__dirname, './authors.json'), 'utf-8');
-const booksRaw = await fs.readFile(path.join(__dirname, './books.json'), 'utf-8');
+const authorsPath = path.join(__dirname, 'authors.json');
+const booksPath = path.join(__dirname, 'books.json');
+
+const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
+const booksRaw = await fs.readFile(booksPath, 'utf-8');
 
 const authors = JSON.parse(authorsRaw);
 const books = JSON.parse(booksRaw);

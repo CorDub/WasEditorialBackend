@@ -32,7 +32,10 @@ app.use(cors({
 app.use(express.json());
 
 const isStaging = process.env.NODE_ENV === "staging"
+console.log("isStaging", isStaging)
+console.log("SESSION_SECRET:", JSON.stringify(process.env.SESSION_SECRET));
 
+app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -69,6 +72,7 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
 app.use("/api", userRoutes);
 
 async function authenticateUser(req, res, next) {
+  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     return res.status(401).json({ error: "Unauthorized"});
   }
@@ -83,6 +87,7 @@ async function authenticateUser(req, res, next) {
 }
 
 async function authenticateAdmin(req, res, next) {
+  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     console.log("No user session");
     return res.status(401).json({ error: "Unauthorized"});
@@ -99,6 +104,7 @@ async function authenticateAdmin(req, res, next) {
 }
 
 async function authenticateSuperAdmin(req, res, next) {
+  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     console.log("No user session");
     return res.status(401).json({ error: "Unauthorized"});

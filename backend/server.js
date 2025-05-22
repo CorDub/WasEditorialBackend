@@ -8,7 +8,6 @@ import { PrismaClient } from "@prisma/client";
 import adminRoutes from "./routes/adminRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
-import('./prisma/seed.js');
 
 dotenv.config();
 const app = express();
@@ -41,7 +40,9 @@ app.use(session({
   }
 }));
 
-app.get('/api/checkPermissions', authenticateUser, async (req, res) => {
+
+
+app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
   try {
     console.log("This is req.user:", req.user);
     const user_clean = {

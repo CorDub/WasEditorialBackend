@@ -289,6 +289,7 @@ router.get('/books/:bookId/inventories', async (req, res) => {
 router.get('/sales', async (req, res) => {
   try {
     const authorId = req.session.user_id;
+    console.log(authorId);
 
     // Get date range from query parameters
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();

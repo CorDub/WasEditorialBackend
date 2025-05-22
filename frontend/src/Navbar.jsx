@@ -22,7 +22,7 @@ function Navbar({
   const navigate = useNavigate();
 
   async function logout() {
-    const response = fetch(`${baseURL}/logout`, {
+    const response = fetch(`${baseURL}/api/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

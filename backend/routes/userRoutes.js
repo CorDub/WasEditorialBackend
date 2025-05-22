@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
         categoryId: user.categoryId,
         role: user.role
       }
-      res.status(200).send(user_send);
+      res.status(200).json(user_send);
     } else {
       res.status(401).json({error: "Wrong password or email address"});
     }

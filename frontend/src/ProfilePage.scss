@@ -1,0 +1,70 @@
+.profile-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-page-personal {
+  background-color: #E2E2E2;
+  border-radius: 15px;
+  width: 50%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.profile-page-lines-container {
+  border-radius: 15px;
+  width: 75%;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.profile-page-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-radius: 15px;
+
+}
+
+.profile-page-line:hover {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.profile-page-icon {
+  margin-right: 1rem;
+}
+
+.profile-page-title {
+  width: 150px;
+  margin-right: 0.5rem;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.profile-page-value {
+  width: 70%;
+}
+
+.profile-page-edit {
+  width: 10%;
+  margin-left: 0.5rem;
+}
+
+.profile-page-edit:hover {
+  cursor: pointer;
+}
+
+.profile-page-input {
+  margin-bottom: 0;
+}

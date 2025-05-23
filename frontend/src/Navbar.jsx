@@ -5,6 +5,9 @@ import UserContext from "./UserContext";
 import AdminNavbar from "./AdminNavbar";
 import SuperAdminNavbar from "./SuperAdminNavbar";
 import AuthorNavbar from "./AuthorNavbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { Link } from "react-router-dom";
 
 function Navbar({
     subNav,
@@ -75,6 +78,10 @@ function Navbar({
         {chooseSubNavbar(subNav)}
       </div>
       <div className='navbar-logout'>
+        <Link to='/profile-page'  className="navbar-profile">
+          <FontAwesomeIcon icon={faUser}
+            className={active === "profile" ? "navbar-profile-icon-active" : "navbar-profile-icon"}/>
+        </Link>
         {(user !== '') &&
           <p className="grey-button" onClick={logout}>Cerrar sessión</p>}
       </div>

@@ -59,6 +59,27 @@ router.get('/user', async (req, res) => {
   }
 })
 
+router.patch('/user', async (req, res) => {
+  try {
+    const fieldToChange = req.body;
+    const updatedUser = await prisma.user.update({
+      where: {id: req.session.user_id},
+      data: {
+        ...fieldToChange
+      }
+    });
+
+    if (updatedUser) {
+      res.status(200)
+    } else {
+      res.status(500).json({error: "There was an issue updating the user details"});
+    }
+
+  } catch (error) {
+    console.error("Error when updating user: ", error);
+  }
+})
+
 router.post('/confirmation_code', async (req, res) => {
   try {
     const { confirmation_code, user_id } = req.body;

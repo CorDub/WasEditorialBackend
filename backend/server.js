@@ -62,7 +62,7 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
       categoryId: req.user.categoryId,
       role: req.user.role
     }
-    res.json(user_clean)
+    res.status(200).json(user_clean)
   } catch(error) {
     console.log("Error running checkPermissions in userRoutes:", error);
     res.status(500).json({error: "Error in checkPermissions"});

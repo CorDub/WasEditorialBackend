@@ -19,6 +19,7 @@ import BookstoreInventory from './BookstoreInventory.jsx';
 import BookInventory from './BookInventory.jsx';
 import AuthorSales from './AuthorSales.jsx';
 import AuthorCommissions from './AuthorComissions.jsx';
+import ProfilePage from './ProfilePage.jsx';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
+          <Route path='/profile-page' element={<ProfilePage/>} />
           <Route path='/author/change-password' element={<ChangePasswordPage />} />
           <Route path='/author/inventory' element={<AuthorInventory/>} />
           <Route path='/author/sales' element={<AuthorSales/>} />

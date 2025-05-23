@@ -183,11 +183,11 @@ function BookstoreInventory({
     enablePagination: false,
     enableFullScreenToggle: false,
     enableRowVirtualization: true,
-    renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
-      </div>
-    ),
+    // renderTopToolbarCustomActions: () => (
+    //   <div className="table-add-button">
+    //     <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
+    //   </div>
+    // ),
     initialState: {
       density: 'compact',
     },

@@ -1,10 +1,11 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.scss';
 import logo from './assets/PlataformaWas.png';
 import UserContext from './UserContext';
 import LoginError from './LoginError';
 import Alert from './Alert';
+import checkForErrors from "./customHooks/checkForErrors";
 
 function LoginPage() {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -17,6 +18,7 @@ function LoginPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const location = useLocation();
+  const emailRef = useRef();
 
   useEffect(() => {
     if (location.state) {
@@ -50,7 +52,6 @@ function LoginPage() {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
         setErrors([...errors, 1]);
       } else {
         const data = await response.json();
@@ -80,6 +81,17 @@ function LoginPage() {
       if (password.length === 0) {newErrors.push(3)};
     }
 
+    const expectationsEmail = {
+      validity: "email valid"
+    }
+
+    const errorsLine = checkForErrors("El correo que ingresabá", email, expectationsEmail, emailRef);
+    console.log("errorsLine", errorsLine);
+    if (errorsLine.length > 0) {
+      newErrors.push(4);
+    }
+
+    console.log("newErrors", newErrors);
     setErrors(newErrors);
     return newErrors;
   }
@@ -95,6 +107,7 @@ function LoginPage() {
             type="text"
             placeholder="Correo"
             value={email}
+            ref={emailRef}
             onChange={(e) => setEmail(e.target.value)}/>
           <input className="global-input login-input"
             type="password"

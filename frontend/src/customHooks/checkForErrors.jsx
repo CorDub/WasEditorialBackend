@@ -1,6 +1,7 @@
 function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
+  const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   console.log("fieldName", fieldName);
   console.log("fieldValue", fieldValue);
@@ -85,6 +86,15 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
         if (fieldExpectations.maximum < fieldValue) {
           errorList.push(`${fieldName} es superior al maximo disponible.`);
           addErrorClass(fieldRef);
+        };
+        break;
+
+      case "validity":
+        if (fieldExpectations.validity === "email valid") {
+          if (validEmailRegex.test(fieldValue) === false) {
+            errorList.push(`${fieldName} no es un correo valido.`);
+            addErrorClass(fieldRef);
+          }
         };
         break;
 

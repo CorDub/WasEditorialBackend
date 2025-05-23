@@ -70,7 +70,7 @@ router.patch('/user', async (req, res) => {
     });
 
     if (updatedUser) {
-      res.status(200)
+      res.status(200).json({message: "Updated"});
     } else {
       res.status(500).json({error: "There was an issue updating the user details"});
     }

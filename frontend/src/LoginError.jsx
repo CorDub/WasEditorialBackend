@@ -4,6 +4,8 @@ import useCheckUser from "./customHooks/useCheckUser";
 function LoginError({ errors, setErrors, inputs }) {
   useCheckUser();
 
+  console.log("errors in LoginError", errors);
+
   function displayError(error) {
     if (error === 1) {
       inputs.forEach((input) => {
@@ -31,6 +33,15 @@ function LoginError({ errors, setErrors, inputs }) {
       }
       return (
         <p className="login-error">La contraseña no puede estar vacia</p>
+      )
+    }
+
+    if (error === 4) {
+      if (!inputs[0].classList.contains("error-inputs"))  {
+        inputs[0].classList.add("error-inputs");
+      }
+      return (
+        <p className="login-error">El correo no es un correo valido.</p>
       )
     }
   }

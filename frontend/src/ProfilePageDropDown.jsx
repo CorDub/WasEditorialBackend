@@ -1,34 +1,34 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./ProfilePage.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
-import { useState, useRef} from "react";
 import useCheckUser from "./customHooks/useCheckUser";
+import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 
-function ProfilePageLine({
+function ProfilePageDropDown({
     icon,
     title,
     field,
     value,
+    possibleValues,
     setAlertMessage,
     setAlertType,
     forceRender,
     setForceRender,
     setErrors}) {
-  const [isEditOpen, setEditOpen] = useState(false);
   useCheckUser();
+  const [isEditOpen, setEditOpen] = useState(false);
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [newValue, setNewValue] = useState(value);
-  const inputRef = useRef();
-
+  const selectRef = useRef();
 
   async function updateProfileField() {
     if (newValue === value || newValue === "" || newValue === undefined) {
       setEditOpen(false);
       return;
     }
-    setErrors([]);
 
+    setErrors([]);
     const errors = checkInputs();
     if (errors.length > 0) {
       return;
@@ -60,15 +60,13 @@ function ProfilePageLine({
 
   function checkInputs() {
     let errorList = []
-    const expectationsLine = {
+    const expectationsDropDown = {
       type: "string",
       presence: "not empty",
-    }
-    if (field === "email") {
-      expectationsLine['validity'] = "email valid"
+      value: possibleValues,
     }
 
-    const errorsLine = checkForErrors("El correo que ingresabá", newValue, expectationsLine, inputRef);
+    const errorsLine = checkForErrors("El país", newValue, expectationsDropDown, selectRef);
 
     if (errorsLine.length > 0) {
       errorList.push(errorsLine);
@@ -86,18 +84,22 @@ function ProfilePageLine({
         <h2>{title}</h2></div>
       {isEditOpen
         ? <>
-            <input type="text"
-              className="global-input profile-page-input"
-              placeholder={value}
-              value={newValue}
-              ref={inputRef}
+            <select className="select-global profile-page-input"
+              ref={selectRef}
               onChange={(e) => setNewValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   updateProfileField();
                 }
-              }}/>
-            <FontAwesomeIcon icon={ faCircleCheck }
+              }}>
+              <option value={value}>Selecciona pais</option>
+              {possibleValues && possibleValues.map((value, index) => (
+                <option
+                  key={index}
+                  value={value}>{value}</option>
+              ))}
+            </select>
+            <FontAwesomeIcon icon={faCircleCheck}
               className="profile-page-edit profile-page-edit-open"
               onClick={() => updateProfileField()} />
           </>
@@ -111,4 +113,4 @@ function ProfilePageLine({
   )
 }
 
-export default ProfilePageLine;
+export default ProfilePageDropDown;

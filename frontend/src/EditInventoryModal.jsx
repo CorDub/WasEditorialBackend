@@ -166,12 +166,12 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
 
   function checkInputs() {
     let errorsList = []
-    const expectationsBook = {
-      type: "string",
-      presence: "not empty",
-      length: 100,
-      value: bookTitlesList
-    };
+    // const expectationsBook = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   length: 100,
+    //   value: bookTitlesList
+    // };
     const expectationsBookstore = {
       type: "string",
       presence: "not empty",
@@ -190,11 +190,12 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive"
     }
 
-    const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
+    // const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
     const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
     const errorsInicial = checkForErrors("Cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef);
-    const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
+    // const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
+    const errorInputs = [errorsBookstore, errorsPais, errorsInicial];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -259,13 +260,13 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
         <p>Editar inventario</p>
       </div>
       <form className="global-form">
-        <select onChange={(e) => dropDownChange(e, "Book")}
+        {/* <select onChange={(e) => dropDownChange(e, "Book")}
           className="select-global" ref={bookRef}>
           <option value={book}>{book}</option>
           {existingBooks && existingBooks.map((book, index) => (
             <option key={index} value={book.title}>{book.title}</option>
           ))}
-        </select>
+        </select> */}
         <select onChange={(e) => dropDownChange(e, "Bookstore")}
           className="select-global" ref={bookstoreRef}>
           <option value={bookstore}>{bookstore}</option>

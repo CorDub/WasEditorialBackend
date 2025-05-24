@@ -245,6 +245,13 @@ function BookstoreInventory({
     selectRelevantInventories();
   }, [inventories])
 
+  // ensures the modalType is reset to the correct one after you add a transfer
+  useEffect(() => {
+    if (!isModalOpen) {
+      setModalType("inventory");
+    }
+  }, [modalType, isModalOpen])
+
   function selectRelevantInventories() {
     const relevantInventories = [];
     let currentTotal = 0;

@@ -180,9 +180,26 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     sendToServer();
   }
 
+  console.log(clickedRow);
+
+  useEffect(() => {
+    console.log("bookstoresToTransfer", bookstoresToTransfer);
+  }, [bookstoresToTransfer]);
+
   function checkInputs() {
     // Prepare an error list that will be displayed if any
     let errorsList = []
+
+    // Check if we're not making a transfer to the same inventory first
+    for (const transfer of bookstoresToTransfer) {
+      if (parseInt(transfer.bookstoreId) === clickedRow.bookstoreId
+        && transfer.country === clickedRow.country) {
+          errorsList.push(["No se puede transferir al mismo inventario"]);
+          setErrors(errorsList);
+          console.log("blocked");
+          return errorsList;
+      }
+    }
 
     // Set expectations for each field being tested
     const expectationsBookstore = {

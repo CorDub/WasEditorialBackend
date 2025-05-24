@@ -183,11 +183,11 @@ function BookstoreInventory({
     enablePagination: false,
     enableFullScreenToggle: false,
     enableRowVirtualization: true,
-    renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
-      </div>
-    ),
+    // renderTopToolbarCustomActions: () => (
+    //   <div className="table-add-button">
+    //     <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
+    //   </div>
+    // ),
     initialState: {
       density: 'compact',
     },
@@ -244,6 +244,13 @@ function BookstoreInventory({
     }
     selectRelevantInventories();
   }, [inventories])
+
+  // ensures the modalType is reset to the correct one after you add a transfer
+  useEffect(() => {
+    if (!isModalOpen) {
+      setModalType("inventory");
+    }
+  }, [modalType, isModalOpen])
 
   function selectRelevantInventories() {
     const relevantInventories = [];

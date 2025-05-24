@@ -721,65 +721,65 @@ router.get('/inventories', async (req, res) => {
   }
 });
 
-router.post('/inventory', async (req, res) => {
-  try {
-    const {
-      book,
-      bookstore,
-      country,
-      inicial
-    } = req.body;
-    const existing = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: book,
-          bookstoreId: bookstore,
-          country: country
-        }
-      }
-    });
+// router.post('/inventory', async (req, res) => {
+//   try {
+//     const {
+//       book,
+//       bookstore,
+//       country,
+//       inicial
+//     } = req.body;
+//     const existing = await prisma.inventory.findUnique({
+//       where: {
+//         bookId_bookstoreId_country: {
+//           bookId: book,
+//           bookstoreId: bookstore,
+//           country: country
+//         }
+//       }
+//     });
 
-    if (existing) {
-      if (existing.isDeleted === false) {
-        res.status(500).json({message: "Este inventario ya existe"})
-        return;
-      }
+//     if (existing) {
+//       if (existing.isDeleted === false) {
+//         res.status(500).json({message: "Este inventario ya existe"})
+//         return;
+//       }
 
-      const exhumedInventory = await prisma.inventory.update({
-        where: {id: existing.id},
-        data: {
-          bookId: book,
-          bookstoreId: bookstore,
-          country: country,
-          initial: inicial,
-          current: inicial,
-          isDeleted: false
-        }
-      });
-      res.status(201).json(exhumedInventory);
-      return;
-    }
+//       const exhumedInventory = await prisma.inventory.update({
+//         where: {id: existing.id},
+//         data: {
+//           bookId: book,
+//           bookstoreId: bookstore,
+//           country: country,
+//           initial: inicial,
+//           current: inicial,
+//           isDeleted: false
+//         }
+//       });
+//       res.status(201).json(exhumedInventory);
+//       return;
+//     }
 
-    const createdInventory = await prisma.inventory.create({
-      data: {
-        bookId: book,
-        bookstoreId: bookstore,
-        country: country,
-        initial: inicial,
-        current: inicial
-      }
-    });
-    res.status(201).json(createdInventory);
-  } catch (error) {
-    console.error(error);
-    if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
-      res.status(500).json({message: "Este inventario ya existe"})
-      return;
-    }
+//     const createdInventory = await prisma.inventory.create({
+//       data: {
+//         bookId: book,
+//         bookstoreId: bookstore,
+//         country: country,
+//         initial: inicial,
+//         current: inicial
+//       }
+//     });
+//     res.status(201).json(createdInventory);
+//   } catch (error) {
+//     console.error(error);
+//     if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+//       res.status(500).json({message: "Este inventario ya existe"})
+//       return;
+//     }
 
-    res.status(500).json({ error: error });
-  }
-})
+//     res.status(500).json({ error: error });
+//   }
+// })
 
 router.patch('/inventory', async (req, res) => {
   try {

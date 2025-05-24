@@ -44,6 +44,13 @@ function BookInventory({
     }
   }, [inventoryTotalRef])
 
+  // ensures the modalType is reset to the correct one after you add a transfer
+  useEffect(() => {
+    if (!isModalOpen) {
+      setModalType("inventory");
+    }
+  }, [modalType, isModalOpen])
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -181,11 +188,11 @@ function BookInventory({
     enablePagination: false,
     enableFullScreenToggle: false,
     enableRowVirtualization: true,
-    renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <button onClick={() => openModal("adding", {book: selectedBook})} className="blue-button table-button">Añadir nuevo inventario</button>
-      </div>
-    ),
+    // renderTopToolbarCustomActions: () => (
+    //   <div className="table-add-button">
+    //     <button onClick={() => openModal("adding", {book: selectedBook})} className="blue-button table-button">Añadir nuevo inventario</button>
+    //   </div>
+    // ),
     initialState: {
       density: 'compact',
     },
@@ -266,17 +273,15 @@ function BookInventory({
     setImpressions(sortedRelevantInventories[0].book.impressions);
   }
 
-  console.log(data)
-
   useEffect(() => {
     requestAnimationFrame(() => {
       bookInventoryRef.current.classList.add("bookstore-inventory-extended");
     });
   }, [selectedBook])
 
-  function openModal(type, clickedRow) {
+  function openModal(action, clickedRow) {
     setClickedRow(clickedRow);
-    switch (type) {
+    switch (action) {
       case 'adding':
         setModalAction("adding");
         break;

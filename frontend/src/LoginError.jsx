@@ -4,8 +4,6 @@ import useCheckUser from "./customHooks/useCheckUser";
 function LoginError({ errors, setErrors, inputs }) {
   useCheckUser();
 
-  console.log("errors in LoginError", errors);
-
   function displayError(error) {
     if (error === 1) {
       inputs.forEach((input) => {

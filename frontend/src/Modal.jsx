@@ -15,6 +15,9 @@ import EditTransferModal from './EditTransferModal';
 import DeleteTransferModal from './DeleteTransferModal';
 import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
 import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
+import AddingAuthorModal from './AddingAuthorModal';
+import EditAuthorModal from './EditAuthorModal';
+import DeleteAuthorModal from './DeleteAuthorModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -48,6 +51,11 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
     },
     transferFromAuthor: {
       adding: AddingTransferFromAuthorModal,
+    },
+    author: {
+      adding: AddingAuthorModal,
+      edit: EditAuthorModal,
+      delete: DeleteAuthorModal
     }
   };
 

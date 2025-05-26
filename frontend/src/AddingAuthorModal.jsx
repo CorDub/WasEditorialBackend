@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin.jsx';
 import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
-function AddingAuthorModal({ closeAddingModal, globalFilter }) {
+function AddingAuthorModal({ clikedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState('');
@@ -68,12 +68,12 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
           return;
         }
         const alertMessage = 'No se pudó crear un nuevo autor.';
-        closeAddingModal(globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
         Su contraseña se ha sido enviado por correo.`;
-        closeAddingModal(globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -269,7 +269,7 @@ function AddingAuthorModal({ closeAddingModal, globalFilter }) {
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
         </div>
       </form>

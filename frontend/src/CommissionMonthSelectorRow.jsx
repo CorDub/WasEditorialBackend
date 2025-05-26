@@ -27,7 +27,11 @@ function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
       className={active ? "cms-row-active" : "cms-row"}
       onClick={() => setActiveMonth(index)}>
       <div className="cms-month">{changeDateFormat(month.forMonth)}</div>
-      <div className="cms-status">{month.isPaid ? "Pagado" : "No pagado"}</div>
+      <div className="cms-status">{month.amount === 0
+        ? ""
+        : month.isPaid
+          ? "Pagado"
+          : "No pagado"}</div>
       <div className="cms-total">{formatNumber(month.amount)}</div>
     </div>
   )

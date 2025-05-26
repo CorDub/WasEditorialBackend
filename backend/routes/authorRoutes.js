@@ -533,11 +533,16 @@ router.get('/monthlySales', async (req, res) => {
             // deep cloning the bookstores to avoid having the same object being mutated later
             // and shared across different months instead of a different object every time
             transfers: bookstores.map(bookstore => ({...bookstore})),
-            transfersTotal: 0
+            transfersTotal: 0,
           }
         };
 
         for (const bookstore of salesByMonths[transferMonth]['transfers']) {
+          // skip deliveries to author
+          if (transfer.toInventory === null) {
+            // bookstore.quantity += transfer.quantity;
+            continue;
+          }
           if (bookstore.id === transfer.toInventory.bookstore.id) {
             bookstore.quantity += transfer.quantity
           }
@@ -1047,6 +1052,11 @@ router.get("/payments", async (req, res) => {
         createdAt: {
           gt: ltm
         }
+      },
+      select: {
+        amount: true,
+        forMonth: true,
+        isPaid: true
       }
     });
 

@@ -86,12 +86,10 @@ function LoginPage() {
     }
 
     const errorsLine = checkForErrors("El correo que ingresabá", email, expectationsEmail, emailRef);
-    console.log("errorsLine", errorsLine);
     if (errorsLine.length > 0) {
       newErrors.push(4);
     }
-
-    console.log("newErrors", newErrors);
+    
     setErrors(newErrors);
     return newErrors;
   }

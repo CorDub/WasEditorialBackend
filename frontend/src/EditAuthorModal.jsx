@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 
-function EditAuthorModal({ row, closeEditModal, globalFilter }) {
+function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
-  const [firstName, setFirstName] = useState(row.first_name);
-  const [lastName, setLastName] = useState(row.last_name ? row.last_name : "");
-  const [country, setCountry] = useState(row.country ? row.country : "");
-  const [referido, setReferido] = useState(row.referido ? row.referido : "");
-  const [email, setEmail] = useState(row.email ? row.email : "");
-  const [category, setCategory] = useState(row.category ? row.category.type : "");
+  const [firstName, setFirstName] = useState(clickedRow.first_name);
+  const [lastName, setLastName] = useState(clickedRow.last_name);
+  const [country, setCountry] = useState(clickedRow.country);
+  const [referido, setReferido] = useState(clickedRow.referido);
+  const [email, setEmail] = useState(clickedRow.email);
+  const [category, setCategory] = useState(clickedRow.category.type );
   const countries = [
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -42,11 +42,14 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
   async function editAuthor(e) {
     let fullCategory = {};
     categories.map((cat) => {
-      if (cat.type === parseInt(category)) {
+      console.log(cat.type);
+      if (cat.type === category) {
         fullCategory = cat;
         return;
       }
     });
+    console.log(category);
+
     e.preventDefault();
     try {
       const response = await fetch(`${baseURL}/admin/user`, {
@@ -56,7 +59,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
         },
         credentials: "include",
         body: JSON.stringify({
-          id: row.id,
+          id: clickedRow.id,
           first_name: firstName,
           last_name: lastName,
           country: country,
@@ -68,7 +71,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
 
       if (response.ok === true) {
         const alertMessage = (`Actualizado ${firstName} ${lastName} con exito`);
-        closeEditModal(globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -184,7 +187,9 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
     categories.map((cat) => {
       categories_types.push(cat.type)
     });
-    if (!categories_types.includes(parseInt(category))) {
+    console.log("categories", categories);
+    console.log("category", category);
+    if (!categories_types.includes(category)) {
       errorList.push(62);
       addErrorClass(inputCategory);
     };
@@ -265,7 +270,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-              onClick={() => closeEditModal(globalFilter, false)}>Cancelar</button>
+              onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={handleSubmit}>Confirmar</button>
         </div>

@@ -19,7 +19,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      console.log(lastName);
       const response = await fetch(`${baseURL}/superadmin/admin`, {
         method: "PATCH",
         headers: {

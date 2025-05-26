@@ -29,6 +29,7 @@ router.get('/users', async (req, res) => {
         last_name: true,
         country: true,
         referido: true,
+        email: true,
         category: {
           where: {
             isDeleted: false
@@ -145,7 +146,7 @@ router.patch('/user', async (req, res) => {
       email,
       categoryId } = req.body;
     const updatedAuthor = await prisma.user.update({
-      where: {id: id},
+      where: {id: parseInt(id)},
       data: {
         first_name: first_name,
         last_name: last_name,
@@ -154,7 +155,7 @@ router.patch('/user', async (req, res) => {
         email: email,
         category: {
           connect: {
-            id: categoryId
+            id: parseInt(categoryId)
           }
         }
       }

@@ -15,7 +15,6 @@ function TableActions ({
     openModal,
     row,
     isTableActionsOpen,
-    setTableActionsOpen,
     setModalType,
     type}) {
   const gearRef = useRef();

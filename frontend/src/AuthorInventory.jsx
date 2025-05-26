@@ -31,6 +31,19 @@ function AuthorInventory(){
   const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
   const [isAuthorTrialInventoryOpen, setAuthorTrialInventoryOpen] = useState(false);
   const [reset, setReset] = useState(false);
+  const [exclusions, setExclusions] = useState("");
+  const legendValues = [
+    ['Entregados al autor', '#57eafa'],
+    ['Vendidos', '#4E5981'],
+    ['Disponibles', '#E2E2E2'],
+    ['Devoluciones', 'black']
+  ]
+  const [legendDisplays, setLegendDisplays] = useState({
+    'givenToAuthor': true,
+    'sold': true,
+    'current': true,
+    'returns': true
+  });
 
   useEffect(()=>{
     fetchInventories()
@@ -104,15 +117,26 @@ function AuthorInventory(){
           setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
           setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
           setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
-          setAuthorTrialInventoryOpen={setAuthorTrialInventoryOpen}/>
+          setAuthorTrialInventoryOpen={setAuthorTrialInventoryOpen}
+          legendDisplays={legendDisplays}
+          setLegendDisplays={setLegendDisplays}
+          exclusions={exclusions}
+          setExclusions={setExclusions}/>
         </div>
-        {isTotalInventoryOpen && (
-          <AuthorInventoryGlobal
-            bookSales={booksInventories}
-            selectedBookId={selectedBookId} />)}
-        {isGivenToAuthorOpen && (
-          <GivenToAuthorDetails
-            selectedBookId={selectedBookId}/>)}
+        <div className="author-inventory-rightfield">
+          {isTotalInventoryOpen && (
+          <AuthorTrialInventory
+            selectedBookId={selectedBookId}
+            setSelectedBookId={setSelectedBookId}
+            legendValues={legendValues}
+            legendDisplays={legendDisplays}
+            setLegendDisplays={setLegendDisplays}
+            exclusions={exclusions}/>)}
+          {isGivenToAuthorOpen && (
+            <GivenToAuthorDetails
+              selectedBookId={selectedBookId}/>)}
+        </div>
+
         {isBooksSoldGraphOpen && (
           <BooksSoldGraph
             bookSales={booksInventories}

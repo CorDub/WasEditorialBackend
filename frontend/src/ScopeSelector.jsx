@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faShop, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
 import { useState } from "react";
 
-function ScopeSelector({scope, setScope, setSelectedBookId}) {
+function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) {
   const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
   const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
   const [isCountryTooltipOpen, setCountryTooltipOpen] = useState(false);
@@ -27,6 +27,12 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
         onClick={() => {
           setScope("book");
           setSelectedBookId('');
+          setLegendDisplays({
+            "givenToAuthor": true,
+            "sold": true,
+            "current": true,
+            "returns": true
+          })
         }}
         onMouseEnter={() => setBookTooltipOpen(true)}
         onMouseLeave={() => setBookTooltipOpen(false)} />
@@ -35,7 +41,15 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
       <FontAwesomeIcon
         icon={faShop}
         className={scope === "bookstore" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("bookstore")}
+        id='ssi-bookstore'
+        onClick={() => {
+          setScope("bookstore")
+          setLegendDisplays({
+            "givenToAuthor": true,
+            "sold": true,
+            "current": true,
+            "returns": true
+          })}}
         onMouseEnter={() => setBookstoreTooltipOpen(true)}
         onMouseLeave={() => setBookstoreTooltipOpen(false)} />
       {isBookstoreTooltipOpen && (
@@ -43,7 +57,14 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
       <FontAwesomeIcon
         icon={faEarthAmericas}
         className={scope === "country" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("country")}
+        onClick={() => {
+          setScope("country")
+          setLegendDisplays({
+            "givenToAuthor": true,
+            "sold": true,
+            "current": true,
+            "returns": true
+          })}}
         onMouseEnter={() => setCountryTooltipOpen(true)}
         onMouseLeave={() => setCountryTooltipOpen(false)} />
       {isCountryTooltipOpen && (

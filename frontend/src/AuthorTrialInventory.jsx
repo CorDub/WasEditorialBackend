@@ -4,29 +4,20 @@ import ScopeSelector from "./ScopeSelector";
 import "./AuthorTrialInventory.scss";
 import Legend from "./Legend";
 
-function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
+function AuthorTrialInventory({
+    selectedBookId,
+    setSelectedBookId,
+    legendValues,
+    legendDisplays,
+    setLegendDisplays,
+    exclusions}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [selectedBookName, setSelectedBookName] = useState("");
   const [max, setMax] = useState(0);
   const [scope, setScope] = useState("book");
-  const legendValues = [
-    ['Entregados al autor', '#57eafa'],
-    ['Vendidos', '#4E5981'],
-    ['Disponibles', '#E2E2E2'],
-    ['Devoluciones', 'black']
-  ]
-  const [legendDisplays, setLegendDisplays] = useState({
-    'givenToAuthor': true,
-    'sold': true,
-    'current': true,
-    'returns': true
-  });
 
-  useEffect(() => {
-    console.log(legendDisplays);
-  }, [legendDisplays])
 
   async function fetchAllAuthorInventories() {
     try {
@@ -54,7 +45,7 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
     fetchAllAuthorInventories();
   }, []);
 
-  function filterData(data, scope, selectedBookId, legendDisplays) {
+  function filterData(data, scope, selectedBookId, legendDisplays, exclusions) {
     if (!data) {
       return;
     }
@@ -85,6 +76,22 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
 
     let results = {};
     for (const inventory of bookFilterData) {
+
+      // making sure we skip the correct unwanted data in case of exclusions
+      // first the case for everything but Was
+      console.log("exclusions", exclusions);
+      if (exclusions === "allButWas") {
+        if (inventory.bookstore.id === 3) {
+          continue;
+        }
+      }
+
+      // second the case of only Was
+      if (exclusions === "onlyWas") {
+        if (inventory.bookstore.id !== 3) {
+          continue;
+        }
+      }
       //get the correct groupBy with possibleScopes
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
@@ -126,8 +133,6 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
         let max = 0;
 
         for (const display of legendDisplaysList) {
-          console.log("display", display)
-
           if (display[1] === true) {
             max += result[1][display[0]];
           }
@@ -164,15 +169,15 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
     if (selectedBookId) {
       if (scope === "book" || scope === "bookstore") {
         setScope("bookstore");
-        filterData(data, "bookstore", selectedBookId, legendDisplays);
+        filterData(data, "bookstore", selectedBookId, legendDisplays, exclusions);
       } else {
         setScope("country");
-        filterData(data, "country", selectedBookId, legendDisplays);
+        filterData(data, "country", selectedBookId, legendDisplays, exclusions);
       }
     } else {
-      filterData(data, scope, selectedBookId, legendDisplays);
+      filterData(data, scope, selectedBookId, legendDisplays, exclusions);
     }
-  }, [selectedBookId, scope, data, legendDisplays]);
+  }, [selectedBookId, scope, data, legendDisplays, exclusions]);
 
   function displayScopeInTitle() {
     const title = selectedBookId === "" ? "Todos los titulos" : selectedBookName;
@@ -186,17 +191,14 @@ function AuthorTrialInventory({selectedBookId, setSelectedBookId}) {
     }
   }
 
-  useEffect(() => {
-    console.log(filteredData);
-  }, [filteredData]);
-
   return(
     <div className="author-inventory-global">
       <div className="aig-scope-and-title">
         <ScopeSelector
           scope={scope}
           setScope={setScope}
-          setSelectedBookId={setSelectedBookId}/>
+          setSelectedBookId={setSelectedBookId}
+          setLegendDisplays={setLegendDisplays}/>
         <div className="aig-title"><h2>{displayScopeInTitle()}</h2></div>
       </div>
       {filteredData && filteredData.map((dataPoint, index) => (

@@ -35,6 +35,10 @@ function AuthorCommissions() {
   }
 
   useEffect(() => {
+    console.log(dataByMonths)
+  }, [dataByMonths]);
+
+  useEffect(() => {
     fetchAuthorBookSales();
   }, [])
 

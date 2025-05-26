@@ -79,7 +79,6 @@ function AuthorTrialInventory({
 
       // making sure we skip the correct unwanted data in case of exclusions
       // first the case for everything but Was
-      console.log("exclusions", exclusions);
       if (exclusions === "allButWas") {
         if (inventory.bookstore.id === 3) {
           continue;

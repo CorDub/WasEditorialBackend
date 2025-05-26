@@ -28,7 +28,7 @@ function Table({data, activeMonth}) {
   function formatRowData() {
   // From the month data, format it so you can display it in rows
     let rowData = [];
-
+    console.log(monthData);
     // MonthData.ransfers has all existing libraries,
     // so this will create all necessary objects to hold row data
     for (const bookstore of monthData.transfers) {

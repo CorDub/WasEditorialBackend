@@ -117,10 +117,6 @@ function ShowInventories({
     setLegendDisplays(options[name]);
   }
 
-  useEffect(() => {
-    console.log(legendDisplays)
-  }, [legendDisplays])
-
   return (
     inventories && (
       <div id='show-inventory-container'>

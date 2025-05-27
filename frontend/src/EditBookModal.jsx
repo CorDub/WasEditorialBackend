@@ -5,15 +5,15 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 import AddingBookErrorList from "./AddingBookErrorList";
 
-function EditBookModal({ row, closeEditModal, globalFilter }) {
+function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
-  const [title, setTitle] = useState(row.title);
-  const [pasta, setPasta] = useState(row.pasta);
-  const [price, setPrice] = useState(row.price);
-  const [isbn, setIsbn] = useState(row.isbn);
-  const [authors, setAuthors] = useState(row.users);
+  const [title, setTitle] = useState(clickedRow.title);
+  const [pasta, setPasta] = useState(clickedRow.pasta);
+  const [price, setPrice] = useState(clickedRow.price);
+  const [isbn, setIsbn] = useState(clickedRow.isbn);
+  const [authors, setAuthors] = useState(clickedRow.users);
   const [existingAuthors, setExistingAuthors] = useState(null);
   const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
@@ -59,11 +59,6 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
   }
 
   async function sendToServer() {
-    // const authors_ids = [];
-    // authors.map((author) => {
-    //   authors_ids.push(author)
-    // })
-
     try {
       const response = await fetch(`${baseURL}/admin/book`, {
         method: "PATCH",
@@ -72,7 +67,7 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
         },
         credentials: "include",
         body: JSON.stringify({
-          id: row.id,
+          id: clickedRow.id,
           title: title,
           pasta: pasta,
           price: price,
@@ -83,10 +78,10 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
 
       if (response.ok === true) {
         const alertMessage = `Se actualizó "${title}" con exito`;
-        closeEditModal(globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
         const alertMessage = `No se pudó actualizar "${title}"`;
-        closeEditModal(globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch(error) {
@@ -228,7 +223,6 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
         };
         return;
       } else {
-        // inputs[input_name]["function"](input_index, e);
         if (inputs[input_name]["element"].classList.contains("selected") === false) {
           inputs[input_name]["element"].classList.add("selected")
         };
@@ -318,7 +312,7 @@ function EditBookModal({ row, closeEditModal, globalFilter }) {
         <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeEditModal(globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Confirmar</button>
         </div>
         </form>

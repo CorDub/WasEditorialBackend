@@ -1,12 +1,12 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 
-function DeleteBookModal({ row, closeDeleteModal, globalFilter }) {
+function DeleteBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteBook() {
     try {
-      const response = await fetch(`${baseURL}/admin/book?book_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/admin/book?book_id=${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
@@ -15,11 +15,11 @@ function DeleteBookModal({ row, closeDeleteModal, globalFilter }) {
       });
 
       if (response.ok) {
-        const alertMessage = `El libro ${row.title} ha sido eliminado con exito.`;
-        closeDeleteModal(globalFilter, true, alertMessage, "confirmation");
+        const alertMessage = `El libro ${clickedRow.title} ha sido eliminado con exito.`;
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
-        const alertMessage = `No se pudó eliminar el libro ${row.title}.`;
-        closeDeleteModal(globalFilter, false, alertMessage, "error");
+        const alertMessage = `No se pudó eliminar el libro ${clickedRow.title}.`;
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -32,11 +32,11 @@ function DeleteBookModal({ row, closeDeleteModal, globalFilter }) {
       <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar el libro
-          ${row.title}?`}</p>
+          ${clickedRow.title}?`}</p>
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={() => closeDeleteModal(globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteBook}>Confirmar</button>
         </div>

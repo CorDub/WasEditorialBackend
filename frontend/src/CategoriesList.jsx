@@ -1,25 +1,22 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import DeleteCategoryModal from './DeleteCategoryModal';
-import EditCategoryModal from './EditCategoryModal';
-import AddingCategoryModal from './AddingCategoryModal';
 import Navbar from './Navbar';
 import Alert from "./Alert";
 import UserContext from './UserContext';
+import Modal from "./Modal";
+import TableActions from "./TableActions";
 
 function CategoriesList() {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [isEditModalOpen, setOpenEditModal] = useState(false);
-  const [editModal, setEditModal] = useState(null);
-  const [isAddingModalOpen, setOpenAddingModal] = useState(false);
-  const [addingModal, setAddingModal] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [clickedRow, setClickedRow] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [modalType, setModalType] = useState("category");
+  const [modalAction, setModalAction] = useState('');
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -33,10 +30,7 @@ function CategoriesList() {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          <button onClick={()=>openEditModal(row.original)}
-            className="blue-button modal-button">Editar</button>
-          <button onClick={()=>openDeleteModal(row.original)}
-            className="blue-button modal-button">Eliminar</button>
+          <TableActions openModal={openModal} row={row}/>
         </div>
       )
     },
@@ -67,7 +61,9 @@ function CategoriesList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
+        <button
+          onClick={() => openModal("adding", null)}
+          className="blue-button">Añadir nueva categoria</button>
       </div>
     ),
     initialState: {
@@ -133,57 +129,29 @@ function CategoriesList() {
 
   useEffect(() => {
     fetchCategories();
-  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
+  }, [isModalOpen])
 
-  function openDeleteModal(row) {
-    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenDeleteModal(true);
-  }
-
-  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setDeleteModal(null);
-    setOpenDeleteModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    if (reload === true) {
-      setForceRender(!forceRender);
+  function openModal(type, clickedRow) {
+    setClickedRow(clickedRow);
+    switch (type) {
+      case 'adding':
+        setModalAction("adding");
+        break;
+      case 'edit':
+        setModalAction("edit");
+        break;
+      case 'delete':
+        setModalAction("delete");
+        break;
+      default:
+        console.log("Unknown error")
+        return;
     }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
+    setModalOpen(true);
   }
 
-  function openEditModal(row) {
-    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenEditModal(true);
-  }
-
-  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setEditModal(null);
-    setOpenEditModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
-  }
-
-  function openAddingModal() {
-    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenAddingModal(true);
-  }
-
-  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setAddingModal(null);
-    setOpenAddingModal(false);
+  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+    setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
     if (reload === true) {
@@ -198,9 +166,14 @@ function CategoriesList() {
   return(
     <>
       <Navbar subNav={user.role} active={"categorias"}/>
-      {isDeleteModalOpen && deleteModal}
-      {isEditModalOpen && editModal}
-      {isAddingModalOpen && addingModal}
+      {isModalOpen &&
+        <Modal
+          modalType={modalType}
+          modalAction={modalAction}
+          clickedRow={clickedRow}
+          closeModal={closeModal}
+          pageIndex={pagination.pageIndex}
+          globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />

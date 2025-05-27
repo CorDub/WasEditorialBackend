@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingCategoryError from './AddingCategoryError';
 
-function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
+function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
@@ -36,11 +36,11 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
         }
 
         const alertMessage = `No se pudó crear una nueva categoría ${tipo}.`;
-        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
 
         const alertMessage = `Una nueva categoria ${tipo} ha sido creado.`;
-        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -149,7 +149,7 @@ function AddingCategoryModal({ closeAddingModal, pageIndex, globalFilter }) {
         <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir</button>
         </div>
       </form>

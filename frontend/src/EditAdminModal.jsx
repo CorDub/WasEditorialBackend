@@ -128,10 +128,13 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     };
   }
 
+  console.log(clickedRow);
+
   return (
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar admin</p>
+        <p>{clickedRow.first_name} {clickedRow.last_name}</p>
       </div>
       <form className="global-form">
         <input type='text' placeholder="Nombre"

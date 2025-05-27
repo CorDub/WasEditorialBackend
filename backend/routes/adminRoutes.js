@@ -1212,6 +1212,12 @@ router.post('/transfer', async (req, res) => {
 
     // Route 1 : delivered to Author
     if (type === "send" && !bookstoreToId) {
+
+      if (country !== "México") {
+        res.status(400).json({message: "Una entega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
+        return;
+      }
+
       const newTransferToAuthor = await prisma.transfer.create({
         data: {
           fromInventoryId: inventoryFromId,

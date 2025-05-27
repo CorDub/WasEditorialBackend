@@ -248,6 +248,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       <div className="modal-proper">
         <div className="form-title">
           <p>Editar libro</p>
+          <p>{clickedRow.title}</p>
         </div>
         <form className="global-form" onSubmit={handleSubmit}>
         <input type='text' value={title}

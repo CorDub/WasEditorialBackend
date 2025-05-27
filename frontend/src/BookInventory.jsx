@@ -188,11 +188,6 @@ function BookInventory({
     enablePagination: false,
     enableFullScreenToggle: false,
     enableRowVirtualization: true,
-    // renderTopToolbarCustomActions: () => (
-    //   <div className="table-add-button">
-    //     <button onClick={() => openModal("adding", {book: selectedBook})} className="blue-button table-button">Añadir nuevo inventario</button>
-    //   </div>
-    // ),
     initialState: {
       density: 'compact',
     },
@@ -329,8 +324,13 @@ function BookInventory({
         setModalType={setModalType}
         openModal={openModal}
         setRetreat={setRetreat}/>
-      {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
-          closeModal={closeModal} globalFilter={globalFilter} />}
+      {isModalOpen &&
+        <Modal
+          modalType={modalType}
+          modalAction={modalAction}
+          clickedRow={clickedRow}
+          closeModal={closeModal}
+          globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>

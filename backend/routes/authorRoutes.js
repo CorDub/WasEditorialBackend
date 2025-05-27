@@ -68,15 +68,12 @@ router.patch('/change_password', async (req, res) => {
 
 router.get('/books', async (req, res) => {
   try {
-    // if (!req.session.user_id) {
-    //     return res.status(401).json({ message: "Unauthorized" });
-    // }
-    console.log(req.session.user_id)
     const books = await prisma.book.findMany({
         where: {
             users: {
                 some: { id: req.session.user_id }
-            }
+            },
+            isDeleted: false
         }
     });
 
@@ -248,7 +245,8 @@ router.get('/books/:bookId/inventories', async (req, res) => {
         id: parseInt(req.params.bookId),
         users: {
           some: { id: req.session.user_id }
-        }
+        },
+        isDeleted: false
       }
     });
 
@@ -309,7 +307,8 @@ router.get('/sales', async (req, res) => {
           createdAt: {
             gte: startDate,
             lte: endDate
-          }
+          },
+          isDeleted: false
         },
         include: {
           inventory: {
@@ -618,13 +617,6 @@ router.get('/monthlySales', async (req, res) => {
 router.get('/currentTienda', async (req, res) => {
   try {
     const month = req.query.month;
-    // let nextMonth;
-    // if (parseInt(month.substring(5,7)) === 12) {
-    //   nextMonth = 1
-    // } else {
-    //   nextMonth = parseInt(month.substring(5,7)) + 1
-    // }
-    // const monthDateTime = new Date(`${month.substring(0,4)}-${nextMonth}-01`);
 
     let monthDateTime;
     if (parseInt(month.substring(5,7)) === 12) {
@@ -648,14 +640,6 @@ router.get('/currentTienda', async (req, res) => {
           }
         }
       },
-      // select: {
-      //   bookstore: {
-      //     select: {
-      //       id: true,
-      //       name: true
-      //     }
-      //   }
-      // }
       include: {
         bookstore: {
           select: {
@@ -683,9 +667,6 @@ router.get('/currentTienda', async (req, res) => {
 
     let inventoriesReconstructed = [];
     for (const inventory of inventories) {
-      // if (inventory.id !== inventories[0].id) {
-      //   continue;
-      // }
       let existing = false;
 
       for (const obj of inventoriesReconstructed) {
@@ -758,8 +739,7 @@ router.get('/currentTienda', async (req, res) => {
 })
 
 router.get('/givenToAuthorTransfers', async (req, res) => {
-  const currentUserId = req.session.user_id
-  console.log("\n currentUserId \n", currentUserId);
+  const currentUserId = req.session.user_id;
   try {
     const relevantTransfers = await prisma.transfer.findMany({
       where: {

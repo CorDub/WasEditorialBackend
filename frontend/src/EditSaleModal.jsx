@@ -255,10 +255,13 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
+  console.log(clickedRow);
+
   return (
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar venta</p>
+        <p>{clickedRow.completeInventory}</p>
       </div>
       <form className="global-form">
         <select onChange={(e) => dropDownChange(e, "Book")}

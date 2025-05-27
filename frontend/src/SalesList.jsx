@@ -27,10 +27,6 @@ function SalesList () {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          {/* <button onClick={() => openModal("edit", row.original)}
-            className="blue-button modal-button">Editar</button>
-          <button onClick={() => openModal("delete", row.original)}
-            className="blue-button modal-button">Eliminar</button> */}
           <TableActions openModal={openModal} row={row} />
         </div>
       )
@@ -184,10 +180,6 @@ function SalesList () {
   useEffect(() => {
     fetchSales();
   }, [forceRender]);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data])
 
   return (
     <div>

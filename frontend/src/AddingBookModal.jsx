@@ -6,7 +6,7 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 import AddingBookErrorList from "./AddingBookErrorList";
 
-function AddingBookModal({ closeAddingModal, globalFilter }) {
+function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
@@ -75,11 +75,11 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         }
 
         const alertMessage= 'No se pudó crear un nuveo libro.';
-        closeAddingModal(globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Un nuevo libro ${data.title} ha sido creado.`;
-        closeAddingModal(globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -367,7 +367,7 @@ function AddingBookModal({ closeAddingModal, globalFilter }) {
         <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir nuevo libro</button>
         </div>
       </form>

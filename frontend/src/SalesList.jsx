@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import Modal from "./Modal";
 import Alert from "./Alert";
 import UserContext from "./UserContext";
+import TableActions from "./TableActions";
 
 function SalesList () {
   useCheckAdmin();
@@ -26,10 +27,11 @@ function SalesList () {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          <button onClick={() => openModal("edit", row.original)}
+          {/* <button onClick={() => openModal("edit", row.original)}
             className="blue-button modal-button">Editar</button>
           <button onClick={() => openModal("delete", row.original)}
-            className="blue-button modal-button">Eliminar</button>
+            className="blue-button modal-button">Eliminar</button> */}
+          <TableActions openModal={openModal} row={row} />
         </div>
       )
     },

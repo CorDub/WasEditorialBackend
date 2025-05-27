@@ -18,6 +18,15 @@ import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
 import AddingAuthorModal from './AddingAuthorModal';
 import EditAuthorModal from './EditAuthorModal';
 import DeleteAuthorModal from './DeleteAuthorModal';
+import AddingBookModal from './AddingBookModal';
+import EditBookModal from "./EditBookModal";
+import DeleteBookModal from "./DeleteBookModal";
+import AddingBookstoreModal from './AddingBookstoreModal';
+import EditBookstoreModal from './EditBookstoreModal';
+import DeleteBookstoreModal from './DeleteBookstoreModal';
+import AddingCategoryModal from './AddingCategoryModal';
+import EditCategoryModal from "./EditCategoryModal";
+import DeleteCategoryModal from "./DeleteCategoryModal";
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -56,6 +65,21 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
       adding: AddingAuthorModal,
       edit: EditAuthorModal,
       delete: DeleteAuthorModal
+    },
+    book: {
+      adding: AddingBookModal,
+      edit: EditBookModal,
+      delete: DeleteBookModal
+    },
+    bookstore: {
+      adding: AddingBookstoreModal,
+      edit: EditBookstoreModal,
+      delete: DeleteBookstoreModal
+    },
+    category: {
+      adding: AddingCategoryModal,
+      edit: EditCategoryModal,
+      delete: DeleteCategoryModal
     }
   };
 

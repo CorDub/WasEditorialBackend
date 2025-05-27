@@ -1,15 +1,12 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useState } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 
-function DeleteBookstoreModal({ row, closeDeleteModal, pageIndex, globalFilter }) {
+function DeleteBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
 
   async function deleteBookstore() {
     const baseURL = import.meta.env.VITE_API_URL || '';
     try {
-      const response = await fetch(`${baseURL}/admin/bookstore?bookstore_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/admin/bookstore?bookstore_id=${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
@@ -18,12 +15,12 @@ function DeleteBookstoreModal({ row, closeDeleteModal, pageIndex, globalFilter }
       });
 
       if (response.ok) {
-          const alertMessage = `La librería ${row.name} ha sido eliminada con exito.`;
-          closeDeleteModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        const alertMessage = `La librería ${clickedRow.name} ha sido eliminada con exito.`;
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
 
       } else {
-        const alertMessage = `No se pudó eliminar la librería ${row.name}`;
-        closeDeleteModal(pageIndex, globalFilter, false, alertMessage, "error");
+        const alertMessage = `No se pudó eliminar la librería ${clickedRow.name}`;
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -36,11 +33,11 @@ function DeleteBookstoreModal({ row, closeDeleteModal, pageIndex, globalFilter }
       <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar la librería
-          ${row.name}?`}</p>
+          ${clickedRow.name}?`}</p>
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={() => closeDeleteModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteBookstore}>Confirmar</button>
         </div>

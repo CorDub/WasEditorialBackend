@@ -269,7 +269,7 @@ router.post('/category', async (req, res) => {
 
     const existing = await prisma.category.findUnique({
       where: {
-        type: {type}
+        type: tipo
       }
     });
 

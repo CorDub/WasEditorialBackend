@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin.jsx';
 import AddingAuthorModalErrors from './AddingAuthorModalErrors.jsx';
 
-function AddingAuthorModal({ clikedRow, closeModal, pageIndex, globalFilter }) {
+function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState('');

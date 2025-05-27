@@ -2,25 +2,25 @@ import { useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingCategoryError from './AddingCategoryError';
 
-function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
+function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
-  const [tipo, setTipo] = useState(row.type);
-  const [regalias, setRegalias] = useState(row.percentage_royalties);
-  const [gestionTiendas, setGestionTiendas] = useState(row.percentage_management_stores);
-  const [gestionMinima, setGestionMinima] = useState(row.management_min);
+  const [tipo, setTipo] = useState(clickedRow.type);
+  const [regalias, setRegalias] = useState(clickedRow.percentage_royalties);
+  const [gestionTiendas, setGestionTiendas] = useState(clickedRow.percentage_management_stores);
+  const [gestionMinima, setGestionMinima] = useState(clickedRow.management_min);
   const [errorList, setErrorList] = useState([]);
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}http://localhost:3000/admin/category`, {
+      const response = await fetch(`${baseURL}/admin/category`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: row.id,
+          id: clickedRow.id,
           tipo: tipo,
           regalias: regalias,
           gestionTiendas: gestionTiendas,
@@ -36,11 +36,11 @@ function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
         }
 
         const alertMessage = `No se pudó actualizar la categoría ${tipo}.`;
-        closeEditModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
 
         const alertMessage = `La categoría ${tipo} ha sido actualizada con exito.`;
-        closeEditModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -149,7 +149,7 @@ function EditCategoryModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeEditModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Confirmar</button>
         </div>
       </form>

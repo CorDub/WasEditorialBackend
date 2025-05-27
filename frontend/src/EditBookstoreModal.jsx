@@ -2,15 +2,15 @@ import { useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingBookstoreErrorList from "./AddingBookstoreErrorList";
 
-function EditBookstoreModal({ row, closeEditModal, pageIndex, globalFilter }) {
+function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
-  const [name, setName] = useState(row.name);
-  const [dealPercentage, setDealPercentage] = useState(row.deal_percentage);
-  const [contactName, setContactName] = useState(row.contact_name);
-  const [contactPhone, setContactPhone] = useState(row.contact_phone);
-  const [contactEmail, setContactEmail] = useState(row.contact_email);
+  const [name, setName] = useState(clickedRow.name);
+  const [dealPercentage, setDealPercentage] = useState(clickedRow.deal_percentage);
+  const [contactName, setContactName] = useState(clickedRow.contact_name);
+  const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
+  const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
   const [errorList, setErrorList] = useState([]);
 
   async function sendToServer() {
@@ -22,7 +22,7 @@ function EditBookstoreModal({ row, closeEditModal, pageIndex, globalFilter }) {
         },
         credentials: "include",
         body: JSON.stringify({
-          id: row.id,
+          id: clickedRow.id,
           name: name,
           dealPercentage: dealPercentage,
           contactName: contactName,
@@ -33,10 +33,10 @@ function EditBookstoreModal({ row, closeEditModal, pageIndex, globalFilter }) {
 
       if (response.ok === true) {
         const alertMessage = `Se actualizó con exito ${name}`;
-        closeEditModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
         const alertMessage = `No se pudó actualizar ${name}`;
-        closeEditModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch(error) {
@@ -109,7 +109,7 @@ function EditBookstoreModal({ row, closeEditModal, pageIndex, globalFilter }) {
         <AddingBookstoreErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeEditModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Confirmar</button>
         </div>
       </form>

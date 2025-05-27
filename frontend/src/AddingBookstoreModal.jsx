@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingBookstoreErrorList from './AddingBookstoreErrorList';
 
-function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
+function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
@@ -34,11 +34,11 @@ function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
       if (response.ok === false) {
         console.log(response.status);
         const alertMessage = 'No se pude crear una nueva librería.';
-        closeAddingModal(pageIndex, globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
         const alertMessage = `Una nueva librería ${data.name} ha sido creado en la database.`;
-        closeAddingModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
     } catch(error) {
@@ -111,7 +111,7 @@ function AddingBookstoreModal({ closeAddingModal, pageIndex, globalFilter }) {
         <AddingBookstoreErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
-            onClick={() => closeAddingModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir nueva librería</button>
         </div>
       </form>

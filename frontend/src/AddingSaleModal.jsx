@@ -62,20 +62,71 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
-  useEffect(() => {
-    fetchInventories();
-  }, []);
+  async function getExistingBooks() {
+    try {
+      const response = await fetch(`${baseURL}/admin/existingBooks`, {
+       method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        setExistingBooks(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getExistingBookstores() {
+    try {
+      const response = await fetch(`${baseURL}/admin/existingBookstores`, {
+       method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        setExistingBookstores(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-    let inventoryBooks = [];
-    let inventoryBookstores = [];
-    for (const inventory of data) {
-      inventoryBooks.push(inventory.book.title);
-      inventoryBookstores.push(inventory.bookstore.name);
+    async function fetchData() {
+      await Promise.all([
+        fetchInventories(),
+        getExistingBooks(),
+        getExistingBookstores()
+      ]);
     }
-    setExistingBooks(inventoryBooks);
-    setExistingBookstores(inventoryBookstores);
-  }, [data])
+
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   let inventoryBooks = [];
+  //   let inventoryBookstores = [];
+  //   for (const inventory of data) {
+  //     inventoryBooks.push(inventory.book.title);
+  //     inventoryBookstores.push(inventory.bookstore.name);
+  //   }
+  //   setExistingBooks(inventoryBooks);
+  //   setExistingBookstores(inventoryBookstores);
+  // }, [data])
+
+  // useEffect(() => {
+  //   console.log(existingBooks);
+  //   console.log(existingBookstores);
+  // }, [existingBooks, existingBookstores])
 
   function dropDownChange(e, input_name, input_index) {
 
@@ -102,7 +153,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         };
         return;
       } else {
-        // inputs[input_name]["function"](input_index, e);
         if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
           inputs[input_name]["element"].current.classList.add("selected")
         };
@@ -125,17 +175,26 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   function checkInputs() {
     let errorsList = []
+    let existingBookIds = []
+    for (const book of existingBooks) {
+      existingBookIds.push(book.id)
+    }
+    let existingBookstoreIds = []
+    for (const bookstore of existingBookstores) {
+      existingBookstoreIds.push(bookstore.id)
+    }
+
     const expectationsBook = {
-      type: "string",
+      type: "number",
       presence: "not empty",
-      length: 100,
-      value: existingBooks
+      // length: 100,
+      value: existingBookIds
     };
     const expectationsBookstore = {
-      type: "string",
+      type: "number",
       presence: "not empty",
-      length: 50,
-      value: existingBookstores
+      // length: 50,
+      value: existingBookstoreIds
     };
     const expectationsPais = {
       type: "string",
@@ -159,8 +218,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
       errorInputs = [errorsQuantity];
     } else {
-      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-      errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
+      errorsBook = checkForErrors("Libro", parseInt(book), expectationsBook, bookRef);
+      errorsBookstore = checkForErrors("Libreria", parseInt(bookstore) , expectationsBookstore, bookstoreRef);
       errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
       errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
       errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
@@ -191,9 +250,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      const chosenInventory = data.find(inventory => inventory.book.title === book && inventory.bookstore.name === bookstore);
-      console.log(chosenInventory);
-
       const response = await fetch(`${baseURL}/admin/sale`, {
         method: "POST",
         headers: {
@@ -201,8 +257,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         },
         credentials: "include",
         body: JSON.stringify({
-          book: chosenInventory.bookId,
-          bookstore: chosenInventory.bookstoreId,
+          book: parseInt(book),
+          bookstore: parseInt(bookstore),
           country: country,
           quantity: quantity
         }),
@@ -248,14 +304,14 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
              className="select-global" ref={bookRef}>
              <option value="null">Selecciona libro</option>
              {existingBooks && existingBooks.map((book, index) => (
-               <option key={index} value={book}>{book}</option>
+               <option key={index} value={book.id}>{book.title}</option>
              ))}
            </select>
            <select onChange={(e) => dropDownChange(e, "Bookstore")}
              className="select-global" ref={bookstoreRef}>
              <option value="null">Selecciona libreria</option>
              {existingBookstores && existingBookstores.map((bookstore, index) => (
-               <option key={index} value={bookstore}>{bookstore}</option>
+               <option key={index} value={bookstore.id}>{bookstore.name}</option>
              ))}
            </select>
            <select onChange={(e) => dropDownChange(e, "Country")}

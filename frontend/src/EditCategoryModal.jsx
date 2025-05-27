@@ -132,6 +132,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       <div className="modal-proper">
       <div className="form-title">
         <p>Editar categoría</p>
+        <p>{clickedRow.type}</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
         <input type='text' placeholder="Tipo" value={tipo}

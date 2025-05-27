@@ -258,6 +258,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar inventario</p>
+        <p>{clickedRow.book.title} de {clickedRow.bookstore.name} en {clickedRow.country}</p>
       </div>
       <form className="global-form">
         {/* <select onChange={(e) => dropDownChange(e, "Book")}

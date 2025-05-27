@@ -71,8 +71,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok) {
         const data = await response.json();
-        // const cleanedUpData = data.filter(bookstore => bookstore.name !== clickedRow.bookstore.name)
-        // setExistingBookstores(cleanedUpData);
         setExistingBookstores(data);
       }
 
@@ -148,10 +146,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   };
 
-  useEffect(() => {
-    console.log(bookstoresToTransfer);
-  }, [bookstoresToTransfer])
-
   function updateQuantity(e, input_index) {
     let soFar = [...bookstoresToTransfer];
     if (!soFar[input_index]) {
@@ -180,15 +174,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     sendToServer();
   }
 
-  console.log(clickedRow);
-
-  useEffect(() => {
-    console.log("bookstoresToTransfer", bookstoresToTransfer);
-  }, [bookstoresToTransfer]);
-
   function checkInputs() {
     // Prepare an error list that will be displayed if any
     let errorsList = []
+
+    // Check if bookstoresToTransfer is null
+    if (bookstoresToTransfer[0] === null) {
+      errorsList.push(["Por favor elige una librería, país y cantidad"]);
+      setErrors(errorsList);
+      return errorsList;
+    }
 
     // Check if we're not making a transfer to the same inventory first
     for (const transfer of bookstoresToTransfer) {

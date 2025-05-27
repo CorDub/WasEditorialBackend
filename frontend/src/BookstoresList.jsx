@@ -1,9 +1,6 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import DeleteBookstoreModal from './DeleteBookstoreModal';
-import EditBookstoreModal from './EditBookstoreModal';
-import AddingBookstoreModal from './AddingBookstoreModal';
 import Navbar from "./Navbar";
 import Alert from "./Alert";
 import UserContext from './UserContext';
@@ -15,12 +12,6 @@ function BookstoresList() {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  // const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
-  // const [deleteModal, setDeleteModal] = useState(null);
-  // const [isEditModalOpen, setOpenEditModal] = useState(false);
-  // const [editModal, setEditModal] = useState(null);
-  // const [isAddingModalOpen, setOpenAddingModal] = useState(false);
-  // const [addingModal, setAddingModal] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
@@ -39,10 +30,6 @@ function BookstoresList() {
       header: "Acciones",
       Cell: ({row}) => (
         <div>
-          {/* <button onClick={()=>openEditModal(row.original)}
-            className="blue-button modal-button">Editar</button>
-          <button onClick={()=>openDeleteModal(row.original)}
-            className="blue-button modal-button">Eliminar</button> */}
           <TableActions openModal={openModal} row={row}/>
         </div>
       )
@@ -146,67 +133,7 @@ function BookstoresList() {
     fetchBookstores();
   }, [isModalOpen])
 
-  // function openDeleteModal(row) {
-  //   setDeleteModal(<DeleteBookstoreModal row={row} closeDeleteModal={closeDeleteModal}
-  //     pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-  //   setOpenDeleteModal(true);
-  // }
-
-  // function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-  //   setDeleteModal(null);
-  //   setOpenDeleteModal(false);
-  //   globalFilter && setGlobalFilter(globalFilter);
-  //   pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-  //   if (reload === true) {
-  //     setForceRender(!forceRender);
-  //   }
-  //   if (alertMessage) {
-  //     setAlertMessage(alertMessage);
-  //     setAlertType(alertType);
-  //   }
-  // }
-
-  // function openEditModal(row) {
-  //   setEditModal(<EditBookstoreModal row={row} closeEditModal={closeEditModal}
-  //     pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-  //   setOpenEditModal(true);
-  // }
-
-  // function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-  //   setEditModal(null);
-  //   setOpenEditModal(false);
-  //   globalFilter && setGlobalFilter(globalFilter);
-  //   pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-  //   if (reload === true) {
-  //     setForceRender(!forceRender);
-  //   }
-  //   if (alertMessage) {
-  //     setAlertMessage(alertMessage);
-  //     setAlertType(alertType);
-  //   }
-  // }
-
-  // function openAddingModal() {
-  //   setAddingModal(<AddingBookstoreModal closeAddingModal={closeAddingModal}
-  //     pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-  //   setOpenAddingModal(true);
-  // }
-
-  // function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-  //   setAddingModal(null);
-  //   setOpenAddingModal(false);
-  //   globalFilter && setGlobalFilter(globalFilter);
-  //   pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-  //   if (reload === true) {
-  //     setForceRender(!forceRender);
-  //   }
-  //   if (alertMessage) {
-  //     setAlertMessage(alertMessage);
-  //     setAlertType(alertType);
-  //   }
-  // }
-
-    function openModal(type, clickedRow) {
+  function openModal(type, clickedRow) {
     setClickedRow(clickedRow);
     switch (type) {
       case 'adding':
@@ -241,9 +168,6 @@ function BookstoresList() {
   return(
     <>
       <Navbar subNav={user.role} active={"librerias"}/>
-      {/* {isDeleteModalOpen && deleteModal}
-      {isEditModalOpen && editModal}
-      {isAddingModalOpen && addingModal} */}
       {isModalOpen &&
         <Modal
           modalType={modalType}

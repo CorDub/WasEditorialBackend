@@ -88,7 +88,8 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     <div className="modal-overlay">
       <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva librería</p>
+        <p>Editar librería</p>
+        <p>{clickedRow.name}</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
         <input type='text' placeholder="Nombre" value={name}

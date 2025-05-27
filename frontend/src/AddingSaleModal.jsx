@@ -112,22 +112,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   let inventoryBooks = [];
-  //   let inventoryBookstores = [];
-  //   for (const inventory of data) {
-  //     inventoryBooks.push(inventory.book.title);
-  //     inventoryBookstores.push(inventory.bookstore.name);
-  //   }
-  //   setExistingBooks(inventoryBooks);
-  //   setExistingBookstores(inventoryBookstores);
-  // }, [data])
-
-  // useEffect(() => {
-  //   console.log(existingBooks);
-  //   console.log(existingBookstores);
-  // }, [existingBooks, existingBookstores])
-
   function dropDownChange(e, input_name, input_index) {
 
     const inputs = {

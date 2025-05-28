@@ -10,7 +10,7 @@ import GivenToAuthorDetails from "./GivenToAuthorDetails";
 import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
-import AuthorInventoryGlobal from "./AuthorInventoryGlobal";
+// import AuthorInventoryGlobal from "./AuthorInventoryGlobal";
 import AuthorTrialInventory from "./AuthorTrialInventory";
 
 function AuthorInventory(){
@@ -35,14 +35,14 @@ function AuthorInventory(){
   const legendValues = [
     ['Entregados al autor', '#57eafa'],
     ['Vendidos', '#4E5981'],
+    ['Devoluciones', 'black'],
     ['Disponibles', '#E2E2E2'],
-    ['Devoluciones', 'black']
   ]
   const [legendDisplays, setLegendDisplays] = useState({
     'givenToAuthor': true,
     'sold': true,
-    'current': true,
-    'returns': true
+    'returns': true,
+    'current': true
   });
 
   useEffect(()=>{

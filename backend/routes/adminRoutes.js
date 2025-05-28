@@ -722,65 +722,188 @@ router.get('/inventories', async (req, res) => {
   }
 });
 
-// router.post('/inventory', async (req, res) => {
-//   try {
-//     const {
-//       book,
-//       bookstore,
-//       country,
-//       inicial
-//     } = req.body;
-//     const existing = await prisma.inventory.findUnique({
-//       where: {
-//         bookId_bookstoreId_country: {
-//           bookId: book,
-//           bookstoreId: bookstore,
-//           country: country
-//         }
-//       }
-//     });
+router.get('/inventoriesByBook', async (req, res) => {
+  try {
+    const queryBookId = parseInt(req.query.bookId);
+    const thatBookImpressions = await prisma.impression.findMany({
+      where: {
+        bookId: queryBookId,
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        quantity: true,
+        note: true,
+        isDeleted: true,
+        createdAt: true
+      }
+    })
 
-//     if (existing) {
-//       if (existing.isDeleted === false) {
-//         res.status(500).json({message: "Este inventario ya existe"})
-//         return;
-//       }
+    const thatBookInventories = await prisma.inventory.findMany({
+      where: {
+        bookId: queryBookId,
+        isDeleted: false
+      },
+      select: {
+        bookstore: {
+          select: {
+            name: true
+          }
+        },
+        bookstoreId: true,
+        country: true,
+        initial: true,
+        current: true,
+        returns: true,
+        givenToAuthor: true,
+        sales: {
+          select: {
+            quantity: true,
+            isDeleted: true
+          }
+        }
+      }
+    })
 
-//       const exhumedInventory = await prisma.inventory.update({
-//         where: {id: existing.id},
-//         data: {
-//           bookId: book,
-//           bookstoreId: bookstore,
-//           country: country,
-//           initial: inicial,
-//           current: inicial,
-//           isDeleted: false
-//         }
-//       });
-//       res.status(201).json(exhumedInventory);
-//       return;
-//     }
+    const relevantInventories = [];
+    let currentTotal = 0;
+    let initialTotal = 0;
+    let returnsTotal = 0;
+    let givenToAuthorTotal = 0;
+    let soldTotal = 0;
+    for (const inventory of thatBookInventories) {
+      let thisInventorySalesTotal = 0
+      currentTotal += inventory.current;
+      initialTotal += inventory.initial;
+      returnsTotal += inventory.returns;
+      givenToAuthorTotal += inventory.givenToAuthor;
+      for (const sale of inventory.sales) {
+        if (sale.isDeleted === false) {
+          soldTotal += sale.quantity
+          thisInventorySalesTotal += sale.quantity
+        }
+      }
+      const inventoryPlusSales = {...inventory, totalSales: thisInventorySalesTotal}
+      relevantInventories.push(inventoryPlusSales);
+    }
+    const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
+    const payload = {
+      sortedRelevantInventories,
+      currentTotal,
+      initialTotal,
+      returnsTotal,
+      givenToAuthorTotal,
+      soldTotal,
+      thatBookImpressions
+    }
 
-//     const createdInventory = await prisma.inventory.create({
-//       data: {
-//         bookId: book,
-//         bookstoreId: bookstore,
-//         country: country,
-//         initial: inicial,
-//         current: inicial
-//       }
-//     });
-//     res.status(201).json(createdInventory);
-//   } catch (error) {
-//     console.error(error);
-//     if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
-//       res.status(500).json({message: "Este inventario ya existe"})
-//       return;
-//     }
+    res.status(200).json(payload);
 
-//     res.status(500).json({ error: error });
-//   }
-// })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at inventoriesByBook route"});
+  }
+})
+
+router.get('/inventoriesByBookstore', async (req, res) => {
+  try {
+    const queryBookstoreId = parseInt(req.query.bookstoreId);
+
+    const thatBookstoreInventories = await prisma.inventory.findMany({
+      where: {
+        bookstoreId: queryBookstoreId,
+        isDeleted: false
+      },
+      select: {
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true,
+        country: true,
+        initial: true,
+        current: true,
+        returns: true,
+        givenToAuthor: true,
+        sales: {
+          select: {
+            quantity: true,
+            isDeleted: true
+          }
+        }
+      }
+    })
+
+    const relevantInventories = [];
+    let currentTotal = 0;
+    let initialTotal = 0;
+    let returnsTotal = 0;
+    let givenToAuthorTotal = 0;
+    let soldTotal = 0;
+    for (const inventory of thatBookstoreInventories) {
+      let thisInventorySalesTotal = 0
+      currentTotal += inventory.current;
+      initialTotal += inventory.initial;
+      returnsTotal += inventory.returns;
+      givenToAuthorTotal += inventory.givenToAuthor;
+      for (const sale of inventory.sales) {
+        if (sale.isDeleted === false) {
+          soldTotal += sale.quantity
+          thisInventorySalesTotal += sale.quantity
+        }
+      }
+      const inventoryPlusSales = {...inventory, totalSales: thisInventorySalesTotal}
+      relevantInventories.push(inventoryPlusSales);
+    }
+    const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
+    const payload = {
+      sortedRelevantInventories,
+      currentTotal,
+      initialTotal,
+      returnsTotal,
+      givenToAuthorTotal,
+      soldTotal,
+    }
+
+    res.status(200).json(payload);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at inventoriesByBook route"});
+  }
+})
+
+router.get('/inventoriesCurrentTotals', async (req, res) => {
+  try {
+    const currentTotals = await prisma.inventory.groupBy({
+      by: ['bookstoreId'],
+      _sum: {
+        current: true
+      }
+    })
+
+    const withNames = await Promise.all(
+      currentTotals.map(async (group) => {
+        const bookstore = await prisma.bookstore.findUnique({
+          where: { id: group.bookstoreId },
+          select: { name: true }
+        });
+
+        return {
+          ...group,
+          bookstoreName: bookstore?.name || null
+        };
+      })
+    );
+
+    res.status(200).json(withNames);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at inventoriesCurrentTotals route"});
+  }
+})
 
 router.patch('/inventory', async (req, res) => {
   try {

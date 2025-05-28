@@ -1,6 +1,6 @@
 import XAxis from "./XAxis";
 import { useState, useEffect } from "react";
-import "./AuthorInventoryGlobal.scss";
+
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import Legend from "./Legend";
 

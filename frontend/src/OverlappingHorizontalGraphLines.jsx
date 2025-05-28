@@ -1,7 +1,14 @@
 import "./OverlappingHorizontalGraphLines.scss";
 import { useState, useEffect, useRef } from "react";
 
-function OverlappingHorizontalGraphLines({title, initial, sold, given, current, returns, max}) {
+function OverlappingHorizontalGraphLines({
+    title,
+    color,
+    sold,
+    given,
+    current,
+    returns,
+    max}) {
   const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
   const titleRef = useRef();
   const [isEllipsed, setEllipsed] = useState(false);

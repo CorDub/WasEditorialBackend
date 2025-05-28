@@ -22,6 +22,7 @@ function InventoriesAreaDashboard() {
   const [isBookInventoryOpen, setBookInventoryOpen] = useState(false);
   const [isBookstoreInventoryOpen, setBookstoreInventoryOpen] = useState(false);
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreId, setSelectedBookstoreId] = useState(null);
   const [selectedBook, setSelectedBook] = useState("");
   const [selectedBookstoreNoSpaces, setSelectedBookstoreNoSpaces] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
@@ -39,22 +40,37 @@ function InventoriesAreaDashboard() {
     };
   }, []);
 
+  async function getCurrentTotals() {
+    const response = await fetch(`${baseURL}/admin/inventoriesCurrentTotals`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    });
+
+    if (response.ok) {
+      const data = await response.json()
+      setData(data);
+    }
+  }
+
+  useEffect(() => {
+    getCurrentTotals()
+  }, []);
+
   function getBookstoresNamesandCounts(data) {
     const resCounts = [];
 
-    for (let i = 0; i < data.length; i++) {
-      if (!resCounts[data[i].bookstoreId]) {
-        let bookstoreObject = {
-          name: data[i].bookstore.name,
-          count: data[i].current
-        }
-        resCounts[data[i].bookstoreId] = bookstoreObject;
-      } else {
-        resCounts[data[i].bookstoreId].count += data[i].current
-      }
+    for (const bookstore of data) {
+      resCounts.push({
+          name: bookstore.bookstoreName,
+          count: bookstore._sum.current,
+          id: bookstore.bookstoreId
+        })
     }
 
-    const filteredResCounts = resCounts.filter(count => count !== "");
+    const filteredResCounts = Object.values(resCounts).filter(count => count !== "");
     const sortedResCounts = filteredResCounts.sort((a, b) => b.count - a.count);
 
     setBookstoresCounts(sortedResCounts);
@@ -264,33 +280,10 @@ function InventoriesAreaDashboard() {
     return finalAreaDimensions;
   };
 
-  async function fetchInventories() {
-    try {
-      const response = await fetch(`${baseURL}/admin/inventories`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        const data = await response.json();
-        setData(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchInventories();
-  }, []);
-
   useEffect(() => {
     const newArray = Array.from({length: bookstoresCounts.length}, () => 0);
     for (const inventory of data) {
-      newArray[inventory.bookstoreId - 1] += parseInt(inventory.current)
+      newArray[inventory.bookstoreId - 1] += inventory._sum.current
     }
     setCurrentQuantities(newArray);
   }, [data, bookstoresCounts]);
@@ -312,7 +305,7 @@ function InventoriesAreaDashboard() {
     <div className="inventory-area-container">
       <Navbar
         subNav={user.role}
-        active={"inventories2"}
+        active={"inventories"}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
         setSelectedBookstore={setSelectedBookstore}
         setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
@@ -325,6 +318,7 @@ function InventoriesAreaDashboard() {
         <div className="areas-container">
           {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
             const bookstore = bookstoresCounts[index];
+            console.log(bookstore.id);
             const noSpaceName = bookstore.name.replace(' ', '');
             return (
               <InventoryArea
@@ -332,6 +326,7 @@ function InventoriesAreaDashboard() {
                 name={noSpaceName}
                 bookstoreName={bookstore.name}
                 count={bookstore.count}
+                bookstoreId={bookstore.id}
                 top={area.top}
                 left={area.left}
                 height={area.height}
@@ -339,6 +334,7 @@ function InventoriesAreaDashboard() {
                 setBookstoreInventoryOpen={setBookstoreInventoryOpen}
                 setSelectedBookstore={setSelectedBookstore}
                 setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
+                setSelectedBookstoreId={setSelectedBookstoreId}
                 setSelectedLogo={setSelectedLogo}
                 retreat={retreat}
                 setRetreat={setRetreat}/>
@@ -350,6 +346,7 @@ function InventoriesAreaDashboard() {
         <BookstoreInventory
           selectedBookstore={selectedBookstore}
           selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
+          selectedBookstoreId={selectedBookstoreId}
           selectedLogo={selectedLogo}
           isBookstoreInventoryOpen={isBookstoreInventoryOpen}
           setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}

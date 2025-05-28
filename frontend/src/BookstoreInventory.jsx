@@ -1,8 +1,6 @@
-import { useContext, useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import useCheckAdmin from './customHooks/useCheckAdmin';
-import InventoriesContext from "./InventoriesContext";
 import "./BookstoreInventory.scss";
-// import BookstoreInventoryBook from "./BookstoreInventoryBook";
 import InventoryTotal from "./InventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
@@ -13,12 +11,12 @@ import ProgressBar from "./ProgressBar";
 function BookstoreInventory({
     selectedBookstore,
     selectedBookstoreNoSpaces,
+    selectedBookstoreId,
     selectedLogo,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
-  const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
   const [currentTotal, setCurrentTotal] = useState(0);
@@ -238,13 +236,6 @@ function BookstoreInventory({
     }
   });
 
-  useEffect(() => {
-    if (!inventories) {
-      fetchInventories();
-    }
-    selectRelevantInventories();
-  }, [inventories])
-
   // ensures the modalType is reset to the correct one after you add a transfer
   useEffect(() => {
     if (!isModalOpen) {
@@ -252,33 +243,37 @@ function BookstoreInventory({
     }
   }, [modalType, isModalOpen])
 
-  function selectRelevantInventories() {
-    const relevantInventories = [];
-    let currentTotal = 0;
-    let initialTotal = 0;
-    let returnsTotal = 0;
-    let givenToAuthorTotal = 0;
-    let soldTotal = 0;
-    for (const inventory of inventories) {
-      if (inventory.bookstore.name === selectedBookstore) {
-        relevantInventories.push(inventory);
-        currentTotal += inventory.current;
-        initialTotal += inventory.initial;
-        returnsTotal += inventory.returns;
-        givenToAuthorTotal += inventory.givenToAuthor;
-        for (const sale of inventory.sales) {
-          soldTotal += sale.quantity
-        }
+  async function getBookstoreInventories() {
+    try {
+      const response = await fetch(`${baseURL}/admin/inventoriesByBookstore?bookstoreId=${selectedBookstoreId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setData(data.sortedRelevantInventories);
+        setCurrentTotal(data.currentTotal);
+        setInitialTotal(data.initialTotal);
+        setSoldTotal(data.soldTotal);
+        setGivenToAuthorTotal(data.givenToAuthorTotal);
+        setReturnsTotal(data.returnsTotal);
       }
+
+    } catch (error) {
+      console.log(error)
     }
-    setCurrentTotal(currentTotal);
-    setInitialTotal(initialTotal);
-    setReturnsTotal(returnsTotal);
-    setGivenToAuthorTotal(givenToAuthorTotal);
-    setSoldTotal(soldTotal);
-    const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
-    setData(sortedRelevantInventories);
   }
+
+  useEffect(() => {
+    getBookstoreInventories();
+  }, []);
+
+  console.log(selectedBookstoreId)
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -311,7 +306,7 @@ function BookstoreInventory({
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      fetchInventories();
+      getBookstoreInventories();
       setForceRender(!forceRender);
     }
     if (alertMessage) {

@@ -1,4 +1,4 @@
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "../ProgressBar";
 
 function BookstoreInventoryBook({title, current, initial}) {
   return(

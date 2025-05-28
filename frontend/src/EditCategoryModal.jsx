@@ -93,6 +93,11 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       addErrorClass(inputRegalias);
     };
 
+    if (parseFloat(regalias) > 100) {
+      newErrorList.push(23);
+      addErrorClass(inputRegalias);
+    }
+
     if (isNaN(parseFloat(gestionTiendas))) {
       newErrorList.push(31);
       addErrorClass(inputGestionTiendas);
@@ -102,6 +107,11 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       newErrorList.push(32);
       addErrorClass(inputGestionTiendas);
     };
+
+    if (parseFloat(gestionTiendas) > 100) {
+      newErrorList.push(33);
+      addErrorClass(inputGestionTiendas);
+    }
 
     if (isNaN(parseFloat(gestionMinima))) {
       newErrorList.push(41);

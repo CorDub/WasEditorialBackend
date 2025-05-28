@@ -17,10 +17,14 @@ function AddingCategoryError({errorList, setErrorList}) {
         return (<p className="login-error">El percentage de regalias debe estar un numero.</p>)
       case 22:
         return (<p className="login-error">El percentage de regalias no puede estar vacío.</p>)
+      case 23:
+        return (<p className="login-error">El percentage de regalias no puede ser mas de 100.</p>)
       case 31:
         return (<p className="login-error">El percentage de gestion de tiendas debe estar un numero.</p>)
       case 32:
         return (<p className="login-error">El percentage de gestion de tiendas no puede estar vacío.</p>)
+      case 33:
+        return (<p className="login-error">El percentage de gestion de tiendas no puede ser mas de 100.</p>)
       case 41:
         return (<p className="login-error">El minima de gestion debe estar un numero.</p>)
       case 42:

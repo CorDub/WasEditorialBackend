@@ -4,8 +4,8 @@ function Legend({values, displays, setDisplays}) {
   const valuesToDisplay = {
     0: "givenToAuthor",
     1: "sold",
-    2: "current",
-    3: "returns"
+    2: "returns",
+    3: "current"
   }
 
   return(

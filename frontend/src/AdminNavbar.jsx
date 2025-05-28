@@ -53,7 +53,7 @@ function AdminNavbar({
     //   return;
     // };
 
-    if (active === "inventories2") {
+    if (active === "inventories") {
       searchBarRef.current.focus();
       return;
     }
@@ -92,7 +92,7 @@ function AdminNavbar({
   }, [inventories])
 
   useEffect(() => {
-    if (active === "inventories2") {
+    if (active === "inventories") {
       searchBarRef.current.classList.add("navbar-extended");
     }
   }, [active]);
@@ -125,7 +125,7 @@ function AdminNavbar({
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
       {/* <Link to='/admin/inventories' className="navbar-button">Inventarios</Link> */}
-      {active === "inventories2" ?
+      {active === "inventories" ?
         <>
           <input
             type="text"
@@ -151,7 +151,7 @@ function AdminNavbar({
             null
           }
         </>:
-        <Link to='/admin/inventories2' className="navbar-button">Inventarios</Link>
+        <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
       }
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
     </div>

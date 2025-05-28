@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./AuthorTrialInventory.scss";
+import "./AuthorInventoryGlobal.scss";
 import Legend from "./Legend";
 
 function AuthorTrialInventory({
@@ -44,6 +45,8 @@ function AuthorTrialInventory({
   useEffect(() => {
     fetchAllAuthorInventories();
   }, []);
+
+  console.log(data);
 
   function filterData(data, scope, selectedBookId, legendDisplays, exclusions) {
     if (!data) {
@@ -118,7 +121,8 @@ function AuthorTrialInventory({
           current: inventory.current,
           givenToAuthor: inventory.givenToAuthor,
           returns: inventory.returns,
-          sold: sumSales
+          sold: sumSales,
+          color: scope === "bookstore" ? inventory.bookstore.color : '#E2E2E2'
         }
       }
     }
@@ -204,11 +208,11 @@ function AuthorTrialInventory({
         <OverlappingHorizontalGraphLines
           key={index}
           title={dataPoint[0]}
-          initial={legendDisplays['initial'] && dataPoint[1].initial}
+          color={dataPoint[1].color}
           sold={legendDisplays['sold'] && dataPoint[1].sold}
           given={legendDisplays['givenToAuthor'] && dataPoint[1].givenToAuthor}
-          current={legendDisplays['current'] && dataPoint[1].current}
           returns={legendDisplays['returns'] && dataPoint[1].returns}
+          current={legendDisplays['current'] && dataPoint[1].current}
           max={max} />))}
       <Legend
         values={legendValues}

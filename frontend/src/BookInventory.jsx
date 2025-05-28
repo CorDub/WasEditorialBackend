@@ -1,6 +1,5 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useEffect, useRef, useState, useMemo, useContext } from "react";
-import InventoriesContext from "./InventoriesContext";
+import { useEffect, useRef, useState, useMemo } from "react";
 import InventoryTotal from "./InventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
@@ -16,7 +15,6 @@ function BookInventory({
     setRetreat}) {
   useCheckAdmin()
   const baseURL = import.meta.env.VITE_API_URL || '';
-  const { inventories, fetchInventories } = useContext(InventoriesContext);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
@@ -232,41 +230,36 @@ function BookInventory({
     }
   });
 
-  useEffect(() => {
-    if (!inventories) {
-      fetchInventories();
-    }
-    selectRelevantInventories();
-  }, [inventories])
+  async function getBookInventories() {
+    try {
+      const response = await fetch(`${baseURL}/admin/inventoriesByBook?bookId=${selectedBookId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
 
-  function selectRelevantInventories() {
-    const relevantInventories = [];
-    let currentTotal = 0;
-    let initialTotal = 0;
-    let returnsTotal = 0;
-    let givenToAuthorTotal = 0;
-    let soldTotal = 0;
-    for (const inventory of inventories) {
-      if (inventory.book.title === selectedBook) {
-        relevantInventories.push(inventory);
-        currentTotal += inventory.current;
-        initialTotal += inventory.initial;
-        returnsTotal += inventory.returns;
-        givenToAuthorTotal += inventory.givenToAuthor;
-        for (const sale of inventory.sales) {
-          soldTotal += sale.quantity
-        }
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setData(data.sortedRelevantInventories);
+        setCurrentTotal(data.currentTotal);
+        setInitialTotal(data.initialTotal);
+        setSoldTotal(data.soldTotal);
+        setGivenToAuthorTotal(data.givenToAuthorTotal);
+        setReturnsTotal(data.returnsTotal);
+        setImpressions(data.thatBookImpressions);
       }
+
+    } catch (error) {
+      console.log(error)
     }
-    setCurrentTotal(currentTotal);
-    setInitialTotal(initialTotal);
-    setReturnsTotal(returnsTotal);
-    setGivenToAuthorTotal(givenToAuthorTotal);
-    setSoldTotal(soldTotal);
-    const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
-    setData(sortedRelevantInventories);
-    setImpressions(sortedRelevantInventories[0].book.impressions);
   }
+
+  useEffect(() => {
+    getBookInventories();
+  }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -298,7 +291,7 @@ function BookInventory({
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      fetchInventories();
+      getBookInventories();
       setForceRender(!forceRender);
     }
     if (alertMessage) {

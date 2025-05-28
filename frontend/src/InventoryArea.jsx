@@ -7,6 +7,7 @@ function InventoryArea({
     name,
     bookstoreName,
     count,
+    bookstoreId,
     top,
     left,
     height,
@@ -14,6 +15,7 @@ function InventoryArea({
     setBookstoreInventoryOpen,
     setSelectedBookstore,
     setSelectedBookstoreNoSpaces,
+    setSelectedBookstoreId,
     setSelectedLogo,
     retreat,
     setRetreat}) {
@@ -44,6 +46,7 @@ function InventoryArea({
       setSelectedBookstoreNoSpaces(name);
       setSelectedLogo(logo);
       setBookstoreInventoryOpen(true);
+      setSelectedBookstoreId(bookstoreId)
     }, 250)
   }
 

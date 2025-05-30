@@ -10,7 +10,6 @@ import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
 import AdminsList from "./AdminsList.jsx";
-// import InventoriesList from './InventoriesList.jsx';
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
@@ -31,7 +30,6 @@ function App() {
           <Route path="/superadmin/admins" element={<AdminsList />} />
           <Route path='/admin/authors' element={<AuthorsList />} />
           <Route path="/admin/categories" element={<CategoriesList />} />
-          {/* <Route path="/admin/inventories" element={<InventoriesList />} /> */}
           <Route path="/admin/inventories" element={<InventoriesAreaDashboard />} />
           <Route path="/admin/bookstoreInventory" element={<BookstoreInventory />} />
           <Route path="/admin/bookInventory" element={<BookInventory />} />

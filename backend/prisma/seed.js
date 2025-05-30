@@ -26,7 +26,7 @@ async function main() {
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
   twelveMonthsAgo.setDate(1);
 
-  await prisma.category.create({
+  const cat1 = await prisma.category.create({
     data: {
       type: "1",
       percentage_royalties: 100,
@@ -36,7 +36,7 @@ async function main() {
     }
   })
 
-  await prisma.category.create({
+  const cat2 = await prisma.category.create({
     data: {
       type: "2",
       percentage_royalties: 100,
@@ -46,7 +46,7 @@ async function main() {
     }
   })
 
-  await prisma.category.create({
+  const cat3 = await prisma.category.create({
     data: {
       type: "3",
       percentage_royalties: 20,
@@ -56,10 +56,14 @@ async function main() {
     }
   })
 
+  console.log(cat1)
+  console.log(cat2)
+  console.log(cat3)
+
   /// Add all books from DB
 
   async function addAuthorFromDB(author) {
-    await prisma.user.create({
+    const createdAuthor = await prisma.user.create({
       data: {
         first_name: author.first_name,
         last_name: author.last_name,
@@ -68,11 +72,10 @@ async function main() {
         createdAt: twelveMonthsAgo
       }
     })
+    console.log(createdAuthor.first_name);
   };
 
-  authors.forEach((author) => {
-    addAuthorFromDB(author)
-  });
+  await Promise.all(authors.map(author => addAuthorFromDB(author)));
 
   async function addBookFromDB(book, authorsIndexes) {
     function checkISBN(isbn) {
@@ -112,16 +115,17 @@ async function main() {
     return formatted_user_id
   }
 
-  books.map(async (book) => {
-    let authorsIndexes = await Promise.all(
-      book["Author(s)"].map(async (user) => {
-        const user_id = await findAuthorWithFullName(user)
-        return user_id;
-      })
-    )
-    addBookFromDB(book, authorsIndexes)
-  });
-
+  await Promise.all(
+    books.map(async (book) => {
+      let authorsIndexes = await Promise.all(
+        book["Author(s)"].map(async (user) => {
+          const user_id = await findAuthorWithFullName(user)
+          return user_id;
+        })
+      )
+      addBookFromDB(book, authorsIndexes)
+    })
+  );
   /// Create users
 
   await prisma.user.create({
@@ -150,6 +154,56 @@ async function main() {
 
   await prisma.user.create({
     data: {
+      first_name: "Juan",
+      last_name: "AdminWasEditorial",
+      country: "México",
+      email: "JuanAdmin@waseditorial.com",
+      password: await bcrypt.hash("PruebaAdmin1", 10),
+      role: Role.superadmin,
+      createdAt: twelveMonthsAgo
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      first_name: "Rebeca",
+      last_name: "AdminWasEditorial",
+      country: "México",
+      email: "RebecaAdmin@waseditorial.com",
+      password: await bcrypt.hash("PruebaAdmin2", 10),
+      role: Role.superadmin,
+      createdAt: twelveMonthsAgo
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      first_name: "Juan",
+      last_name: "AutorWasEditorial",
+      country: "México",
+      email: "JuanAutor@waseditorial.com",
+      categoryId: 1,
+      password: await bcrypt.hash("PruebaAutor1", 10),
+      role: Role.author,
+      createdAt: twelveMonthsAgo
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      first_name: "Rebeca",
+      last_name: "AutorWasEditorial",
+      country: "México",
+      email: "RebecaAutor@waseditorial.com",
+      categoryId: 1,
+      password: await bcrypt.hash("PruebaAutor2", 10),
+      role: Role.author,
+      createdAt: twelveMonthsAgo
+    },
+  });
+
+  await prisma.user.create({
+    data: {
       first_name: "Autorino",
       last_name: "Adorno",
       country: "México",
@@ -158,8 +212,8 @@ async function main() {
       password: await bcrypt.hash("bookboi3", 10),
       role: Role.author,
       createdAt: twelveMonthsAgo
-    },
-  });
+    }
+  })
 
   /// Create Bookstores
 
@@ -361,42 +415,50 @@ async function main() {
   }
 
   // Add test author to 5 books as an author
-  const user = await prisma.user.findFirst({
-    where: {
-      email: {
-        contains: 'adorno'
+
+  async function addingBookToAuthor(email) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: {
+          contains: email
+        },
+        role: Role.author
       }
+    });
+
+    if (!user) {
+      console.log('User not found', email);
+      return;
     }
-  });
 
-  if (!user) {
-    console.log('User not found');
-    return;
-  }
-
-  const randomBooks = await prisma.book.findMany({
-    take: 5,
-    where: {
-      NOT: {
-        users: {
-          some: {
-            id: user.id
+    const randomBooks = await prisma.book.findMany({
+      take: 5,
+      where: {
+        NOT: {
+          users: {
+            some: {
+              id: user.id
+            }
           }
         }
       }
-    }
-  });
-
-  for (const book of randomBooks) {
-    await prisma.book.update({
-      where: { id: book.id },
-      data: {
-        users: {
-          connect: { id: user.id }
-        }
-      }
     });
+
+    for (const book of randomBooks) {
+      await prisma.book.update({
+        where: { id: book.id },
+        data: {
+          users: {
+            connect: { id: user.id }
+          }
+        }
+      });
+    }
   }
+
+  await addingBookToAuthor("adorno");
+  await addingBookToAuthor("Rebeca");
+  await addingBookToAuthor("Juan");
 
   /// Create more fake sales specifically for the test author in the last month
   const now = new Date();
@@ -551,10 +613,16 @@ async function main() {
   }
 }
 
+
 main()
-  .catch((e) => {
-    console.error(e);
+  .then(() => {
+    console.log("Seed complete");
+    process.exit(0);
   })
-  .finally(async()=> {
+  .catch((e) => {
+    console.error("Seed failed:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
     await prisma.$disconnect();
   });

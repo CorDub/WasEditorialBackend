@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Unused old stuff keeping in local just in case
+src/unused/

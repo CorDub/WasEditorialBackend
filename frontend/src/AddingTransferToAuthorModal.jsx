@@ -14,6 +14,8 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
   const [person, setPerson] = useState('');
   const quantityRef = useRef();
 
+  console.log(clickedRow);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors([]);
@@ -69,6 +71,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           deliveryDate: deliveryDate,
           place: place,
           person: person,
+          country: clickedRow.country
         }),
       });
 

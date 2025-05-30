@@ -745,6 +745,7 @@ router.get('/inventoriesByBook', async (req, res) => {
         isDeleted: false
       },
       select: {
+        id: true,
         bookstore: {
           select: {
             name: true
@@ -821,6 +822,7 @@ router.get('/inventoriesByBookstore', async (req, res) => {
         isDeleted: false
       },
       select: {
+        id: true,
         book: {
           select: {
             title: true
@@ -1349,7 +1351,7 @@ router.post('/transfer', async (req, res) => {
     if (type === "send" && !bookstoreToId) {
 
       if (country !== "México") {
-        res.status(400).json({message: "Una entega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
+        res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
         return;
       }
 

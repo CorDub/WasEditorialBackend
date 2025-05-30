@@ -318,7 +318,6 @@ function InventoriesAreaDashboard() {
         <div className="areas-container">
           {areaDimensions && bookstoresCounts && areaDimensions.map((area, index) => {
             const bookstore = bookstoresCounts[index];
-            console.log(bookstore.id);
             const noSpaceName = bookstore.name.replace(' ', '');
             return (
               <InventoryArea

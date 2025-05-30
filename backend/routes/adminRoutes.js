@@ -751,6 +751,12 @@ router.get('/inventoriesByBook', async (req, res) => {
           }
         },
         bookstoreId: true,
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true,
         country: true,
         initial: true,
         current: true,
@@ -821,6 +827,12 @@ router.get('/inventoriesByBookstore', async (req, res) => {
           }
         },
         bookId: true,
+        bookstore: {
+          select: {
+            name: true
+          }
+        },
+        bookstoreId: true,
         country: true,
         initial: true,
         current: true,

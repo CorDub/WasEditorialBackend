@@ -3,8 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
-function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) {
+function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  console.log(clickedRow);
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
@@ -43,6 +44,8 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}) 
     "Yemen",
     "Zambia", "Zimbabue"
   ];
+
+
 
   let bookTitlesList = []
   for (const book of existingBooks) {

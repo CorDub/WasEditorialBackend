@@ -255,7 +255,6 @@ function BookstoreInventory({
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setData(data.sortedRelevantInventories);
         setCurrentTotal(data.currentTotal);
         setInitialTotal(data.initialTotal);
@@ -272,8 +271,6 @@ function BookstoreInventory({
   useEffect(() => {
     getBookstoreInventories();
   }, []);
-
-  console.log(selectedBookstoreId)
 
   useEffect(() => {
     requestAnimationFrame(() => {

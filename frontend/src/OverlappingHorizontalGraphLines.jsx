@@ -19,15 +19,20 @@ function OverlappingHorizontalGraphLines({
     given: 0
   })
 
+  console.log(newLengths);
+
   function getLength(type, max) {
     switch (type) {
-      case current:
+      case 'current':
+        // console.log('current: ', ((current + sold + returns + given) * 100) / max)
         return ((current + sold + returns + given) * 100) / max
-      case returns:
+      case 'returns':
+        // console.log('returns', ((given + sold + returns) * 100) / max)
         return ((given + sold + returns) * 100) / max
-      case sold:
+      case 'sold':
+        // console.log('sold', ((given + sold) * 100) / max)
         return ((given + sold) * 100) / max
-      case given:
+      case 'given':
         return (given * 100) / max
     }
   }
@@ -42,10 +47,10 @@ function OverlappingHorizontalGraphLines({
       }
 
       const newLengths = {
-        current: getLength(current, max),
-        returns: getLength(returns, max),
-        sold: getLength(sold, max),
-        given: getLength(given, max)
+        current: getLength('current', max),
+        returns: getLength('returns', max),
+        sold: getLength('sold', max),
+        given: getLength('given', max)
       }
       setNewLengths(newLengths);
     })

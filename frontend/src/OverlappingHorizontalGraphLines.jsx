@@ -19,8 +19,6 @@ function OverlappingHorizontalGraphLines({
     given: 0
   })
 
-  console.log(newLengths);
-
   function getLength(type, max) {
     switch (type) {
       case 'current':

@@ -126,9 +126,6 @@ router.get('/inventories', async (req, res) => {
       }
     });
 
-    // console.log("books length", books.length);
-    // console.log(books[0]);
-
     // Calculate overall totals across all books
     let overallInitialTotal = 0;
     let overallSoldTotal = 0;
@@ -378,8 +375,6 @@ router.get('/monthlySales', async (req, res) => {
     ltm.setMonth(ltm.getMonth()-12);
     ltm.setDate(1);
 
-    // console.log("LTM", ltm);
-
     // Get all sales for that user based on that;
     const data = await prisma.sale.findMany({
       where: {
@@ -573,52 +568,10 @@ router.get('/monthlySales', async (req, res) => {
       // Get an array of all the 12 monhts Y + M combination
       let ltmStrings = [];
       for (let i = 0; i < 13; i++) {
-        // let monthString = "";
-        // if ((currentMonth - i) <= 0) {
-        //   let newCurrentMonth = currentMonth - i + 12;
-        //   if (newCurrentMonth.toString().length === 1) {
-        //     newCurrentMonth = "0" + newCurrentMonth.toString();
-        //   } else {
-        //     newCurrentMonth = newCurrentMonth.toString();
-        //   }
-
-        //   monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
-        // } else {
-        //   let newCurrentMonth = (currentMonth-i).toString();
-        //   if (newCurrentMonth.toString().length === 1) {
-        //     newCurrentMonth = "0" + newCurrentMonth.toString();
-        //   } else {
-        //     newCurrentMonth = newCurrentMonth.toString();
-        //   }
-
-        //   monthString = currentYear.toString() + '-' + newCurrentMonth;
-        // }
-        // ltmStrings.push(monthString);
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
         ltmStrings.push(monthStr);
       }
-
-      // Compare with salesByMonths and fill in if missing
-      // for (let i = 0; i < ltmStrings.length; i++) {
-      //   let existing = false;
-
-      //   for (const month of salesByMonthsList) {
-      //     if (ltmStrings[i] === month[0]) {
-      //       existing = true;
-      //     }
-      //   }
-
-      //   if (!existing) {
-      //     salesByMonthsList.splice(i, 0, [ltmStrings[i], {
-      //       ganancia: 0,
-      //       sales: [],
-      //       total: 0,
-      //       transfers: [],
-      //       transfersTotal: 0
-      //     }]);
-      //   }
-      // };
 
       for (let i = 0; i < ltmStrings.length; i++) {
         let existing = false;

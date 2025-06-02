@@ -14,7 +14,6 @@ function ShowInventories({
     setAuthorBookstoreInventoryOpen,
     setAuthorWasInventoryOpen,
     setAuthorAvailableInventoryOpen,
-    setAuthorTrialInventoryOpen,
     legendDisplays,
     setLegendDisplays,
     setExclusions}) {
@@ -25,7 +24,7 @@ function ShowInventories({
   const bookstoreRef = useRef();
   const wasRef = useRef();
   const availableRef = useRef();
-  const trialRef = useRef();
+  // const trialRef = useRef();
   const [isWasPerCountryOpen, setWasPerCountryOpen] = useState(false);
 
   //ensure that totalRef is the default so that something is displayed
@@ -48,7 +47,6 @@ function ShowInventories({
       bookstore: setAuthorBookstoreInventoryOpen,
       was: setAuthorWasInventoryOpen,
       available: setAuthorAvailableInventoryOpen,
-      trial: setAuthorTrialInventoryOpen
     }
 
     // removing and adding the active style to the right components.

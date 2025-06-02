@@ -46,8 +46,6 @@ function AuthorTrialInventory({
     fetchAllAuthorInventories();
   }, []);
 
-  console.log(data);
-
   function filterData(data, scope, selectedBookId, legendDisplays, exclusions) {
     if (!data) {
       return;

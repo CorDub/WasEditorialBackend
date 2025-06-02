@@ -455,15 +455,20 @@ router.get('/monthlySales', async (req, res) => {
     // If not, we create the month with the data of the current sale and the previous scaffold for bookstores
     let salesByMonths = {};
     for (const sale of data) {
-      if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
-        salesByMonths[sale.createdAt.toISOString().substring(0,7)]["sales"].push(sale);
-        salesByMonths[sale.createdAt.toISOString().substring(0,7)]["total"] += (
+      const date = new Date(sale.createdAt);
+      const year = date.getFullYear();
+      const month = (date.getMonth() +1).toString().padStart(2, "0");
+      const key = `${year}-${month}`;
+
+      if (salesByMonths[key]) {
+        salesByMonths[key]["sales"].push(sale);
+        salesByMonths[key]["total"] += (
           (sale.inventory.book.price * sale.quantity)
           * (userCategory.percentage_management_stores / 100)
           * (userCategory.percentage_royalties / 100)
         )
       } else {
-        salesByMonths[sale.createdAt.toISOString().substring(0,7)] = {
+        salesByMonths[key] = {
           sales: [sale],
           ganancia: (
             sale.inventory.book.price
@@ -522,7 +527,11 @@ router.get('/monthlySales', async (req, res) => {
     // Otherwise create it
     if (allAuthorTransfers.length > 0) {
       for (const transfer of allAuthorTransfers) {
-        const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+        const date = new Date(transfer.createdAt);
+        const year = date.getFullYear();
+        const month = (date.getMonth() +1).toString().padStart(2, "0");
+        const transferMonth = `${year}-${month}`;
+        // const transferMonth = transfer.createdAt.toISOString().substring(0,7);
 
         if (!salesByMonths[transferMonth]) {
           salesByMonths[transferMonth] = {

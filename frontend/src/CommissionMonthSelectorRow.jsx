@@ -1,7 +1,16 @@
 import formatNumber from "./customHooks/formatNumber";
 import "./CommissionMonthSelectorRow.scss"
+import { useState } from "react";
+import { useEffect } from "react";
 
 function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
+  const [salesPresence, setSalesPresence] = useState(true)
+
+  useEffect(() => {
+    if (month.amount === 0) {
+      setSalesPresence(false)
+    }
+  }, [month])
 
   function changeDateFormat(date) {
     const months = {
@@ -27,11 +36,16 @@ function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
       className={active ? "cms-row-active" : "cms-row"}
       onClick={() => setActiveMonth(index)}>
       <div className="cms-month">{changeDateFormat(month.forMonth)}</div>
-      <div className="cms-status">{month.amount === 0
-        ? ""
-        : month.isPaid
-          ? "Pagado"
-          : "No pagado"}</div>
+      {salesPresence && (
+        <div className="cms-status">
+          {month.isPaid ? "Pagado" : "No pagado"}
+        </div>
+      )}
+      {!salesPresence && (
+        <div className="cms-status-no-sales">
+          No ventas
+        </div>
+      )}
       <div className="cms-total">{formatNumber(month.amount)}</div>
     </div>
   )

@@ -598,7 +598,6 @@ router.get('/monthlySales', async (req, res) => {
         const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
         ltmStrings.push(monthStr);
       }
-      console.log("ltmStrings", ltmStrings);
 
       // Compare with salesByMonths and fill in if missing
       // for (let i = 0; i < ltmStrings.length; i++) {

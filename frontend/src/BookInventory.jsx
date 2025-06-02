@@ -6,6 +6,7 @@ import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
+import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 
 function BookInventory({
     selectedBook,

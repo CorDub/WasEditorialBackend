@@ -10,8 +10,7 @@ import GivenToAuthorDetails from "./GivenToAuthorDetails";
 import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
-// import AuthorInventoryGlobal from "./AuthorInventoryGlobal";
-import AuthorTrialInventory from "./AuthorTrialInventory";
+import InventoryGraph from "./InventoryGraph"
 
 function AuthorInventory(){
   useCheckUser();
@@ -29,7 +28,6 @@ function AuthorInventory(){
   const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
   const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
   const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
-  const [isAuthorTrialInventoryOpen, setAuthorTrialInventoryOpen] = useState(false);
   const [reset, setReset] = useState(false);
   const [exclusions, setExclusions] = useState("");
   const legendValues = [
@@ -117,7 +115,6 @@ function AuthorInventory(){
           setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
           setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
           setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
-          setAuthorTrialInventoryOpen={setAuthorTrialInventoryOpen}
           legendDisplays={legendDisplays}
           setLegendDisplays={setLegendDisplays}
           exclusions={exclusions}
@@ -125,7 +122,7 @@ function AuthorInventory(){
         </div>
         <div className="author-inventory-rightfield">
           {isTotalInventoryOpen && (
-          <AuthorTrialInventory
+          <InventoryGraph
             selectedBookId={selectedBookId}
             setSelectedBookId={setSelectedBookId}
             legendValues={legendValues}
@@ -152,11 +149,6 @@ function AuthorInventory(){
           <AuthorAvailableInventory
             bookSales={inventories.bookInventories}
             selectedBookId={selectedBookId}/>)}
-        {isAuthorTrialInventoryOpen && (
-          <AuthorTrialInventory
-            selectedBookId={selectedBookId}
-            setSelectedBookId={setSelectedBookId}/>
-        )}
       </div>
     </div>
     </>

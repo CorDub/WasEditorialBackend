@@ -16,6 +16,14 @@ function AuthorCommissions() {
 
   async function fetchAuthorBookSales() {
     try {
+      // check cache first
+      const cachedAuthorMonthlySales = sessionStorage.getItem("authorMonthlySales");
+      if (cachedAuthorMonthlySales) {
+        console.log("cache hit");
+        setDataByMonths(JSON.parse(cachedAuthorMonthlySales));
+        return
+      }
+
       const response = await fetch(`${baseURL}/author/monthlySales`, {
         method: "GET",
         headers: {
@@ -26,17 +34,14 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
-        // setDataByMonths(Object.entries(data));
+        sessionStorage.setItem("authorMonthlySales", JSON.stringify(data));
+        console.log("cache storage");
         setDataByMonths(data);
       };
     } catch(error) {
       console.log("Error when fetching the data", error);
     }
   }
-
-  useEffect(() => {
-    console.log(dataByMonths)
-  }, [dataByMonths]);
 
   useEffect(() => {
     fetchAuthorBookSales();

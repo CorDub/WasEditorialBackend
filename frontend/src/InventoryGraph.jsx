@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
-import "./AuthorTrialInventory.scss";
+import "./InventoryGraph.scss";
 import "./AuthorInventoryGlobal.scss";
 import Legend from "./Legend";
 
-function AuthorTrialInventory({
+function InventoryGraph({
     selectedBookId,
     setSelectedBookId,
     legendValues,
@@ -40,6 +40,10 @@ function AuthorTrialInventory({
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    console.log("data", data)
+  }, []);
 
   // fetch all inventories with relevant data on load
   useEffect(() => {
@@ -220,4 +224,4 @@ function AuthorTrialInventory({
   )
 }
 
-export default AuthorTrialInventory;
+export default InventoryGraph;

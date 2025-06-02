@@ -29,6 +29,9 @@ function Legend({values, displays, setDisplays}) {
         </div>
       ))}
       </div>
+      <div className="legend-clickonit">
+        <p>Haga clic en los puntos para modificar el gráfico</p>
+      </div>
     </div>
   )
 }

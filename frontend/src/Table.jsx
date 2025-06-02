@@ -25,15 +25,10 @@ function Table({data, activeMonth}) {
     }
   }, [data, activeMonth]);
 
-   useEffect(() => {
-    console.log("tiendaData", tiendaData);
-    console.log("monthData", monthData);
-  }, [tiendaData, monthData]);
-
   function formatRowData() {
   // From the month data, format it so you can display it in rows
     let rowData = [];
-    // MonthData.ransfers has all existing libraries,
+    // MonthData.transfers has all existing libraries,
     // so this will create all necessary objects to hold row data
     for (const bookstore of monthData.transfers) {
       rowData.push({
@@ -144,14 +139,6 @@ function Table({data, activeMonth}) {
 
       if (response.ok) {
         const data = await response.json();
-        // let groupedTiendaData = data.reduce((groupedByTienda, {name, total, current}) => {
-        //   if (!groupedByTienda[name]) {
-        //     groupedByTienda[name] = { name, total: 0, current: 0};
-        //   }
-        //   groupedByTienda[name].total += total;
-        //   groupedByTienda[name].current += current;
-        //   return groupedByTienda;
-        // }, {});
         setTiendaData(data);
       }
     } catch (error) {

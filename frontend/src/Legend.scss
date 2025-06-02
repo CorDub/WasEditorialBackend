@@ -1,7 +1,9 @@
 .legend-box {
   display: flex;
+  flex-direction: column;
   width: 100%;
   justify-content: center;
+  align-items: center;
   margin-top: 0.5rem;
 }
 
@@ -30,4 +32,12 @@
 .legend-value-name {
   font-style: italic;
   font-size: 0.95em;
+}
+
+.legend-clickonit {
+  p {
+    margin: 0;
+  }
+  margin: 0.5rem 0 0 0;
+  font-style: italic;
 }

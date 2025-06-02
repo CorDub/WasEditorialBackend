@@ -563,6 +563,7 @@ router.get('/monthlySales', async (req, res) => {
     // correctly with the month chosen (based on index)
 
     let salesByMonthsList = Object.entries(salesByMonths);
+    let newSalesByMonthsList = [];
     if (Object.keys(salesByMonths).length < 12) {
       // Get the YYYY-MM combination 12m ago
       const now = new Date();
@@ -571,52 +572,81 @@ router.get('/monthlySales', async (req, res) => {
 
       // Get an array of all the 12 monhts Y + M combination
       let ltmStrings = [];
-      for (let i = 0; i < 12; i++) {
-        let monthString = "";
-        if ((currentMonth - i) <= 0) {
-          let newCurrentMonth = currentMonth - i + 12;
-          if (newCurrentMonth.toString().length === 1) {
-            newCurrentMonth = "0" + newCurrentMonth.toString();
-          } else {
-            newCurrentMonth = newCurrentMonth.toString();
-          }
+      for (let i = 0; i < 13; i++) {
+        // let monthString = "";
+        // if ((currentMonth - i) <= 0) {
+        //   let newCurrentMonth = currentMonth - i + 12;
+        //   if (newCurrentMonth.toString().length === 1) {
+        //     newCurrentMonth = "0" + newCurrentMonth.toString();
+        //   } else {
+        //     newCurrentMonth = newCurrentMonth.toString();
+        //   }
 
-          monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
-        } else {
-          let newCurrentMonth = (currentMonth-i).toString();
-          if (newCurrentMonth.toString().length === 1) {
-            newCurrentMonth = "0" + newCurrentMonth.toString();
-          } else {
-            newCurrentMonth = newCurrentMonth.toString();
-          }
+        //   monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
+        // } else {
+        //   let newCurrentMonth = (currentMonth-i).toString();
+        //   if (newCurrentMonth.toString().length === 1) {
+        //     newCurrentMonth = "0" + newCurrentMonth.toString();
+        //   } else {
+        //     newCurrentMonth = newCurrentMonth.toString();
+        //   }
 
-          monthString = currentYear.toString() + '-'+ newCurrentMonth;
-        }
-        ltmStrings.push(monthString);
+        //   monthString = currentYear.toString() + '-' + newCurrentMonth;
+        // }
+        // ltmStrings.push(monthString);
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+        ltmStrings.push(monthStr);
       }
+      console.log("ltmStrings", ltmStrings);
 
       // Compare with salesByMonths and fill in if missing
+      // for (let i = 0; i < ltmStrings.length; i++) {
+      //   let existing = false;
+
+      //   for (const month of salesByMonthsList) {
+      //     if (ltmStrings[i] === month[0]) {
+      //       existing = true;
+      //     }
+      //   }
+
+      //   if (!existing) {
+      //     salesByMonthsList.splice(i, 0, [ltmStrings[i], {
+      //       ganancia: 0,
+      //       sales: [],
+      //       total: 0,
+      //       transfers: [],
+      //       transfersTotal: 0
+      //     }]);
+      //   }
+      // };
+
       for (let i = 0; i < ltmStrings.length; i++) {
         let existing = false;
 
         for (const month of salesByMonthsList) {
           if (ltmStrings[i] === month[0]) {
+            newSalesByMonthsList.push(month);
             existing = true;
+            continue;
           }
         }
 
         if (!existing) {
-          salesByMonthsList.splice(i, 0, [ltmStrings[i], {
-            ganancia: 0,
-            sales: [],
-            total: 0,
-            transfers: [],
-            transfersTotal: 0
-          }]);
+          newSalesByMonthsList.push([
+            ltmStrings[i], {
+              ganancia: 0,
+              sales: [],
+              total: 0,
+              transfers: [],
+              transfersTotal: 0
+            }
+          ])
         }
-      };
+      }
     }
-    res.status(200).json(salesByMonthsList);
+
+    res.status(200).json(newSalesByMonthsList);
   } catch (error) {
     console.error("error fetching monthly sales", error);
     res.status(500).json({error: 'Internal server error'});

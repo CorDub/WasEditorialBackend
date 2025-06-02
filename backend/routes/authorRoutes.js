@@ -769,7 +769,18 @@ router.get('/currentTienda', async (req, res) => {
       }
     }
 
-    res.status(200).json(inventoriesReconstructed);
+    let groupedTiendaData = inventoriesReconstructed.reduce((groupedByTienda, {name, total, current}) => {
+      if (!groupedByTienda[name]) {
+        groupedByTienda[name] = { name, total: 0, current: 0};
+      }
+      groupedByTienda[name].total += total;
+      groupedByTienda[name].current += current;
+      return groupedByTienda;
+    }, {});
+
+    const groupedTiendaDataList = Object.values(groupedTiendaData);
+
+    res.status(200).json(groupedTiendaDataList);
   } catch (error) {
     console.log("\n ERROR PROVIDING RELEVANT INVENTORIES \n",error);
     res.status(500).json({error: "There was a server error fetching the relevant data"});

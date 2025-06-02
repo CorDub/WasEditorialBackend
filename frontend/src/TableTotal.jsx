@@ -8,7 +8,7 @@ function TableTotal({headerList, delivered, sold, enTienda, total}) {
       <div className={`${headerList[1]}`}>{delivered}</div>
       <div className={`${headerList[2]}`}>{sold}</div>
       <div className={`${headerList[3]}`}>{enTienda}</div>
-      <div className={`${headerList[4]}`}>{formatNumber(total)}</div>
+      <div className={`${headerList[4]}`}>{total === 0 ? "$ 0" : formatNumber(total)}</div>
     </div>
   )
 }

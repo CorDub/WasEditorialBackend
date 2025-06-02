@@ -130,6 +130,10 @@ app.get('/', (req, res) => {
   res.send("woo front page of the api!");
 });
 
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

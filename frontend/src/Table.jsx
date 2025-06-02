@@ -25,10 +25,14 @@ function Table({data, activeMonth}) {
     }
   }, [data, activeMonth]);
 
+   useEffect(() => {
+    console.log("tiendaData", tiendaData);
+    console.log("monthData", monthData);
+  }, [tiendaData, monthData]);
+
   function formatRowData() {
   // From the month data, format it so you can display it in rows
     let rowData = [];
-    console.log(monthData);
     // MonthData.ransfers has all existing libraries,
     // so this will create all necessary objects to hold row data
     for (const bookstore of monthData.transfers) {
@@ -74,10 +78,23 @@ function Table({data, activeMonth}) {
 
     // Add the inTienda number for each line
     for (const bookstore of tiendaData) {
+      let existing = false
       for (const row of rowData) {
         if (row.name === bookstore.name) {
           row.enTienda = bookstore.current
+          existing = true
         }
+      }
+
+      if (!existing) {
+        rowData.push({
+          name: bookstore.name,
+          delivered: 0,
+          sold: 0,
+          sales: [],
+          enTienda: bookstore.current,
+          total: 0
+        })
       }
     }
     setRowData(rowData);
@@ -127,15 +144,15 @@ function Table({data, activeMonth}) {
 
       if (response.ok) {
         const data = await response.json();
-        let groupedTiendaData = data.reduce((groupedByTienda, {name, total, current}) => {
-          if (!groupedByTienda[name]) {
-            groupedByTienda[name] = { name, total: 0, current: 0};
-          }
-          groupedByTienda[name].total += total;
-          groupedByTienda[name].current += current;
-          return groupedByTienda;
-        }, {});
-        setTiendaData(Object.values(groupedTiendaData));
+        // let groupedTiendaData = data.reduce((groupedByTienda, {name, total, current}) => {
+        //   if (!groupedByTienda[name]) {
+        //     groupedByTienda[name] = { name, total: 0, current: 0};
+        //   }
+        //   groupedByTienda[name].total += total;
+        //   groupedByTienda[name].current += current;
+        //   return groupedByTienda;
+        // }, {});
+        setTiendaData(data);
       }
     } catch (error) {
       console.log(error);

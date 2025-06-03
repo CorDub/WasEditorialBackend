@@ -21,14 +21,14 @@ function Table({data, activeMonth}) {
   /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {
-      console.log(data);
+      console.log(data[activeMonth][0]);
       setMonthData(data[activeMonth][1])
     }
   }, [data, activeMonth]);
 
   useEffect(() => {
-    console.log(monthData)
-  }, [monthData]);
+    console.log(activeMonth)
+  }, [activeMonth]);
 
   function formatRowData() {
   // From the month data, format it so you can display it in rows
@@ -134,7 +134,7 @@ function Table({data, activeMonth}) {
   // Get data for the "in tienda" column
   async function fetchTiendaData() {
     try {
-      const cachedAuthorTiendaData = sessionStorage.getItem("authorTiendaData");
+      const cachedAuthorTiendaData = sessionStorage.getItem(`authorTiendaData${activeMonth}`);
       if (cachedAuthorTiendaData) {
         console.log("cache hit");
         setTiendaData(JSON.parse(cachedAuthorTiendaData));
@@ -151,7 +151,7 @@ function Table({data, activeMonth}) {
 
       if (response.ok) {
         const data = await response.json();
-        sessionStorage.setItem("authorTiendaData", JSON.stringify(data));
+        sessionStorage.setItem(`authorTiendaData${activeMonth}`, JSON.stringify(data));
         console.log("cache storage");
         setTiendaData(data);
       }

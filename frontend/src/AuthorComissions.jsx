@@ -49,6 +49,14 @@ function AuthorCommissions() {
 
   async function fetchPayments() {
     try {
+      // check cache first
+      const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
+      if (cachedAuthorPayments) {
+        console.log("cache hit");
+        setPayments(JSON.parse(cachedAuthorPayments));
+        return
+      }
+
       const response = await fetch(`${baseURL}/author/payments`, {
         method: "GET",
         headers: {
@@ -59,6 +67,8 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
+        sessionStorage.setItem("authorPayments", JSON.stringify(data));
+        console.log("cache storage");
         setPayments(data);
       };
     } catch(error) {

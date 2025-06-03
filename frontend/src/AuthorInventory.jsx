@@ -11,6 +11,7 @@ import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
 import InventoryGraph from "./InventoryGraph"
+import { data } from "react-router-dom";
 
 function AuthorInventory(){
   useCheckUser();
@@ -50,6 +51,18 @@ function AuthorInventory(){
 
   async function fetchInventories() {
     try {
+      const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");
+      const cachedAuthorBookInventoriesTotals = sessionStorage.getItem("authorBookInventoriesTotals");
+      if (cachedAuthorInventoriesTotals) {
+        console.log("cache hit");
+        setInventories(JSON.parse(cachedAuthorInventoriesTotals));
+        console.log("cache hit");
+        setBooksInventories(cachedAuthorBookInventoriesTotals);
+        return
+      }
+
+
+
       const response = await fetch(`${baseURL}/author/inventories`, {
         method: "GET",
         headers: {
@@ -60,8 +73,10 @@ function AuthorInventory(){
 
       if (response.ok) {
         const data = await response.json();
+        sessionStorage.setItem("authorInventoriesTotals", JSON.stringify(data));
         setInventories(data);
-        setBooksInventories(data.bookInventories)
+        sessionStorage.setItem("authorBookInventoriesTotals", JSON.stringify(data.bookInventories));
+        setBooksInventories(data.bookInventories);
       }
     } catch (error) {
       console.error(error);

@@ -3,6 +3,7 @@ import TableRow from "./TableRow";
 import TableTotal from "./TableTotal";
 import { useState, useEffect } from "react";
 import "./Table.scss";
+import LoadingWheel from "./LoadingWheel";
 
 function Table({data, activeMonth}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -17,6 +18,7 @@ function Table({data, activeMonth}) {
   const [rowData, setRowData] = useState(null);
   const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
   /// Select only the data for the month displayed
   useEffect(() => {
@@ -141,6 +143,7 @@ function Table({data, activeMonth}) {
         return
       }
 
+      setLoading(true);
       const response = await fetch(`${baseURL}/author/currentTienda?month=${data[activeMonth][0]}`, {
         method: "GET",
         headers: {
@@ -154,6 +157,7 @@ function Table({data, activeMonth}) {
         sessionStorage.setItem(`authorTiendaData${activeMonth}`, JSON.stringify(data));
         console.log("cache storage");
         setTiendaData(data);
+        setLoading(true);
       }
     } catch (error) {
       console.log(error);
@@ -169,7 +173,10 @@ function Table({data, activeMonth}) {
   return (
     <div className="table">
       <TableHeader headerList={headerList}/>
-      {rowData && rowData.map((row, index) => (
+      {isLoading && (
+        <LoadingWheel />
+      )}
+      {rowData && !isLoading && rowData.map((row, index) => (
         <TableRow
           key={index}
           headerList={headerList}
@@ -180,7 +187,7 @@ function Table({data, activeMonth}) {
           enTienda={row.enTienda}
           total={row.total}/>
       ))}
-      {totalData && (
+      {totalData && !isLoading && (
         <TableTotal
           headerList={headerList}
           delivered={totalData.delivered}

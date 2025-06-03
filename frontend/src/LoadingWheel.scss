@@ -1,0 +1,108 @@
+.loading-wheel-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.loading-wheel {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border-right: 10px solid currentColor;
+  border-left: 10px solid currentColor;
+  border-bottom: 10px solid currentColor;
+  border-top: 10px solid transparent;
+  animation: spin 2s linear infinite, colorsChange 8s linear infinite;
+  // position: relative;
+}
+
+// .loading-wheel::before {
+//   content: "";
+//   width: 4px;
+//   height: 8px;
+//   border-top-right-radius: 50%;
+//   border-bottom-right-radius: 50%;
+//   position: absolute;
+//   top: -2px;
+//   left: 2px;
+//   border: 1px solid black;
+//   background-color: black;
+//   transform: rotate(-45deg)
+// }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes colorsChange {
+  0% {
+    border-right-color: #E2E2E2;
+    border-left-color: #E2E2E2;
+    border-bottom-color: #E2E2E2;
+  }
+  25% {
+    border-right-color: #57eafa;
+    border-left-color: #57eafa;
+    border-bottom-color: #57eafa;
+  }
+  50% {
+    border-right-color: #4E5981;
+    border-left-color: #4E5981;
+    border-bottom-color: #4E5981;
+  }
+  75% {
+    border-right-color: black;
+    border-left-color: black;
+    border-bottom-color: black;
+  }
+  100% {
+    border-right-color: #E2E2E2;
+    border-left-color: #E2E2E2;
+    border-bottom-color: #E2E2E2;
+  }
+}
+
+// @keyframes spin2 {
+//   0% { border: 10px solid transparent; }
+//   25% { border-top: 10px solid #4E5981; }
+//   50% { border-top: 10px solid #4E5981;
+//         border-right: 10px solid #4E5981;}
+//   75% { border-top: 10px solid #4E5981;
+//         border-right: 10px solid #4E5981;
+//         border-bottom: 10px solid #4E5981;}
+//   100% { border: 10px solid #4E5981; }
+// }
+
+// @keyframes spin3 {
+//   0% {
+//     border-top-width: 0px;
+//     border-right-width: 0px;
+//     border-bottom-width: 0px;
+//     border-left-width: 0px;}
+//   25% {
+//     border-top-width: 50px;
+//     border-right-width: 0px;
+//     border-bottom-width: 0px;
+//     border-left-width: 0px;
+//   }
+//   50% {
+//     border-top-width: 50px;
+//     border-right-width: 50px;
+//     border-bottom-width: 0px;
+//     border-left-width: 0px;
+//   }
+//   75% {
+//     border-top-width: 50px;
+//     border-right-width: 50px;
+//     border-bottom-width: 50px;
+//     border-left-width: 0px;
+//   }
+//   100% {
+//     border-top-width: 50px;
+//     border-right-width: 50px;
+//     border-bottom-width: 50px;
+//     border-left-width: 50px;
+//   }
+//  }

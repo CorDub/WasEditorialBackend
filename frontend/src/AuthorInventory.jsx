@@ -56,12 +56,9 @@ function AuthorInventory(){
       if (cachedAuthorInventoriesTotals) {
         console.log("cache hit");
         setInventories(JSON.parse(cachedAuthorInventoriesTotals));
-        console.log("cache hit");
-        setBooksInventories(cachedAuthorBookInventoriesTotals);
+        setBooksInventories(JSON.parse(cachedAuthorBookInventoriesTotals));
         return
       }
-
-
 
       const response = await fetch(`${baseURL}/author/inventories`, {
         method: "GET",

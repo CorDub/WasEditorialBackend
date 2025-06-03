@@ -11,7 +11,6 @@ import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
 import AuthorWasInventory from "./AuthorWasInventory";
 import AuthorAvailableInventory from "./AuthorAvailableInventory";
 import InventoryGraph from "./InventoryGraph"
-import { data } from "react-router-dom";
 
 function AuthorInventory(){
   useCheckUser();
@@ -54,7 +53,6 @@ function AuthorInventory(){
       const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");
       const cachedAuthorBookInventoriesTotals = sessionStorage.getItem("authorBookInventoriesTotals");
       if (cachedAuthorInventoriesTotals) {
-        console.log("cache hit");
         setInventories(JSON.parse(cachedAuthorInventoriesTotals));
         setBooksInventories(JSON.parse(cachedAuthorBookInventoriesTotals));
         return
@@ -134,13 +132,13 @@ function AuthorInventory(){
         </div>
         <div className="author-inventory-rightfield">
           {isTotalInventoryOpen && (
-          <InventoryGraph
-            selectedBookId={selectedBookId}
-            setSelectedBookId={setSelectedBookId}
-            legendValues={legendValues}
-            legendDisplays={legendDisplays}
-            setLegendDisplays={setLegendDisplays}
-            exclusions={exclusions}/>)}
+            <InventoryGraph
+              selectedBookId={selectedBookId}
+              setSelectedBookId={setSelectedBookId}
+              legendValues={legendValues}
+              legendDisplays={legendDisplays}
+              setLegendDisplays={setLegendDisplays}
+              exclusions={exclusions}/>)}
           {isGivenToAuthorOpen && (
             <GivenToAuthorDetails
               selectedBookId={selectedBookId}/>)}

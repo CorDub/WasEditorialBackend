@@ -18,7 +18,7 @@ function Table({data, activeMonth}) {
   const [rowData, setRowData] = useState(null);
   const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   /// Select only the data for the month displayed
   useEffect(() => {
@@ -157,7 +157,7 @@ function Table({data, activeMonth}) {
         sessionStorage.setItem(`authorTiendaData${activeMonth}`, JSON.stringify(data));
         console.log("cache storage");
         setTiendaData(data);
-        setLoading(true);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);

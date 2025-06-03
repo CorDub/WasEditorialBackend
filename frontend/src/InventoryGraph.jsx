@@ -4,6 +4,7 @@ import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";
 import "./AuthorInventoryGlobal.scss";
 import Legend from "./Legend";
+import LoadingWheel from "./LoadingWheel";
 
 function InventoryGraph({
     selectedBookId,
@@ -18,10 +19,18 @@ function InventoryGraph({
   const [selectedBookName, setSelectedBookName] = useState("");
   const [max, setMax] = useState(0);
   const [scope, setScope] = useState("book");
+  const [isLoading, setLoading] = useState(false);
 
 
   async function fetchAllAuthorInventories() {
     try {
+      const cachedGraphInventoryData = sessionStorage.getItem("graphInventoryData");
+      if (cachedGraphInventoryData) {
+        setData(JSON.parse(cachedGraphInventoryData));
+        return
+      }
+
+      setLoading(true);
       const response = await fetch(`${baseURL}/author/completeInventory`, {
         method: "GET",
         headers: {
@@ -33,17 +42,15 @@ function InventoryGraph({
       if (response.ok) {
         const parsedData = await response.json();
         filterData(parsedData, scope, selectedBookId);
+        sessionStorage.setItem("graphInventoryData", JSON.stringify(parsedData));
         setData(parsedData);
+        setLoading(false);
       };
 
     } catch (error) {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    console.log("data", data)
-  }, []);
 
   // fetch all inventories with relevant data on load
   useEffect(() => {
@@ -206,7 +213,10 @@ function InventoryGraph({
           setLegendDisplays={setLegendDisplays}/>
         <div className="aig-title"><h2>{displayScopeInTitle()}</h2></div>
       </div>
-      {filteredData && filteredData.map((dataPoint, index) => (
+      {isLoading && (
+        <LoadingWheel />
+      )}
+      {filteredData && !isLoading && filteredData.map((dataPoint, index) => (
         <OverlappingHorizontalGraphLines
           key={index}
           title={dataPoint[0]}

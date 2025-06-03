@@ -6,6 +6,7 @@ import { faStore } from '@fortawesome/free-solid-svg-icons';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import ImpressionsList from "./ImpressionsList";
+import "./InventoryTotal.scss";
 
 function InventoryTotal({
     selectedBookstore,

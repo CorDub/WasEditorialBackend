@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import UserContext from "./UserContext";
 import TableActions from "./TableActions";
+import LoadingWheel from "./LoadingWheel";
 
 function SalesList () {
   useCheckAdmin();
@@ -20,7 +21,11 @@ function SalesList () {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-
+  const [isLoading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
 
   const columns = useMemo(() => [
     {
@@ -75,9 +80,9 @@ function SalesList () {
     columns,
     data,
     enableDensityToggle: false,
-    enablePagination: false,
+    enablePagination: true,
     enableFullScreenToggle: false,
-    enableRowVirtualization: true,
+    enableRowVirtualization: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nueva venta</button>
@@ -86,8 +91,9 @@ function SalesList () {
     initialState: {
       density: 'compact',
     },
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    state: { pagination, globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -160,6 +166,7 @@ function SalesList () {
 
   async function fetchSales() {
     try {
+      setLoading(true);
       const response = await fetch(`${baseURL}/admin/sales`, {
         method: "GET",
         headers: {
@@ -171,6 +178,7 @@ function SalesList () {
       if (response.ok) {
         const data = await response.json();
         setData(data);
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -187,7 +195,8 @@ function SalesList () {
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}
         clickedRow={clickedRow} closeModal={closeModal}
         globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table}/>}
+      {isLoading && <LoadingWheel/>}
+      {data && !isLoading && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>

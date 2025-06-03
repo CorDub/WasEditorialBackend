@@ -6,6 +6,7 @@ import Alert from "./Alert";
 import UserContext from './UserContext';
 import Modal from "./Modal";
 import TableActions from "./TableActions";
+import LoadingWheel from './LoadingWheel';
 
 function BookstoresList() {
   useCheckAdmin();
@@ -22,8 +23,9 @@ function BookstoresList() {
   const [alertType, setAlertType] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 15
+    pageSize: 30
   })
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -109,6 +111,7 @@ function BookstoresList() {
 
   async function fetchBookstores() {
     try {
+      setLoading(true);
       const response = await fetch(`${baseURL}/admin/bookstore`, {
         method: 'GET',
         headers: {
@@ -120,6 +123,7 @@ function BookstoresList() {
       if (response.ok === true) {
         const dataBookstores = await response.json();
         setData(dataBookstores);
+        setLoading(false);
       } else {
         console.log("There was an error fetching bookstores:", response.status);
       };
@@ -176,7 +180,8 @@ function BookstoresList() {
           closeModal={closeModal}
           pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table} />}
+      {isLoading && <LoadingWheel />}
+      {data && !isLoading && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>

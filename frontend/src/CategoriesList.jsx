@@ -6,6 +6,7 @@ import Alert from "./Alert";
 import UserContext from './UserContext';
 import Modal from "./Modal";
 import TableActions from "./TableActions";
+import LoadingWheel from './LoadingWheel';
 
 function CategoriesList() {
   useCheckAdmin();
@@ -24,6 +25,7 @@ function CategoriesList() {
     pageIndex: 0,
     pageSize: 15
   })
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -107,6 +109,7 @@ function CategoriesList() {
 
   async function fetchCategories() {
     try {
+      setLoading(true);
       const response = await fetch(`${baseURL}/admin/categories`, {
         method: 'GET',
         headers: {
@@ -118,6 +121,7 @@ function CategoriesList() {
       if (response.ok === true) {
         const dataCategories = await response.json();
         setData(dataCategories);
+        setLoading(false);
       } else {
         console.log("There was an error fetching categories:", response.status);
       };
@@ -174,7 +178,8 @@ function CategoriesList() {
           closeModal={closeModal}
           pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table} />}
+      {isLoading && <LoadingWheel />}
+      {data && !isLoading && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>

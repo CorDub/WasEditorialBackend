@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import UserContext from "./UserContext";
 import TableActions from "./TableActions";
+import LoadingWheel from "./LoadingWheel";
 
 function AdminsList() {
   useCheckSuperAdmin();
@@ -20,6 +21,7 @@ function AdminsList() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 15
@@ -133,6 +135,7 @@ function AdminsList() {
 
   async function fetchAdmins() {
     try {
+      setLoading(true);
       const response = await fetch(`${baseURL}/superadmin/admins`, {
         method: "GET",
         headers: {
@@ -144,6 +147,7 @@ function AdminsList() {
       if (response.ok) {
         const data = await response.json();
         setData(data);
+        setLoading(false);
       } else {
         console.log("response was not ok:", response.status);
       };
@@ -163,7 +167,8 @@ function AdminsList() {
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table}/>}
+      {isLoading && <LoadingWheel />}
+      {data && !isLoading && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>

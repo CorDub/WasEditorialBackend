@@ -6,7 +6,6 @@ import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
-import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 
 function BookInventory({
     selectedBook,
@@ -35,6 +34,10 @@ function BookInventory({
   const [impressions, setImpressions] = useState([]);
   const inventoryTotalRef = useRef();
   const [tableTop, setTableTop] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
 
   // slides down the top of the table
   useEffect(() => {
@@ -184,14 +187,15 @@ function BookInventory({
     columns,
     data,
     enableDensityToggle: false,
-    enablePagination: false,
+    enablePagination: true,
     enableFullScreenToggle: false,
-    enableRowVirtualization: true,
+    enableRowVirtualization: false,
     initialState: {
       density: 'compact',
     },
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    state: { pagination, globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {

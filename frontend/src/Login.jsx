@@ -6,6 +6,7 @@ import UserContext from './UserContext';
 import LoginError from './LoginError';
 import Alert from './Alert';
 import checkForErrors from "./customHooks/checkForErrors";
+import LoadingWheel from "./LoadingWheel";
 
 function LoginPage() {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -19,6 +20,7 @@ function LoginPage() {
   const [alertType, setAlertType] = useState("");
   const location = useLocation();
   const emailRef = useRef();
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     if (location.state) {
@@ -39,6 +41,7 @@ function LoginPage() {
         return;
       }
 
+      setLoading(true);
       const response = await fetch(`${baseURL}/api/login`, {
         method: "POST",
         headers: {
@@ -55,7 +58,9 @@ function LoginPage() {
         setErrors([...errors, 1]);
       } else {
         const data = await response.json();
+
         setUser(data);
+        setLoading(false);
         if (data.role === "admin") {
           navigate('/admin/authors')
         } else if (data.role === "superadmin") {
@@ -89,7 +94,7 @@ function LoginPage() {
     if (errorsLine.length > 0) {
       newErrors.push(4);
     }
-    
+
     setErrors(newErrors);
     return newErrors;
   }
@@ -118,9 +123,12 @@ function LoginPage() {
         </form>
       </div>
       <LoginError errors={errors} setErrors={setErrors} inputs={inputs} />
+      {isLoading && (
+        <LoadingWheel />)}
       <div className="login-forpas">
-      <Link to="/forgotten-password"
-        className="login-forgotten-password">Olvidó su contraseña?</Link>
+        <Link to="/forgotten-password"
+          className="login-forgotten-password">Olvidó su contraseña?
+        </Link>
       </div>
       <Alert message={alertMessage} type={alertType} setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}/>

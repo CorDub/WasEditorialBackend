@@ -6,6 +6,7 @@ import Alert from "./Alert";
 import UserContext from './UserContext';
 import TableActions from "./TableActions";
 import Modal from "./Modal";
+import LoadingWheel from "./LoadingWheel";
 
 function BooksList() {
   useCheckAdmin();
@@ -22,8 +23,9 @@ function BooksList() {
   const [alertType, setAlertType] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 15
+    pageSize: 30
   })
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -63,8 +65,8 @@ function BooksList() {
     },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    enablePagination: false,
-    enableRowVirtualization: true,
+    enablePagination: true,
+    enableRowVirtualization: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button
@@ -75,9 +77,9 @@ function BooksList() {
     initialState: {
       density: 'compact',
     },
-    // onPaginationChange: setPagination,
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    state: { pagination, globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -119,6 +121,7 @@ function BooksList() {
 
   async function fetchBooks() {
     try {
+      // setLoading(true);
       const response = await fetch(`${baseURL}/admin/book`, {
         method: 'GET',
         headers: {
@@ -130,6 +133,7 @@ function BooksList() {
       if (response.ok === true) {
         const dataBooks = await response.json();
         setData(dataBooks);
+        // setLoading(false);
       } else {
         console.log("There was an error fetching books:", response.status);
       };
@@ -186,7 +190,8 @@ function BooksList() {
           closeModal={closeModal}
           pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table} />}
+      {isLoading && <LoadingWheel/>}
+      {data && !isLoading && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </>

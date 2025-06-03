@@ -21,9 +21,14 @@ function Table({data, activeMonth}) {
   /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {
+      console.log(data);
       setMonthData(data[activeMonth][1])
     }
   }, [data, activeMonth]);
+
+  useEffect(() => {
+    console.log(monthData)
+  }, [monthData]);
 
   function formatRowData() {
   // From the month data, format it so you can display it in rows
@@ -129,6 +134,13 @@ function Table({data, activeMonth}) {
   // Get data for the "in tienda" column
   async function fetchTiendaData() {
     try {
+      const cachedAuthorTiendaData = sessionStorage.getItem("authorTiendaData");
+      if (cachedAuthorTiendaData) {
+        console.log("cache hit");
+        setTiendaData(JSON.parse(cachedAuthorTiendaData));
+        return
+      }
+
       const response = await fetch(`${baseURL}/author/currentTienda?month=${data[activeMonth][0]}`, {
         method: "GET",
         headers: {
@@ -139,6 +151,8 @@ function Table({data, activeMonth}) {
 
       if (response.ok) {
         const data = await response.json();
+        sessionStorage.setItem("authorTiendaData", JSON.stringify(data));
+        console.log("cache storage");
         setTiendaData(data);
       }
     } catch (error) {

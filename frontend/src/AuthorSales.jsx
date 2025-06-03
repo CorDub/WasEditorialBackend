@@ -5,6 +5,7 @@ import './AuthorSales.scss';
 import Navbar from "./Navbar";
 import BookSelector from './BookSelector';
 import SalesContent from './SalesContent';
+import LoadingWheel from './LoadingWheel';
 
 function AuthorSales() {
   useCheckUser();
@@ -12,7 +13,7 @@ function AuthorSales() {
   const { user } = useContext(UserContext);
   const [salesData, setSalesData] = useState(null);
   const [monthlyData, setMonthlyData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('total');
   // const [dateRange, setDateRange] = useState(null);
@@ -33,6 +34,10 @@ function AuthorSales() {
   // useEffect(() => {
   //   setDefaultRange();
   // }, []);
+
+  useEffect(() => {
+    console.log(salesData);
+  }, [salesData])
 
   function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
@@ -67,6 +72,14 @@ function AuthorSales() {
 
   const fetchSales = async () => {
     try {
+      const cachedAuthorSalesData = sessionStorage.getItem("authorSalesData");
+      if (cachedAuthorSalesData) {
+        console.log("cache hit", JSON.parse(cachedAuthorSalesData));
+        setSalesData(JSON.parse(cachedAuthorSalesData));
+        processMonthlyData(JSON.parse(cachedAuthorSalesData).sales, selectedBook);
+        return
+      }
+
       setLoading(true);
       setError(null);
       const queryParams = new URLSearchParams({
@@ -86,6 +99,8 @@ function AuthorSales() {
       }
 
       const data = await response.json();
+      console.log("cache storage");
+      sessionStorage.setItem("authorSalesData", JSON.stringify(data));
       setSalesData(data);
       processMonthlyData(data.sales, selectedBook);
     } catch (error) {
@@ -121,7 +136,7 @@ function AuthorSales() {
   };
 
   if (loading) {
-    return <div className="sales-container">Loading sales data...</div>;
+    return <div className="sales-container"><LoadingWheel /></div>;
   }
 
   if (error) {

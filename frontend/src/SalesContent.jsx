@@ -3,6 +3,7 @@ import { Label, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, R
 
 const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
   useCheckUser();
+  console.log("salesData in SalesContent", salesData);
   const selectedBookSales = selectedBook === 'total'
     ? salesData.totalSales
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;

@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import Alert from './Alert';
 import Modal from "./Modal";
 import TableActions from "./TableActions";
+import LoadingWheel from "./LoadingWheel";
 
 function AuthorsList() {
   useCheckAdmin();
@@ -24,10 +25,9 @@ function AuthorsList() {
   const [alertType, setAlertType] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 15
+    pageSize: 30
   });
-
-  console.log(fetchedData);
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -63,10 +63,6 @@ function AuthorsList() {
       accessorKey: "referido"
     },
   ], []);
-  // const [pagination, setPagination] = useState({
-  //   pageIndex: 0,
-  //   pageSize: 19
-  // });
 
   const table = useMaterialReactTable({
     columns,
@@ -76,8 +72,8 @@ function AuthorsList() {
     },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    enablePagination: false,
-    enableRowVirtualization: true,
+    enablePagination: true,
+    enableRowVirtualization: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <button
@@ -88,10 +84,10 @@ function AuthorsList() {
     initialState: {
       density: 'compact',
     },
-    // onPaginationChange: setPagination,
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    // state: { pagination, globalFilter },
-    state: { globalFilter },
+    state: { pagination, globalFilter },
+    // state: { globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -101,7 +97,7 @@ function AuthorsList() {
         top: "60px",
         left: "10px",
         width: "99vw",
-        // height: "93vh"
+        height: "93vh"
       }
     },
     muiTableContainerProps: {
@@ -166,6 +162,7 @@ function AuthorsList() {
 
   async function fetchUsers() {
     try {
+      // setLoading(true);
       const response = await fetch(`${baseURL}/admin/users`, {
         method: "GET",
         headers: {
@@ -176,8 +173,8 @@ function AuthorsList() {
 
       if (response.ok) {
         const data = await response.json();
-
         setFetchedData(data);
+        // setLoading(false);
       }
 
     } catch (error) {
@@ -200,7 +197,8 @@ function AuthorsList() {
           closeModal={closeModal}
           pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table}/>}
+      {isLoading && <LoadingWheel/>}
+      {data && !isLoading && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </>

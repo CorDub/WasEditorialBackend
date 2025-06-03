@@ -33,6 +33,10 @@ function BookstoreInventory({
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
 
   const columns = useMemo(() => [
     {
@@ -178,9 +182,9 @@ function BookstoreInventory({
     columns,
     data,
     enableDensityToggle: false,
-    enablePagination: false,
+    enablePagination: true,
     enableFullScreenToggle: false,
-    enableRowVirtualization: true,
+    enableRowVirtualization: false,
     // renderTopToolbarCustomActions: () => (
     //   <div className="table-add-button">
     //     <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
@@ -189,8 +193,9 @@ function BookstoreInventory({
     initialState: {
       density: 'compact',
     },
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    state: { pagination, globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {

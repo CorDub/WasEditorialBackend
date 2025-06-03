@@ -1,0 +1,11 @@
+.bookstore-inventory-total-impressions {
+  border-radius: 15px;
+  padding: 0.5rem;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+  transition: 0.2s;
+}
+
+.bookstore-inventory-total-impressions:hover {
+  background-color: #fff;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+}

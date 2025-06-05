@@ -114,7 +114,6 @@
   overflow-y: visible;
   text-overflow: ellipsis;
   width: 125px;
-
 }
 
 .ohgl-global {
@@ -131,4 +130,15 @@
   z-index: 10;
   white-space: nowrap;
   padding: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.ohgl-number {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
 }

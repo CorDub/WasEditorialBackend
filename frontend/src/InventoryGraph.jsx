@@ -45,7 +45,9 @@ function InventoryGraph({
         sessionStorage.setItem("graphInventoryData", JSON.stringify(parsedData));
         setData(parsedData);
         setLoading(false);
-      };
+      } else {
+        setLoading(false);
+      }
 
     } catch (error) {
       console.log(error);

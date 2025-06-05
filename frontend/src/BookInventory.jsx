@@ -57,7 +57,7 @@ function BookInventory({
     {
       header: "Acciones",
       Cell: ({row}) => (
-        <div>
+        <div style={{overflow:"visible"}}>
           <TableActions
             key={isTableActionsOpen}
             openModal={openModal}
@@ -75,7 +75,8 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '7%',
+          overflow: 'visible'
         }
       }
     },

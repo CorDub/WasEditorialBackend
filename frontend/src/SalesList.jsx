@@ -31,7 +31,7 @@ function SalesList () {
     {
       header: "Acciones",
       Cell: ({row}) => (
-        <div>
+        <div style={{overflow:"visible"}}>
           <TableActions openModal={openModal} row={row} />
         </div>
       )

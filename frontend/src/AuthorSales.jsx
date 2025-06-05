@@ -95,6 +95,7 @@ function AuthorSales() {
       });
 
       if (!response.ok) {
+        setLoading(false);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 

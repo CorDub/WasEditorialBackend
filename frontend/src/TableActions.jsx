@@ -148,7 +148,7 @@ function TableActions ({
                 onMouseEnter={() => setSendTooltipOpen(!isSendTooltipOpen)}
                 onMouseLeave={() => setSendTooltipOpen(!isSendTooltipOpen)}/>
               {isSendTooltipOpen && (
-                <div className="ta-tooltip">Añadir entrega</div>)}
+                <div className="ta-tooltip">Añadir entrega a librería</div>)}
               {row.original.country === "México" && (
                 <>
                 <FontAwesomeIcon icon={faPersonArrowUpFromLine}

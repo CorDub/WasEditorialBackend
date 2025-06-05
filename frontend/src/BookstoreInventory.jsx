@@ -44,7 +44,7 @@ function BookstoreInventory({
     {
       header: "Acciones",
       Cell: ({row}) => (
-        <div>
+        <div style={{position:"relative", overflow:"visible !important"}}>
           <TableActions
             key={isTableActionsOpen}
             openModal={openModal}
@@ -62,7 +62,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          overflow: 'visible'
         }
       }
     },
@@ -242,8 +243,9 @@ function BookstoreInventory({
     },
     muiTableBodyCellProps: {
       sx: {
-        overflow: "visible"
-      }
+        overflow: "visible",
+        position: "relative"
+      },
     },
     muiTopToolbarProps: {
       sx: {

@@ -37,7 +37,8 @@ function AuthorCommissions() {
         sessionStorage.setItem("authorMonthlySales", JSON.stringify(data));
         console.log("cache storage");
         setDataByMonths(data);
-      };
+      }
+      
     } catch(error) {
       console.log("Error when fetching the data", error);
     }

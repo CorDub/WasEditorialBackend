@@ -7,6 +7,7 @@ import Alert from "./Alert";
 import UserContext from "./UserContext";
 import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
+import { getSectionVisibleValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 function AdminsList() {
   useCheckSuperAdmin();
@@ -30,7 +31,7 @@ function AdminsList() {
     {
       header: "Acciones",
       Cell: ({row}) => (
-        <div>
+        <div style={{ overflow: "visible" }}>
           <TableActions openModal={openModal} row={row}/>
         </div>
       )

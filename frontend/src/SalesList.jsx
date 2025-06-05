@@ -47,7 +47,7 @@ function SalesList () {
     {
       header: "Ingresos",
       Cell: ({row}) => {
-        const number = row.original.quantity * row.original.inventory.book.price
+        const number = row.original.quantity * row.original.inventory.price
         return (
           <div>
             {"$ " + number.toLocaleString()}
@@ -58,7 +58,7 @@ function SalesList () {
     {
       header: "Ganancia de Was",
       Cell: ({row}) => {
-        const ingresos = row.original.quantity * row.original.inventory.book.price
+        const ingresos = row.original.quantity * row.original.inventory.price
         const remainings = ingresos * row.original.inventory.bookstore.deal_percentage / 100
         return (
           <div>

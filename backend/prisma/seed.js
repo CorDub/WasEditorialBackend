@@ -557,11 +557,7 @@ async function main() {
           createdAt: true,
           inventory: {
             select: {
-              book: {
-                select: {
-                  price: true
-                }
-              }
+              price: true
             }
           }
         },
@@ -580,13 +576,13 @@ async function main() {
       for (const sale of data) {
         if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
-            (sale.inventory.book.price * sale.quantity)
+            (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           )
         } else {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
-            (sale.inventory.book.price * sale.quantity)
+            (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           )

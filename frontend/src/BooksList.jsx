@@ -49,10 +49,6 @@ function BooksList() {
       accessorKey: "pasta"
     },
     {
-      header: "Precio",
-      accessorKey: "price"
-    },
-    {
       header: "ISBN",
       accessorKey: "isbn"
     },

@@ -94,6 +94,10 @@ function BookInventory({
       }
     },
     {
+      header: "Precio",
+      accessorKey: "price"
+    },
+    {
       header: "Vendidos",
       Cell: ({row}) => {
         return (<div>{row.original.totalSales} / {row.original.initial}</div>)

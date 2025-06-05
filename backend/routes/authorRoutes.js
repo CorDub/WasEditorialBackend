@@ -322,13 +322,13 @@ router.get('/sales', async (req, res) => {
 
     const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
     const totalValue = sales.reduce((sum, sale) => {
-      const price = sale.inventory.book.price || 199.99;
+      const price = sale.inventory.price || 199.99;
       return sum + (price * sale.quantity);
     }, 0);
 
     const bookSales = sales.reduce((acc, sale) => {
       const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
-      const price = sale.inventory.book.price || 199.99;
+      const price = sale.inventory.price || 199.99;
       const saleValue = price * sale.quantity;
 
       if (existingBook) {
@@ -358,8 +358,8 @@ router.get('/sales', async (req, res) => {
         created_at: sale.createdAt,
         title: sale.inventory.book.title,
         bookstore_name: sale.inventory.bookstore.name,
-        price: sale.inventory.book.price || 199.99,
-        value: (sale.inventory.book.price || 199.99) * sale.quantity
+        price: sale.inventory.price || 199.99,
+        value: (sale.inventory.price || 199.99) * sale.quantity
       }))
     });
   } catch (error) {
@@ -406,9 +406,9 @@ router.get('/monthlySales', async (req, res) => {
             book: {
               select: {
                 title: true,
-                price: true
               }
-            }
+            },
+            price: true
           }
         }
       },
@@ -458,7 +458,7 @@ router.get('/monthlySales', async (req, res) => {
       if (salesByMonths[key]) {
         salesByMonths[key]["sales"].push(sale);
         salesByMonths[key]["total"] += (
-          (sale.inventory.book.price * sale.quantity)
+          (sale.inventory.price * sale.quantity)
           * (userCategory.percentage_management_stores / 100)
           * (userCategory.percentage_royalties / 100)
         )
@@ -466,12 +466,12 @@ router.get('/monthlySales', async (req, res) => {
         salesByMonths[key] = {
           sales: [sale],
           ganancia: (
-            sale.inventory.book.price
+            sale.inventory.price
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           ),
           total: (
-            (sale.inventory.book.price * sale.quantity)
+            (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
           ),
@@ -1120,7 +1120,6 @@ router.get("/completeInventory", async (req, res) => {
           select: {
             id: true,
             title: true,
-            price: true,
             isDeleted: true
           },
         },
@@ -1133,6 +1132,7 @@ router.get("/completeInventory", async (req, res) => {
           }
         },
         country: true,
+        price: true,
         initial: true,
         current: true,
         returns: true,

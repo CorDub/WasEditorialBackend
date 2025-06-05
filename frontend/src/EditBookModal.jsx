@@ -11,7 +11,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   const [title, setTitle] = useState(clickedRow.title);
   const [pasta, setPasta] = useState(clickedRow.pasta);
-  const [price, setPrice] = useState(clickedRow.price);
+  // const [price, setPrice] = useState(clickedRow.price);
   const [isbn, setIsbn] = useState(clickedRow.isbn);
   const [authors, setAuthors] = useState(clickedRow.users);
   const [existingAuthors, setExistingAuthors] = useState(null);
@@ -70,7 +70,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           id: clickedRow.id,
           title: title,
           pasta: pasta,
-          price: price,
           isbn: isbn,
           authors: authors,
         })
@@ -114,15 +113,14 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
     const inputTitle = document.getElementById('adding-book-title');
     const inputPasta = document.getElementById('pasta-select');
-    const inputPrice = document.getElementById('adding-book-price');
+    // const inputPrice = document.getElementById('adding-book-price');
     const inputIsbn = document.getElementById('adding-book-isbn');
     const inputAuthors = [];
     authors.map((author, index) => {
       inputAuthors.push(document.getElementById(`author-select-${index}`));
     });
 
-    const inputsList = [inputTitle, inputPasta, inputPrice,
-      inputIsbn, inputAuthors];
+    const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors];
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
@@ -157,20 +155,20 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       addErrorClass(inputPasta);
     };
 
-    if (isNaN(parseFloat(price))) {
-      newErrorList.push(31);
-      addErrorClass(inputPrice);
-    };
+    // if (isNaN(parseFloat(price))) {
+    //   newErrorList.push(31);
+    //   addErrorClass(inputPrice);
+    // };
 
-    if (parseFloat(price) < 0) {
-      newErrorList.push(32);
-      addErrorClass(inputPrice);
-    };
+    // if (parseFloat(price) < 0) {
+    //   newErrorList.push(32);
+    //   addErrorClass(inputPrice);
+    // };
 
-    if (price === null) {
-      newErrorList.push(33);
-      addErrorClass(inputPrice);
-    }
+    // if (price === null) {
+    //   newErrorList.push(33);
+    //   addErrorClass(inputPrice);
+    // };
 
     authors.map((author, index) => {
       if (author === null) {
@@ -260,9 +258,9 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
-        <input type='text' value={price}
+        {/* <input type='text' value={price}
           className="global-input" id="adding-book-price"
-          onChange={(e) => setPrice(e.target.value)}></input>
+          onChange={(e) => setPrice(e.target.value)}></input> */}
         <input type='text' value={isbn} placeholder="ISBN"
           className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>

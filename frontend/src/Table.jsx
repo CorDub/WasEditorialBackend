@@ -69,7 +69,7 @@ function Table({data, activeMonth}) {
           if (!existing) {
             row.sales.push({
               book: sale.inventory.book.title,
-              price: sale.inventory.book.price,
+              price: sale.inventory.price,
               ganancia: monthData.ganancia,
               quantity: sale.quantity
             })

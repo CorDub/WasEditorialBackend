@@ -429,7 +429,6 @@ router.post('/book', async (req, res) => {
       data: {
         title: title,
         pasta: pasta,
-        price: parseFloat(price),
         isbn: isbn,
         users: {
           connect: authorsIds,
@@ -454,6 +453,7 @@ router.post('/book', async (req, res) => {
           bookId: new_book.id,
           bookstoreId: 3,
           country: "México",
+          price: parseFloat(price),
           initial: quantity,
           current: quantity
         }
@@ -501,7 +501,6 @@ router.patch('/book', async (req, res) => {
       id,
       title,
       pasta,
-      price,
       isbn,
       authors } = req.body;
 
@@ -515,7 +514,6 @@ router.patch('/book', async (req, res) => {
       data: {
         title: title,
         pasta: pasta,
-        price: parseFloat(price),
         isbn: isbn,
         users: {
           connect: authorsIds,
@@ -685,6 +683,7 @@ router.get('/inventories', async (req, res) => {
           }
         },
         country: true,
+        price: true,
         initial: true,
         current: true,
         returns: true,
@@ -759,6 +758,7 @@ router.get('/inventoriesByBook', async (req, res) => {
         },
         bookId: true,
         country: true,
+        price: true,
         initial: true,
         current: true,
         returns: true,
@@ -835,6 +835,7 @@ router.get('/inventoriesByBookstore', async (req, res) => {
           }
         },
         bookstoreId: true,
+        price: true,
         country: true,
         initial: true,
         current: true,
@@ -926,7 +927,8 @@ router.patch('/inventory', async (req, res) => {
       book,
       bookstore,
       country,
-      inicial
+      inicial,
+      price
     } = req.body;
     const currentInventory = await prisma.inventory.findUnique({
       where: {id: id}
@@ -938,7 +940,8 @@ router.patch('/inventory', async (req, res) => {
         bookId: book,
         bookstoreId: bookstore,
         country: country,
-        initial: inicial
+        initial: inicial,
+        price: price
       }
     });
     if (updatedInventory.current > updatedInventory.initial) {
@@ -1016,7 +1019,6 @@ router.get('/sales', async (req, res) => {
             book: {
               select: {
                 title: true,
-                price: true
               }
             },
             bookstoreId: true,
@@ -1027,6 +1029,7 @@ router.get('/sales', async (req, res) => {
               }
             },
             country: true,
+            price: true,
             initial: true
           }
         },

@@ -38,6 +38,8 @@ function BookstoreInventory({
     pageSize: 30
   })
 
+  console.log(data);
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -69,12 +71,26 @@ function BookstoreInventory({
       accessorKey:'book.title',
       muiTableHeadCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%'
+          width: '5%'
+        }
+      }
+    },
+    {
+      header: "Precio",
+      accessorKey:"price",
+      muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '3%'
         }
       }
     },
@@ -85,12 +101,12 @@ function BookstoreInventory({
       },
       muiTableHeadCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       }
     },
@@ -101,12 +117,12 @@ function BookstoreInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       }
     },
@@ -117,12 +133,12 @@ function BookstoreInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       }
     },
@@ -133,12 +149,12 @@ function BookstoreInventory({
       ),
       muiTableHeadCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       }
     },
@@ -147,12 +163,12 @@ function BookstoreInventory({
       accessorKey: "country",
       muiTableHeadCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '3%'
         }
       }
     },

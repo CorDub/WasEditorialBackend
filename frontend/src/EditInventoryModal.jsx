@@ -15,11 +15,13 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [bookstore, setBookstore] = useState(clickedRow.bookstore.name);
   const [bookstoreId, setBookstoreId] = useState(clickedRow.bookstoreId);
   const [country, setCountry] = useState(clickedRow.country);
+  const [price, setPrice] = useState(clickedRow.price);
   const [inicial, setInicial] = useState(clickedRow.initial);
   const bookRef = useRef();
   const bookstoreRef = useRef();
   const countryRef = useRef();
   const inicialRef = useRef();
+  const priceRef = useRef();
   const countries = [
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -191,14 +193,20 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
       type: "number",
       presence: "not empty",
       range: "positive"
-    }
+    };
+    const expectationsPrice = {
+      type: "number",
+      presence: "not empty",
+      range: "positive"
+    };
 
     // const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
     const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
     const errorsInicial = checkForErrors("Cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef);
     // const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
-    const errorInputs = [errorsBookstore, errorsPais, errorsInicial];
+    const errorsPrice = checkForErrors("Precio", price, expectationsPrice, priceRef);
+    const errorInputs = [errorsBookstore, errorsPais, errorsInicial, errorsPrice];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -234,7 +242,8 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
           book: bookId,
           bookstore: bookstoreId,
           country: country,
-          inicial: parseInt(inicial)
+          inicial: parseInt(inicial),
+          price: parseFloat(price)
         }),
       });
 
@@ -288,6 +297,10 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <input type="text" placeholder="Cantidad inicial de libros"
           className="global-input" value={inicial}
           ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
+        <input type='text' value={price}
+          className="global-input" id="adding-book-price"
+          ref={priceRef}
+          onChange={(e) => setPrice(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

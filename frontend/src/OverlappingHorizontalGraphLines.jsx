@@ -38,13 +38,10 @@ function OverlappingHorizontalGraphLines({
   function getLength(type, max) {
     switch (type) {
       case 'current':
-        // console.log('current: ', ((current + sold + returns + given) * 100) / max)
         return ((current + sold + returns + given) * 100) / max
       case 'returns':
-        // console.log('returns', ((given + sold + returns) * 100) / max)
         return ((given + sold + returns) * 100) / max
       case 'sold':
-        // console.log('sold', ((given + sold) * 100) / max)
         return ((given + sold) * 100) / max
       case 'given':
         return (given * 100) / max
@@ -73,7 +70,7 @@ function OverlappingHorizontalGraphLines({
   // hide number if overflowing
   useLayoutEffect(() => {
     hideOverflow();
-  }, [])
+  }, [sold, given, current, returns, max])
 
   function hideOverflow() {
     const available_width = actualLinesRef.current.getBoundingClientRect().width;
@@ -116,25 +113,25 @@ function OverlappingHorizontalGraphLines({
       numberLengths.current = context.measureText(current).width
     }
 
-    if (numberLengths.given > newLengthsEstimates.given) {
+    if (numberLengths.given + 4 > newLengthsEstimates.given) {
       setGivenNumberHidden(true)
     } else {
       setGivenNumberHidden(false)
     }
 
-    if (numberLengths.sold > newLengthsEstimates.sold) {
+    if (numberLengths.sold + 4 > newLengthsEstimates.sold) {
       setSoldNumberHidden(true)
     } else {
       setSoldNumberHidden(false)
     }
 
-    if (numberLengths.returns > newLengthsEstimates.returns) {
+    if (numberLengths.returns + 4 > newLengthsEstimates.returns) {
       setReturnsNumberHidden(true)
     } else {
       setReturnsNumberHidden(false)
     }
 
-    if (numberLengths.current > newLengthsEstimates.current) {
+    if (numberLengths.current + 4 > newLengthsEstimates.current) {
       setCurrentNumberHidden(true)
     } else {
       setCurrentNumberHidden(false)
@@ -144,6 +141,7 @@ function OverlappingHorizontalGraphLines({
   }
 
   function displayAllNumbers() {
+    const available_width = actualLinesRef.current.getBoundingClientRect().width;
     setSavedLengths({...newLengths});
     let displayLengths = {...newLengths};
     let availableLengths = {
@@ -152,94 +150,117 @@ function OverlappingHorizontalGraphLines({
       sold: 0,
       given: 0
     }
-    console.log(displayLengths);
-    console.log(numberWidths);
+
+    function percentsToPixels(percent) {
+      return percent * available_width / 100
+    }
+
+    function pixelsToPercents(pixel) {
+      return pixel * 100 / available_width
+    }
+
+    let displayLengthsPixels = {
+      current: percentsToPixels(displayLengths.current),
+      returns: percentsToPixels(displayLengths.returns),
+      sold: percentsToPixels(displayLengths.sold),
+      given: percentsToPixels(displayLengths.given)
+    }
 
     //Given
-    if (numberWidths.given > newLengths.given) {
-      displayLengths.given += numberWidths.given
+    if (numberWidths.given + 4 > percentsToPixels(newLengths.given)) {
+      displayLengthsPixels.given += numberWidths.given + 4
     } else {
-      availableLengths.given = newLengths.given - numberWidths.given
+      availableLengths.given = percentsToPixels(newLengths.given) - numberWidths.given
     }
 
     //Sold
-    const necessarySold = displayLengths.given - (newLengths.sold - numberWidths.sold);
-    if (displayLengths.given > (newLengths.sold - numberWidths.sold)) {
+    const necessarySold = displayLengthsPixels.given - (displayLengthsPixels.sold - numberWidths.sold - 4);
+    if (displayLengthsPixels.given > (displayLengthsPixels.sold - numberWidths.sold - 4)) {
+      console.log("true")
       if (availableLengths.given > 0) {
-        let remaining = necessarySold
+        let remaining = necessarySold + 18
         if (availableLengths.given < necessarySold) {
-          displayLengths.given -= availableLengths.given
+          displayLengthsPixels.given -= availableLengths.given
           remaining -= availableLengths.given
         } else {
-          displayLengths.given -= necessarySold
+          displayLengthsPixels.given -= necessarySold
         }
 
         if (remaining > 0) {
-          displayLengths.sold += remaining;
+          displayLengthsPixels.sold += remaining;
           remaining = 0;
         }
       } else {
-        displayLengths.sold += necessarySold;
+        displayLengthsPixels.sold += necessarySold;
       }
     } else {
-      availableLengths.sold = displayLengths.sold - numberWidths.sold - displayLengths.given;
+      availableLengths.sold = displayLengthsPixels.sold - numberWidths.sold - displayLengthsPixels.given;
     }
 
     //Returns
-    const necessaryReturns = displayLengths.sold - (newLengths.returns - numberWidths.returns);
-    if (displayLengths.sold > (newLengths.returns - numberWidths.returns)) {
+    const necessaryReturns = displayLengthsPixels.sold - (displayLengthsPixels.returns - numberWidths.returns - 4);
+    console.log("necessaryReturns", necessaryReturns)
+    console.log("displayLengthsPixels.sold", displayLengthsPixels.sold)
+    console.log("displayLengthsPixels.returns", displayLengthsPixels.returns)
+    console.log("numberWidths.returns", numberWidths.returns)
+    if (displayLengthsPixels.sold > (displayLengthsPixels.returns - numberWidths.returns - 4)) {
       if (availableLengths.sold > 0) {
-        let remaining = necessaryReturns
+        let remaining = necessaryReturns + 18
         if (availableLengths.sold < necessaryReturns) {
-          displayLengths.sold -= availableLengths.given
+          displayLengthsPixels.sold -= availableLengths.given
           remaining -= availableLengths.sold
         } else {
-          displayLengths.sold -= necessaryReturns
+          displayLengthsPixels.sold -= necessaryReturns
         }
 
         if (remaining > 0) {
-          displayLengths.returns += remaining;
+          displayLengthsPixels.returns += remaining;
           remaining = 0;
         }
       } else {
-        displayLengths.returns += necessarySold;
+        displayLengthsPixels.returns += necessarySold;
       }
     } else {
-      availableLengths.returns = displayLengths.returns - numberWidths.returns - displayLengths.sold;
+      availableLengths.returns = displayLengthsPixels.returns - numberWidths.returns - displayLengthsPixels.sold;
     }
 
     //Current
-    const necessaryCurrent = displayLengths.returns - (newLengths.current - numberWidths.current);
-    if (displayLengths.returns > (newLengths.current - numberWidths.current)) {
+    const necessaryCurrent = displayLengthsPixels.returns - (displayLengthsPixels.current - numberWidths.current);
+    if (displayLengthsPixels.returns > (displayLengthsPixels.current - numberWidths.current)) {
       if (availableLengths.sold > 0) {
-        let remaining = necessaryCurrent
+        let remaining = necessaryCurrent + 18
         if (availableLengths.sold < necessaryCurrent) {
-          displayLengths.returns -= availableLengths.given
+          displayLengthsPixels.returns -= availableLengths.given
           remaining -= availableLengths.sold
         } else {
-          displayLengths.returns -= necessaryCurrent
+          displayLengthsPixels.returns -= necessaryCurrent
         }
 
         if (remaining > 0) {
-          displayLengths.current += remaining;
+          displayLengthsPixels.current += remaining;
           remaining = 0;
         }
       } else {
-        displayLengths.current += necessarySold;
+        displayLengthsPixels.current += necessarySold;
       }
     } else {
-      availableLengths.returns = displayLengths.current - numberWidths.current - displayLengths.returns;
+      availableLengths.returns = displayLengthsPixels.current - numberWidths.current - displayLengthsPixels.returns;
     }
+
+    displayLengths.current = pixelsToPercents(displayLengthsPixels.current)
+    displayLengths.returns = pixelsToPercents(displayLengthsPixels.returns)
+    displayLengths.sold = pixelsToPercents(displayLengthsPixels.sold)
+    displayLengths.given = pixelsToPercents(displayLengthsPixels.given)
+
     setNewLengths(displayLengths);
     setGivenNumberHidden(false)
     setSoldNumberHidden(false)
     setReturnsNumberHidden(false)
     setCurrentNumberHidden(false)
-    console.log(displayLengths);
   }
 
   function returnLengths() {
-    setNewLengths({...savedLengths});
+    setNewLengths(savedLengths);
     hideOverflow();
   }
 
@@ -282,7 +303,7 @@ function OverlappingHorizontalGraphLines({
             </div>)}
           {given > 0 && (
             <div
-              className="ohgl-given"
+              className={isGivenNumberHidden ? "ohgl-given no-padding" : "ohgl-given"}
               ref={numberGivenRef}
               style={{width: `${newLengths.given}%`}}>
               <div className='ohgl-number'

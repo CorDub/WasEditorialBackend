@@ -175,7 +175,7 @@ function OverlappingHorizontalGraphLines({
 
     //Sold
     const necessarySold = displayLengthsPixels.given - (displayLengthsPixels.sold - numberWidths.sold - 4);
-    if (displayLengthsPixels.given > (displayLengthsPixels.sold - numberWidths.sold - 4)) {
+    if (displayLengthsPixels.given > (displayLengthsPixels.sold - numberWidths.sold - 16)) {
       console.log("true")
       if (availableLengths.given > 0) {
         let remaining = necessarySold + 18
@@ -203,7 +203,7 @@ function OverlappingHorizontalGraphLines({
     console.log("displayLengthsPixels.sold", displayLengthsPixels.sold)
     console.log("displayLengthsPixels.returns", displayLengthsPixels.returns)
     console.log("numberWidths.returns", numberWidths.returns)
-    if (displayLengthsPixels.sold > (displayLengthsPixels.returns - numberWidths.returns - 4)) {
+    if (displayLengthsPixels.sold > (displayLengthsPixels.returns - numberWidths.returns - 16)) {
       if (availableLengths.sold > 0) {
         let remaining = necessaryReturns + 18
         if (availableLengths.sold < necessaryReturns) {
@@ -226,7 +226,7 @@ function OverlappingHorizontalGraphLines({
 
     //Current
     const necessaryCurrent = displayLengthsPixels.returns - (displayLengthsPixels.current - numberWidths.current);
-    if (displayLengthsPixels.returns > (displayLengthsPixels.current - numberWidths.current)) {
+    if (displayLengthsPixels.returns > (displayLengthsPixels.current - numberWidths.current - 16)) {
       if (availableLengths.sold > 0) {
         let remaining = necessaryCurrent + 18
         if (availableLengths.sold < necessaryCurrent) {

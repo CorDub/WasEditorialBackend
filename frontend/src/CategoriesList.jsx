@@ -34,7 +34,12 @@ function CategoriesList() {
         <div style={{overflow:"visible"}}>
           <TableActions openModal={openModal} row={row}/>
         </div>
-      )
+      ),
+      muiTableBodyCellProps: {
+        sx: {
+          overflow: "visible"
+        }
+      }
     },
     {
       header: "Tipo",

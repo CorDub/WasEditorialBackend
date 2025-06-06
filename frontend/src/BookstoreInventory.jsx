@@ -198,6 +198,9 @@ function BookstoreInventory({
   const table = useMaterialReactTable({
     columns,
     data,
+    localization: {
+      noRecordsToDisplay: 'Descargando datos'
+    },
     enableDensityToggle: false,
     enablePagination: true,
     enableFullScreenToggle: false,

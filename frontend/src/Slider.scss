@@ -1,0 +1,27 @@
+.slider {
+  width: 80%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem 0 0;
+}
+
+.slider-bar {
+  width: 100%;
+  height: 4px;
+  border: 1px solid grey;
+  background-color: #fff;
+  border-radius: 15px;
+  position: relative;
+  z-index: 0;
+}
+
+.slider-ball {
+  position: absolute;
+  top: -5px;
+  // left: -4px;
+  width: 15px;
+  height: 15px;
+  background-color: #4E5981;
+  border-radius: 50%;
+}

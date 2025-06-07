@@ -23,14 +23,13 @@ function Table({data, activeMonth}) {
   /// Select only the data for the month displayed
   useEffect(() => {
     if (data) {
-      console.log(data[activeMonth][0]);
       setMonthData(data[activeMonth][1])
     }
   }, [data, activeMonth]);
 
   useEffect(() => {
-    console.log(activeMonth)
-  }, [activeMonth]);
+    console.log(data && activeMonth)
+  }, [data, activeMonth]);
 
   function formatRowData() {
   // From the month data, format it so you can display it in rows
@@ -161,6 +160,7 @@ function Table({data, activeMonth}) {
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
 

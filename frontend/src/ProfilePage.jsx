@@ -3,12 +3,13 @@ import useCheckUser from "./customHooks/useCheckUser";
 import UserContext from "./UserContext";
 import { useContext, useState, useEffect } from "react";
 import "./ProfilePage.scss";
-import { faEnvelope, faEarthAmericas } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faEarthAmericas, faFont } from '@fortawesome/free-solid-svg-icons';
 import ProfilePageLine from "./ProfilePageLine";
 import Alert from "./Alert";
 import ProfilePageDropDown from "./ProfilePageDropDown";
 import { Link } from "react-router-dom";
 import ErrorsList from "./ErrorsList";
+import ProfilePageSlider from "./ProfilePageSlider";
 
 function ProfilePage() {
   useCheckUser();
@@ -74,6 +75,14 @@ function ProfilePage() {
             forceRender={forceRender}
             setForceRender={setForceRender}
             setErrors={setErrors}/>
+          <ProfilePageSlider
+            icon={faFont}
+            title={"Letras"}
+            value={user.font_size}
+            setAlertMessage={setAlertMessage}
+            setAlertType={setAlertType}
+            forceRender={forceRender}
+            setForceRender={setForceRender}/>
           <ErrorsList errors={errors} setErrors={setErrors}/>
           <Link to="/forgotten-password"
             className="profile-page-change-password">

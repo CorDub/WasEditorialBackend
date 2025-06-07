@@ -18,7 +18,7 @@ function AuthorCommissions() {
     try {
       // check cache first
       const cachedAuthorMonthlySales = sessionStorage.getItem("authorMonthlySales");
-      if (cachedAuthorMonthlySales) {
+      if (cachedAuthorMonthlySales && JSON.parse(cachedAuthorMonthlySales).length > 0) {
         console.log("cache hit");
         setDataByMonths(JSON.parse(cachedAuthorMonthlySales));
         return
@@ -38,7 +38,7 @@ function AuthorCommissions() {
         console.log("cache storage");
         setDataByMonths(data);
       }
-      
+
     } catch(error) {
       console.log("Error when fetching the data", error);
     }

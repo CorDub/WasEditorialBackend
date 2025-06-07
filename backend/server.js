@@ -60,7 +60,8 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
       referido: req.user.referido,
       email: req.user.email,
       categoryId: req.user.categoryId,
-      role: req.user.role
+      role: req.user.role,
+      font_size: req.user.font_size
     }
     res.status(200).json(user_clean)
   } catch(error) {

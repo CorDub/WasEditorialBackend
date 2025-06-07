@@ -417,6 +417,8 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
+    // console.log("data[0]", data[0]);
+
     // Need this for the category of the author,
     // which is used in how much author make from the sales
     const user = await prisma.user.findUnique({
@@ -483,6 +485,8 @@ router.get('/monthlySales', async (req, res) => {
       }
     }
 
+    // console.log("salesByMonth", salesByMonths);
+
     /// Adding transfers for the "entregado" column - same process
     // Get all the transfers from the last 12 months
     const allAuthorTransfers = await prisma.transfer.findMany({
@@ -517,6 +521,8 @@ router.get('/monthlySales', async (req, res) => {
         }
       }
     });
+
+    // console.log("allAuthorTransfers[0]", allAuthorTransfers[0])
 
     // Then add the transfer data to salesBymonth if the month of the transfer exist
     // Otherwise create it
@@ -559,44 +565,44 @@ router.get('/monthlySales', async (req, res) => {
 
     let salesByMonthsList = Object.entries(salesByMonths);
     let newSalesByMonthsList = [];
-    if (Object.keys(salesByMonths).length < 12) {
-      // Get the YYYY-MM combination 12m ago
-      const now = new Date();
-      let currentYear = now.getFullYear();
-      const currentMonth = now.getMonth() + 1;
+    // Get the YYYY-MM combination 12m ago
+    const now = new Date();
+    let currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
 
-      // Get an array of all the 12 monhts Y + M combination
-      let ltmStrings = [];
-      for (let i = 0; i < 13; i++) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-        ltmStrings.push(monthStr);
+    // Get an array of all the 12 monhts Y + M combination
+    let ltmStrings = [];
+    for (let i = 0; i < 13; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+      ltmStrings.push(monthStr);
+    }
+
+    for (let i = 0; i < ltmStrings.length; i++) {
+      let existing = false;
+
+      for (const month of salesByMonthsList) {
+        if (ltmStrings[i] === month[0]) {
+          newSalesByMonthsList.push(month);
+          existing = true;
+          continue;
+        }
       }
 
-      for (let i = 0; i < ltmStrings.length; i++) {
-        let existing = false;
-
-        for (const month of salesByMonthsList) {
-          if (ltmStrings[i] === month[0]) {
-            newSalesByMonthsList.push(month);
-            existing = true;
-            continue;
+      if (!existing) {
+        newSalesByMonthsList.push([
+          ltmStrings[i], {
+            ganancia: 0,
+            sales: [],
+            total: 0,
+            transfers: [],
+            transfersTotal: 0
           }
-        }
-
-        if (!existing) {
-          newSalesByMonthsList.push([
-            ltmStrings[i], {
-              ganancia: 0,
-              sales: [],
-              total: 0,
-              transfers: [],
-              transfersTotal: 0
-            }
-          ])
-        }
+        ])
       }
     }
+
+    console.log("newSalesByMonthsList", newSalesByMonthsList);
 
     res.status(200).json(newSalesByMonthsList);
   } catch (error) {

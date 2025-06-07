@@ -39,7 +39,7 @@ const CustomDropdown = ({ options, defaultOption, onChange, reset, setReset }) =
         className="dropdown-button"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{selectedOption && selectedOption.label}</span>
+        <span className="custom-dropdown-selected-option">{selectedOption && selectedOption.label}</span>
         <svg
           className={`dropdown-arrow ${isOpen ? 'open' : ''}`}
           xmlns="http://www.w3.org/2000/svg"

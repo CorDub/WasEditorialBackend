@@ -2,14 +2,22 @@ import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../UserContext';
 
-function useCheckUser(page_id) {
+function useCheckUser() {
   const { user, fetchUser } = useContext(UserContext);
   const navigate = useNavigate();
+
+  // if (user !== "") {
+  //   if (user === null) {
+  //     navigate("/");
+  //     return;
+  //   }
+  // }
 
   useEffect(() => {
     async function fetchUserData() {
       if (user !== "") {
         if (user === null) {
+
           navigate("/");
           return;
         }

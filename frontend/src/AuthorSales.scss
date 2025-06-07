@@ -25,6 +25,7 @@
   flex-direction: column;
   height: 100%;
   gap: 20px;
+  width: 30%;
 }
 
 #author-sales-content-right {
@@ -95,6 +96,7 @@
 .books-sold-item{
   span{
     color: #4E6CB3;
+    font-size: clamp(0.8rem, 1rem, 1.2rem);
   }
 }
 
@@ -137,6 +139,7 @@
   font-size: 14px;
   height: 35px;
   transition: background-color 0.2s;
+  font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .apply-date-range-btn:hover {

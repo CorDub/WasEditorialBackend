@@ -37,6 +37,7 @@ model User {
   books               Book[]
   role                Role      @default(author)
   reset_password_code Int?
+  font_size           Float?    @default(1.0)
   isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt

@@ -29,7 +29,8 @@ router.post('/login', async (req, res) => {
         referido: user.referido,
         email: user.email,
         categoryId: user.categoryId,
-        role: user.role
+        role: user.role,
+        font_size: user.font_size
       }
       res.status(200).json(user_send);
     } else {

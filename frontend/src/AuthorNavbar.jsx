@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function AuthorNavbar({ active }) {
+function AuthorNavbar({ active, preferredFontSize }) {
 
   function declareButtonActive(active) {
     const buttons = document.querySelectorAll(".navbar-button");
@@ -33,7 +33,8 @@ function AuthorNavbar({ active }) {
   }, [active])
 
   return(
-    <div className="admin-navbar">
+    <div className="admin-navbar"
+      style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
       <Link to='/author/sales' className="navbar-button">Ventas</Link>
       <Link to='/author/inventory' className="navbar-button">Inventario</Link>
       <Link to='/author/commissions' className="navbar-button">Comisiones</Link>

@@ -2,7 +2,11 @@ import CommissionMonthSelectorRow from "./CommissionMonthSelectorRow";
 import "./CommissionMonthSelector.scss";
 import LoadingWheel from "./LoadingWheel";
 
-function CommissionMonthSelector({activeMonth, setActiveMonth, payments}) {
+function CommissionMonthSelector({
+  activeMonth,
+  setActiveMonth,
+  payments,
+  preferredFontSize}) {
 
   return(
     <div className="commission-month-selector">
@@ -14,7 +18,8 @@ function CommissionMonthSelector({activeMonth, setActiveMonth, payments}) {
           index={index}
           month={month}
           active={index === activeMonth ? true : false}
-          setActiveMonth={setActiveMonth}/>
+          setActiveMonth={setActiveMonth}
+          preferredFontSize={preferredFontSize}/>
       ))}
 
     </div>

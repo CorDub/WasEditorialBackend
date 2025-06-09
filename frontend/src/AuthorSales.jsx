@@ -35,10 +35,6 @@ function AuthorSales() {
   //   setDefaultRange();
   // }, []);
 
-  useEffect(() => {
-    console.log(salesData);
-  }, [salesData])
-
   function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
     if (!sales || sales.length === 0) return;
@@ -74,7 +70,6 @@ function AuthorSales() {
     try {
       const cachedAuthorSalesData = sessionStorage.getItem("authorSalesData");
       if (cachedAuthorSalesData) {
-        console.log("cache hit", JSON.parse(cachedAuthorSalesData));
         setSalesData(JSON.parse(cachedAuthorSalesData));
         processMonthlyData(JSON.parse(cachedAuthorSalesData).sales, selectedBook);
         return
@@ -100,7 +95,6 @@ function AuthorSales() {
       }
 
       const data = await response.json();
-      console.log("cache storage");
       sessionStorage.setItem("authorSalesData", JSON.stringify(data));
       setSalesData(data);
       processMonthlyData(data.sales, selectedBook);
@@ -148,6 +142,9 @@ function AuthorSales() {
     return <div className="sales-container">No hay información de ventas.</div>;
   }
 
+  console.log(user)
+  console.log(user.font_size)
+
   return (
     <div className="author-sales"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -191,6 +188,7 @@ function AuthorSales() {
           salesData={salesData}
           selectedBook={selectedBook}
           monthlyData={monthlyData}
+          preferredFontSize={user.font_size}
         />
       </div>
     </div>

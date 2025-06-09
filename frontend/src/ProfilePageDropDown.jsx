@@ -83,7 +83,7 @@ function ProfilePageDropDown({
     <div className="profile-page-line">
       <div className="profile-page-title">
         <FontAwesomeIcon icon={icon}
-          className="profile-page-icon"/>
+          className="profile-page-icon fa-icon"/>
         <h2 style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>{title}</h2></div>
       {isEditOpen
         ? <>
@@ -104,7 +104,7 @@ function ProfilePageDropDown({
               ))}
             </select>
             <FontAwesomeIcon icon={faCircleCheck}
-              className="profile-page-edit profile-page-edit-open"
+              className="profile-page-edit profile-page-edit-open fa-icon"
               onClick={() => updateProfileField()} />
           </>
         : <>
@@ -112,7 +112,7 @@ function ProfilePageDropDown({
             style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
               {value}</div>
           <FontAwesomeIcon icon={faPen}
-            className="profile-page-edit"
+            className="profile-page-edit fa-icon"
             onClick={() => setEditOpen(true)} />
           </>}
     </div>

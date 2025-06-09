@@ -52,7 +52,7 @@ function GivenToAuthorDetails({selectedBookId}) {
       <div className="gtad-header">
         <div className="gtad-name fecha">Fecha</div>
         <div className="gtad-name libro">Libro</div>
-        <div className="gtad-name cantidad">Cantidad</div>
+        <div className="gtad-name cantidad" title='Cantidad'>Cantidad</div>
         <div className="gtad-name person">Person</div>
         <div className="gtad-name lugar">Lugar</div>
         <div className="gtad-name comentario">Comentario</div>

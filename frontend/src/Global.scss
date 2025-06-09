@@ -41,7 +41,7 @@ a {
   color: white;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  font-size: clamp(0.8rem, 1rem, 1.2rem);
+  // font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .blue-button:hover {
@@ -58,7 +58,7 @@ a {
   background-color: $bg-second-color;
   color: $prim-color;
   box-shadow: -1px -1px 1px #4E5981, 1px 1px 1px #fff inset;
-  font-size: clamp(0.8rem, 1rem, 1.2rem);
+  // font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .grey-button:hover {
@@ -76,7 +76,7 @@ a {
   background-color: $prim-color;
   color: white;
   transition: 0.3s;
-  font-size: clamp(0.8rem, 1rem, 1.2rem);
+  // font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .navbar-button:hover {
@@ -219,14 +219,15 @@ a {
   justify-content: center;
   align-items: center;
   text-align: center;
+  margin-top: 0.5rem;
   padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  // padding-bottom: 0.5rem;
 }
 
 .login-error {
   margin: 0;
   color: red;
-  font-size: 0.9em;
+  font-size: 1.1em;
 }
 
 /// Table
@@ -314,4 +315,8 @@ a {
 
 .hidden {
   display: none;
+}
+
+.fa-icon {
+  font-size: 1rem;
 }

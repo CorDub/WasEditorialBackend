@@ -1,9 +1,12 @@
 import useCheckUser from "./customHooks/useCheckUser";
 import { Label, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
+const SalesContent = ({
+  salesData,
+  selectedBook,
+  monthlyData,
+  preferredFontSize }) => {
   useCheckUser();
-  console.log("salesData in SalesContent", salesData);
   const selectedBookSales = selectedBook === 'total'
     ? salesData.totalSales
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;
@@ -24,7 +27,10 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
           {selectedBook === 'total' && (
             <ul>
               {salesData.bookSales.map(book => (
-                <li key={book.bookId} className='books-sold-item'>
+                <li key={book.bookId}
+                  className='books-sold-item'
+                  style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
+                  title={`${book.title}: ${book.quantity} libros ($ ${book.value.toLocaleString()})`}>
                   {book.title}: {book.quantity} libros <span>($ {book.value.toLocaleString()})</span>
                 </li>
               ))}

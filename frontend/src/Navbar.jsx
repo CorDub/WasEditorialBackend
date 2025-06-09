@@ -65,7 +65,9 @@ function Navbar({
                   retreat={retreat}
                   setRetreat={setRetreat}/>
       case "author":
-        return <AuthorNavbar active={active}/>
+        return <AuthorNavbar
+                  active={active}
+                  preferredFontSize={user.font_size}/>
       default:
         console.log('Unkown error')
         return;
@@ -73,7 +75,8 @@ function Navbar({
   }
 
   return (
-    <div className="navbar">
+    <div className="navbar"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <div className="navbar-home">
         {chooseSubNavbar(subNav)}
       </div>

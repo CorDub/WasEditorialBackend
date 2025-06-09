@@ -17,12 +17,15 @@
   display: flex;
   background-color: #4E5981;
   color: white;
-  font-size: clamp(10px, 1vw, 16px);
+  // font-size: clamp(10px, 1vw, 16px);
 }
 
 .gtad-name {
   border-right: 1px solid white;
   margin-right: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fecha {

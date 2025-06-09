@@ -82,14 +82,16 @@ function AuthorCommissions() {
   }, [])
 
   return(
-    <div className="author-commissions">
+    <div className="author-commissions"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar
         subNav={user && user.role}
         active={"comisiones"} />
       <CommissionMonthSelector
         activeMonth={activeMonth}
         setActiveMonth={setActiveMonth}
-        payments={payments}/>
+        payments={payments}
+        preferredFontSize={user.font_size}/>
       <Table
         data={dataByMonths}
         activeMonth={activeMonth}

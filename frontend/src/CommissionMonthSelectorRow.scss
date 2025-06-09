@@ -19,7 +19,7 @@
 }
 
 .cms-status {
-  width: 40%;
+  width: 30%;
   text-align: center;
 }
 
@@ -32,6 +32,9 @@
 }
 
 .cms-total {
-  width: 30%;
+  width: 40%;
   text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

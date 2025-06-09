@@ -23,7 +23,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
     <div className="scope-selector">
       <FontAwesomeIcon
         icon={faBook}
-        className={scope === "book" ? "ssi-active" : "scope-selector-icon"}
+        className={scope === "book" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
         onClick={() => {
           setScope("book");
           setSelectedBookId('');
@@ -40,7 +40,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
         <div className="scope-selector-tooltip-libro">Libro</div>)}
       <FontAwesomeIcon
         icon={faShop}
-        className={scope === "bookstore" ? "ssi-active" : "scope-selector-icon"}
+        className={scope === "bookstore" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
         id='ssi-bookstore'
         onClick={() => {
           setScope("bookstore")
@@ -56,7 +56,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
         <div className="scope-selector-tooltip-libreria">Librería</div>)}
       <FontAwesomeIcon
         icon={faEarthAmericas}
-        className={scope === "country" ? "ssi-active" : "scope-selector-icon"}
+        className={scope === "country" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
         onClick={() => {
           setScope("country")
           setLegendDisplays({

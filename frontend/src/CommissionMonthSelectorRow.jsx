@@ -3,7 +3,12 @@ import "./CommissionMonthSelectorRow.scss"
 import { useState } from "react";
 import { useEffect } from "react";
 
-function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
+function CommissionMonthSelectorRow({
+  index,
+  month,
+  active,
+  setActiveMonth,
+  preferredFontSize}) {
   const [salesPresence, setSalesPresence] = useState(true)
 
   useEffect(() => {
@@ -34,19 +39,23 @@ function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
   return(
     <div
       className={active ? "cms-row-active" : "cms-row"}
+      style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
       onClick={() => setActiveMonth(index)}>
       <div className="cms-month">{changeDateFormat(month.forMonth)}</div>
       {salesPresence && (
-        <div className="cms-status">
+        <div className="cms-status"
+          style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
           {month.isPaid ? "Pagado" : "No pagado"}
         </div>
       )}
       {!salesPresence && (
-        <div className="cms-status-no-sales">
+        <div className="cms-status-no-sales"
+          style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
           No ventas
         </div>
       )}
-      <div className="cms-total">{formatNumber(month.amount)}</div>
+      <div className="cms-total"
+        style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>{formatNumber(month.amount)}</div>
     </div>
   )
 }

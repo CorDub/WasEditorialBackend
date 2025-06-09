@@ -172,7 +172,7 @@ function ShowInventories({
           onClick={() => {
             declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)
             setExclusions("")}}>
-          <p className="author-inventory-label">Inventario total disponible</p>
+          <p className="author-inventory-label" title='Inventario total disponible'>Inventario total disponible</p>
           <p className="author-inventory-number">{inventories.summary.total || 0}</p>
         </div>
       </div>

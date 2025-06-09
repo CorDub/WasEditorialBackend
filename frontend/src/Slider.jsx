@@ -90,7 +90,7 @@ function Slider({value, setNewValue, isEditOpen}) {
 
   return(
     <div className="slider">
-      <div className={isEditOpen ? "slider-bar" : "slider-bar slider-bar-closed"}
+      <div className={isEditOpen ? "slider-bar slider-bar-open" : "slider-bar slider-bar-closed"}
         ref={sliderBarRef}>
         {isEditOpen
           ? <div className="slider-ball"
@@ -106,7 +106,7 @@ function Slider({value, setNewValue, isEditOpen}) {
         <div className="slider-scale">
           {(Object.entries(gradations)).map((gradation, index) => (
             <div className="slider-scale-grade"
-              style={{ left: `${gradation[1] - 6}px`}}
+              style={{ left: `${gradation[1]}px`}}
               key={index}>
               {gradation[0]}
             </div>

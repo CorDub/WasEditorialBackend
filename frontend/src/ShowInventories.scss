@@ -21,7 +21,10 @@
 
 .author-inventory-label {
   margin: 0;
-  font-size: clamp(0.8rem, 1.2rem, 1.2rem);
+  // font-size: clamp(0.8rem, 1.2rem, 1.2rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .author-inventory-number {

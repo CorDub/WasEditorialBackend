@@ -15,7 +15,8 @@ function ProfilePageDropDown({
     setAlertType,
     forceRender,
     setForceRender,
-    setErrors}) {
+    setErrors,
+    preferredFontSize}) {
   useCheckUser();
   const [isEditOpen, setEditOpen] = useState(false);
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -76,15 +77,18 @@ function ProfilePageDropDown({
     return errorList;
   }
 
+  console.log(preferredFontSize)
+
   return(
     <div className="profile-page-line">
       <div className="profile-page-title">
         <FontAwesomeIcon icon={icon}
           className="profile-page-icon"/>
-        <h2>{title}</h2></div>
+        <h2 style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>{title}</h2></div>
       {isEditOpen
         ? <>
             <select className="select-global profile-page-input"
+              style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}
               ref={selectRef}
               onChange={(e) => setNewValue(e.target.value)}
               onKeyDown={(e) => {
@@ -104,7 +108,9 @@ function ProfilePageDropDown({
               onClick={() => updateProfileField()} />
           </>
         : <>
-          <div className="profile-page-value">{value}</div>
+          <div className="profile-page-value"
+            style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
+              {value}</div>
           <FontAwesomeIcon icon={faPen}
             className="profile-page-edit"
             onClick={() => setEditOpen(true)} />

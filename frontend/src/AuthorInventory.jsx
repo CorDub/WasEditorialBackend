@@ -96,7 +96,8 @@ function AuthorInventory(){
   }, [selectedBookId]);
 
   return (
-    <>
+    <div className="author-inventory"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
     <Navbar subNav={user && user.role} active={"inventario"} />
     <div id="author-page-container">
       <div id="author-page-content">
@@ -161,7 +162,7 @@ function AuthorInventory(){
             selectedBookId={selectedBookId}/>)}
       </div>
     </div>
-    </>
+    </div>
   )
 }
 

@@ -1,7 +1,7 @@
 import "./Slider.scss";
 import {useState, useRef, useEffect, useLayoutEffect} from "react";
 
-function Slider({value, setNewValue}) {
+function Slider({value, setNewValue, isEditOpen}) {
   const [horizontalDisplacement, setHorizontalDisplacement] = useState(0);
   const sliderBallRef = useRef();
   const sliderBarRef = useRef();
@@ -53,15 +53,21 @@ function Slider({value, setNewValue}) {
 
   }, [isTracking])
 
+  console.log(isEditOpen);
+
   return(
     <div className="slider">
-      <div className="slider-bar"
+      <div className={isEditOpen ? "slider-bar" : "slider-bar slider-bar-closed"}
         ref={sliderBarRef}>
-        <div className="slider-ball"
+        {isEditOpen
+          ? <div className="slider-ball"
           ref={sliderBallRef}
           onMouseDown={() => setTracking(true)}
-          style={{left:`${-4 + horizontalDisplacement}px`}}>
-        </div>
+          style={{left:`${-4 + horizontalDisplacement}px`}}></div>
+          : <div className="slider-ball slider-ball-closed"
+          ref={sliderBallRef}
+          style={{left:`${-4 + horizontalDisplacement}px`}}></div>
+        }
       </div>
     </div>
   )

@@ -12,7 +12,8 @@ function ProfilePageSlider({
   setAlertMessage,
   setAlertType,
   forceRender,
-  setForceRender
+  setForceRender,
+  preferredFontSize
 }) {
   const [isEditOpen, setEditOpen] = useState(false);
   useCheckUser();
@@ -34,7 +35,7 @@ function ProfilePageSlider({
 
       if (response.ok) {
         setEditOpen(false);
-        setAlertMessage(`El tamaño de las letras ha sido cambiado`);
+        setAlertMessage(`El tamaño de las letras ha estado cambiado`);
         setAlertType("confirmation");
         setForceRender(!forceRender);
       }
@@ -45,18 +46,21 @@ function ProfilePageSlider({
     setEditOpen(false);
   }
 
+  console.log(isEditOpen)
+
   return (
     <div className="profile-page-line">
       <div className="profile-page-title">
         <FontAwesomeIcon icon={icon} className="profile-page-icon"/>
-        <h2>{title}</h2>
+        <h2 style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>{title}</h2>
       </div>
     {isEditOpen
       ? <div className="profile-page-slider-edit">
           <div className="profile-page-slider-top">
             <Slider className="profile-page-slider-open"
               value={value}
-              setNewValue={setNewValue}/>
+              setNewValue={setNewValue}
+              isEditOpen={isEditOpen}/>
             <div className="profile-page-slider-example"
               style={{fontSize: `${newValue}rem`}}>
               <p>Ejemplo</p>
@@ -67,7 +71,10 @@ function ProfilePageSlider({
             onClick={closeAndSave}/>
         </div>
       : <>
-        <div className="profile-page-value"><Slider value={value}/></div>
+        <div className="profile-page-value">
+          <Slider value={value}
+            isEditOpen={isEditOpen}/>
+        </div>
         <FontAwesomeIcon icon={faPen}
           className="profile-page-edit"
           onClick={() => setEditOpen(true)} />

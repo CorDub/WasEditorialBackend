@@ -5,7 +5,8 @@ function BookSelector({
     onBookChange,
     selectedValue = 'total',
     reset,
-    setReset }) {
+    setReset,
+    fontSize }) {
   const options = [
     { value: 'total', label: 'Todos los titulos' },
     ...(booksInventories?.map(book => ({
@@ -25,6 +26,7 @@ function BookSelector({
       onChange={handleChange}
       reset={reset}
       setReset={setReset}
+      fontSize={fontSize}
     />
   );
 }

@@ -16,6 +16,11 @@
   z-index: 0;
 }
 
+.slider-bar-closed {
+  background-color: #E2E2E2;
+  border: 1px solid rgb(175, 175, 175);
+}
+
 .slider-ball {
   position: absolute;
   top: -5px;
@@ -24,4 +29,8 @@
   height: 15px;
   background-color: #4E5981;
   border-radius: 50%;
+}
+
+.slider-ball-closed {
+  background-color: grey;
 }

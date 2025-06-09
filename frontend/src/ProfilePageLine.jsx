@@ -14,7 +14,8 @@ function ProfilePageLine({
     setAlertType,
     forceRender,
     setForceRender,
-    setErrors}) {
+    setErrors,
+    preferredFontSize}) {
   const [isEditOpen, setEditOpen] = useState(false);
   useCheckUser();
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -83,11 +84,12 @@ function ProfilePageLine({
       <div className="profile-page-title">
         <FontAwesomeIcon icon={icon}
           className="profile-page-icon"/>
-        <h2>{title}</h2></div>
+        <h2 style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>{title}</h2></div>
       {isEditOpen
         ? <>
             <input type="text"
               className="global-input profile-page-input"
+              style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}
               placeholder={value}
               value={newValue}
               ref={inputRef}
@@ -102,7 +104,9 @@ function ProfilePageLine({
               onClick={() => updateProfileField()} />
           </>
         : <>
-          <div className="profile-page-value">{value}</div>
+          <div className="profile-page-value"
+            style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
+              {value}</div>
           <FontAwesomeIcon icon={faPen}
             className="profile-page-edit"
             onClick={() => setEditOpen(true)} />

@@ -149,7 +149,8 @@ function AuthorSales() {
   }
 
   return (
-    <>
+    <div className="author-sales"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"ventas"} />
       <div id="author-sales-container">
         <div className="date-range-selector">
@@ -158,6 +159,7 @@ function AuthorSales() {
             booksInventories={salesData.bookSales}
             onBookChange={handleBookChange}
             selectedValue={selectedBook}
+            fontSize={user.font_size}
           />
           </div>
           <div className="date-input">
@@ -191,7 +193,7 @@ function AuthorSales() {
           monthlyData={monthlyData}
         />
       </div>
-    </>
+    </div>
   );
 }
 

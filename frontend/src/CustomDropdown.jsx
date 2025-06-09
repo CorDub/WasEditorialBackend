@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './CustomDropdown.scss';
 
-const CustomDropdown = ({ options, defaultOption, onChange, reset, setReset }) => {
+const CustomDropdown = ({ options, defaultOption, onChange, reset, setReset, fontSize }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
   const dropdownRef = useRef(null);
@@ -39,7 +39,8 @@ const CustomDropdown = ({ options, defaultOption, onChange, reset, setReset }) =
         className="dropdown-button"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="custom-dropdown-selected-option">{selectedOption && selectedOption.label}</span>
+        <span className="custom-dropdown-selected-option"
+          style={{ fontSize: `clamp{0.8rem, ${fontSize}, 1.5rem}`}}>{selectedOption && selectedOption.label}</span>
         <svg
           className={`dropdown-arrow ${isOpen ? 'open' : ''}`}
           xmlns="http://www.w3.org/2000/svg"

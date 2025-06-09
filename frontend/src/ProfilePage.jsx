@@ -48,7 +48,8 @@ function ProfilePage() {
   }, [forceRender])
 
   return(
-    <div className="profile-page">
+    <div className="profile-page"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar
         subNav={user && user.role}
         active={"profile"} />
@@ -63,7 +64,8 @@ function ProfilePage() {
             setAlertType={setAlertType}
             forceRender={forceRender}
             setForceRender={setForceRender}
-            setErrors={setErrors}/>
+            setErrors={setErrors}
+            preferredFontSize={user.font_size}/>
           <ProfilePageDropDown
             icon={faEarthAmericas}
             title={"País"}
@@ -74,7 +76,8 @@ function ProfilePage() {
             setAlertType={setAlertType}
             forceRender={forceRender}
             setForceRender={setForceRender}
-            setErrors={setErrors}/>
+            setErrors={setErrors}
+            preferredFontSize={user.font_size}/>
           <ProfilePageSlider
             icon={faFont}
             title={"Letras"}
@@ -82,7 +85,8 @@ function ProfilePage() {
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
             forceRender={forceRender}
-            setForceRender={setForceRender}/>
+            setForceRender={setForceRender}
+            preferredFontSize={user.font_size}/>
           <ErrorsList errors={errors} setErrors={setErrors}/>
           <Link to="/forgotten-password"
             className="profile-page-change-password">

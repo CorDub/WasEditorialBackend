@@ -1,9 +1,13 @@
 .slider {
-  width: 80%;
+  width: 90%;
   height: 20px;
   display: flex;
-  align-items: center;
-  padding: 0 1rem 0 0;
+  flex-direction: column;
+  // align-items: center;
+  justify-content: center;
+  // padding: 0 1rem 0 0;
+  // padding-left: 0.5rem;
+  margin-left: 1rem;
 }
 
 .slider-bar {
@@ -14,6 +18,7 @@
   border-radius: 15px;
   position: relative;
   z-index: 0;
+  margin-bottom: 0.5rem;
 }
 
 .slider-bar-closed {
@@ -33,4 +38,16 @@
 
 .slider-ball-closed {
   background-color: grey;
+}
+
+.slider-scale {
+  display: flex;
+  position: relative;
+  height: 20px;
+}
+
+.slider-scale-grade {
+  position: absolute;
+  top: 0px;
+  font-size: 0.8rem;
 }

@@ -28,6 +28,7 @@ function ProfilePageBankDetails({
   const bankRef = useRef();
   const swiftRef = useRef();
 
+  // Update async values that will start undefined
   useEffect(() => {
     setClabe(accountNumber || "");
     setBankName(bank || "");
@@ -36,6 +37,16 @@ function ProfilePageBankDetails({
   }, [accountNumber, bank, accountHolder, swift]);
 
   async function updateBankDetails() {
+    // Check if there are any changes before checking for errors
+    if (clabe === accountNumber
+      && bankName === bank
+      && accountHolderName === accountHolder
+      && newSwift === swift) {
+        setEditOpen(false);
+        return;
+      }
+
+    // Check for errors before firing the request
     setErrors([]);
 
     const errors = checkInputs();

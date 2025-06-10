@@ -26,8 +26,6 @@ router.post('/login', async (req, res) => {
         first_name: user.first_name,
         last_name: user.last_name,
         referido: user.referido,
-        email: user.email,
-        phone: user.phone,
         categoryId: user.categoryId,
         role: user.role,
         font_size: user.font_size
@@ -53,10 +51,47 @@ router.get('/user', async (req, res) => {
       res.status(204).json("No user with this email were found");
     } else {
       sendResetPasswordMail(email, user.first_name)
-      res.status(200).json(user);
+      const user_send = {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        referido: user.referido,
+        categoryId: user.categoryId,
+        role: user.role,
+        font_size: user.font_size
+      }
+      res.status(200).json(user_send);
     }
   } catch (error) {
     console.error("Error retrieving the user:", error)
+  }
+})
+
+router.get('/user_extra', async (req, res) => {
+  try {
+    const user_id = parseInt(req.query.id);
+    const user = await prisma.user.findUnique({where: {
+      id: user_id,
+      isDeleted: false
+    }});
+
+    if (user === null) {
+      res.status(204).json("No user found");
+    } else {
+      console.log("user:", user);
+      const user_send = {
+        email: user.email,
+        phone: user.phone,
+        font_size: user.font_size,
+        clabe: user.clabe,
+        name_bank_account: user.name_bank_account,
+        bank: user.bank,
+        swift: user.swift
+      }
+      res.status(200).json(user_send);
+    }
+  } catch (error) {
+    console.error("Error retrieving info: ", error)
   }
 })
 
@@ -78,6 +113,7 @@ router.patch('/user', async (req, res) => {
 
   } catch (error) {
     console.error("Error when updating user: ", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 })
 

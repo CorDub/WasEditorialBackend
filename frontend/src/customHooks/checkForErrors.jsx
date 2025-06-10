@@ -3,6 +3,8 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const validPhoneRegex = /^(?:\+|00)?\d{10,15}$/;
+  const validClabeRegex = /^\d{18}$/;
+  const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
@@ -93,9 +95,20 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
           }
         } else if (fieldExpectations.validity === "phone valid") {
           const clean = fieldValue.replace(/\s|\(|\)|-/g, '');
-          console.log(clean);
           if (validPhoneRegex.test(clean) === false) {
             errorList.push(`${fieldName} no es un numéro de téléfono valido.`);
+            addErrorClass(fieldRef);
+          }
+        } else if (fieldExpectations.validity === "clabe valid") {
+          const clean = fieldValue.replace(/\s/g, '');
+          if (validClabeRegex.test(clean) === false) {
+            errorList.push(`${fieldName} no es una clabe valida.`);
+            addErrorClass(fieldRef);
+          }
+        } else if (fieldExpectations.validity === "swift valid") {
+          const clean = fieldValue.replace(/\s/g, '');
+          if (validSwiftRegex.test(clean) === false) {
+            errorList.push(`${fieldName} no es un codigo swift valido.`);
             addErrorClass(fieldRef);
           }
         }

@@ -12,7 +12,8 @@ function BookInventory({
     selectedBookId,
     isBookInventoryOpen,
     setBookInventoryOpen,
-    setRetreat}) {
+    setRetreat,
+    preferredFontSize}) {
   useCheckAdmin()
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [currentTotal, setCurrentTotal] = useState(0);
@@ -90,13 +91,25 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
     {
       header: "Precio",
-      accessorKey: "price"
+      accessorKey: "price",
+      muiTableBodyCellProps: {
+        sx: {
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      }
     },
     {
       header: "Vendidos",
@@ -110,7 +123,11 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
@@ -126,7 +143,11 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
@@ -142,7 +163,11 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
@@ -158,7 +183,11 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
@@ -172,7 +201,11 @@ function BookInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },

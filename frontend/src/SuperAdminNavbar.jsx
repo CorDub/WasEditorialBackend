@@ -12,7 +12,8 @@ function SuperAdminNavbar({
     setSelectedBookId,
     setBookInventoryOpen,
     retreat,
-    setRetreat }) {
+    setRetreat,
+    preferredFontSize }) {
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
   const { inventories, fetchInventories } = useContext(InventoriesContext);
@@ -119,7 +120,12 @@ function SuperAdminNavbar({
   }, [searchTerms])
 
   return(
-    <div className="admin-navbar">
+    <div className="admin-navbar"
+      style={
+        window.innerWidth <= 1300
+          ? { fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.1rem)`}
+          : { fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}
+      }>
       <Link to='/superadmin/admins' className="navbar-button">Administradores</Link>
       <Link to='/admin/authors' className="navbar-button">Autores</Link>
       <Link to='/admin/books' className="navbar-button">Libros</Link>

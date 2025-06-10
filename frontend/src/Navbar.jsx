@@ -53,7 +53,8 @@ function Navbar({
                   setSelectedBookId={setSelectedBookId}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
-                  setRetreat={setRetreat}/>
+                  setRetreat={setRetreat}
+                  preferredFontSize={user.font_size}/>
       case "admin":
         return <AdminNavbar
                   active={active}
@@ -63,7 +64,8 @@ function Navbar({
                   setSelectedBook={setSelectedBook}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
-                  setRetreat={setRetreat}/>
+                  setRetreat={setRetreat}
+                  preferredFontSize={user.font_size}/>
       case "author":
         return <AuthorNavbar
                   active={active}

@@ -7,7 +7,6 @@ import Alert from "./Alert";
 import UserContext from "./UserContext";
 import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
-import { getSectionVisibleValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 function AdminsList() {
   useCheckSuperAdmin();
@@ -95,6 +94,14 @@ function AdminsList() {
         backgroundColor: "#fff"
       }
     },
+    muiTableBodyCellProps: {
+      sx: {
+        fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
     muiTopToolbarProps: {
       sx: {
         backgroundColor: "#fff"
@@ -168,7 +175,7 @@ function AdminsList() {
   }, [forceRender]);
 
   return (
-    <div>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"admins"}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} pageIndex={pagination.pageIndex}

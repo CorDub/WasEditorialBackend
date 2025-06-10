@@ -131,6 +131,10 @@ app.get('/', (req, res) => {
   res.send("woo front page of the api!");
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

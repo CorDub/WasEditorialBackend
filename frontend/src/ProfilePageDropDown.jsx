@@ -77,8 +77,6 @@ function ProfilePageDropDown({
     return errorList;
   }
 
-  console.log(preferredFontSize)
-
   return(
     <div className="profile-page-line">
       <div className="profile-page-title">

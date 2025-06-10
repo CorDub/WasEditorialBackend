@@ -2,11 +2,7 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-  console.log("fieldName", fieldName);
-  console.log("fieldValue", fieldValue);
-  console.log("fieldExpectations", fieldExpectations);
-  console.log("fieldRef", fieldRef);
+  const validPhoneRegex = /^(?:\+|00)?\d{10,15}$/;
 
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
@@ -95,7 +91,14 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
             errorList.push(`${fieldName} no es un correo valido.`);
             addErrorClass(fieldRef);
           }
-        };
+        } else if (fieldExpectations.validity === "phone valid") {
+          const clean = fieldValue.replace(/\s|\(|\)|-/g, '');
+          console.log(clean);
+          if (validPhoneRegex.test(clean) === false) {
+            errorList.push(`${fieldName} no es un numéro de téléfono valido.`);
+            addErrorClass(fieldRef);
+          }
+        }
         break;
 
       default:

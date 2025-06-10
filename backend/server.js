@@ -61,7 +61,8 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
       email: req.user.email,
       categoryId: req.user.categoryId,
       role: req.user.role,
-      font_size: req.user.font_size
+      font_size: req.user.font_size,
+      phone: req.user.phone
     }
     res.status(200).json(user_clean)
   } catch(error) {

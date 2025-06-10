@@ -67,9 +67,17 @@ function ProfilePageLine({
     }
     if (field === "email") {
       expectationsLine['validity'] = "email valid"
+    } else if (field === "phone") {
+      expectationsLine['validity'] = "phone valid"
     }
 
-    const errorsLine = checkForErrors("El correo que ingresabá", newValue, expectationsLine, inputRef);
+    let errorsLine;
+
+    if (field === "email") {
+      errorsLine = checkForErrors("El correo que ingresabá", newValue, expectationsLine, inputRef);
+    } else if (field === "phone") {
+      errorsLine = checkForErrors("El numéro de téléfono que ingresabá", newValue, expectationsLine, inputRef);
+    }
 
     if (errorsLine.length > 0) {
       errorList.push(errorsLine);

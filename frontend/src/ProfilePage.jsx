@@ -10,6 +10,7 @@ import ProfilePageDropDown from "./ProfilePageDropDown";
 import { Link } from "react-router-dom";
 import ErrorsList from "./ErrorsList";
 import ProfilePageSlider from "./ProfilePageSlider";
+import ProfilePageBankDetails from "./ProfilePageBankDetails";
 
 function ProfilePage() {
   useCheckUser();
@@ -42,12 +43,39 @@ function ProfilePage() {
     "Zambia", "Zimbabue"
   ];
   const [errors, setErrors] = useState([])
+  const [extraInfo, setExtraInfo] = useState(null)
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   useEffect(() => {
     fetchUser()
+    getExtraInfo()
   }, [forceRender])
 
-  console.log(user);
+  async function getExtraInfo() {
+    try {
+      const response = await fetch(`${baseURL}/api/user_extra?id=${user.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setExtraInfo(data);
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (user.id) {
+      getExtraInfo();
+    }
+  }, [user.id])
 
   return(
     <div className="profile-page"
@@ -100,6 +128,17 @@ function ProfilePage() {
             forceRender={forceRender}
             setForceRender={setForceRender}
             preferredFontSize={user.font_size}/>
+          <ProfilePageBankDetails
+            preferredFontSize={user.font_size}
+            accountNumber={extraInfo && extraInfo.clabe}
+            accountHolder={extraInfo && extraInfo.name_bank_account}
+            bank={extraInfo && extraInfo.bank}
+            swift={extraInfo && extraInfo.swift}
+            setAlertMessage={setAlertMessage}
+            setAlertType={setAlertType}
+            forceRender={forceRender}
+            setErrors={setErrors}
+            setForceRender={setForceRender}/>
           <ErrorsList errors={errors} setErrors={setErrors}/>
           <Link to="/forgotten-password"
             className="profile-page-change-password">

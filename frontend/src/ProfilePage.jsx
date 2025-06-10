@@ -3,7 +3,7 @@ import useCheckUser from "./customHooks/useCheckUser";
 import UserContext from "./UserContext";
 import { useContext, useState, useEffect } from "react";
 import "./ProfilePage.scss";
-import { faEnvelope, faEarthAmericas, faFont } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faEarthAmericas, faFont, faPhone } from '@fortawesome/free-solid-svg-icons';
 import ProfilePageLine from "./ProfilePageLine";
 import Alert from "./Alert";
 import ProfilePageDropDown from "./ProfilePageDropDown";
@@ -47,6 +47,8 @@ function ProfilePage() {
     fetchUser()
   }, [forceRender])
 
+  console.log(user);
+
   return(
     <div className="profile-page"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -60,6 +62,17 @@ function ProfilePage() {
             title={'Correo'}
             field={"email"}
             value={user.email}
+            setAlertMessage={setAlertMessage}
+            setAlertType={setAlertType}
+            forceRender={forceRender}
+            setForceRender={setForceRender}
+            setErrors={setErrors}
+            preferredFontSize={user.font_size}/>
+          <ProfilePageLine
+            icon={faPhone}
+            title={"Téléfono"}
+            field={"phone"}
+            value={user.phone}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
             forceRender={forceRender}

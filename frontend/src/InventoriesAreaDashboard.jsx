@@ -348,7 +348,8 @@ function InventoriesAreaDashboard() {
           selectedBookstoreId={selectedBookstoreId}
           selectedLogo={selectedLogo}
           isBookstoreInventoryOpen={isBookstoreInventoryOpen}
-          setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}
+          setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+          preferredFontSize={user.font_size}/>}
 
       {isBookInventoryOpen &&
         <BookInventory
@@ -356,7 +357,8 @@ function InventoriesAreaDashboard() {
           selectedBookId={selectedBookId}
           isBookInventoryOpen={isBookInventoryOpen}
           setBookInventoryOpen={setBookInventoryOpen}
-          setRetreat={setRetreat} />}
+          setRetreat={setRetreat}
+          preferredFontSize={user.font_size} />}
     </div>
   )
 }

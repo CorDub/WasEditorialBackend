@@ -25,7 +25,8 @@ function InventoryTotal({
     impressions,
     setModalType,
     openModal,
-    setRetreat}) {
+    setRetreat,
+    preferredFontSize}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
@@ -68,7 +69,8 @@ function InventoryTotal({
   };
 
   return(
-    <div className="total-and-impressions">
+    <div className="total-and-impressions"
+      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.2rem)`}}>
       <div className="bookstore-inventory-total">
 
         {logo ?

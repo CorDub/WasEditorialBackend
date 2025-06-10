@@ -126,6 +126,14 @@ function SalesList () {
         backgroundColor: "#fff"
       }
     },
+    muiTableBodyCellProps: {
+      sx: {
+        fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
     muiTopToolbarProps: {
       sx: {
         backgroundColor: "#fff"

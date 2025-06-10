@@ -14,7 +14,8 @@ function BookstoreInventory({
     selectedBookstoreId,
     selectedLogo,
     isBookstoreInventoryOpen,
-    setBookstoreInventoryOpen}) {
+    setBookstoreInventoryOpen,
+    preferredFontSize}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
@@ -37,8 +38,6 @@ function BookstoreInventory({
     pageIndex: 0,
     pageSize: 30
   })
-
-  console.log(data);
 
   const columns = useMemo(() => [
     {
@@ -77,7 +76,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '5%'
+          width: '5%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -91,7 +91,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -107,7 +108,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -123,7 +125,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -139,7 +142,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -155,7 +159,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -169,7 +174,8 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -190,7 +196,7 @@ function BookstoreInventory({
       },
       muiTableBodyCellProps: {
         sx: {
-          width: '10%'
+          width: '10%',
         }
       }
     }
@@ -246,8 +252,11 @@ function BookstoreInventory({
     },
     muiTableBodyCellProps: {
       sx: {
-        overflow: "visible",
-        position: "relative"
+        position: "relative",
+        fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
       },
     },
     muiTopToolbarProps: {
@@ -341,7 +350,8 @@ function BookstoreInventory({
   return (
     <div
       className="bookstore-inventory"
-      ref={bookstoreInventoryRef}>
+      ref={bookstoreInventoryRef}
+      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`}}>
       <InventoryTotal
         selectedBookstore={selectedBookstore}
         selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
@@ -352,7 +362,8 @@ function BookstoreInventory({
         givenToAuthorTotal={givenToAuthorTotal}
         soldTotal={soldTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
-        setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
+        setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+        preferredFontSize={preferredFontSize}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

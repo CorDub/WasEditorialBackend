@@ -27,6 +27,7 @@ import DeleteBookstoreModal from './DeleteBookstoreModal';
 import AddingCategoryModal from './AddingCategoryModal';
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
+import EditPaymentModal from "./EditPaymentModal";
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -80,7 +81,11 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
       adding: AddingCategoryModal,
       edit: EditCategoryModal,
       delete: DeleteCategoryModal
+    },
+    payment: {
+      edit: EditPaymentModal
     }
+
   };
 
   const ChosenModal = potentialModals[modalType][modalAction];

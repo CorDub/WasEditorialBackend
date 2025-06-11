@@ -8,6 +8,7 @@ import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { faPersonArrowUpFromLine } from "@fortawesome/free-solid-svg-icons";
 import { faPersonArrowDownToLine } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -30,6 +31,7 @@ function TableActions ({
   const [isReturnTooltipOpen, setReturnTooltipOpen ] = useState(false);
   const [isGivenToAuthorTooltipOpen, setGivenToAuthorTooltipOpen ] = useState(false);
   const [isReceivedFromAuthorTooltipOpen, setReceivedFromAuthorTooltipOpen ] = useState(false);
+  const [isPaymentsTooltipOpen, setPaymentsTooltipOpen] = useState(false);
 
   useEffect(() => {
     if (row.original.bookstoreId === 3) {
@@ -104,31 +106,53 @@ function TableActions ({
     openModal("adding", row.original);
   }
 
+  function markAsPaid() {
+    setModalType("payment");
+    openModal("edit", row.original)
+  }
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
         onClick={displayingActions} ref={gearRef}/>
-
-      <div className="ta-buttons hidden" ref={buttonsRef}>
+        <div className="ta-buttons hidden" ref={buttonsRef}>
         <Tooltip message={tooltipMessage} x={x} y={y}/>
-        <FontAwesomeIcon
-          icon={faPen}
-          className="ta-button ta-edit"
-          id={`ta-edit-${row.index}`}
-          onClick={() => openModal("edit", row.original)}
-          onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
-          onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
-        {isEditTooltipOpen && (
-          <div className="ta-tooltip">Editar</div>)}
-        <FontAwesomeIcon
-          icon={faCircleXmark}
-          className="ta-button ta-delete"
-          id={`ta-delete-${row.index}`}
-          onClick={() => openModal("delete", row.original)}
-          onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
-          onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
-        {isDeleteTooltipOpen && (
-          <div className="ta-tooltip">Eliminar</div>)}
+
+        {!type && (
+          <>
+          <FontAwesomeIcon
+            icon={faPen}
+            className="ta-button ta-edit"
+            id={`ta-edit-${row.index}`}
+            onClick={() => openModal("edit", row.original)}
+            onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+            onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+          {isEditTooltipOpen && (
+            <div className="ta-tooltip">Editar</div>)}
+          <FontAwesomeIcon
+            icon={faCircleXmark}
+            className="ta-button ta-delete"
+            id={`ta-delete-${row.index}`}
+            onClick={() => openModal("delete", row.original)}
+            onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+            onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+          {isDeleteTooltipOpen && (
+            <div className="ta-tooltip">Eliminar</div>)}
+          </>)
+        }
+
+        {type && type === "payment" &&
+            <>
+            <FontAwesomeIcon icon={faCircleCheck}
+              className='ta-button ta-sale'
+              id={`ta-payment-${row.index}`}
+              onClick={markAsPaid}
+              onMouseEnter={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}
+              onMouseLeave={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}/>
+            {isPaymentsTooltipOpen && (
+              <div className="ta-tooltip">Marcar pagado</div>)}
+            </>}
+
         {type && type === "inventory" &&
           <>
           <FontAwesomeIcon icon={faDollarSign}
@@ -182,7 +206,6 @@ function TableActions ({
                 <div className="ta-tooltip">Añadir devolución</div>)}
             </>
           }
-
           </>
         }
       </div>

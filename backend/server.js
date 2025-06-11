@@ -8,6 +8,8 @@ import { PrismaClient } from "@prisma/client";
 import adminRoutes from "./routes/adminRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 const app = express();
@@ -132,13 +134,12 @@ app.get('/', (req, res) => {
   res.send("woo front page of the api!");
 });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
-
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
 
 // Start the server
 const PORT = process.env.PORT || 3000;

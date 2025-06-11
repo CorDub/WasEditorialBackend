@@ -1045,6 +1045,9 @@ router.get("/payments", async (req, res) => {
         amount: true,
         forMonth: true,
         isPaid: true
+      },
+      orderBy: {
+        createdAt: "desc"
       }
     });
 

@@ -8,6 +8,8 @@ function CommissionMonthSelector({
   payments,
   preferredFontSize}) {
 
+  console.log(payments);
+
   return(
     <div className="commission-month-selector">
       <div className="cms-title"><h2>Selecciona mes</h2></div>

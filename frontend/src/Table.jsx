@@ -27,10 +27,6 @@ function Table({data, activeMonth}) {
     }
   }, [data, activeMonth]);
 
-  useEffect(() => {
-    console.log(data && activeMonth)
-  }, [data, activeMonth]);
-
   function formatRowData() {
   // From the month data, format it so you can display it in rows
     let rowData = [];

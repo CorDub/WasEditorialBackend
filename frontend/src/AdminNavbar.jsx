@@ -58,6 +58,11 @@ function AdminNavbar({
       buttons[5].classList.add("active-button");
       return;
     };
+
+    if (active === "payments") {
+      buttons[6].classList.add("active-button");
+      return;
+    }
   }
 
   useEffect(() => {
@@ -154,6 +159,7 @@ function AdminNavbar({
         <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
       }
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
+      <Link to='/admin/payments' className="navbar-button">Pagos</Link>
     </div>
   )
 }

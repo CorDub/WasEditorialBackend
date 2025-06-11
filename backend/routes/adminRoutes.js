@@ -1507,6 +1507,63 @@ router.post('/transfer', async (req, res) => {
   }
 })
 
+/// Payments routes
+router.get('/pendingPayments', async (req, res) => {
+  try {
+    const pendingPayments = await prisma.payment.findMany({
+      where: {
+        isDeleted: false,
+        isPaid: false
+      },
+      select: {
+        id: true,
+        user: {
+          select: {
+            first_name: true,
+            last_name: true,
+            id: true
+          }
+        },
+        amount: true,
+        forMonth: true
+      },
+      orderBy: {
+        createdAt: 'asc'
+      }
+    });
+
+    res.status(200).json(pendingPayments);
+
+  } catch (error) {
+    console.error("\n ERROR FETCHING PAYMENTS \n", error);
+    res.status(500).json({error: "a server error occurred while fetching payments"})
+  }
+})
+
+router.patch('/markAsPaid', async (req, res) => {
+  try {
+    const queryPaymentId = parseInt(req.query.id)
+    const updatedPayment = await prisma.payment.update({
+      where: {
+        id: queryPaymentId,
+        isDeleted: false
+      },
+      data: {
+        isPaid: true
+      }
+    })
+
+    if (updatedPayment) {
+      res.status(200).json({message: "Successfully marked payment as paid"})
+    }
+
+  } catch(error) {
+    console.error("\n ERROR MARKING PAYMENT AS PAID \n", error);
+    res.status(500).json({error:"a server error occurred while fetching payments"})
+  }
+})
+
+
 /// soft delete on cascade
 
 async function softDeleteBooksOnCascade(deletedAuthor) {

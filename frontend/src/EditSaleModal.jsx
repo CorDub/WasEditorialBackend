@@ -237,7 +237,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -245,7 +244,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         const alertMessage = 'No se pudó editar la venta.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        console.log("Yeah created");
         const alertMessage = `La venta ha sido editada con exito.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }

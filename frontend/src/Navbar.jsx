@@ -88,7 +88,7 @@ function Navbar({
             className={active === "profile" ? "navbar-profile-icon-active" : "navbar-profile-icon"}/>
         </Link>
         {(user !== '') &&
-          <p className="grey-button" onClick={logout}>Cerrar sessión</p>}
+          <p className="grey-button" onClick={logout}>Cerrar sesión</p>}
       </div>
     </div>
   )

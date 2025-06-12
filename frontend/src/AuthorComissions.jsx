@@ -14,13 +14,28 @@ function AuthorCommissions() {
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
   const [isDemandPaymentPossible, setDemandPaymentPossible] = useState(true);
+  const [isDemandPaymentTooltipOpen, setDemandPaymentTooltipPossible] = useState('available');
 
   useEffect(() => {
-    const now = new Date();
-    if (now.getDate() >= 25) {
-      setDemandPaymentPossible(false);
+    if (dataByMonths && activeMonth != null) {
+      const now = new Date();
+      const year = String(now.getFullYear());
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const currentActiveMonth = year + "-" + month
+
+      if (currentActiveMonth === dataByMonths[activeMonth][0]) {
+        setDemandPaymentPossible("currentMonth");
+        return;
+      }
+
+      if (now.getDate() >= 25) {
+        setDemandPaymentPossible("tooLateInTheMonth");
+        return;
+      }
+
+      setDemandPaymentPossible("available");
     }
-  }, [])
+  }, [dataByMonths, activeMonth])
 
   async function fetchAuthorBookSales() {
     try {
@@ -105,9 +120,23 @@ function AuthorCommissions() {
           data={dataByMonths}
           activeMonth={activeMonth}
           setActiveMonth={setActiveMonth}/>
-        {isDemandPaymentPossible
-        ? <div className="author-commissions-solicitar-pago">Solicitar Pago</div>
-        : <div className="author-commissions-solicitar-pago-unavailable">Solicitar Pago</div>}
+        {isDemandPaymentPossible === "available" && (
+          <div className="author-commissions-solicitar-pago">Solicitar Pago</div>
+        )}
+
+        {isDemandPaymentPossible === "currentMonth" && (
+          null
+        )}
+
+        {isDemandPaymentPossible === "tooLateInTheMonth" && (
+          <div className="author-commissions-solicitar-pago-unavailable"
+            onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
+            onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
+            {isDemandPaymentTooltipOpen && (
+              <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
+          </div>
+        )}
+
       </div>
     </div>
   )

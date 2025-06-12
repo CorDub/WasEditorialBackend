@@ -32,13 +32,13 @@ model User {
   referido            String?
   email               String?   @unique
   phone               String?
-  clabe               String?   
+  clabe               String?
   name_bank_account   String?
   bank                String?
   swift               String?
   password            String?
   category            Category? @relation(fields: [categoryId], references: [id])
-  categoryId          Int?
+  categoryId          Int?      @default(1)
   books               Book[]
   role                Role      @default(author)
   reset_password_code Int?

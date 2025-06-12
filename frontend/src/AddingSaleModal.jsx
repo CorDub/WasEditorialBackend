@@ -233,6 +233,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }
 
   async function sendToServer() {
+    console.log(book, bookstore);
     try {
       const response = await fetch(`${baseURL}/admin/sale`, {
         method: "POST",
@@ -269,8 +270,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   useEffect(() => {
     if (clickedRow) {
-      setBook(clickedRow.book.title);
-      setBookstore(clickedRow.bookstore.name);
+      setBook(clickedRow.bookId);
+      setBookstore(clickedRow.bookstoreId);
       setCountry(clickedRow.country);
     }
   }, [clickedRow])

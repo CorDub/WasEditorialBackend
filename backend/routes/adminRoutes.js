@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
 import { prisma } from "./../server.js"
+import { cp } from "fs";
 
 const router = express.Router();
 
@@ -1096,7 +1097,82 @@ router.post('/sale', async (req, res) => {
           current: selectedInventory.current-quantity
         }
       });
-      console.log(updatedInventory);
+
+      // update all potential authors payments sums as well
+      const now = new Date();
+      const year = String(now.getFullYear());
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const currentForMonth = year + "-" + month;
+
+      const bookOfSale = await prisma.book.findUnique({
+        where: {
+          id: updatedInventory.bookId
+        },
+        select: {
+          users: {
+            select: {
+              id: true
+            }
+          }
+        }
+      })
+      const userIds = bookOfSale.users.map(user => user.id);
+
+      // update the payment for each author of the book
+      if (userIds.length > 0) {
+        for (const id of userIds) {
+          // using findMany instead of findUnique here to avoid the error if not found.
+          const relatedPayment = await prisma.payment.findMany({
+            where: {
+              userId: id,
+              forMonth: currentForMonth
+            }
+          })
+
+          const userCategory = await prisma.user.findUnique({
+            where: {
+              id: id,
+              isDeleted: false
+            },
+            select: {
+              category: {
+                select: {
+                  percentage_royalties: true,
+                  percentage_management_stores: true
+                }
+              }
+            }
+          })
+
+          if (relatedPayment.length === 0) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: id,
+                amount: (createdSale.quantity * updatedInventory.price)
+                  * (userCategory.category.percentage_royalties / 100)
+                  * (userCategory.category.percentage_management_stores / 100),
+                forMonth: currentForMonth
+              }
+            })
+          } else {
+            console.log("relatedPayment[0]", relatedPayment[0])
+            console.log("userCategory", userCategory)
+            console.log("createdSale", createdSale)
+            console.log("updatedInventory", updatedInventory)
+            const updatedRelatedPayment = await prisma.payment.update({
+              where: {
+                id: relatedPayment[0].id
+              },
+              data: {
+                amount: relatedPayment[0].amount
+                  + (createdSale.quantity * updatedInventory.price)
+                  * (userCategory.category.percentage_royalties / 100)
+                  * (userCategory.category.percentage_management_stores / 100)
+              }
+            })
+          }
+        }
+      }
     }
 
     res.status(201).json(createdSale);

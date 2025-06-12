@@ -5,3 +5,27 @@
   top: 70px;
   display: flex;
 }
+
+.author-commissions-right-side {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.author-commissions-solicitar-pago {
+  border-radius: 15px;
+  border-bottom: 1px solid #E2E2E2;
+  padding: 0.5rem;
+  background-color:#f8f9fa;
+  color: black;
+}
+
+.author-commissions-solicitar-pago:hover {
+  cursor: pointer;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.author-commissions-solicitar-pago-unavailable {
+  
+}

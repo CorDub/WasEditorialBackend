@@ -34,8 +34,6 @@ app.use(cors({
 app.use(express.json());
 
 const isStaging = process.env.NODE_ENV === "staging"
-console.log("isStaging", isStaging)
-console.log("SESSION_SECRET:", JSON.stringify(process.env.SESSION_SECRET));
 
 app.set('trust proxy', 1);
 app.use(session({
@@ -48,8 +46,6 @@ app.use(session({
     sameSite: isStaging ? "none" : "lax"
   }
 }));
-
-
 
 app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
   try {
@@ -129,13 +125,10 @@ app.use('/author', authenticateUser, authorRoutes);
 app.use('/admin', authenticateAdmin, adminRoutes);
 app.use('/superadmin', authenticateSuperAdmin, superAdminRoutes);
 
-// Example API endpoint
-app.get('/', (req, res) => {
-  res.send("woo front page of the api!");
-});
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))

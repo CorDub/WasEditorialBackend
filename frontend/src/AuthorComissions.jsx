@@ -13,6 +13,14 @@ function AuthorCommissions() {
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
+  const [isDemandPaymentPossible, setDemandPaymentPossible] = useState(true);
+
+  useEffect(() => {
+    const now = new Date();
+    if (now.getDate() >= 25) {
+      setDemandPaymentPossible(false);
+    }
+  }, [])
 
   async function fetchAuthorBookSales() {
     try {
@@ -92,10 +100,15 @@ function AuthorCommissions() {
         setActiveMonth={setActiveMonth}
         payments={payments}
         preferredFontSize={user.font_size}/>
-      <Table
-        data={dataByMonths}
-        activeMonth={activeMonth}
-        setActiveMonth={setActiveMonth}/>
+      <div className="author-commissions-right-side">
+        <Table
+          data={dataByMonths}
+          activeMonth={activeMonth}
+          setActiveMonth={setActiveMonth}/>
+        {isDemandPaymentPossible
+        ? <div className="author-commissions-solicitar-pago">Solicitar Pago</div>
+        : <div className="author-commissions-solicitar-pago-unavailable">Solicitar Pago</div>}
+      </div>
     </div>
   )
 }

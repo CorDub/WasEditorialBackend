@@ -1,7 +1,10 @@
 import express from "express";
 import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
+import multer from "multer";
+import { sendEmailWithInvoice } from "../mailer.js";
 
+const upload = multer();
 const router = express.Router();
 
 router.patch('/change_password', async (req, res) => {
@@ -1108,6 +1111,29 @@ router.get("/payments", async (req, res) => {
   } catch(error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching relevant transfers"})
+  }
+})
+
+router.post("/sendInvoice", upload.fields([
+  { name: "factura", maxCount: 1},
+  { name: "constancia", maxCount: 1}
+]), async (req, res) => {
+  try {
+    const userID = req.session.user_id;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userID,
+      }
+    });
+    const factura = req.files.factura[0];
+    const constancia = req.files.constancia[0]
+    const { month, amount, uso } = req.body;
+    const name = user.first_name + " " + user.last_name;
+    sendEmailWithInvoice(name, month, amount, uso, factura, constancia);
+    res.status(200).json({message: "invoice sent successfully"})
+  } catch (error) {
+    console.log("\n ERROR WHILE SENDING INVOICE \n", error);
+    res.status(500).json({error: "a server error occurred while sending the invoice"})
   }
 })
 

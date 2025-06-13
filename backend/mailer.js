@@ -15,7 +15,7 @@ export async function sendSetPasswordMail(email, name, password) {
   try {
     const user = await prisma.user.findUnique({where: {email: email}});
     const info = await transport.sendMail({
-      from: '"Was TEST" <no-reply@wastest.com',
+      from: '"Was TEST" <no-reply@wastest.com>',
       to: email,
       subject: 'Codigo de confirmacion para su cuenta de Was Editorial - Test',
       text: `Hola ${name}, \n
@@ -37,7 +37,7 @@ export async function sendResetPasswordMail(to, name) {
     const codigo = Math.floor(Math.random()* 900000 + 100000);
     const user = await prisma.user.findUnique({where: {email: to}});
     const info = await transport.sendMail({
-      from: '"Was TEST" <no-reply@wastest.com',
+      from: '"Was TEST" <no-reply@wastest.com>',
       to,
       subject: 'Codigo de confirmacion para su cuenta de Was Editorial - Test',
       text: `Hola ${name}, \n
@@ -55,3 +55,36 @@ export async function sendResetPasswordMail(to, name) {
     console.error('Error sending the set password email:', error);
   }
 };
+
+export async function sendEmailWithInvoice(name, month, amount, uso, factura, constancia) {
+  try {
+    const mimeToExtension = {
+      "application/pdf": ".pdf",
+      "image/jpeg": ".jpeg",
+      "image/png": ".png"
+    }
+
+    const info = await transport.sendMail({
+      from: '"Was TEST" <no-reply@wastest.com>',
+      to: "example@test.was.com",
+      subject: `Nueva factura de ${name} para el mes de ${month}`,
+      text: `Hola, \n
+      Eso es un correo automatico mandado por el sitio web de Was Editorial.
+      ${name} solicitó nueva factura de $ ${amount} para el mes de ${month}.
+      Esta adjunto al correo con la constancia de situación fiscal.
+      El uso de CFDI dado es ${uso}.`,
+      attachments: [
+        {
+          filename: `Factura ${name} - ${month} - ${amount}${mimeToExtension[factura.mimetype]}`,
+          content: factura.buffer
+        },
+        {
+          filename: `Constancia ${name}${mimeToExtension[constancia.mimetype]}`,
+          content: constancia.buffer
+        }
+      ]
+    })
+  } catch(error) {
+    console.error('Error sending the invoice email:', error);
+  }
+}

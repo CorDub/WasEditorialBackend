@@ -6,8 +6,9 @@ function CommissionMonthSelector({
   activeMonth,
   setActiveMonth,
   payments,
-  preferredFontSize}) {
-    
+  preferredFontSize,
+  setPaymentInfo}) {
+
   return(
     <div className="commission-month-selector">
       <div className="cms-title"><h2>Selecciona mes</h2></div>
@@ -19,7 +20,8 @@ function CommissionMonthSelector({
           month={month}
           active={index === activeMonth ? true : false}
           setActiveMonth={setActiveMonth}
-          preferredFontSize={preferredFontSize}/>
+          preferredFontSize={preferredFontSize}
+          setPaymentInfo={setPaymentInfo}/>
       ))}
 
     </div>

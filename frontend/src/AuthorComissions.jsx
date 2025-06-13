@@ -5,6 +5,8 @@ import Navbar from "./Navbar";
 import Table from "./Table";
 import CommissionMonthSelector from "./CommissionMonthSelector";
 import "./AuthorCommissions.scss"
+import Modal from "./Modal";
+import Alert from "./Alert";
 
 function AuthorCommissions() {
   useCheckUser();
@@ -15,6 +17,12 @@ function AuthorCommissions() {
   const [payments, setPayments] = useState(null);
   const [isDemandPaymentPossible, setDemandPaymentPossible] = useState(true);
   const [isDemandPaymentTooltipOpen, setDemandPaymentTooltipPossible] = useState('available');
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("payment");
+  const [modalAction, setModalAction] = useState("demand");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   useEffect(() => {
     if (dataByMonths && activeMonth != null) {
@@ -104,6 +112,17 @@ function AuthorCommissions() {
     fetchPayments();
   }, [])
 
+  function closeModal(reload, alertMessage, alertType) {
+    setModalOpen(false);
+    if (reload === true) {
+      setForceRender(!forceRender);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
+  }
+
   return(
     <div className="author-commissions"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -121,13 +140,12 @@ function AuthorCommissions() {
           activeMonth={activeMonth}
           setActiveMonth={setActiveMonth}/>
         {isDemandPaymentPossible === "available" && (
-          <div className="author-commissions-solicitar-pago">Solicitar Pago</div>
+          <div className="author-commissions-solicitar-pago"
+            onClick={() => setModalOpen(true)}>Solicitar Pago</div>
         )}
-
         {isDemandPaymentPossible === "currentMonth" && (
           null
         )}
-
         {isDemandPaymentPossible === "tooLateInTheMonth" && (
           <div className="author-commissions-solicitar-pago-unavailable"
             onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
@@ -136,8 +154,16 @@ function AuthorCommissions() {
               <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
           </div>
         )}
-
       </div>
+      {isModalOpen && <Modal
+          modalType={modalType}
+          modalAction={modalAction}
+          closeModal={closeModal}/>}
+      <Alert
+        message={alertMessage}
+        type={alertType}
+        setAlertMessage={setAlertMessage}
+        setAlertType={setAlertType}/>
     </div>
   )
 }

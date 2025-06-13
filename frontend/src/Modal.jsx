@@ -28,6 +28,7 @@ import AddingCategoryModal from './AddingCategoryModal';
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import EditPaymentModal from "./EditPaymentModal";
+import DemandPaymentModal from './DemandPaymentModal';
 
 function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
   const potentialModals = {
@@ -83,7 +84,8 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
       delete: DeleteCategoryModal
     },
     payment: {
-      edit: EditPaymentModal
+      edit: EditPaymentModal,
+      demand: DemandPaymentModal,
     }
 
   };

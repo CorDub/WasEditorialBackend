@@ -136,6 +136,18 @@ a {
   font-size: 0.85rem;
 }
 
+.modal-form-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
+  width: 100%;
+}
+
+.modal-form-error {
+  color: red;
+}
+
 /// Form
 
 .global-form {

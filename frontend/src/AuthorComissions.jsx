@@ -23,6 +23,7 @@ function AuthorCommissions() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+  const [paymentInfo, setPaymentInfo] = useState(null);
 
   useEffect(() => {
     if (dataByMonths && activeMonth != null) {
@@ -133,7 +134,8 @@ function AuthorCommissions() {
         activeMonth={activeMonth}
         setActiveMonth={setActiveMonth}
         payments={payments}
-        preferredFontSize={user.font_size}/>
+        preferredFontSize={user.font_size}
+        setPaymentInfo={setPaymentInfo}/>
       <div className="author-commissions-right-side">
         <Table
           data={dataByMonths}
@@ -156,6 +158,7 @@ function AuthorCommissions() {
         )}
       </div>
       {isModalOpen && <Modal
+          paymentInfo={paymentInfo}
           modalType={modalType}
           modalAction={modalAction}
           closeModal={closeModal}/>}

@@ -1,7 +1,10 @@
 import { useState } from "react";
 
-function DemandPaymentModal({closeModal}) {
+function DemandPaymentModal({closeModal, paymentInfo}) {
   const [uso, setUso] = useState("");
+  const [factura, setFactura] = useState(null);
+  const [constancia, setConstancia] = useState(null);
+  const max_size = 5*1024*1024
   const usosDeCFDI = [
     { clave: "G01", descripcion: "Adquisición de mercancías" },
     { clave: "G02", descripcion: "Devoluciones, descuentos o bonificaciones" },
@@ -31,10 +34,112 @@ function DemandPaymentModal({closeModal}) {
     { clave: "CP01", descripcion: "Pagos" },
     { clave: "CN01", descripcion: "Nómina" }
   ]
+  const [errorFactura, setErrorFactura] = useState("");
+  const [errorConstancia, setErrorConstancia] = useState("");
+  const [errorUso, setErrorUso] = useState("");
+  const baseURL = import.meta.env.VITE_API_URL || '';
+
+  function checkFile(e, type) {
+    const file = e.target.files[0];
+    if (!file) {
+      if (type === "factura") {
+        setErrorFactura("La factura no puede estar vacía.")
+      } else if (type === "constancia") {
+        setErrorConstancia("La constancia no puede estar vacía.")
+      }
+      return;
+    }
+
+    if (file.type !== "application/pdf"
+      && file.type !== "image/jpeg"
+      && file.type !== "image/png"
+    ) {
+      if (type === "factura") {
+        setErrorFactura("La factura debe ser de typo pdf, jpeg o png.")
+      } else if (type === "constancia") {
+        setErrorConstancia("La constancia debe ser de typo pdf, jpeg o png.")
+      }
+      return;
+    }
+
+    if (file.size > max_size) {
+      if (type === "factura") {
+        setErrorFactura("La factura no puede pesar mas de 5MB.")
+      } else if (type === "constancia") {
+        setErrorConstancia("La constancia no puede pesar mas de 5MB.")
+      }
+      return;
+    }
+
+    if (type === "factura") {
+      setFactura(file)
+    } else if (type === "constancia") {
+      setConstancia(file)
+    } else {
+      console.log("Unknown type passed : ", type);
+    }
+  }
+
+  async function sendInvoice() {
+    if (!factura || !constancia || !uso) {
+      if (!factura) {
+        setErrorFactura("Factura faltante");
+      }
+      if (!constancia) {
+        setErrorConstancia("Constancia faltante");
+      }
+      if (!uso) {
+        setErrorUso("Uso de CFDI faltante");
+      }
+      return
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("factura", factura);
+      formData.append("constancia", constancia);
+      formData.append("month", paymentInfo.month);
+      formData.append("amount", paymentInfo.amount);
+      formData.append("uso", uso);
+
+      const response = await fetch(`${baseURL}/author/sendInvoice`, {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      });
+
+      if (response.ok) {
+        const alertMessage = `Su factura ha estado mandado con exito.`;
+        closeModal(true, alertMessage, "confirmation");
+      } else {
+        const alertMessage = 'No se pudó mandar la factura.';
+        closeModal(false, alertMessage, "error");
+      }
+
+    } catch(error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="modal-proper">
       <div className="modal-stuff-to-add">
+        <div className="modal-form-upload">
+          <label className="modal-form-label">Factura (pdf, jpeg, png, max 5MB)</label>
+          <input type="file"
+            className="modal-form-file"
+            accept=".pdf,image/jpeg,image/pdf"
+            onChange={(e) => checkFile(e, "factura")}/>
+          <div className="modal-form-error">{errorFactura}</div>
+        </div>
+        <div className="modal-form-upload">
+          <label className="modal-form-label">Constancia de situación fiscal (pdf, jpeg, png, max 5MB)</label>
+          <input type="file"
+            accept=".pdf,image/jpeg,image/pdf"
+            className="modal-form-file"
+            onChange={(e) => checkFile(e, "constancia")}/>
+          <div className="modal-form-error">{errorConstancia}</div>
+        </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Uso de CFDI</label>
           <select className="select-global"
@@ -44,13 +149,14 @@ function DemandPaymentModal({closeModal}) {
               <option key={index} value={uso.clave}>{uso.clave} : {uso.descripcion}</option>
             ))}
           </select>
+          <div className="modal-form-error">{errorUso}</div>
         </div>
       </div>
       <div className="modal-actions">
         <button className='blue-button modal-button'
           onClick={() => closeModal(false)}>Cancelar</button>
         <button className='blue-button modal-button'
-         >Confirmar</button>
+         onClick={sendInvoice}>Confirmar</button>
       </div>
     </div>
   )

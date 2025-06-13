@@ -30,7 +30,14 @@ import DeleteCategoryModal from "./DeleteCategoryModal";
 import EditPaymentModal from "./EditPaymentModal";
 import DemandPaymentModal from './DemandPaymentModal';
 
-function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, globalFilter }) {
+function Modal({
+  modalType,
+  modalAction,
+  clickedRow,
+  closeModal,
+  pageIndex,
+  globalFilter,
+  paymentInfo }) {
   const potentialModals = {
     admin: {
       adding: AddingAdminModal,
@@ -94,8 +101,12 @@ function Modal({ modalType, modalAction, clickedRow, closeModal, pageIndex, glob
 
   return (
     <div className="modal-overlay">
-        {ChosenModal && <ChosenModal clickedRow={clickedRow} closeModal={closeModal}
-          pageIndex={pageIndex} globalFilter={globalFilter}/>}
+        {ChosenModal && <ChosenModal
+          clickedRow={clickedRow}
+          closeModal={closeModal}
+          pageIndex={pageIndex}
+          globalFilter={globalFilter}
+          paymentInfo={paymentInfo}/>}
     </div>
   )
 }

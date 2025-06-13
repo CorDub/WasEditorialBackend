@@ -8,7 +8,8 @@ function CommissionMonthSelectorRow({
   month,
   active,
   setActiveMonth,
-  preferredFontSize}) {
+  preferredFontSize,
+  setPaymentInfo}) {
   const [salesPresence, setSalesPresence] = useState(true)
 
   useEffect(() => {
@@ -36,11 +37,22 @@ function CommissionMonthSelectorRow({
     return months[date.substring(5,7)] + " " + date.substring(0,4);
   }
 
+  function addPaymentInfo() {
+    if (month) {
+      setPaymentInfo({
+        "month": changeDateFormat(month.forMonth),
+        "amount": month.amount
+      })
+    }
+  }
+
   return(
     <div
       className={active ? "cms-row-active" : "cms-row"}
       style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
-      onClick={() => setActiveMonth(index)}>
+      onClick={() => {
+        setActiveMonth(index);
+        addPaymentInfo();}}>
       <div className="cms-month">{changeDateFormat(month.forMonth)}</div>
       {salesPresence && (
         <div className="cms-status"
@@ -55,7 +67,9 @@ function CommissionMonthSelectorRow({
         </div>
       )}
       <div className="cms-total"
-        style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>{formatNumber(month.amount)}</div>
+        style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
+          {formatNumber(month.amount)}
+      </div>
     </div>
   )
 }

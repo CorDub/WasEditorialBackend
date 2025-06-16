@@ -66,10 +66,10 @@ function AuthorSales() {
     setMonthlyData(sortedData);
   }
 
-  const fetchSales = async () => {
+  const fetchSales = async (forceFetch) => {
     try {
       const cachedAuthorSalesData = sessionStorage.getItem("authorSalesData");
-      if (cachedAuthorSalesData) {
+      if (cachedAuthorSalesData && !forceFetch) {
         setSalesData(JSON.parse(cachedAuthorSalesData));
         processMonthlyData(JSON.parse(cachedAuthorSalesData).sales, selectedBook);
         return
@@ -127,7 +127,8 @@ function AuthorSales() {
   };
 
   const handleApplyDateRange = () => {
-    fetchSales();
+    const forceFetch = true;
+    fetchSales(forceFetch);
   };
 
   if (loading) {

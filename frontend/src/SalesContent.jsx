@@ -15,27 +15,36 @@ const SalesContent = ({
     ? salesData.totalValue
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.value || 0;
 
+  const selectedBookTitle = salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.title || "";
+
   return (
     <div id="author-sales-content">
       <div id="author-sales-content-left">
         <div id="total-sales">
           <h3>Libros vendidos</h3>
           <p>{selectedBookSales} libros</p>
-          <p className="sales-value">$ {selectedBookValue.toLocaleString()}</p>
+          <p className="sales-value">$ {selectedBookValue.toFixed(2)}</p>
         </div>
         <div id="books-sold">
-          {selectedBook === 'total' && (
-            <ul>
+          {selectedBook === 'total'
+            ? <ul>
               {salesData.bookSales.map(book => (
                 <li key={book.bookId}
                   className='books-sold-item'
                   style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
-                  title={`${book.title}: ${book.quantity} libros ($ ${book.value.toLocaleString()})`}>
-                  {book.title}: {book.quantity} libros <span>($ {book.value.toLocaleString()})</span>
+                  title={`${book.title}: ${book.quantity} libros ($ ${book.value.toFixed(2)})`}>
+                  {book.title}: {book.quantity} libros <span>($ {book.value.toFixed(2)})</span>
                 </li>
               ))}
             </ul>
-          )}
+            : <ul>
+              <li className="books-sold-item"
+                style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
+                title={`${selectedBook}: ${selectedBookSales} libros <span>($ ${selectedBookValue.toFixed(2)})</span>`}>
+                {selectedBookTitle}: {selectedBookSales} libros <span>($ {selectedBookValue.toFixed(2)})</span>
+              </li>
+            </ul>
+          }
         </div>
       </div>
       <div id="author-sales-content-right">
@@ -43,7 +52,8 @@ const SalesContent = ({
           <div className="chart-header">
             <h3>Ventas mensuales</h3>
           </div>
-          <ResponsiveContainer width="100%" height={400}>
+          {monthlyData && (
+            <ResponsiveContainer width="100%" height={400}>
             <LineChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -84,6 +94,7 @@ const SalesContent = ({
               />
             </LineChart>
           </ResponsiveContainer>
+          )}
         </div>
       </div>
     </div>

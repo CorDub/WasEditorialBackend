@@ -426,7 +426,7 @@ router.get('/sales', async (req, res) => {
         value: ((sale.inventory.price || 199.99) * sale.quantity)
           * (author.category.percentage_management_stores / 100)
           * (author.category.percentage_royalties / 100) 
-          / bookSalesHashMap[sale.inventory.book.title]
+          / numberOfAuthors[sale.inventory.book.title]
       }))
     });
   } catch (error) {

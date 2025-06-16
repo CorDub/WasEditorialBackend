@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword } from './../utils.js';
 import { prisma } from "./../server.js"
-import { cp } from "fs";
 
 const router = express.Router();
 
@@ -957,7 +956,6 @@ router.patch('/inventory', async (req, res) => {
       })
     }
 
-    console.log(updatedInventory);
     if (updatedInventory) {
       res.status(200).json({message: "Successfully updated inventory"});
     } else {
@@ -1150,24 +1148,23 @@ router.post('/sale', async (req, res) => {
                 userId: id,
                 amount: (createdSale.quantity * updatedInventory.price)
                   * (userCategory.category.percentage_royalties / 100)
-                  * (userCategory.category.percentage_management_stores / 100),
+                  * (userCategory.category.percentage_management_stores / 100)
+                  / userIds.length,
                 forMonth: currentForMonth
               }
             })
           } else {
-            console.log("relatedPayment[0]", relatedPayment[0])
-            console.log("userCategory", userCategory)
-            console.log("createdSale", createdSale)
-            console.log("updatedInventory", updatedInventory)
+
             const updatedRelatedPayment = await prisma.payment.update({
               where: {
                 id: relatedPayment[0].id
               },
               data: {
-                amount: relatedPayment[0].amount
+                amount: (relatedPayment[0].amount
                   + (createdSale.quantity * updatedInventory.price)
                   * (userCategory.category.percentage_royalties / 100)
                   * (userCategory.category.percentage_management_stores / 100)
+                  / userIds.length)
               }
             })
           }

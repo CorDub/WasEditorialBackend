@@ -472,6 +472,7 @@ router.get('/monthlySales', async (req, res) => {
             },
             book: {
               select: {
+                id: true,
                 title: true,
               }
             },
@@ -516,11 +517,23 @@ router.get('/monthlySales', async (req, res) => {
     // If the month already exist within salesByMonths we add the numbers of the current sale
     // If not, we create the month with the data of the current sale and the previous scaffold for bookstores
     let salesByMonths = {};
+    let numberOfAuthors = {};
     for (const sale of data) {
       const date = new Date(sale.createdAt);
       const year = date.getFullYear();
       const month = (date.getMonth() +1).toString().padStart(2, "0");
       const key = `${year}-${month}`;
+      if (!numberOfAuthors[sale.inventory.book.id]) {
+        const authorCount = await prisma.book.findUnique({
+          where: {id: sale.inventory.book.id},
+          select: {
+            _count: {
+              select: {users: true}
+            }
+          }
+        });
+        numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
+      }
 
       if (salesByMonths[key]) {
         salesByMonths[key]["sales"].push(sale);
@@ -528,6 +541,7 @@ router.get('/monthlySales', async (req, res) => {
           (sale.inventory.price * sale.quantity)
           * (userCategory.percentage_management_stores / 100)
           * (userCategory.percentage_royalties / 100)
+          / numberOfAuthors[sale.inventory.book.id]
         )
       } else {
         salesByMonths[key] = {
@@ -536,11 +550,13 @@ router.get('/monthlySales', async (req, res) => {
             sale.inventory.price
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors[sale.inventory.book.id]
           ),
           total: (
             (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors[sale.inventory.book.id]
           ),
           // deep cloning the bookstores to avoid having the same object being mutated later
           // and shared across different months instead of a different object every time

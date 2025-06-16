@@ -261,7 +261,7 @@ router.get('/books/:bookId/inventories', async (req, res) => {
       }
     });
 
-    console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
+    // console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
 
     const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
     const soldTotal = inventories.reduce((sum, inv) => {
@@ -287,7 +287,6 @@ router.get('/books/:bookId/inventories', async (req, res) => {
 router.get('/sales', async (req, res) => {
   try {
     const authorId = req.session.user_id;
-    console.log(authorId);
 
     // Get date range from query parameters
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
@@ -323,31 +322,93 @@ router.get('/sales', async (req, res) => {
         }
       });
 
-    const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
-    const totalValue = sales.reduce((sum, sale) => {
-      const price = sale.inventory.price || 199.99;
-      return sum + (price * sale.quantity);
-    }, 0);
-
-    const bookSales = sales.reduce((acc, sale) => {
-      const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
-      const price = sale.inventory.price || 199.99;
-      const saleValue = price * sale.quantity;
-
-      if (existingBook) {
-        existingBook.quantity += sale.quantity;
-        existingBook.value += saleValue;
-      } else {
-        acc.push({
-          bookId: sale.inventory.book.id,
-          title: sale.inventory.book.title,
-          quantity: sale.quantity,
-          value: saleValue,
-          price: price
-        });
+    let totalSales = 0;
+    let totalValue = 0;
+    let bookSalesHashMap = {};
+    let numberOfAuthors = {};
+    const author = await prisma.user.findUnique({
+      where: {
+        id: authorId
+      },
+      select: {
+        category: {
+          select: {
+            percentage_management_stores: true,
+            percentage_royalties: true
+          }
+        }
       }
-      return acc;
-    }, []);
+    })
+
+    for (const sale of sales) {
+      if (!numberOfAuthors[sale.inventory.book.title]) {
+        const authorCount = await prisma.book.findUnique({
+          where: {id: sale.inventory.book.id},
+          select: {
+            _count: {
+              select: {users: true}
+            }
+          }
+        });
+        numberOfAuthors[sale.inventory.book.title] = authorCount._count.users;
+      }
+
+      const saleValue = ((sale.inventory.price * sale.quantity) 
+        * (author.category.percentage_management_stores / 100)
+        * (author.category.percentage_royalties / 100)
+        / numberOfAuthors[sale.inventory.book.title])
+      totalSales += sale.quantity
+      totalValue += saleValue
+
+      if (!bookSalesHashMap[sale.inventory.book.title]) {
+        bookSalesHashMap[sale.inventory.book.title] = {
+          "bookId": sale.inventory.book.id,
+          "title": sale.inventory.book.title,
+          "quantity": sale.quantity,
+          "value": saleValue,
+          "price": sale.inventory.price
+        }
+      } else {
+        bookSalesHashMap[sale.inventory.book.title].quantity += sale.quantity
+        bookSalesHashMap[sale.inventory.book.title].value += saleValue
+      }
+    }
+
+    const bookSales = Object.values(bookSalesHashMap);
+    // const authorCount = await prisma.book.findUnique({
+    //   where: { id: bookId },
+    //   select: {
+    //     _count: {
+    //       select: { users: true }
+    //     }
+    //   }
+    // });
+
+    // const totalSales = sales.reduce((sum, sale) => sum + sale.quantity, 0);
+    // const totalValue = sales.reduce((sum, sale) => {
+    //   const price = sale.inventory.price || 199.99;
+    //   return sum + (price * sale.quantity);
+    // }, 0);
+
+    // const bookSales = sales.reduce((acc, sale) => {
+    //   const existingBook = acc.find(b => b.bookId === sale.inventory.book.id);
+    //   const price = sale.inventory.price || 199.99;
+    //   const saleValue = price * sale.quantity;
+
+    //   if (existingBook) {
+    //     existingBook.quantity += sale.quantity;
+    //     existingBook.value += saleValue;
+    //   } else {
+    //     acc.push({
+    //       bookId: sale.inventory.book.id,
+    //       title: sale.inventory.book.title,
+    //       quantity: sale.quantity,
+    //       value: saleValue,
+    //       price: price
+    //     });
+    //   }
+    //   return acc;
+    // }, []);
 
     res.json({
       totalSales,
@@ -362,7 +423,10 @@ router.get('/sales', async (req, res) => {
         title: sale.inventory.book.title,
         bookstore_name: sale.inventory.bookstore.name,
         price: sale.inventory.price || 199.99,
-        value: (sale.inventory.price || 199.99) * sale.quantity
+        value: ((sale.inventory.price || 199.99) * sale.quantity)
+          * (author.category.percentage_management_stores / 100)
+          * (author.category.percentage_royalties / 100) 
+          / bookSalesHashMap[sale.inventory.book.title]
       }))
     });
   } catch (error) {
@@ -408,6 +472,7 @@ router.get('/monthlySales', async (req, res) => {
             },
             book: {
               select: {
+                id: true,
                 title: true,
               }
             },
@@ -419,8 +484,6 @@ router.get('/monthlySales', async (req, res) => {
         createdAt: 'desc'
       }
     });
-
-    // console.log("data[0]", data[0]);
 
     // Need this for the category of the author,
     // which is used in how much author make from the sales
@@ -454,11 +517,23 @@ router.get('/monthlySales', async (req, res) => {
     // If the month already exist within salesByMonths we add the numbers of the current sale
     // If not, we create the month with the data of the current sale and the previous scaffold for bookstores
     let salesByMonths = {};
+    let numberOfAuthors = {};
     for (const sale of data) {
       const date = new Date(sale.createdAt);
       const year = date.getFullYear();
       const month = (date.getMonth() +1).toString().padStart(2, "0");
       const key = `${year}-${month}`;
+      if (!numberOfAuthors[sale.inventory.book.id]) {
+        const authorCount = await prisma.book.findUnique({
+          where: {id: sale.inventory.book.id},
+          select: {
+            _count: {
+              select: {users: true}
+            }
+          }
+        });
+        numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
+      }
 
       if (salesByMonths[key]) {
         salesByMonths[key]["sales"].push(sale);
@@ -466,6 +541,7 @@ router.get('/monthlySales', async (req, res) => {
           (sale.inventory.price * sale.quantity)
           * (userCategory.percentage_management_stores / 100)
           * (userCategory.percentage_royalties / 100)
+          / numberOfAuthors[sale.inventory.book.id]
         )
       } else {
         salesByMonths[key] = {
@@ -474,11 +550,13 @@ router.get('/monthlySales', async (req, res) => {
             sale.inventory.price
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors[sale.inventory.book.id]
           ),
           total: (
             (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors[sale.inventory.book.id]
           ),
           // deep cloning the bookstores to avoid having the same object being mutated later
           // and shared across different months instead of a different object every time
@@ -604,8 +682,6 @@ router.get('/monthlySales', async (req, res) => {
         ])
       }
     }
-
-    console.log("newSalesByMonthsList", newSalesByMonthsList);
 
     res.status(200).json(newSalesByMonthsList);
   } catch (error) {

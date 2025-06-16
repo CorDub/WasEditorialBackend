@@ -557,7 +557,8 @@ async function main() {
           createdAt: true,
           inventory: {
             select: {
-              price: true
+              price: true,
+              bookId: true,
             }
           }
         },
@@ -574,17 +575,30 @@ async function main() {
 
       /// Then group them by month
       for (const sale of data) {
+        const numberOfAuthors = await prisma.book.findUnique({
+          where: {
+            id: sale.inventory.bookId
+          },
+          select: {
+            _count: {
+              select: {users: true}
+            }
+          }
+        });
+
         if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
             (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors._count.users
           )
         } else {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
             (sale.inventory.price * sale.quantity)
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
+            / numberOfAuthors._count.users
           )
         }
       }

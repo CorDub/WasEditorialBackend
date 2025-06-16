@@ -25,26 +25,38 @@ function AuthorCommissions() {
   const [alertType, setAlertType] = useState("");
   const [paymentInfo, setPaymentInfo] = useState(null);
 
+  // set the status of payment
   useEffect(() => {
+    if (paymentInfo != null) {
+      if (paymentInfo.status === "solicited") {
+        setDemandPaymentPossible("solicited");
+        return;
+      } 
+      if (paymentInfo.status === "paid") {
+        setDemandPaymentPossible("paid");
+        return;
+      } 
+      if (paymentInfo.status === "noVentas") {
+        setDemandPaymentPossible("noVentas");
+        return;
+      } 
+    }
     if (dataByMonths && activeMonth != null) {
       const now = new Date();
       const year = String(now.getFullYear());
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const currentActiveMonth = year + "-" + month
-
       if (currentActiveMonth === dataByMonths[activeMonth][0]) {
         setDemandPaymentPossible("currentMonth");
         return;
       }
-
       if (now.getDate() >= 25) {
         setDemandPaymentPossible("tooLateInTheMonth");
         return;
       }
-
       setDemandPaymentPossible("available");
     }
-  }, [dataByMonths, activeMonth])
+  }, [dataByMonths, activeMonth, paymentInfo, forceRender])
 
   async function fetchAuthorBookSales() {
     try {
@@ -82,14 +94,15 @@ function AuthorCommissions() {
 
   async function fetchPayments() {
     try {
-      // check cache first
+      // check cache (but skip if forceRender is true)
       const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
-      if (cachedAuthorPayments) {
+      if (cachedAuthorPayments && !forceRender) {
         console.log("cache hit");
         setPayments(JSON.parse(cachedAuthorPayments));
         return
       }
 
+      console.log("refetch");
       const response = await fetch(`${baseURL}/author/payments`, {
         method: "GET",
         headers: {
@@ -103,6 +116,7 @@ function AuthorCommissions() {
         sessionStorage.setItem("authorPayments", JSON.stringify(data));
         console.log("cache storage");
         setPayments(data);
+        setForceRender(false);
       };
     } catch(error) {
       console.log("Error when fetching the data", error);
@@ -111,12 +125,18 @@ function AuthorCommissions() {
 
   useEffect(() => {
     fetchPayments();
-  }, [])
+  }, [forceRender])
 
   function closeModal(reload, alertMessage, alertType) {
     setModalOpen(false);
     if (reload === true) {
-      setForceRender(!forceRender);
+      console.log("forceRender to true");
+      setPaymentInfo(prev => ({
+        ...prev,
+        status: "solicited"
+        }));
+      console.log("solicited");
+      setForceRender(true);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
@@ -148,6 +168,9 @@ function AuthorCommissions() {
         {isDemandPaymentPossible === "currentMonth" && (
           null
         )}
+        {isDemandPaymentPossible === "noVentas" && (
+          null
+        )}
         {isDemandPaymentPossible === "tooLateInTheMonth" && (
           <div className="author-commissions-solicitar-pago-unavailable"
             onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
@@ -155,6 +178,12 @@ function AuthorCommissions() {
             {isDemandPaymentTooltipOpen && (
               <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
           </div>
+        )}
+        {isDemandPaymentPossible === "solicited" && (
+          <div className="author-commissions-solicitar-pago-unavailable">Pago solicitado</div>
+        )}
+        {isDemandPaymentPossible === "paid" && (
+          <div className="author-commissions-solicitar-pago-paid">Pagado</div>
         )}
       </div>
       {isModalOpen && <Modal

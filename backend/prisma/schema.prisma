@@ -24,6 +24,12 @@ enum TransferType {
   return
 }
 
+enum PaymentStatus {
+  created
+  solicited
+  paid
+}
+
 model User {
   id                  Int       @id @default(autoincrement())
   first_name          String
@@ -151,13 +157,15 @@ model Transfer {
 }
 
 model Payment {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  id        Int           @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id])
   userId    Int
   amount    Float
   forMonth  String
-  isPaid    Boolean  @default(false)
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status    PaymentStatus @default(created)
+  isDeleted Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@unique([userId, forMonth])
 }

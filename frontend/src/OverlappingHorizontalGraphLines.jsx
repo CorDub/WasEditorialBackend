@@ -199,10 +199,6 @@ function OverlappingHorizontalGraphLines({
 
     //Returns
     const necessaryReturns = displayLengthsPixels.sold - (displayLengthsPixels.returns - numberWidths.returns - 4);
-    console.log("necessaryReturns", necessaryReturns)
-    console.log("displayLengthsPixels.sold", displayLengthsPixels.sold)
-    console.log("displayLengthsPixels.returns", displayLengthsPixels.returns)
-    console.log("numberWidths.returns", numberWidths.returns)
     if (displayLengthsPixels.sold > (displayLengthsPixels.returns - numberWidths.returns - 16)) {
       if (availableLengths.sold > 0) {
         let remaining = necessaryReturns + 18

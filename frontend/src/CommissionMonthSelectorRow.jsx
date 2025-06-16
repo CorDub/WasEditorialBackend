@@ -11,11 +11,23 @@ function CommissionMonthSelectorRow({
   preferredFontSize,
   setPaymentInfo}) {
   const [salesPresence, setSalesPresence] = useState(true)
+  const [paymentStatus, setPaymentStatus] = useState("")
 
   useEffect(() => {
     if (month.amount === 0) {
       setSalesPresence(false)
     }
+
+    if (month.status === "created") {
+      setPaymentStatus("No pagado")
+    } else if (month.status === "solicited") {
+      setPaymentStatus("Solicitado") 
+    } else if (month.status === "paid") {
+      setPaymentStatus("Pagado")
+    } else {
+      setPaymentStatus("");
+    }
+
   }, [month])
 
   function changeDateFormat(date) {
@@ -41,7 +53,9 @@ function CommissionMonthSelectorRow({
     if (month) {
       setPaymentInfo({
         "month": changeDateFormat(month.forMonth),
-        "amount": month.amount
+        "monthOriginal" : month.forMonth,
+        "amount": month.amount,
+        "status": month.amount === 0 ? "noVentas" : month.status
       })
     }
   }
@@ -57,7 +71,7 @@ function CommissionMonthSelectorRow({
       {salesPresence && (
         <div className="cms-status"
           style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
-          {month.isPaid ? "Pagado" : "No pagado"}
+          {paymentStatus}
         </div>
       )}
       {!salesPresence && (

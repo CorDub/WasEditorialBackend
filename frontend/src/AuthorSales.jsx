@@ -39,10 +39,11 @@ function AuthorSales() {
     const monthlySales = {};
     if (!sales || sales.length === 0) return;
 
+    console.log(sales);
+
     const filteredSales = bookId === 'total'
       ? sales
       : sales.filter(sale => sale.book_id === parseInt(bookId));
-
 
     filteredSales.forEach(sale => {
       const date = new Date(sale.created_at);

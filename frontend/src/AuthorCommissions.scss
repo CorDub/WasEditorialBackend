@@ -35,6 +35,22 @@
   z-index: 0;
 }
 
+.author-commissions-solicitar-pago-solicited {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding: 0.5rem;
+  background-color:#afaeae;
+  color: black;
+}
+
+.author-commissions-solicitar-pago-paid {
+  border-radius: 15px;
+  border: 1px solid green;
+  padding: 0.5rem;
+  background-color:green;
+  color: white;
+}
+
 .demand-payment-tooltip {
   position: absolute;
   top: -40px;

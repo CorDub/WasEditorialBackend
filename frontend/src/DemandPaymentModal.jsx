@@ -99,6 +99,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("factura", factura);
       formData.append("constancia", constancia);
       formData.append("month", paymentInfo.month);
+      formData.append("monthOriginal", paymentInfo.monthOriginal);
       formData.append("amount", paymentInfo.amount);
       formData.append("uso", uso);
 

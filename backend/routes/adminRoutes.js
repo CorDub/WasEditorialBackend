@@ -1589,7 +1589,7 @@ router.get('/pendingPayments', async (req, res) => {
     const pendingPayments = await prisma.payment.findMany({
       where: {
         isDeleted: false,
-        isPaid: false
+        status: "solicited"
       },
       select: {
         id: true,
@@ -1625,7 +1625,7 @@ router.patch('/markAsPaid', async (req, res) => {
         isDeleted: false
       },
       data: {
-        isPaid: true
+        status: 'paid'
       }
     })
 

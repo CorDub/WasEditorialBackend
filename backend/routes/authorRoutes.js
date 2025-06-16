@@ -1047,7 +1047,7 @@ router.get("/payments", async (req, res) => {
       select: {
         amount: true,
         forMonth: true,
-        isPaid: true
+        status: true
       },
       orderBy: {
         createdAt: "desc"
@@ -1101,7 +1101,7 @@ router.get("/payments", async (req, res) => {
           allPayments.splice(i, 0, {
             amount: 0,
             forMonth: ltmStrings[i],
-            isPaid: false
+            status: "created"
           });
         }
       };
@@ -1127,9 +1127,21 @@ router.post("/sendInvoice", upload.fields([
     });
     const factura = req.files.factura[0];
     const constancia = req.files.constancia[0]
-    const { month, amount, uso } = req.body;
+    const { month, monthOriginal, amount, uso } = req.body;
     const name = user.first_name + " " + user.last_name;
     sendEmailWithInvoice(name, month, amount, uso, factura, constancia);
+
+    const updatedPayment = await prisma.payment.update({
+      where: {
+        userId_forMonth: {
+          userId: userID,
+          forMonth: monthOriginal
+        }
+      },
+      data: {
+        status: "solicited"
+      }
+    })
     res.status(200).json({message: "invoice sent successfully"})
   } catch (error) {
     console.log("\n ERROR WHILE SENDING INVOICE \n", error);

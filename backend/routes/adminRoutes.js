@@ -1137,7 +1137,8 @@ router.post('/sale', async (req, res) => {
               category: {
                 select: {
                   percentage_royalties: true,
-                  percentage_management_stores: true
+                  percentage_management_stores: true,
+                  management_min: true
                 }
               }
             }
@@ -1147,25 +1148,40 @@ router.post('/sale', async (req, res) => {
             const createdPayment = await prisma.payment.create({
               data: {
                 userId: id,
-                amount: (createdSale.quantity * updatedInventory.price)
-                  * (userCategory.category.percentage_royalties / 100)
-                  * (userCategory.category.percentage_management_stores / 100)
-                  / userIds.length,
+                amount: 
+                // (createdSale.quantity * updatedInventory.price)
+                //   * (userCategory.category.percentage_royalties / 100)
+                //   * (userCategory.category.percentage_management_stores / 100)
+                //   / userIds.length,
+                  createdSale.inventory.bookstore.comissions 
+                    ? createdSale.inventory.price 
+                      - userCategory.management_min 
+                      * createdSale.quantity 
+                      / userIds.length
+                    : createdSale.inventory.price
+                      * createdSale.quantity 
+                      * (userCategory.percentage_management_stores / 100)
+                      * (userCategory.percentage_royalties / 100)
+                      / numberOfAuthors[sale.inventory.book.title],
                 forMonth: currentForMonth
               }
             })
           } else {
-
             const updatedRelatedPayment = await prisma.payment.update({
               where: {
                 id: relatedPayment[0].id
               },
               data: {
-                amount: (relatedPayment[0].amount
-                  + (createdSale.quantity * updatedInventory.price)
-                  * (userCategory.category.percentage_royalties / 100)
-                  * (userCategory.category.percentage_management_stores / 100)
-                  / userIds.length)
+                amount: createdSale.inventory.bookstore.comissions 
+                    ? createdSale.inventory.price 
+                      - userCategory.management_min 
+                      * createdSale.quantity 
+                      / userIds.length
+                    : createdSale.inventory.price
+                      * createdSale.quantity 
+                      * (userCategory.percentage_management_stores / 100)
+                      * (userCategory.percentage_royalties / 100)
+                      / numberOfAuthors[sale.inventory.book.title],
               }
             })
           }

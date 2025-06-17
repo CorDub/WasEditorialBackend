@@ -559,6 +559,11 @@ async function main() {
             select: {
               price: true,
               bookId: true,
+              bookstore: {
+                select: {
+                  comissions: true
+                }
+              }
             }
           }
         },
@@ -588,17 +593,29 @@ async function main() {
 
         if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
-            (sale.inventory.price * sale.quantity)
-            * (userCategory.percentage_management_stores / 100)
-            * (userCategory.percentage_royalties / 100)
-            / numberOfAuthors._count.users
+            sale.inventory.bookstore.comissions 
+              ? sale.inventory.price 
+                - userCategory.management_min 
+                * sale.quantity 
+                / numberOfAuthors._count.users
+              : sale.inventory.price
+                * sale.quantity
+                * (userCategory.percentage_management_stores / 100)
+                * (userCategory.percentage_royalties / 100)
+                / numberOfAuthors._count.users
           )
         } else {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
-            (sale.inventory.price * sale.quantity)
-            * (userCategory.percentage_management_stores / 100)
-            * (userCategory.percentage_royalties / 100)
-            / numberOfAuthors._count.users
+            sale.inventory.bookstore.comissions 
+              ? sale.inventory.price 
+                - userCategory.management_min 
+                * sale.quantity 
+                / numberOfAuthors._count.users
+              : sale.inventory.price
+                * sale.quantity
+                * (userCategory.percentage_management_stores / 100)
+                * (userCategory.percentage_royalties / 100)
+                / numberOfAuthors._count.users
           )
         }
       }

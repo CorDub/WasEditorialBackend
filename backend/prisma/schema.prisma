@@ -104,7 +104,7 @@ model Inventory {
   bookstore     Bookstore  @relation(fields: [bookstoreId], references: [id])
   bookstoreId   Int
   country       String
-  price         Float?     @default(199.99)
+  price         Float?     @default(499.99)
   initial       Int
   current       Int
   returns       Int        @default(0)

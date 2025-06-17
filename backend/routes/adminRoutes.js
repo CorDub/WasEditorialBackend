@@ -161,7 +161,6 @@ router.patch('/user', async (req, res) => {
       }
     });
 
-    console.log(updatedAuthor);
     if (updatedAuthor) {
       res.status(200).json({message: "Successfully updated user"});
     } else {
@@ -332,7 +331,6 @@ router.patch('/category', async (req, res) => {
       }
     });
 
-    console.log(updatedCategory);
     if (updatedCategory) {
       res.status(200).json({message: "Successfully updated category"});
     } else {
@@ -567,6 +565,7 @@ router.post('/bookstore', async (req, res) => {
     const {
       name,
       dealPercentage,
+      comissions,
       contactName,
       contactPhone,
       contactEmail } = req.body;
@@ -574,6 +573,7 @@ router.post('/bookstore', async (req, res) => {
       data: {
         name: name,
         deal_percentage: parseFloat(dealPercentage),
+        comissions: comissions === "true" ? true : false,
         contact_name: contactName,
         contact_phone: contactPhone,
         contact_email: contactEmail,
@@ -593,6 +593,7 @@ router.patch('/bookstore', async (req, res) => {
       id,
       name,
       dealPercentage,
+      comissions,
       contactName,
       contactPhone,
       contactEmail } = req.body;
@@ -600,6 +601,7 @@ router.patch('/bookstore', async (req, res) => {
       where: {id: id},
       data: {
         name: name,
+        comissions: comissions,
         deal_percentage: parseFloat(dealPercentage),
         contact_name: contactName,
         contact_phone: contactPhone,
@@ -607,7 +609,6 @@ router.patch('/bookstore', async (req, res) => {
       }
     });
 
-    console.log(updatedBookstore);
     if (updatedBookstore) {
       res.status(200).json({message: "Successfully updated bookstore"});
     } else {
@@ -1224,7 +1225,6 @@ router.patch('/sale', async (req, res) => {
           current: selectedInventory.current + quantityUpdate
         }
       });
-      console.log(updatedInventory);
       res.status(200).json({message: "Successfully updated inventory"});
     } else {
       if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
@@ -1259,7 +1259,6 @@ router.delete('/sale', async (req, res) => {
           current: selectedInventory.current + quantity
         }
       });
-      console.log(updatedInventory);
     }
 
     res.status(200).json({message: "La venta ha sido eliminada con exito."})

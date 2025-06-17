@@ -43,11 +43,13 @@ function BooksList() {
     },
     {
       header: "Titulo",
-      accessorKey: "title"
+      accessorKey: "title",
+      maxSize: 400,
     },
     {
       header: "Autor(es)",
       accessorKey: "authorNames",
+      maxSize: 400,
     },
     {
       header: "Pasta",
@@ -94,7 +96,7 @@ function BooksList() {
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '81vh',
+        maxHeight: '80vh',
         overflowY: 'auto'
       }
     },

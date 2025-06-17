@@ -51,6 +51,11 @@ function BookstoresList() {
       Cell: ({ row }) => row.original.deal_percentage != null ? `${row.original.deal_percentage}%` : ""
     },
     {
+      header: "Comisiones",
+      accessorKey: "comissions",
+      Cell: ({row}) => row.original.comissions ? "Si" : "No"
+    },
+    {
       header: "Nombre del contacto",
       accessorKey: "contact_name"
     },
@@ -121,6 +126,8 @@ function BookstoresList() {
       }
     }
   });
+
+  console.log(data);
 
   async function fetchBookstores() {
     try {

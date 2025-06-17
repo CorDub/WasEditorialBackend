@@ -8,6 +8,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   const [name, setName] = useState(clickedRow.name);
   const [dealPercentage, setDealPercentage] = useState(clickedRow.deal_percentage);
+  const [comissions, setComissions] = useState(clickedRow.comissions);
   const [contactName, setContactName] = useState(clickedRow.contact_name);
   const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
@@ -15,6 +16,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   async function sendToServer() {
     try {
+      console.log("commissions in sendtoserver", comissions)
       const response = await fetch(`${baseURL}/admin/bookstore`, {
         method: "PATCH",
         headers: {
@@ -25,6 +27,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
           id: clickedRow.id,
           name: name,
           dealPercentage: dealPercentage,
+          comissions: comissions,
           contactName: contactName,
           contactPhone: contactPhone,
           contactEmail: contactEmail,
@@ -98,6 +101,18 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <input type='text' placeholder="% Acuerdo" value={dealPercentage}
           className="global-input" id="adding-bookstore-dealPercentage"
           onChange={(e) => setDealPercentage(e.target.value)}></input>
+        <select className="select-global"
+          onChange={(e) => setComissions(e.target.value === "true")}>
+          {comissions 
+            ? <>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </>
+            : <>
+              <option value="false">No</option>
+              <option value="true">Sí</option>
+            </>}
+        </select>
         <input type='text' placeholder="Nombre del contacto" value={contactName}
           className="global-input" id="adding-bookstore-contactName"
           onChange={(e) => setContactName(e.target.value)}></input>

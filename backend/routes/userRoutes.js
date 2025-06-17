@@ -78,7 +78,6 @@ router.get('/user_extra', async (req, res) => {
     if (user === null) {
       res.status(204).json("No user found");
     } else {
-      console.log("user:", user);
       const user_send = {
         email: user.email,
         phone: user.phone,
@@ -125,7 +124,6 @@ router.post('/confirmation_code', async (req, res) => {
     if (matched === true) {
       const user = await prisma.user.findUnique({where: {id: user_id}});
       req.session.user_id = user.id;
-      console.log("added session user id:", req.session.user_id);
       res.status(200).json({message: "All good"});
     } else {
       res.status(401).json({error: "Unauthorized"});

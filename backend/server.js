@@ -49,7 +49,6 @@ app.use(session({
 
 app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
   try {
-    console.log("This is req.user:", req.user);
     const user_clean = {
       id: req.user.id,
       first_name: req.user.first_name,
@@ -72,7 +71,6 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
 app.use("/api", userRoutes);
 
 async function authenticateUser(req, res, next) {
-  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     return res.status(401).json({ error: "Unauthorized"});
   }
@@ -87,14 +85,12 @@ async function authenticateUser(req, res, next) {
 }
 
 async function authenticateAdmin(req, res, next) {
-  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     console.log("No user session");
     return res.status(401).json({ error: "Unauthorized"});
   }
 
   const user = await prisma.user.findUnique({where: {id: req.session.user_id}});
-  console.log(user);
   if (user === null || (user.role !== "admin" && user.role !== "superadmin")) {
     return res.status(401).json({ error: "User not found or unauthorized"});
   } else {
@@ -104,14 +100,12 @@ async function authenticateAdmin(req, res, next) {
 }
 
 async function authenticateSuperAdmin(req, res, next) {
-  console.log("session", req.session.user_id)
   if (!req.session.user_id) {
     console.log("No user session");
     return res.status(401).json({ error: "Unauthorized"});
   }
 
   const user = await prisma.user.findUnique({where: {id: req.session.user_id}});
-  console.log(user);
   if (user === null || user.role !== "superadmin") {
     return res.status(401).json({ error: "User not found or unauthorized"});
   } else {

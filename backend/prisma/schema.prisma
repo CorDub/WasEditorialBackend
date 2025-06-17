@@ -86,6 +86,7 @@ model Bookstore {
   id              Int         @id @default(autoincrement())
   name            String
   deal_percentage Float?
+  comissions      Boolean     @default(false)
   contact_name    String?
   contact_phone   String?
   contact_email   String?

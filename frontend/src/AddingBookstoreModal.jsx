@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingBookstoreErrorList from './AddingBookstoreErrorList';
 
@@ -8,6 +8,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
 
   const [name, setName] = useState('');
   const [dealPercentage, setDealPercentage] = useState('');
+  const [comissions, setComissions] = useState(false);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
@@ -25,6 +26,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         body: JSON.stringify({
           name: name,
           dealPercentage: dealPercentage,
+          comissions: comissions,
           contactName: contactName,
           contactPhone: contactPhone,
           contactEmail: contactEmail,
@@ -99,6 +101,12 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         <input type='text' placeholder="% Acuerdo"
           className="global-input" id="adding-bookstore-dealPercentage"
           onChange={(e) => setDealPercentage(e.target.value)}></input>
+        <select className="select-global"
+          onChange={(e) => setComissions(e.target.value === "true")}>
+          <option value="null">Comisiones</option>
+          <option value="false">No</option>
+          <option value="true">Si</option>
+        </select>
         <input type='text' placeholder="Nombre del contacto"
           className="global-input" id="adding-bookstore-contactName"
           onChange={(e) => setContactName(e.target.value)}></input>

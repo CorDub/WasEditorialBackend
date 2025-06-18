@@ -3,8 +3,6 @@ import "./TableRowDetails.scss";
 
 function TableRowDetails({sales}) {
 
-  console.log(sales);
-
   return(
     <div className="table-row-details">
       {sales && sales.map((sale, index) => (
@@ -13,7 +11,7 @@ function TableRowDetails({sales}) {
           book={sale.book}
           price={sale.price}
           comissions={sale.comissions}
-          ganancia={sale.ganancia}
+          ganancia={(sale.price - sale.comissions) * parseFloat(sale.sharePerAuthor) / 100}
           sharePerAuthor={sale.sharePerAuthor}
           quantity={sale.quantity} />
       ))}

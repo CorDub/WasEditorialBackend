@@ -17,7 +17,8 @@ function TableActions ({
     row,
     isTableActionsOpen,
     setModalType,
-    type}) {
+    type,
+    status}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -32,6 +33,7 @@ function TableActions ({
   const [isGivenToAuthorTooltipOpen, setGivenToAuthorTooltipOpen ] = useState(false);
   const [isReceivedFromAuthorTooltipOpen, setReceivedFromAuthorTooltipOpen ] = useState(false);
   const [isPaymentsTooltipOpen, setPaymentsTooltipOpen] = useState(false);
+  const [isCostTooltipOpen, setCostTooltipOpen] = useState(false);
 
   useEffect(() => {
     if (row.original.bookstoreId === 3) {
@@ -108,7 +110,12 @@ function TableActions ({
 
   function markAsPaid() {
     setModalType("payment");
-    openModal("edit", row.original)
+    openModal("edit", row.original);
+  }
+
+  function addCost() {
+    setModalType("cost");
+    openModal("adding", row.original);
   }
 
   return(
@@ -151,6 +158,18 @@ function TableActions ({
               onMouseLeave={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}/>
             {isPaymentsTooltipOpen && (
               <div className="ta-tooltip">Marcar pagado</div>)}
+            {status === "created" && (
+              <>
+              <FontAwesomeIcon icon={faDollarSign}
+                className='ta-button ta-delete'
+                id={`ta-payment-${row.index}`}
+                onClick={addCost}
+                onMouseEnter={() => setCostTooltipOpen(!isCostTooltipOpen)}
+                onMouseLeave={() => setCostTooltipOpen(!isCostTooltipOpen)}/>
+              {isCostTooltipOpen && (
+                <div className="ta-tooltip">Añadir costo addicional</div>)}
+              </>
+            )}
             </>}
 
         {type && type === "inventory" &&

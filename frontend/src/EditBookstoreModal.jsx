@@ -16,7 +16,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   async function sendToServer() {
     try {
-      console.log("commissions in sendtoserver", comissions)
       const response = await fetch(`${baseURL}/admin/bookstore`, {
         method: "PATCH",
         headers: {

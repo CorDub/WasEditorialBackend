@@ -161,6 +161,7 @@ model Payment {
   id        Int           @id @default(autoincrement())
   user      User          @relation(fields: [userId], references: [id])
   userId    Int
+  cost      Cost[]
   amount    Float
   forMonth  String
   status    PaymentStatus @default(created)
@@ -169,4 +170,12 @@ model Payment {
   updatedAt DateTime      @updatedAt
 
   @@unique([userId, forMonth])
+}
+
+model Cost {
+  id        Int     @id @default(autoincrement())
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId Int
+  note      String?
+  amount    Float
 }

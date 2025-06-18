@@ -29,6 +29,9 @@ import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import EditPaymentModal from "./EditPaymentModal";
 import DemandPaymentModal from './DemandPaymentModal';
+import AddingCostModal from "./AddingCostModal";
+import EditCostModal from './EditCostModal';
+import DeleteCostModal from './DeleteCostModal';
 
 function Modal({
   modalType,
@@ -93,6 +96,11 @@ function Modal({
     payment: {
       edit: EditPaymentModal,
       demand: DemandPaymentModal,
+    },
+    cost: {
+      adding: AddingCostModal,
+      edit: EditCostModal,
+      delete: DeleteCostModal
     }
 
   };

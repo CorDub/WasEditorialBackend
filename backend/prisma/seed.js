@@ -212,6 +212,19 @@ async function main() {
       }
     })
 
+    await prisma.user.create({
+      data: {
+        first_name: "Corentin",
+        last_name: "Dubois",
+        country: "Francia",
+        email: "corentindubois22@gmail.com",
+        categoryId: 1,
+        password: await bcrypt.hash("bookboi4", 10),
+        role: Role.author,
+        createdAt: twelveMonthsAgo
+      }
+    })
+
     /// Create Bookstores
 
     await prisma.bookstore.create({
@@ -234,7 +247,8 @@ async function main() {
         contact_phone: "525580416352",
         contact_email: "jlwotton17@mercadolibre.co.mx",
         createdAt: twelveMonthsAgo,
-        color: "#ffe600"
+        color: "#ffe600",
+        comissions: true
       }
     })
 
@@ -243,7 +257,8 @@ async function main() {
         name: "Plataforma Was",
         deal_percentage: 30,
         createdAt: twelveMonthsAgo,
-        color: "#4E5981"
+        color: "#4E5981",
+        comissions: true
       }
     })
 
@@ -594,8 +609,8 @@ async function main() {
         if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
             sale.inventory.bookstore.comissions 
-              ? sale.inventory.price 
-                - userCategory.management_min 
+              ? (sale.inventory.price 
+                - userCategory.management_min) 
                 * sale.quantity 
                 / numberOfAuthors._count.users
               : sale.inventory.price
@@ -607,8 +622,8 @@ async function main() {
         } else {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
             sale.inventory.bookstore.comissions 
-              ? sale.inventory.price 
-                - userCategory.management_min 
+              ? (sale.inventory.price 
+                - userCategory.management_min)
                 * sale.quantity 
                 / numberOfAuthors._count.users
               : sale.inventory.price
@@ -635,6 +650,7 @@ async function main() {
         })
       }
     }
+
   } catch (error) {
     console.error("Error somewhere", error);
   }

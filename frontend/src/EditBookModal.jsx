@@ -20,32 +20,33 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [errorList, setErrorList] = useState([]);
 
   async function fetchUsers() {
-      try {
-        const response = await fetch(`${baseURL}/admin/users`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: 'include'
-        });
+    try {
+      const response = await fetch(`${baseURL}/admin/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setExistingAuthors(data);
-        }
-
-      } catch (error) {
-        console.error(error);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setExistingAuthors(data);
       }
-    };
 
-    useEffect(() => {
-      fetchUsers();
-    }, [])
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [])
 
   function authorsChange(index, event) {
     const authorsNew = [...authors];
-    authorsNew[index] = parseInt(event.target.value);
+    authorsNew[index] = JSON.parse(event.target.value);
     setAuthors(authorsNew);
   }
 
@@ -153,18 +154,21 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       addErrorClass(inputPasta);
     };
 
-    authors.map((author, index) => {
-      if (author === null) {
+    authors.map((authorTop, index) => {
+      console.log(authors);
+      if (authorTop === null) {
         newErrorList.push(41);
         addErrorClass(inputAuthors[index]);
+        return
       };
 
       let authorsIds = []
-      existingAuthors.map((author) => {
-        authorsIds.push(author.id);
+      existingAuthors.map((authorBot) => {
+        authorsIds.push(authorBot.id);
       })
-      console.log(author);
-      if (!authorsIds.includes(author.id)) {
+      // console.log(authorTop.id);
+      // console.log(authorsIds);
+      if (!authorsIds.includes(authorTop.id)) {
         newErrorList.push(42);
         addErrorClass(inputAuthors[index]);
       };
@@ -252,7 +256,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               {existingAuthors && existingAuthors.map((author, index) => {
                 return (
                   <>
-                    <option key={index} value={author.id}>
+                    <option key={index} value={JSON.stringify(author)}>
                       {author.first_name} {author.last_name}</option>
                   </>
                 )

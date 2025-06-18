@@ -1,0 +1,18 @@
+.payment-type-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    top: 60px;
+    left: 10px;
+}
+
+.select-payments {
+    width: 10%;
+}
+
+.payment-type-label {
+    margin-bottom: 0.5rem;
+}

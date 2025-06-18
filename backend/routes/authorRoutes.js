@@ -1137,7 +1137,7 @@ router.get("/payments", async (req, res) => {
     });
 
     // Fill in empty months with 0s if necessary
-    if (allPayments.length < 12) {
+    if (allPayments.length < 13) {
       // Get the YYYY-MM combination 12m ago
       const now = new Date();
       let currentYear = now.getFullYear();

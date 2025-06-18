@@ -234,7 +234,8 @@ async function main() {
         contact_phone: "525580416352",
         contact_email: "jlwotton17@mercadolibre.co.mx",
         createdAt: twelveMonthsAgo,
-        color: "#ffe600"
+        color: "#ffe600",
+        comissions: true
       }
     })
 
@@ -243,7 +244,8 @@ async function main() {
         name: "Plataforma Was",
         deal_percentage: 30,
         createdAt: twelveMonthsAgo,
-        color: "#4E5981"
+        color: "#4E5981",
+        comissions: true
       }
     })
 
@@ -594,8 +596,8 @@ async function main() {
         if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
             sale.inventory.bookstore.comissions 
-              ? sale.inventory.price 
-                - userCategory.management_min 
+              ? (sale.inventory.price 
+                - userCategory.management_min) 
                 * sale.quantity 
                 / numberOfAuthors._count.users
               : sale.inventory.price
@@ -607,8 +609,8 @@ async function main() {
         } else {
           salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
             sale.inventory.bookstore.comissions 
-              ? sale.inventory.price 
-                - userCategory.management_min 
+              ? (sale.inventory.price 
+                - userCategory.management_min)
                 * sale.quantity 
                 / numberOfAuthors._count.users
               : sale.inventory.price

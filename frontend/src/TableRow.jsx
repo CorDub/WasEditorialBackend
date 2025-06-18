@@ -23,7 +23,7 @@ function TableRow({headerList, name, delivered, sold, sales, enTienda, total}) {
         <div className={`${headerList[4]}`}>{formatNumber(total)}</div>
       </div>
       {isDetailsOpen && (
-        <div className="">
+        <div>
           <TableRowDetailsHeader />
           <TableRowDetails sales={sales}/>
         </div>

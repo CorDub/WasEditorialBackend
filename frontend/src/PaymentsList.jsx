@@ -7,12 +7,14 @@ import Alert from "./Alert";
 import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
 import Modal from "./Modal";
+import "./PaymentsList.scss";
 
 function PaymentsList() {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [chosenPaymentStatus, setChosenPaymentStatus] = useState("solicited");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
@@ -35,7 +37,8 @@ function PaymentsList() {
             openModal={openModal}
             row={row}
             setModalType={setModalType}
-            type={"payment"}/>
+            type={"payment"}
+            status={chosenPaymentStatus}/>
         </div>
       ),
       muiTableBodyCellProps: {
@@ -66,7 +69,7 @@ function PaymentsList() {
       header: "Periodo",
       accessorKey: "forMonth"
     }
-  ], []);
+  ], [chosenPaymentStatus]);
   const table = useMaterialReactTable({
     columns,
     data,
@@ -86,7 +89,7 @@ function PaymentsList() {
         borderRadius: '15px',
         backgroundColor: "#fff",
         position: "fixed",
-        top: "60px",
+        top: "140px",
         left: "10px",
         width: "99vw"
       }
@@ -155,7 +158,7 @@ function PaymentsList() {
   async function getPendingPayments() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/admin/pendingPayments`, {
+      const response = await fetch(`${baseURL}/admin/payments?status=${chosenPaymentStatus}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -175,12 +178,30 @@ function PaymentsList() {
 
   useEffect(() => {
     getPendingPayments();
-  }, [forceRender])
+    console.log(chosenPaymentStatus)
+  }, [forceRender, chosenPaymentStatus])
 
   return(
     <div className="payments-list"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"payments"}/>
+      <div className="payment-type-choice">
+        <label className="payment-type-label">Pagos seleccionados</label>
+        <select className="select-global select-payments"
+          onChange={(e) => setChosenPaymentStatus(e.target.value)}>
+          <option value="solicited">
+            Solicitados
+          </option>
+          <option value="created">
+            Todavia no solicitados
+          </option>
+          <option  value="paid">
+            Pagados
+          </option>
+        </select>
+        <div>Añadir un costo addicional solamente se puede hacer con un pago que todavía no esta solicitado</div>
+      </div>
+      
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}
         clickedRow={clickedRow} closeModal={closeModal}
         globalFilter={globalFilter} />}

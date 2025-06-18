@@ -597,6 +597,7 @@ router.patch('/bookstore', async (req, res) => {
       contactName,
       contactPhone,
       contactEmail } = req.body;
+
     const updatedBookstore = await prisma.bookstore.update({
       where: {id: id},
       data: {
@@ -609,14 +610,12 @@ router.patch('/bookstore', async (req, res) => {
       }
     });
 
-    if (updatedBookstore) {
-      res.status(200).json({message: "Successfully updated bookstore"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the bookstore"});
-    };
+    
 
+    res.status(200).json({message: "Successfully updated bookstore"});
   } catch(error) {
     console.error("Server error at the update bookstore route:", error);
+    res.status(500).json({error: "There was an issue updating the bookstore"});
   }
 });
 
@@ -1086,6 +1085,13 @@ router.post('/sale', async (req, res) => {
       data: {
         inventoryId: selectedInventory.id,
         quantity: quantity
+      },
+      include: {
+        inventory: {
+          include: {
+            bookstore: true
+          }
+        }
       }
     });
 
@@ -1149,20 +1155,16 @@ router.post('/sale', async (req, res) => {
               data: {
                 userId: id,
                 amount: 
-                // (createdSale.quantity * updatedInventory.price)
-                //   * (userCategory.category.percentage_royalties / 100)
-                //   * (userCategory.category.percentage_management_stores / 100)
-                //   / userIds.length,
                   createdSale.inventory.bookstore.comissions 
-                    ? createdSale.inventory.price 
-                      - userCategory.management_min 
+                    ? (createdSale.inventory.price 
+                      - userCategory.category.management_min) 
                       * createdSale.quantity 
                       / userIds.length
                     : createdSale.inventory.price
                       * createdSale.quantity 
-                      * (userCategory.percentage_management_stores / 100)
-                      * (userCategory.percentage_royalties / 100)
-                      / numberOfAuthors[sale.inventory.book.title],
+                      * (userCategory.category.percentage_management_stores / 100)
+                      * (userCategory.category.percentage_royalties / 100)
+                      / userIds.length,
                 forMonth: currentForMonth
               }
             })
@@ -1173,15 +1175,15 @@ router.post('/sale', async (req, res) => {
               },
               data: {
                 amount: createdSale.inventory.bookstore.comissions 
-                    ? createdSale.inventory.price 
-                      - userCategory.management_min 
+                    ? (createdSale.inventory.price 
+                      - userCategory.category.management_min) 
                       * createdSale.quantity 
                       / userIds.length
                     : createdSale.inventory.price
                       * createdSale.quantity 
-                      * (userCategory.percentage_management_stores / 100)
-                      * (userCategory.percentage_royalties / 100)
-                      / numberOfAuthors[sale.inventory.book.title],
+                      * (userCategory.category.percentage_management_stores / 100)
+                      * (userCategory.category.percentage_royalties / 100)
+                      / userIds.length,
               }
             })
           }
@@ -1596,12 +1598,13 @@ router.post('/transfer', async (req, res) => {
 })
 
 /// Payments routes
-router.get('/pendingPayments', async (req, res) => {
+router.get('/payments', async (req, res) => {
+  const chosenPaymentStatus = req.query.status;
   try {
-    const pendingPayments = await prisma.payment.findMany({
+    const selectedPayments = await prisma.payment.findMany({
       where: {
         isDeleted: false,
-        status: "solicited"
+        status: chosenPaymentStatus
       },
       select: {
         id: true,
@@ -1620,7 +1623,7 @@ router.get('/pendingPayments', async (req, res) => {
       }
     });
 
-    res.status(200).json(pendingPayments);
+    res.status(200).json(selectedPayments);
 
   } catch (error) {
     console.error("\n ERROR FETCHING PAYMENTS \n", error);

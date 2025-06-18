@@ -4,6 +4,7 @@ import TableTotal from "./TableTotal";
 import { useState, useEffect } from "react";
 import "./Table.scss";
 import LoadingWheel from "./LoadingWheel";
+import TableCosts from "./TableCosts";
 
 function Table({data, activeMonth}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -187,6 +188,7 @@ function Table({data, activeMonth}) {
           enTienda={row.enTienda}
           total={row.total}/>
       ))}
+      <TableCosts />
       {totalData && !isLoading && (
         <TableTotal
           headerList={headerList}

@@ -233,7 +233,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }
 
   async function sendToServer() {
-    console.log(book, bookstore);
     try {
       const response = await fetch(`${baseURL}/admin/sale`, {
         method: "POST",

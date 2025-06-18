@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import TableRowDetail from "./TableRowDetail";
 import "./TableRowDetails.scss";
 

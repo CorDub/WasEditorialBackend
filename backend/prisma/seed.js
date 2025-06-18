@@ -212,6 +212,19 @@ async function main() {
       }
     })
 
+    await prisma.user.create({
+      data: {
+        first_name: "Corentin",
+        last_name: "Dubois",
+        country: "Francia",
+        email: "corentindubois22@gmail.com",
+        categoryId: 1,
+        password: await bcrypt.hash("bookboi4", 10),
+        role: Role.author,
+        createdAt: twelveMonthsAgo
+      }
+    })
+
     /// Create Bookstores
 
     await prisma.bookstore.create({
@@ -637,6 +650,7 @@ async function main() {
         })
       }
     }
+
   } catch (error) {
     console.error("Error somewhere", error);
   }

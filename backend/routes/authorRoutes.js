@@ -471,15 +471,11 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
-    // Need this for the category of the author,
-    // which is used in how much author make from the sales
     const user = await prisma.user.findUnique({
       where: {
         id: req.session.user_id
       }
     });
-
-    // Now getting the category
     const userCategory = await prisma.category.findUnique({
       where: {
         id: user.categoryId
@@ -500,8 +496,6 @@ router.get('/monthlySales', async (req, res) => {
     }
 
     // Ensuring sales are grouped by month.
-    // If the month already exist within salesByMonths we add the numbers of the current sale
-    // If not, we create the month with the data of the current sale and the previous scaffold for bookstores
     let salesByMonths = {};
     let numberOfAuthors = {};
     for (const sale of data) {
@@ -521,10 +515,6 @@ router.get('/monthlySales', async (req, res) => {
         numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
       }
 
-      console.log("-----------------------------------------------")
-      console.log("sale", sale)
-      console.log("sale.inventory.bookstore.commissions", sale.inventory.bookstore.comissions)
-      console.log("userCategory.management_min", userCategory.management_min)
       if (salesByMonths[key]) {
         salesByMonths[key]["sales"].push({...sale, 
           comissions: sale.inventory.bookstore.comissions
@@ -543,6 +533,7 @@ router.get('/monthlySales', async (req, res) => {
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
             / numberOfAuthors[sale.inventory.book.id]
+        
       } else {
         salesByMonths[key] = {
           sales: [{...sale, 

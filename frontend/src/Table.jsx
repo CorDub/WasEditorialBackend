@@ -27,6 +27,8 @@ function Table({data, activeMonth}) {
     }
   }, [data, activeMonth]);
 
+  console.log(monthData);
+
   function formatRowData() {
   // From the month data, format it so you can display it in rows
     let rowData = [];
@@ -49,7 +51,7 @@ function Table({data, activeMonth}) {
       for (const row of rowData) {
         if (bookstoreName === row.name) {
           row.sold += sale.quantity
-          row.total += sale.quantity * monthData.ganancia
+          row.total += sale.quantity * (sale.inventory.price - sale.comissions) * parseFloat(sale.sharePerAuthor) / 100;
 
           // Fill in sales details for TableRowDetails
           // If the book object already exists, add the quantity

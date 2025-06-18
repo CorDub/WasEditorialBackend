@@ -144,6 +144,8 @@ function AuthorCommissions() {
     }
   }
 
+  console.log(dataByMonths);
+
   return(
     <div className="author-commissions"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>

@@ -2,6 +2,7 @@ import "./TableRow.scss";
 import formatNumber from "./customHooks/formatNumber";
 import { useState, useEffect } from "react";
 import TableRowDetails from "./TableRowDetails";
+import TableRowDetailsHeader from "./TableRowDetailsHeader";
 
 function TableRow({headerList, name, delivered, sold, sales, enTienda, total}) {
   const [isDetailsOpen, setDetailsOpen] = useState(false);
@@ -21,8 +22,12 @@ function TableRow({headerList, name, delivered, sold, sales, enTienda, total}) {
         <div className={`${headerList[3]}`}>{enTienda}</div>
         <div className={`${headerList[4]}`}>{formatNumber(total)}</div>
       </div>
-      {isDetailsOpen &&
-        <TableRowDetails sales={sales}/>}
+      {isDetailsOpen && (
+        <div className="">
+          <TableRowDetailsHeader />
+          <TableRowDetails sales={sales}/>
+        </div>
+      )}
     </div>
   )
 }

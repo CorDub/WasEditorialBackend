@@ -65,7 +65,9 @@ function Table({data, activeMonth}) {
             row.sales.push({
               book: sale.inventory.book.title,
               price: sale.inventory.price,
+              comissions: sale.comissions,
               ganancia: monthData.ganancia,
+              sharePerAuthor: sale.sharePerAuthor,
               quantity: sale.quantity
             })
           }

@@ -127,8 +127,6 @@ function BookstoresList() {
     }
   });
 
-  console.log(data);
-
   async function fetchBookstores() {
     try {
       setLoading(true);

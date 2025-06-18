@@ -360,11 +360,12 @@ router.get('/sales', async (req, res) => {
       //   * (author.category.percentage_royalties / 100)
       //   / numberOfAuthors[sale.inventory.book.title])
       //   - comissionsCost
+
       const saleValue = sale.inventory.bookstore.comissions 
-        ? sale.inventory.price 
-          - author.category.management_min 
+        ? (sale.inventory.price 
+          - author.category.management_min) 
           * sale.quantity 
-          / numberOfAuthors[sale.inventory.bookstore.comissions]
+          / numberOfAuthors[sale.inventory.book.title]
         : sale.inventory.price
           * sale.quantity
           * (author.category.percentage_management_stores / 100)
@@ -404,7 +405,8 @@ router.get('/sales', async (req, res) => {
         bookstore_name: sale.inventory.bookstore.name,
         price: sale.inventory.price || 199.99,
         value: sale.inventory.bookstore.comissions
-          ? ((sale.inventory.price || 199.99) - author.category.management_min * sale.quantity)
+          ? ((sale.inventory.price || 199.99) - author.category.management_min)
+            * sale.quantity
             / numberOfAuthors[sale.inventory.book.title]
           : ((sale.inventory.price || 199.99) * sale.quantity)
             * (author.category.percentage_management_stores / 100)
@@ -450,7 +452,8 @@ router.get('/monthlySales', async (req, res) => {
           select: {
             bookstore: {
               select: {
-                name: true
+                name: true,
+                comissions: true,
               }
             },
             book: {
@@ -518,38 +521,57 @@ router.get('/monthlySales', async (req, res) => {
         numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
       }
 
+      console.log("-----------------------------------------------")
+      console.log("sale", sale)
+      console.log("sale.inventory.bookstore.commissions", sale.inventory.bookstore.comissions)
+      console.log("userCategory.management_min", userCategory.management_min)
       if (salesByMonths[key]) {
-        salesByMonths[key]["sales"].push(sale);
+        salesByMonths[key]["sales"].push({...sale, 
+          comissions: sale.inventory.bookstore.comissions
+            ? userCategory.management_min
+            : sale.inventory.price 
+              * (userCategory.percentage_management_stores / 100)
+              * (userCategory.percentage_royalties / 100),
+          sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
+        });
         salesByMonths[key]["total"] += sale.inventory.bookstore.comissions 
-          ? (sale.inventory.price - userCategory.management_min * sale.quantity)
+          ? (sale.inventory.price - userCategory.management_min)
+            * sale.quantity
             / numberOfAuthors[sale.inventory.book.id]
           : sale.inventory.price
             * sale.quantity
             * (userCategory.percentage_management_stores / 100)
             * (userCategory.percentage_royalties / 100)
-            / numberOfAuthors[sale.inventory.book.title]
+            / numberOfAuthors[sale.inventory.book.id]
       } else {
         salesByMonths[key] = {
-          sales: [sale],
+          sales: [{...sale, 
+          comissions: sale.inventory.bookstore.comissions
+            ? userCategory.management_min
+            : sale.inventory.price 
+              * (userCategory.percentage_management_stores / 100)
+              * (userCategory.percentage_royalties / 100),
+          sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
+        }],
           ganancia: (
             sale.inventory.bookstore.comissions 
-              ? (sale.inventory.price - userCategory.management_min * sale.quantity)
+              ? (sale.inventory.price - userCategory.management_min)
                 / numberOfAuthors[sale.inventory.book.id]
               : sale.inventory.price
-                * sale.quantity
                 * (userCategory.percentage_management_stores / 100)
                 * (userCategory.percentage_royalties / 100)
-                / numberOfAuthors[sale.inventory.book.title]
+                / numberOfAuthors[sale.inventory.book.id]
           ),
           total: (
             sale.inventory.bookstore.comissions 
-              ? (sale.inventory.price - userCategory.management_min * sale.quantity)
+              ? (sale.inventory.price - userCategory.management_min)
+                * sale.quantity
                 / numberOfAuthors[sale.inventory.book.id]
               : sale.inventory.price
                 * sale.quantity
                 * (userCategory.percentage_management_stores / 100)
                 * (userCategory.percentage_royalties / 100)
-                / numberOfAuthors[sale.inventory.book.title]
+                / numberOfAuthors[sale.inventory.book.id]
           ),
           // deep cloning the bookstores to avoid having the same object being mutated later
           // and shared across different months instead of a different object every time

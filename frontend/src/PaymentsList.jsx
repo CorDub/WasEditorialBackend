@@ -89,7 +89,7 @@ function PaymentsList() {
         borderRadius: '15px',
         backgroundColor: "#fff",
         position: "fixed",
-        top: "140px",
+        top: "160px",
         left: "10px",
         width: "99vw"
       }
@@ -133,8 +133,21 @@ function PaymentsList() {
   function openModal(type, clickedRow) {
     setClickedRow(clickedRow);
     switch (type) {
+      case 'adding':
+        setModalAction("adding");
+        setModalType("cost");
+        break;
       case 'edit':
         setModalAction("edit");
+        setModalType("payment");
+        break;
+      case 'editCost' : 
+        setModalAction("edit");
+        setModalType("cost");
+        break;
+      case 'delete' :
+        setModalAction("delete");
+        setModalType("cost");
         break;
       default:
         console.log("Unknown error")
@@ -178,7 +191,6 @@ function PaymentsList() {
 
   useEffect(() => {
     getPendingPayments();
-    console.log(chosenPaymentStatus)
   }, [forceRender, chosenPaymentStatus])
 
   return(

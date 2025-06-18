@@ -1654,6 +1654,32 @@ router.patch('/markAsPaid', async (req, res) => {
   }
 })
 
+/// Costs routes
+
+router.post('/cost', async (req, res) => {
+  try {
+    const { 
+      paymentId,
+      amount,
+      note
+    } = req.body;
+
+    const createdCost = await prisma.cost.create({
+      data: {
+        paymentId: paymentId,
+        amount: amount,
+        note: note
+      }
+    });
+
+    if (createdCost) {
+      res.status(200).json({message: "Cost created sucessfully"});
+    }
+  } catch (error) {
+    console.error("\n ERROR CREATING THE ADDITIONAL COST \n", error);
+    res.status(500).json({error:"a server error occurred while creating the cost"})
+  }
+})
 
 /// soft delete on cascade
 

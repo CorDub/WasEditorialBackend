@@ -43,10 +43,6 @@ function TableActions ({
     }
   }, [row])
 
-  useEffect(() => {
-    console.log(status)
-  }, [status])
-
   function displayingActions() {
     if (gearRef.current.classList.contains("displaying")) {
       gearRef.current.classList.remove("displaying");

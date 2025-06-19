@@ -6,7 +6,7 @@ import "./Table.scss";
 import LoadingWheel from "./LoadingWheel";
 import TableCosts from "./TableCosts";
 
-function Table({data, activeMonth}) {
+function Table({data, activeMonth, paymentInfo}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [monthData, setMonthData] = useState(null);
   const [headerList, setHeaderList] = useState([
@@ -20,6 +20,7 @@ function Table({data, activeMonth}) {
   const [tiendaData, setTiendaData] = useState(null);
   const [totalData, setTotalData] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [costs, setCosts] = useState([]);
 
   /// Select only the data for the month displayed
   useEffect(() => {
@@ -27,8 +28,6 @@ function Table({data, activeMonth}) {
       setMonthData(data[activeMonth][1])
     }
   }, [data, activeMonth]);
-
-  console.log(monthData);
 
   function formatRowData() {
   // From the month data, format it so you can display it in rows
@@ -171,6 +170,32 @@ function Table({data, activeMonth}) {
     }
   }, [data, activeMonth])
 
+  async function fetchCosts() {
+    if (paymentInfo && paymentInfo.id) {
+      try {
+        const response = await fetch(`${baseURL}/author/costs?paymentId=${paymentInfo.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type":"application/json"
+          },
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          const costs = await response.json();
+          console.log(costs);
+          setCosts(costs);
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchCosts()
+  }, [paymentInfo])
+
   return (
     <div className="table">
       <TableHeader headerList={headerList}/>
@@ -188,7 +213,9 @@ function Table({data, activeMonth}) {
           enTienda={row.enTienda}
           total={row.total}/>
       ))}
-      <TableCosts />
+      {costs.length > 0 &&
+        <TableCosts costs={costs}/>
+      }
       {totalData && !isLoading && (
         <TableTotal
           headerList={headerList}

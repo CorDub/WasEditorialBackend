@@ -116,6 +116,7 @@ function AuthorCommissions() {
         sessionStorage.setItem("authorPayments", JSON.stringify(data));
         console.log("cache storage");
         setPayments(data);
+        setPaymentInfo(data[0]);
         setForceRender(false);
       };
     } catch(error) {
@@ -144,7 +145,7 @@ function AuthorCommissions() {
     }
   }
 
-  console.log(dataByMonths);
+  console.log(paymentInfo);
 
   return(
     <div className="author-commissions"
@@ -162,7 +163,8 @@ function AuthorCommissions() {
         <Table
           data={dataByMonths}
           activeMonth={activeMonth}
-          setActiveMonth={setActiveMonth}/>
+          setActiveMonth={setActiveMonth}
+          paymentInfo={paymentInfo}/>
         {isDemandPaymentPossible === "available" && (
           <div className="author-commissions-solicitar-pago"
             onClick={() => setModalOpen(true)}>Solicitar Pago</div>

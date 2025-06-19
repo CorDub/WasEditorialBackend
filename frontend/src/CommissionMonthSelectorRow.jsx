@@ -52,6 +52,7 @@ function CommissionMonthSelectorRow({
   function addPaymentInfo() {
     if (month) {
       setPaymentInfo({
+        "id": month.id,
         "month": changeDateFormat(month.forMonth),
         "monthOriginal" : month.forMonth,
         "amount": month.amount,

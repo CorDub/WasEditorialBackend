@@ -1,9 +1,18 @@
 .table-costs {
-    display: flex;
     margin: 0.5rem;
     padding: 0.5rem;
     border-radius: 15px;
     background-color: #d6d6d6;
+    border-bottom: grey;
+}
+
+.table-costs:hover {
+    cursor: pointer;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.table-costs-line {
+    display: flex;
 }
 
 .table-costs-title {

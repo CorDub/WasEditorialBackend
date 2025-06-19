@@ -20,6 +20,7 @@ import AuthorSales from './AuthorSales.jsx';
 import AuthorCommissions from './AuthorComissions.jsx';
 import ProfilePage from './ProfilePage.jsx';
 import PaymentsList from './PaymentsList.jsx';
+import CostsList from "./CostsList.jsx";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/admin/books" element={<BooksList />} />
           <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/admin/payments' element={<PaymentsList />} />
+          <Route path='/admin/costs' element={<CostsList />} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/profile-page' element={<ProfilePage/>} />

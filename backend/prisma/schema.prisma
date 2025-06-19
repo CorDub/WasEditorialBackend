@@ -161,7 +161,7 @@ model Payment {
   id        Int           @id @default(autoincrement())
   user      User          @relation(fields: [userId], references: [id])
   userId    Int
-  cost      Cost[]
+  costs     Cost[]
   amount    Float
   forMonth  String
   status    PaymentStatus @default(created)
@@ -173,9 +173,12 @@ model Payment {
 }
 
 model Cost {
-  id        Int     @id @default(autoincrement())
-  payment   Payment @relation(fields: [paymentId], references: [id])
+  id        Int      @id @default(autoincrement())
+  payment   Payment  @relation(fields: [paymentId], references: [id])
   paymentId Int
   note      String?
   amount    Float
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

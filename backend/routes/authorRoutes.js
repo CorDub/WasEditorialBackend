@@ -1288,7 +1288,11 @@ router.get("/costs", async (req, res) => {
   try {
     const fetchedCosts = await prisma.cost.findMany({
       where: {
-        paymentId: paymentIdQuery
+        paymentId: paymentIdQuery,
+        isDeleted: false,
+        payment: {
+          userId: req.session.user_id
+        }
       },
       select: {
         id: true,

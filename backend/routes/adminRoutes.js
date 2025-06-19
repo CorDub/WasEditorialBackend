@@ -1656,6 +1656,44 @@ router.patch('/markAsPaid', async (req, res) => {
 
 /// Costs routes
 
+router.get('/currentCosts', async (req, res) => {
+  try {
+    const currentCosts = await prisma.cost.findMany({
+      where: {
+        isDeleted: false,
+        payment: {
+          status: "created",
+          isDeleted: false
+        }
+      },
+      select: {
+        id: true,
+        paymentId: true,
+        note: true,
+        amount: true,
+        payment: {
+          select: {
+            forMonth: true,
+            user: {
+              select: {
+                first_name: true,
+                last_name: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (currentCosts) {
+      res.status(200).json(currentCosts);
+    }
+  } catch(error) {
+    console.error("\n ERROR getting current costs from server \n", error);
+    res.status(500).json({error:"a server error occurred while fetching payments"})
+  }
+})
+
 router.post('/cost', async (req, res) => {
   try {
     const { 
@@ -1695,6 +1733,93 @@ router.post('/cost', async (req, res) => {
   } catch (error) {
     console.error("\n ERROR CREATING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while creating the cost"})
+  }
+})
+
+router.patch("/cost/:id", async (req, res) => {
+  try {
+    const costId = parseInt(req.params.id);
+    const {
+      amount,
+      note
+    } = req.body;
+
+    const previousCost = await prisma.cost.findUnique({
+      where: {
+        id: costId
+      }
+    })
+    
+    const updatedCost = await prisma.cost.update({
+      where: {
+        id: costId
+      },
+      data: {
+        amount: amount,
+        note: note
+      }
+    })
+
+    if (updatedCost) {
+      const previousPayment = await prisma.payment.findUnique({
+        where: {
+          id: updatedCost.paymentId
+        }
+      });
+
+      if (previousPayment) {
+        const updatedPayment = await prisma.payment.update({
+          where: {
+            id: updatedCost.paymentId
+          },
+          data: {
+            amount: previousPayment.amount + previousCost.amount - updatedCost.amount
+          }
+        })
+      }
+    }
+    res.status(200).json({message: "The cost was updated successfully"});
+  } catch (error) {
+    console.error("\n ERROR UPDATING THE ADDITIONAL COST \n", error);
+    res.status(500).json({error:"a server error occurred while updating the cost"})
+  }
+}) 
+
+router.delete('/cost/:id', async (req, res) => {
+  try {
+    const costId = parseInt(req.params.id);
+    const markedAsDeletedCost = await prisma.cost.update({
+      where: {
+        id: costId
+      },
+      data: {
+        isDeleted: true
+      }
+    });
+
+    if (markedAsDeletedCost) {
+      const previousPayment = await prisma.payment.findUnique({
+        where: {
+          id: markedAsDeletedCost.paymentId
+        }
+      });
+
+      if (previousPayment) {
+        const updatedPayment = await prisma.payment.update({
+          where: {
+            id: markedAsDeletedCost.paymentId
+          },
+          data: {
+            amount: previousPayment.amount + markedAsDeletedCost.amount
+          }
+        })
+      }
+    }
+
+    res.status(200).json({message: "The cost was deleted successfully"});
+  } catch (error) {
+    console.error("\n ERROR DELETING THE ADDITIONAL COST \n", error);
+    res.status(500).json({error:"a server error occurred while deleting the cost"})
   }
 })
 

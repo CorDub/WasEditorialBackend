@@ -15,7 +15,7 @@ function formatNumber(total) {
   }
 
   if (splitTotal.length < 2) {
-    return "$ " + firstPart;
+    return "$ " + firstPart + ",00";
   };
 
   const secondPart = splitTotal[1].substring(0,2);

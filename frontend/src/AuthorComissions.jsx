@@ -99,6 +99,7 @@ function AuthorCommissions() {
       if (cachedAuthorPayments && !forceRender) {
         console.log("cache hit");
         setPayments(JSON.parse(cachedAuthorPayments));
+        setPaymentInfo(JSON.parse(cachedAuthorPayments)[0]);
         return
       }
 

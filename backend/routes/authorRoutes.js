@@ -1127,6 +1127,7 @@ router.get("/payments", async (req, res) => {
         }
       },
       select: {
+        id: true,
         amount: true,
         forMonth: true,
         status: true
@@ -1279,6 +1280,29 @@ router.get("/completeInventory", async (req, res) => {
   } catch (error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})
+  }
+})
+
+router.get("/costs", async (req, res) => {
+  const paymentIdQuery = parseInt(req.query.paymentId);
+  try {
+    const fetchedCosts = await prisma.cost.findMany({
+      where: {
+        paymentId: paymentIdQuery
+      },
+      select: {
+        id: true,
+        note: true,
+        amount: true
+      }
+    });
+
+    if (fetchedCosts) {
+      res.status(200).json(fetchedCosts);
+    }
+  } catch(error) {
+    console.log("\n ERROR WHILE FETCHING COSTS FROM THE SERVER \n", error);
+    res.status(500).json({error: "a server error occurred while fetching costs."})
   }
 })
 

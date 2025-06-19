@@ -123,6 +123,11 @@ function Table({data, activeMonth, paymentInfo}) {
       totalData.enTienda += row.enTienda,
       totalData.total += row.total
     }
+
+    for (const cost of costs) {
+      totalData.total -= cost.amount
+    }
+    
     setTotalData(totalData);
   }
 
@@ -130,7 +135,7 @@ function Table({data, activeMonth, paymentInfo}) {
     if (rowData) {
       createTotalData();
     }
-  }, [rowData])
+  }, [rowData, costs])
 
   // Get data for the "in tienda" column
   async function fetchTiendaData() {

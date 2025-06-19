@@ -1673,6 +1673,23 @@ router.post('/cost', async (req, res) => {
     });
 
     if (createdCost) {
+      const previousPayment = await prisma.payment.findUnique({
+        where: {
+          id: paymentId
+        },
+        select: {
+          amount: true
+        }
+      });
+
+      const updatedPayment = await prisma.payment.update({
+        where: {
+          id: paymentId
+        },
+        data: {
+          amount: previousPayment.amount - createdCost.amount
+        }
+      })
       res.status(200).json({message: "Cost created sucessfully"});
     }
   } catch (error) {

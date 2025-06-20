@@ -22,6 +22,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  // --user-font-size: 1rem;
 }
 
 a {
@@ -209,7 +210,7 @@ a {
   margin-bottom: 0.5rem;
   width: 70%;
   box-sizing: border-box;
-  font-size: clamp(0.8rem, 1rem, 1.2rem);
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 .global-input:focus-visible {
@@ -225,6 +226,7 @@ a {
   width: 70%;
   color: grey;
   box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 .select-global:focus-visible {
@@ -250,6 +252,17 @@ a {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
   // padding-bottom: 0.5rem;
+}
+
+.general-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 1.5rem;
 }
 
 .login-error {
@@ -327,14 +340,17 @@ a {
   border-radius: 15px;
   padding: 0.5rem;
   position: fixed;
-  width: 90px;
-  height: 40px;
+  // width: 90px;
+  // height: 40px;
   // top: 500px;
   // bottom: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  p {
+    margin: 0
+  }
 }
 
 .tooltip-message {

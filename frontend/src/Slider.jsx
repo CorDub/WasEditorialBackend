@@ -96,10 +96,10 @@ function Slider({value, setNewValue, isEditOpen}) {
           ? <div className="slider-ball"
             ref={sliderBallRef}
             onMouseDown={() => setTracking(true)}
-            style={{left:`${-4 + horizontalDisplacement}px`}}></div>
+            style={{left:`${-7.5 + horizontalDisplacement}px`}}></div>
           : <div className="slider-ball slider-ball-closed"
             ref={sliderBallRef}
-            style={{left:`${-4 + horizontalDisplacement}px`}}></div>
+            style={{left:`${-7.5 + horizontalDisplacement}px`}}></div>
         }
       </div>
       {isEditOpen && (

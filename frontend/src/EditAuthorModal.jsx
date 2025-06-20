@@ -9,10 +9,10 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [firstName, setFirstName] = useState(clickedRow.first_name);
   const [lastName, setLastName] = useState(clickedRow.last_name);
   const [country, setCountry] = useState(clickedRow.country);
-  const [referido, setReferido] = useState(clickedRow.referido);
-  const [email, setEmail] = useState(clickedRow.email);
-  const [category, setCategory] = useState(clickedRow.category.type );
-  const countries = [
+  const [referido, setReferido] = useState(clickedRow.referido || "");
+  const [email, setEmail] = useState(clickedRow.email || "");
+  const [category, setCategory] = useState(clickedRow.category.type || 0);
+  const [countries, setCountries] = useState([
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
     "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
@@ -25,7 +25,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     "Jamaica", "Japón", "Jordania",
     "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
     "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
     "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
     "Omán",
     "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
@@ -35,20 +35,42 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
     "Yemen",
     "Zambia", "Zimbabue"
-  ];
+  ]);
   const [errors, setErrors] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [displayedCategories, setDisplayedCategories] = useState([]);
+
+  useEffect(() => {
+    for (let i = 0; i < countries.length; i++) {
+      if (countries[i] === clickedRow.country) {
+        countries.splice(i, 1);
+      } 
+    }
+    countries.splice(0, 0, clickedRow.country);
+    setCountries(countries);
+  }, [clickedRow])
+
+  useEffect(() => {
+    let displayedCategories = []
+    displayedCategories.push(parseInt(clickedRow.category.type))
+    for (let i = 0; i < categories.length; i++) {
+      if (parseInt(categories[i].type) === parseInt(clickedRow.category.type)) {
+        continue
+      } else {
+        displayedCategories.push(parseInt(categories[i].type))
+      }
+    }
+    setDisplayedCategories(displayedCategories);
+  }, [clickedRow, categories])
 
   async function editAuthor(e) {
     let fullCategory = {};
     categories.map((cat) => {
-      console.log(cat.type);
       if (cat.type === category) {
         fullCategory = cat;
         return;
       }
     });
-    console.log(category);
 
     e.preventDefault();
     try {
@@ -211,6 +233,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         if (response.ok === true) {
           const dataCategories = await response.json();
           setCategories(dataCategories);
+          console.log(dataCategories);
         } else {
           console.log("There was an error fetching categories:", response.status);
         };
@@ -233,40 +256,56 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   }
 
   return (
-    <div className="modal-overlay">
       <div className="modal-proper">
         <div className="form-title">
           <p>Editar autor</p>
           <p>{clickedRow.first_name} {clickedRow.last_name}</p>
         </div>
         <form className="global-form">
-          <input type="text" value={`${firstName}`}
-            className="global-input" id='adding-author-first-name'
-            onChange={(e)=>setFirstName(e.target.value)}></input>
-          <input type="text" value={`${lastName}`} placeholder="Apellido"
-            className="global-input" id="adding-author-last-name"
-            onChange={(e)=>setLastName(e.target.value)}></input>
-          <select className="select-global"
-            id="country-select"
-            onChange={(e) => dropDownChange(e, "Country")} >
-            <option value={`${country}`}>{country}</option>
-            {countries.map((country, index) => (
-              <option key={index} value={country} placeholder="Pais">{country}</option>
-            ))}
-          </select>
-          <input type="text" value={`${referido}`} placeholder='Referido'
-            className="global-input" id="adding-author-referido"
-            onChange={(e)=>setReferido(e.target.value)}></input>
-          <input type="text" value={`${email}`} placeholder="Correo"
-            className="global-input" id="adding-author-email"
-            onChange={(e)=>setEmail(e.target.value)}></input>
-          <select className="select-global" id="category-select"
-            onChange={(e) => dropDownChange(e, "Category")}>
-            <option value={category} placeholder="Categoria">{category ? category : "Categoria"}</option>
-            {categories && categories.map((cat, index) => (
-              <option key={index} value={cat.type}>{cat.type}</option>
-            ))}
-          </select>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Nombre</label>
+            <input type="text" value={`${firstName}`}
+              className="global-input" id='adding-author-first-name'
+              onChange={(e)=>setFirstName(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Apellido</label>
+            <input type="text" value={`${lastName}`} placeholder="Apellido"
+              className="global-input" id="adding-author-last-name"
+              onChange={(e)=>setLastName(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">País</label>
+            <select className="select-global"
+              id="country-select"
+              onChange={(e) => dropDownChange(e, "Country")} >
+              {countries.map((country, index) => (
+                <option key={index} value={country} placeholder="Pais">{country}</option>
+              ))}
+            </select>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Referido</label>
+            <input type="text" value={`${referido || ""}`}
+              className="global-input" id="adding-author-referido"
+              onChange={(e)=>setReferido(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Correo</label>
+            <input type="text" value={`${email || ""}`}
+              className="global-input" id="adding-author-email"
+              onChange={(e)=>setEmail(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Categoría</label>
+            <select className="select-global" id="category-select"
+              onChange={(e) => dropDownChange(e, "Category")}>
+              {/* <option value={category} placeholder="Categoria">{category ? category : "Categoria"}</option> */}
+              {displayedCategories && displayedCategories.map((cat, index) => (
+                <option key={index} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
         </form>
         <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
         <div className="modal-actions">
@@ -276,7 +315,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             onClick={handleSubmit}>Confirmar</button>
         </div>
       </div>
-    </div>
   )
 }
 

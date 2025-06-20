@@ -40,7 +40,8 @@ function Modal({
   closeModal,
   pageIndex,
   globalFilter,
-  paymentInfo }) {
+  paymentInfo,
+  userFontSize }) {
   const potentialModals = {
     admin: {
       adding: AddingAdminModal,
@@ -114,7 +115,8 @@ function Modal({
           closeModal={closeModal}
           pageIndex={pageIndex}
           globalFilter={globalFilter}
-          paymentInfo={paymentInfo}/>}
+          paymentInfo={paymentInfo}
+          userFontSize={userFontSize}/>}
     </div>
   )
 }

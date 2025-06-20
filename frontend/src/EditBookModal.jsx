@@ -5,12 +5,12 @@ import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
 import AddingBookErrorList from "./AddingBookErrorList";
 
-function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
+function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFontSize }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [title, setTitle] = useState(clickedRow.title);
-  const [pasta, setPasta] = useState(clickedRow.pasta);
+  const [pasta, setPasta] = useState(clickedRow.pasta || '');
   const [isbn, setIsbn] = useState(clickedRow.isbn);
   const [authors, setAuthors] = useState(clickedRow.users);
   const [existingAuthors, setExistingAuthors] = useState(null);
@@ -18,6 +18,18 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errorList, setErrorList] = useState([]);
+  const [pastaDisplay, setPastaDisplay] = useState([]);
+
+  useEffect(() => {
+    let possiblePasta = ["Blanda", "Dura"]
+    for (let i = 0; i < possiblePasta.length; i++) {
+      if (possiblePasta[i] == clickedRow.pasta) {
+        possiblePasta.splice(i, 1);
+      } 
+    }
+    possiblePasta.splice(0, 0, clickedRow.pasta);
+    setPastaDisplay(possiblePasta);
+  }, [clickedRow.pasta])
 
   async function fetchUsers() {
     try {
@@ -31,7 +43,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setExistingAuthors(data);
       }
 
@@ -236,62 +247,78 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <p>{clickedRow.title}</p>
         </div>
         <form className="global-form" onSubmit={handleSubmit}>
-        <input type='text' value={title}
-          className="global-input" id="adding-book-title"
-          onChange={(e) => setTitle(e.target.value)}></input>
-        <select onChange={(e) =>dropDownChange(e, "Pasta")}
-          className="select-global" id="pasta-select">
-          <option value={pasta}>{pasta}</option>
-          <option value="Blanda">Blanda</option>
-          <option value="Dura">Dura</option>
-        </select>
-        <input type='text' value={isbn} placeholder="ISBN"
-          className="global-input" id="adding-book-isbn"
-          onChange={(e) => setIsbn(e.target.value)}></input>
-        {authors.map((author, index) => (
-          <div key={index} className="book-edit-author-dropdown">
-            <select onChange={(e) =>dropDownChange(e, "Autor", index)}
-              className="select-global" id={`author-select-${index}`}>
-              <option key={index}>{authors[index].first_name} {authors[index].last_name}</option>
-              {existingAuthors && existingAuthors.map((author, index) => {
-                return (
-                  <>
-                    <option key={index} value={JSON.stringify(author)}>
-                      {author.first_name} {author.last_name}</option>
-                  </>
-                )
-              })}
-            </select>
-            <div className="additional-authors-buttons">
-              <Tooltip message={tooltipMessage} x={x} y={y}/>
-              <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
-                id={`plus-icon-${index}`}
-                onMouseEnter={() => toggleTooltip(
-                  "Añadir autor a la lista de autores del libro",
-                  `plus-icon-${index}`)}
-                onMouseLeave={() => toggleTooltip(
-                  "Añadir autor a la lista de autores del libro",
-                  `plus-icon-${index}`)}
-                className="button-icon"/>
-              {authors.length > 1 &&
-                <>
-                  <Tooltip
-                    message={tooltipMessage}
-                    x={x}
-                    y={y}/>
-                  <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
-                    id={`cross-icon-${index}`}
-                    onMouseEnter={() => toggleTooltip(
-                      "Eliminar el autor de la lista de autores del libro",
-                      `cross-icon-${index}`)}
-                    onMouseLeave={() => toggleTooltip(
-                      "Eliminar el autor de la lista de autores del libro",
-                      `cross-icon-${index}`)}
-                    className="button-icon"/>
-                </>}
+          <div className="modal-form-line">
+            <label className="modal-form-label">Título</label>
+            <input type='text' value={title}
+              className="global-input" id="adding-book-title"
+              onChange={(e) => setTitle(e.target.value)}></input>
             </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Pasta</label>
+            <select onChange={(e) =>dropDownChange(e, "Pasta")}
+              className="select-global" id="pasta-select">
+              {/* <option value={pasta}>{pasta}</option>
+              <option value="Blanda">Blanda</option>
+              <option value="Dura">Dura</option> */}
+              {pastaDisplay.map((pasta, index) => (
+                <option key={index} value={pasta}>{pasta}</option>
+              ))}
+            </select>
           </div>
-        ))}
+          <div className="modal-form-line">
+            <label className="modal-form-label">ISBN</label>
+            <input type='text' value={isbn} placeholder="ISBN"
+              className="global-input" id="adding-book-isbn"
+              onChange={(e) => setIsbn(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Autores</label>
+            {authors.map((author, index) => (
+              <div key={index} className="book-edit-author-dropdown">
+                <select onChange={(e) =>dropDownChange(e, "Autor", index)}
+                  className="select-global" id={`author-select-${index}`}>
+                  <option key={index}>{authors[index].first_name} {authors[index].last_name}</option>
+                  {existingAuthors && existingAuthors.map((author, index) => {
+                    return (
+                      <>
+                        <option key={index} value={JSON.stringify(author)}>
+                          {author.first_name} {author.last_name}</option>
+                      </>
+                    )
+                  })}
+                </select>
+                <div className="additional-authors-buttons">
+                  <Tooltip message={tooltipMessage} x={x} y={y} userFontSize={userFontSize}/>
+                  <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
+                    id={`plus-icon-${index}`}
+                    onMouseEnter={() => toggleTooltip(
+                      "Añadir autor a la lista de autores",
+                      `plus-icon-${index}`)}
+                    onMouseLeave={() => toggleTooltip(
+                      "Añadir autor a la lista de autores",
+                      `plus-icon-${index}`)}
+                    className="button-icon"/>
+                  {authors.length > 1 &&
+                    <>
+                      <Tooltip
+                        message={tooltipMessage}
+                        x={x}
+                        y={y}
+                        userFontSize={userFontSize}/>
+                      <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
+                        id={`cross-icon-${index}`}
+                        onMouseEnter={() => toggleTooltip(
+                          "Eliminar el autor de la lista de autores",
+                          `cross-icon-${index}`)}
+                        onMouseLeave={() => toggleTooltip(
+                          "Eliminar el autor de la lista de autores",
+                          `cross-icon-${index}`)}
+                        className="button-icon"/>
+                    </>}
+                </div>
+              </div>
+            ))}
+          </div>
         <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

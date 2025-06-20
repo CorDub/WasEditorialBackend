@@ -1,5 +1,5 @@
 import useCheckSuperAdmin from "./customHooks/useCheckSuperAdmin";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
@@ -16,6 +16,25 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const lastNameRef = useRef();
   const emailRef = useRef();
   const roleRef = useRef();
+  const [roles, setRoles] = useState([]);
+
+
+  useEffect(() => {
+    let orderedRoles = []
+    let possibleRoles = [
+      {value: "superadmin", display:"Superadmin"}, 
+      {value: "admin", display: "Admin"}, 
+      {value: "author", display: "Autor"}];
+    orderedRoles.push(possibleRoles.find(role => role.value === clickedRow.role));
+    for (const role of possibleRoles) {
+      if (role.value === clickedRow.role) {
+        continue;
+      } else {
+        orderedRoles.push(role);
+      }
+    }
+    setRoles(orderedRoles);
+  }, [clickedRow])
 
   async function sendToServer() {
     try {
@@ -137,26 +156,37 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         <p>{clickedRow.first_name} {clickedRow.last_name}</p>
       </div>
       <form className="global-form">
-        <input type='text' placeholder="Nombre"
-          value={firstName}
-          className="global-input" id='adding-author-first-name'
-          ref={firstNameRef}
-          onChange={(e) => setFirstName(e.target.value)}></input>
-        <input type='text' placeholder="Apellido" value={lastName}
-          className="global-input" id="adding-author-last-name"
-          ref={lastNameRef}
-          onChange={(e) => setLastName(e.target.value)}></input>
-        <input type='text' placeholder="Correo" value={email}
-          className="global-input" id="adding-author-email"
-          ref={emailRef}
-          onChange={(e) => setEmail(e.target.value)}></input>
-        <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
-          ref={roleRef}>
-          <option value={role}>{role}</option>
-          <option value="superadmin">Superadmin</option>
-          <option value="admin">Admin</option>
-          <option value="author">Usuario</option>
-        </select>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Nombre</label>
+          <input type='text' placeholder="Nombre"
+            value={firstName}
+            className="global-input" id='adding-author-first-name'
+            ref={firstNameRef}
+            onChange={(e) => setFirstName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Apellido</label>
+          <input type='text' placeholder="Apellido" value={lastName}
+            className="global-input" id="adding-author-last-name"
+            ref={lastNameRef}
+            onChange={(e) => setLastName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Correo</label>
+          <input type='text' placeholder="Correo" value={email}
+            className="global-input" id="adding-author-email"
+            ref={emailRef}
+            onChange={(e) => setEmail(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Role</label>
+          <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
+            ref={roleRef}>
+            {roles.map((role, index) => (
+              <option key={index} value={role.value}>{role.display}</option>
+            ))}
+          </select>
+        </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

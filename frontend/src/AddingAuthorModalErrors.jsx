@@ -39,7 +39,7 @@ function AddingAuthorModalErrors({ errors, setErrors }) {
   }, []);
 
   return (
-    <div className="login-errors">
+    <div className="general-error">
       {errors.length === 0 ?
         null :
         errors.map((error, index) => (

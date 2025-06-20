@@ -94,33 +94,51 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <p>{clickedRow.name}</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Nombre" value={name}
-          className="global-input" id="adding-bookstore-name"
-          onChange={(e) => setName(e.target.value)}></input>
-        <input type='text' placeholder="% Acuerdo" value={dealPercentage}
-          className="global-input" id="adding-bookstore-dealPercentage"
-          onChange={(e) => setDealPercentage(e.target.value)}></input>
-        <select className="select-global"
-          onChange={(e) => setComissions(e.target.value === "true")}>
-          {comissions 
-            ? <>
-              <option value="true">Sí</option>
-              <option value="false">No</option>
-            </>
-            : <>
-              <option value="false">No</option>
-              <option value="true">Sí</option>
-            </>}
-        </select>
-        <input type='text' placeholder="Nombre del contacto" value={contactName}
-          className="global-input" id="adding-bookstore-contactName"
-          onChange={(e) => setContactName(e.target.value)}></input>
-        <input type='text' placeholder="Téléfono" value={contactPhone}
-          className="global-input" id="adding-bookstore-contactPhone"
-          onChange={(e) => setContactPhone(e.target.value)}></input>
-        <input type='text' placeholder="Correo" value={contactEmail}
-          className="global-input" id="adding-bookstore-contactEmail"
-          onChange={(e) => setContactEmail(e.target.value)}></input>
+        <div className="modal-form-line">
+            <label className="modal-form-label">Nombre</label>
+            <input type='text' placeholder="Nombre" value={name}
+              className="global-input" id="adding-bookstore-name"
+              onChange={(e) => setName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+            <label className="modal-form-label">Percentage de acuerdo</label>
+            <input type='text' placeholder="% Acuerdo" value={dealPercentage}
+              className="global-input" id="adding-bookstore-dealPercentage"
+              onChange={(e) => setDealPercentage(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Comisiones</label>
+          <select className="select-global"
+            onChange={(e) => setComissions(e.target.value === "true")}>
+            {comissions 
+              ? <>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </>
+              : <>
+                <option value="false">No</option>
+                <option value="true">Sí</option>
+              </>}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Nombre del contacto</label>
+          <input type='text' placeholder="Nombre del contacto" value={contactName}
+            className="global-input" id="adding-bookstore-contactName"
+            onChange={(e) => setContactName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Teléfono</label>
+          <input type='text' placeholder="Teléfono" value={contactPhone}
+            className="global-input" id="adding-bookstore-contactPhone"
+            onChange={(e) => setContactPhone(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Correo</label>
+          <input type='text' placeholder="Correo" value={contactEmail}
+            className="global-input" id="adding-bookstore-contactEmail"
+            onChange={(e) => setContactEmail(e.target.value)}></input>
+        </div>
         <AddingBookstoreErrorList errorList={errorList} setErrorList={setErrorList}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

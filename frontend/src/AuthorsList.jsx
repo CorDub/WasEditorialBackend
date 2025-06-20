@@ -200,7 +200,7 @@ function AuthorsList() {
   }, [forceRender]);
 
   return (
-    <>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"autores"}/>
       {isModalOpen &&
         <Modal
@@ -214,7 +214,7 @@ function AuthorsList() {
       {data && !isLoading && <MaterialReactTable table={table}/>}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
-    </>
+    </div>
   )
 }
 

@@ -174,6 +174,24 @@ function TableActions ({
 
         {type && type === "inventory" &&
           <>
+          <FontAwesomeIcon
+            icon={faPen}
+            className="ta-button ta-edit"
+            id={`ta-edit-${row.index}`}
+            onClick={() => openModal("edit", row.original)}
+            onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+            onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+          {isEditTooltipOpen && (
+            <div className="ta-tooltip">Editar</div>)}
+          <FontAwesomeIcon
+            icon={faCircleXmark}
+            className="ta-button ta-delete"
+            id={`ta-delete-${row.index}`}
+            onClick={() => openModal("delete", row.original)}
+            onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+            onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+          {isDeleteTooltipOpen && (
+            <div className="ta-tooltip">Eliminar</div>)}
           <FontAwesomeIcon icon={faDollarSign}
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}

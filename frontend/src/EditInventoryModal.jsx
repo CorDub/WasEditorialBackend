@@ -5,7 +5,6 @@ import ErrorsList from "./ErrorsList";
 
 function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
-  console.log(clickedRow);
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
@@ -280,27 +279,39 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
             <option key={index} value={book.title}>{book.title}</option>
           ))}
         </select> */}
-        <select onChange={(e) => dropDownChange(e, "Bookstore")}
-          className="select-global" ref={bookstoreRef}>
-          <option value={bookstore}>{bookstore}</option>
-          {existingBookstores && existingBookstores.map((bookstore, index) => (
-            <option key={index} value={bookstore.title}>{bookstore.name}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Country")}
-          className="select-global" ref={countryRef}>
-          <option value={country}>{country}</option>
-          {countries && countries.map((country, index) => (
-            <option key={index} value={country}>{country}</option>
-          ))}
-        </select>
-        <input type="text" placeholder="Cantidad inicial de libros"
-          className="global-input" value={inicial}
-          ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
-        <input type='text' value={price}
-          className="global-input" id="adding-book-price"
-          ref={priceRef}
-          onChange={(e) => setPrice(e.target.value)}></input>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Librería</label>
+          <select onChange={(e) => dropDownChange(e, "Bookstore")}
+            className="select-global" ref={bookstoreRef}>
+            <option value={bookstore}>{bookstore}</option>
+            {existingBookstores && existingBookstores.map((bookstore, index) => (
+              <option key={index} value={bookstore.title}>{bookstore.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">País</label>
+          <select onChange={(e) => dropDownChange(e, "Country")}
+            className="select-global" ref={countryRef}>
+            <option value={country}>{country}</option>
+            {countries && countries.map((country, index) => (
+              <option key={index} value={country}>{country}</option>
+            ))}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Total del inventario</label>
+          <input type="text" placeholder="Cantidad inicial de libros"
+            className="global-input" value={inicial}
+            ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Precio</label>
+          <input type='text' value={price}
+            className="global-input" id="adding-book-price"
+            ref={priceRef}
+            onChange={(e) => setPrice(e.target.value)}></input>
+        </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

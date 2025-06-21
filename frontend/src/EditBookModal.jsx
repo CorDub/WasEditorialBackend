@@ -23,7 +23,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   useEffect(() => {
     let possiblePasta = ["Blanda", "Dura"]
     for (let i = 0; i < possiblePasta.length; i++) {
-      if (possiblePasta[i] == clickedRow.pasta) {
+      if (possiblePasta[i] === clickedRow.pasta) {
         possiblePasta.splice(i, 1);
       } 
     }

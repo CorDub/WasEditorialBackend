@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingBookstoreErrorList from "./AddingBookstoreErrorList";
 
@@ -13,6 +13,28 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
   const [errorList, setErrorList] = useState([]);
+  const [comissionsDisplay, setComissionsDisplay] = useState([]);
+
+  useEffect(() => {
+    let possibleComissions = [true, false]
+    for (let i = 0; i < possibleComissions.length; i++) {
+      if (possibleComissions[i] === clickedRow.comissions) {
+        possibleComissions.splice(i, 1);
+      } 
+    }
+    possibleComissions.splice(0, 0, clickedRow.comissions);
+
+    let siono = [];
+    for (const poss of possibleComissions) {
+      if (poss === true) {
+        siono.push("Sí")
+      } else if (poss === false) {
+        siono.push("No")
+      }
+    }
+
+    setComissionsDisplay(siono);
+  }, [clickedRow.comissions])
 
   async function sendToServer() {
     try {
@@ -56,6 +78,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     let newErrorList = [];
     const inputName = document.getElementById("adding-bookstore-name");
     const inputDealPercentage = document.getElementById("adding-bookstore-dealPercentage");
+    const inputComissions = document.getElementById("adding-bookstore-comissions");
     const inputContactName = document.getElementById("adding-bookstore-contactName");
     const inputContactPhone = document.getElementById("adding-bookstore-contactPhone");
     const inputContactEmail = document.getElementById("adding-bookstore-contactEmail");
@@ -86,6 +109,14 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     sendToServer();
   }
 
+  function convertComissionsValue(e) {
+    if (e.target.value === "Sí") {
+      setComissions(true)
+    } else {
+      setComissions(false)
+    }
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
@@ -109,16 +140,11 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <div className="modal-form-line">
           <label className="modal-form-label">Comisiones</label>
           <select className="select-global"
-            onChange={(e) => setComissions(e.target.value === "true")}>
-            {comissions 
-              ? <>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </>
-              : <>
-                <option value="false">No</option>
-                <option value="true">Sí</option>
-              </>}
+            id="adding-bookstore-comissions"
+            onChange={(e) => convertComissionsValue(e)}>
+            {comissionsDisplay.map((comission, index) => (
+              <option key={index} value={comission}>{comission}</option>
+            ))}
           </select>
         </div>
         <div className="modal-form-line">

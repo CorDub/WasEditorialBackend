@@ -351,7 +351,7 @@ function BookstoreInventory({
     <div
       className="bookstore-inventory"
       ref={bookstoreInventoryRef}
-      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`}}>
+      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
       <InventoryTotal
         selectedBookstore={selectedBookstore}
         selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}

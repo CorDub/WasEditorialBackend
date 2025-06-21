@@ -347,7 +347,8 @@ function BookInventory({
   }
 
   return(
-    <div className="bookstore-inventory" ref={bookInventoryRef}>
+    <div className="bookstore-inventory" ref={bookInventoryRef}
+      style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
       <InventoryTotal
         selectedBook={selectedBook}
         selectedBookId={selectedBookId}

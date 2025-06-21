@@ -181,7 +181,7 @@ function CategoriesList() {
   }
 
   return(
-    <>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"categorias"}/>
       {isModalOpen &&
         <Modal
@@ -195,7 +195,7 @@ function CategoriesList() {
       {data && !isLoading && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
-    </>
+    </div>
   )
 }
 

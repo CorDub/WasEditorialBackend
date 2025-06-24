@@ -32,7 +32,7 @@ function BooksSoldGraph({bookSales, selectedBookId}) {
 
   async function fetchBookInventoriesByBookstore() {
     try {
-      const response = await fetch(`${baseURL}/author/bookInventories?bookId=${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/author/bookInventories/${selectedBookId}`, {
         method: "GET",
         headers: {
           'Content-Type': "application/json",

@@ -53,7 +53,7 @@ function ProfilePage() {
 
   async function getExtraInfo() {
     try {
-      const response = await fetch(`${baseURL}/api/user_extra?id=${user.id}`, {
+      const response = await fetch(`${baseURL}/api/${user.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

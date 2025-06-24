@@ -278,7 +278,7 @@ function BookInventory({
 
   async function getBookInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoriesByBook?bookId=${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/admin/inventoriesByBook/${selectedBookId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

@@ -6,7 +6,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
   async function deleteCategory() {
     try {
-      const response = await fetch(`${baseURL}/admin/category?category_id=${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/admin/category/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

@@ -436,7 +436,11 @@ router.get('/monthlySales', async (req, res) => {
               some: {
                 id: req.session.user_id
               }
-            }
+            },
+            isDeleted: false
+          },
+          bookstore: {
+            isDeleted: false
           }
         },
         isDeleted: false,
@@ -484,9 +488,12 @@ router.get('/monthlySales', async (req, res) => {
 
     // Preparing a 'scaffold' to reuse later, basically empty models
     let bookstores = await prisma.bookstore.findMany({
+      where: {
+        isDeleted: false
+      },
       select: {
         id: true,
-        name: true
+        name: true,
       }
     });
 
@@ -877,9 +884,9 @@ router.get('/givenToAuthorTransfers', async (req, res) => {
   }
 })
 
-router.get('/bookstoreInventories', async (req, res) => {
+router.get('/bookstoreInventories/:id', async (req, res) => {
   try {
-    const bookId = parseInt(req.query.bookId);
+    const bookId = parseInt(req.params.id);
     // fetch all inventories from the author
 
     let relevantInventories;
@@ -1049,9 +1056,9 @@ router.get("/wasInventories", async (req, res) => {
   }
 })
 
-router.get("/bookInventories", async (req, res) => {
+router.get("/bookInventories/:id", async (req, res) => {
   try {
-    const bookId = parseInt(req.query.bookId);
+    const bookId = parseInt(req.params.id);
 
     // Get all inventories for that specific book
     const bookInventories = await prisma.inventory.findMany({
@@ -1283,8 +1290,9 @@ router.get("/completeInventory", async (req, res) => {
   }
 })
 
-router.get("/costs", async (req, res) => {
-  const paymentIdQuery = parseInt(req.query.paymentId);
+router.get("/costs/:id", async (req, res) => {
+  const paymentIdQuery = parseInt(req.params.id);
+  console.log("paymentIdQuery", paymentIdQuery);
   try {
     const fetchedCosts = await prisma.cost.findMany({
       where: {
@@ -1301,6 +1309,7 @@ router.get("/costs", async (req, res) => {
       }
     });
 
+    console.log("fetchedCosts", fetchedCosts);
     if (fetchedCosts) {
       res.status(200).json(fetchedCosts);
     }

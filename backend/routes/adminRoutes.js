@@ -1251,8 +1251,6 @@ router.patch('/sale', async (req, res) => {
       }
     });
 
-    console.log("updatedSale.createdAt", updatedSale.createdAt);
-
     if (updatedSale) {
       const updatedInventory = await prisma.inventory.update({
         where: {id: selectedInventory.id},
@@ -1266,7 +1264,6 @@ router.patch('/sale', async (req, res) => {
       const year = String(date.getFullYear());
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const currentForMonth = year + "-" + month
-      console.log("currentForMonth", currentForMonth)
 
       const bookOfSale = await prisma.book.findUnique({
         where: {
@@ -1376,6 +1373,13 @@ router.delete('/sale', async (req, res) => {
       {id: sale_id},
       data: {
         isDeleted: true
+      },
+      include: {
+        inventory: {
+          include: {
+            bookstore: true
+          }
+        }
       }
     });
 
@@ -1387,6 +1391,76 @@ router.delete('/sale', async (req, res) => {
           current: selectedInventory.current + quantity
         }
       });
+
+      // update all potential authors payments sums as well
+      const date = new Date(deletedSale.createdAt);
+      const year = String(date.getFullYear());
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const currentForMonth = year + "-" + month
+
+      const bookOfSale = await prisma.book.findUnique({
+        where: {
+          id: updatedInventory.bookId
+        },
+        select: {
+          users: {
+            select: {
+              id: true
+            }
+          }
+        }
+      })
+      const userIds = bookOfSale.users.map(user => user.id);
+
+      // update the payment for each author of the book
+      if (userIds.length > 0) {
+        for (const id of userIds) {
+          // using findMany instead of findUnique here to avoid the error if not found.
+          const relatedPayment = await prisma.payment.findMany({
+            where: {
+              userId: id,
+              forMonth: currentForMonth,
+              isDeleted: false
+            }
+          })
+
+          const userCategory = await prisma.user.findUnique({
+            where: {
+              id: id,
+              isDeleted: false
+            },
+            select: {
+              category: {
+                select: {
+                  percentage_royalties: true,
+                  percentage_management_stores: true,
+                  management_min: true
+                }
+              }
+            }
+          })
+
+          const updatedRelatedPayment = await prisma.payment.update({
+            where: {
+              id: relatedPayment[0].id
+            },
+            data: {
+              amount: deletedSale.inventory.bookstore.comissions 
+                  ? relatedPayment[0].amount 
+                    - ((deletedSale.inventory.price 
+                    - userCategory.category.management_min) 
+                    * quantity 
+                    / userIds.length)
+                  : relatedPayment[0].amount
+                    - (deletedSale.inventory.price
+                    * quantity
+                    * (userCategory.category.percentage_management_stores / 100)
+                    * (userCategory.category.percentage_royalties / 100)
+                    / userIds.length),
+            }
+          })
+        }
+      }
     }
 
     res.status(200).json({message: "La venta ha sido eliminada con exito."})

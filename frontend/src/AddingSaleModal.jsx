@@ -13,7 +13,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const [book, setBook] = useState("");
   const [bookstore, setBookstore] = useState("");
   const [country, setCountry] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const bookRef = useRef();
   const bookstoreRef = useRef();
   const countryRef = useRef();
@@ -199,15 +199,17 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     let errorInputs;
 
     if (clickedRow) {
-      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+      errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
       errorInputs = [errorsQuantity];
     } else {
-      errorsBook = checkForErrors("Libro", parseInt(book), expectationsBook, bookRef);
-      errorsBookstore = checkForErrors("Libreria", parseInt(bookstore) , expectationsBookstore, bookstoreRef);
-      errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+      errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
+      errorsBookstore = checkForErrors("La librería", parseInt(bookstore) , expectationsBookstore, bookstoreRef, "a");
+      errorsPais = checkForErrors("El país", country, expectationsPais, countryRef, "o");
+      errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
       errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
     }
+
+    console.log("errorInputs", errorInputs);
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

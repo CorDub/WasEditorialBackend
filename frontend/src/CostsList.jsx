@@ -85,12 +85,12 @@ function CostsLists() {
             position: "fixed",
             top: "60px",
             left: "10px",
-            width: "99vw"
+            width: "98.5vw"
         }
         },
         muiTableContainerProps: {
         sx: {
-            maxHeight: '81vh',
+            maxHeight: '79vh',
             overflowY: 'auto'
         }
         },
@@ -179,7 +179,8 @@ function CostsLists() {
     }, [forceRender])
 
     return(
-        <div className="costs-list">
+        <div className="costs-list"
+            style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
             <Navbar subNav={user.role} active={"costs"}/>
             {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}
                 clickedRow={clickedRow} closeModal={closeModal}

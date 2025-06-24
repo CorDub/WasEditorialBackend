@@ -65,10 +65,10 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       value: ["superadmin", "admin", "author"]
     }
 
-    const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorsFirstName = checkForErrors("El nombre", firstName, Expectations, firstNameRef, "o");
+    const errorsLastName = checkForErrors("El apellido", lastName, Expectations, lastNameRef, "o");
+    const errorsEmail = checkForErrors("El correo", email, Expectations, emailRef, "o");
+    const errorsRole = checkForErrors("El rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

@@ -37,8 +37,8 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             length: 240
         }
 
-        const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef);
-        const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef);
+        const errorsAmount = checkForErrors("El monto", parseFloat(amount), expectationsAmount, amountRef, "o");
+        const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
         const errorInputs = [errorsAmount, errorsNote];
 
         for (const errorInput of errorInputs) {
@@ -51,8 +51,6 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         return errorsList
     }
 
-    console.log(clickedRow);
-
     async function sendToServer() {
         try {
             const response = await fetch(`${baseURL}/admin/cost/${clickedRow.id}`, {
@@ -62,7 +60,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 },
                 credentials: "include",
                 body: JSON.stringify({
-                    amount: amount,
+                    amount: parseFloat(amount),
                     note: note
                 })
             });
@@ -92,7 +90,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                         placeholder="Monto"
                         ref={amountRef}
                         value={amount}
-                        onChange={(e) => setAmount(parseFloat(e.target.value))}/>
+                        onChange={(e) => setAmount(e.target.value)}/>
                 </div>
                 <div className="modal-form-line">
                     <label className="modal-form-label">Nota</label>

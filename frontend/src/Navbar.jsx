@@ -37,6 +37,7 @@ function Navbar({
       return alert("Something went wrong when logging out.");
     } else {
       setUser(null);
+      sessionStorage.clear();
       navigate('/');
     }
   }
@@ -78,7 +79,11 @@ function Navbar({
 
   return (
     <div className="navbar"
-      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
+      style={
+        window.innerWidth <= 1300
+          ? { fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}
+          : { fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}
+      }>
       <div className="navbar-home">
         {chooseSubNavbar(subNav)}
       </div>

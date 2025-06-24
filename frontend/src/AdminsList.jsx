@@ -53,7 +53,7 @@ function AdminsList() {
       accessorKey: "email"
     },
     {
-      header: "Role",
+      header: "Rol",
       accessorKey: "role"
     }
   ], []);
@@ -64,7 +64,12 @@ function AdminsList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo admin</button>
+        <button 
+          onClick={() => openModal("adding", null)} 
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+          >
+            Añadir nuevo admin</button>
       </div>
     ),
     initialState: {
@@ -82,6 +87,12 @@ function AdminsList() {
         top: "60px",
         left: "10px",
         width: "99vw"
+      }
+    },
+    muiTableContainerProps: {
+      sx: {
+          maxHeight: '79vh',
+          overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {

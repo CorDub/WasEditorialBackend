@@ -70,7 +70,9 @@ function CategoriesList() {
       <div className="table-add-button">
         <button
           onClick={() => openModal("adding", null)}
-          className="blue-button">Añadir nueva categoria</button>
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nueva categoria</button>
       </div>
     ),
     initialState: {
@@ -90,6 +92,12 @@ function CategoriesList() {
         width: "99vw"
       }
     },
+      muiTableContainerProps: {
+        sx: {
+            maxHeight: '79vh',
+            overflowY: 'auto'
+        }
+      },
     muiTableBodyRowProps: {
       sx: {
         backgroundColor: "#fff",

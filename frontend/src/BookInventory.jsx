@@ -69,14 +69,14 @@ function BookInventory({
             type={"inventory"}/>
         </div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '7%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '7%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '7%',
+          // width: '7%',
           overflow: 'visible'
         }
       }
@@ -84,14 +84,14 @@ function BookInventory({
     {
       header: "Librería",
       accessorKey:'bookstore.name',
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -116,14 +116,14 @@ function BookInventory({
       Cell: ({row}) => {
         return (<div>{row.original.totalSales} / {row.original.initial}</div>)
       },
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -136,14 +136,14 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.returns} / {row.original.initial}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -156,14 +156,14 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.givenToAuthor} / {row.original.initial}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -176,14 +176,14 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.current} / {row.original.initial}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -194,14 +194,14 @@ function BookInventory({
     {
       header: "País",
       accessorKey: "country",
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%',
+          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -250,7 +250,7 @@ function BookInventory({
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '72vh',
+        maxHeight: '65vh',
         overflowY: 'auto'
       }
     },
@@ -288,7 +288,6 @@ function BookInventory({
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setData(data.sortedRelevantInventories);
         setCurrentTotal(data.currentTotal);
         setInitialTotal(data.initialTotal);
@@ -363,7 +362,8 @@ function BookInventory({
         ref={inventoryTotalRef}
         setModalType={setModalType}
         openModal={openModal}
-        setRetreat={setRetreat}/>
+        setRetreat={setRetreat}
+        preferredFontSize={preferredFontSize}/>
       {isModalOpen &&
         <Modal
           modalType={modalType}

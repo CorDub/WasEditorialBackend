@@ -244,7 +244,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
       <div className="modal-proper">
         <div className="form-title">
           <p>Editar libro</p>
-          <p>{clickedRow.title}</p>
+          <p className="form-subtitle">{clickedRow.title}</p>
         </div>
         <form className="global-form" onSubmit={handleSubmit}>
           <div className="modal-form-line">

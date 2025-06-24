@@ -30,7 +30,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive"
     }
 
-    const errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+    const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
     const errorInputs = [errorsQuantity];
 
     for (const errorInput of errorInputs) {
@@ -84,7 +84,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   return(
     <div className='modal-proper'>
       <div className="form-title">
-        <p>Nueva impression</p>
+        <p>Editar impresión</p>
       </div>
       <form className="global-form">
         <input

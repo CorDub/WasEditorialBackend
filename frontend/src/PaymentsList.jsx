@@ -89,14 +89,14 @@ function PaymentsList() {
         borderRadius: '15px',
         backgroundColor: "#fff",
         position: "fixed",
-        top: "160px",
+        top: "180px",
         left: "10px",
-        width: "99vw"
+        width: "98.5vw"
       }
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '81vh',
+        maxHeight: '60vh',
         overflowY: 'auto'
       }
     },

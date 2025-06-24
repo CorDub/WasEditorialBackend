@@ -190,6 +190,10 @@ router.delete('/user/:id', async (req, res) => {
       const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor);
       const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books");
       await softDeleteSalesOnCascade(deletedInventoriesIds);
+      const deletedPayments = await softDeletePaymentsOnCascade(deletedAuthor);
+      for (const payment of deletedPayments) {
+        await softDeleteCostsOnCascade(payment);
+      }
     };
 
     res.status(200).json({message: "El autor ha sido eliminado (recuperable) con exito."})
@@ -352,7 +356,7 @@ router.patch('/category', async (req, res) => {
   }
 });
 
-// Book routes
+// Books routes
 
 router.get('/book', async (req, res) => {
   try {
@@ -489,6 +493,7 @@ router.delete('/book/:id', async (req, res) => {
     if (deletedBook) {
       const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books");
       await softDeleteSalesOnCascade(deletedInventoriesIds);
+      await softDeleteImpressionsOnCascade(deletedBook);
     }
 
     res.status(200).json({message: "El libro ha sido eliminado con exito."})
@@ -2040,6 +2045,30 @@ async function softDeleteBooksOnCascade(deletedAuthor) {
   return deletedBooksIds;
 }
 
+async function softDeletePaymentsOnCascade(deletedAuthor) {
+  const paymentsToDelete = await prisma.payment.findMany({
+    where: {
+      userId: deletedAuthor.id,
+      isDeleted: false
+    }
+  })
+
+  let deletedPaymentsIds=[];
+  for (const payment of paymentsToDelete) {
+    const deletedPayment = await prisma.payment.update({
+      where: {
+        id: payment.id
+      },
+      data: {
+        isDeleted: true
+      }
+    })
+    deletedPaymentsIds.push(deletedPayment.id)
+  }
+
+  return deletedPaymentsIds;
+}
+
 async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
   let filter = '';
   if (cascadeType === "books") {
@@ -2072,6 +2101,25 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
   return deletedInventoriesIds;
 }
 
+async function softDeleteImpressionsOnCascade(deletedBook) {
+  const impressionsToDelete = await prisma.impression.findMany({
+    where: {
+      bookId: deletedBook.id,
+      isDeleted: false
+    },
+  });
+
+  let deletedImpressionsIds = [];
+  for (const impression of impressionsToDelete) {
+    const deletedImpression = await prisma.impression.update({
+      where : {id: impression.id},
+      data: {isDeleted: true}
+    })
+    deletedImpressionsIds.push(deletedImpression.id)
+  };
+  return deletedImpressionsIds;
+}
+
 async function softDeleteSalesOnCascade(IdsList) {
   let salesToDelete = [];
 
@@ -2095,6 +2143,26 @@ async function softDeleteSalesOnCascade(IdsList) {
       })
     })
   );
+}
+
+async function softDeleteCostsOnCascade(deletedPaymentId) {
+  const costsToDelete = await prisma.cost.findMany({
+    where: {
+      paymentId: deletedPaymentId,
+      isDeleted: false
+    }
+  });
+
+  let deletedCostsIds = [];
+  for (const cost of costsToDelete) {
+    const deletedCost = await prisma.cost.update({
+      where: {id: cost.id},
+      data: {isDeleted: true}
+    });
+    deletedCostsIds.push(deletedCost.id)
+  };
+
+  return deletedCostsIds;
 }
 
 export default router;

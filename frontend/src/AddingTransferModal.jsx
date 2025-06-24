@@ -225,41 +225,41 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       if (transferType === "send") {
         const bookstoreRef = document.getElementById(`bookstore-select-${i}`);
         const errorsBookstore = checkForErrors(
-          "librería",
+          "La librería",
           bookstoresToTransfer[i].name,
           expectationsBookstore,
-          bookstoreRef
+          bookstoreRef,
+          'a'
         );
         if (errorsBookstore.length > 0) {
           errorsList.push(errorsBookstore);
         };
-        console.log("errorsBookstore", errorsBookstore);
 
         const countryRef = document.getElementById(`country-select-${i}`);
         const errorsCountry = checkForErrors(
-          "país",
+          "El país",
           bookstoresToTransfer[i].country,
           expectationsCountry,
-          countryRef
+          countryRef,
+          "o"
         )
         if (errorsCountry.length > 0) {
           errorsList.push(errorsCountry);
         }
-        console.log("errorsCountry", errorsCountry);
       };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
       console.log("quantityRef", quantityRef);
       const errorsQuantity = checkForErrors(
-        "cantidad",
+        "La cantidad",
         bookstoresToTransfer[i].quantity,
         expectationsQuantity,
-        quantityRef
+        quantityRef,
+        "a"
       )
       if (errorsQuantity.length > 0) {
         errorsList.push(errorsQuantity);
       };
-      console.log("errorsQuantity", errorsQuantity);
       totalQuantities += bookstoresToTransfer[i].quantity
     }
 
@@ -320,7 +320,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     <div className="modal-proper">
       <div className="form-title">
         <p>{transferType && transferType === "send" ? 'Nueva transferencia' : 'Nueva devolución'}</p>
-        <p>{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
       </div>
       <form
         onSubmit={handleSubmit}

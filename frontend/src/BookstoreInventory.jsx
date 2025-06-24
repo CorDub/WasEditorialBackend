@@ -235,7 +235,7 @@ function BookstoreInventory({
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '72vh',
+        maxHeight: '65vh',
         overflowY: 'auto'
       }
     },

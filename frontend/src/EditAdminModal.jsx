@@ -84,10 +84,10 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       value: ["superadmin", "admin", "author"]
     }
 
-    const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorsFirstName = checkForErrors("El nombre", firstName, Expectations, firstNameRef);
+    const errorsLastName = checkForErrors("El apellido", lastName, Expectations, lastNameRef);
+    const errorsEmail = checkForErrors("El correo", email, Expectations, emailRef);
+    const errorsRole = checkForErrors("El rol", role, roleExpectations, roleRef);
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -100,6 +100,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setErrors([]);
 
     const res = checkInputs();
     if (res.length > 0) {
@@ -153,7 +154,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar admin</p>
-        <p>{clickedRow.first_name} {clickedRow.last_name}</p>
+        <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
       </div>
       <form className="global-form">
         <div className="modal-form-line">

@@ -1,4 +1,4 @@
-function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
+function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gender) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -46,7 +46,7 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
       case "presence":
         if (fieldExpectations.presence === "not empty") {
           if (fieldValue === "" || fieldValue === 0) {
-            errorList.push(`${fieldName} no puede estar vacío.`);
+            errorList.push(`${fieldName} no puede estar vací${gender}.`);
           }
           addErrorClass(fieldRef);
         };
@@ -74,7 +74,7 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef) {
       case "range":
         if (fieldExpectations.range === "positive") {
           if (fieldValue < 0) {
-            errorList.push(`${fieldName} no puede ser negativo`)
+            errorList.push(`${fieldName} no puede ser negativ${gender}`)
           };
           addErrorClass(fieldRef);
         }

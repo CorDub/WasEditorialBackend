@@ -60,8 +60,29 @@ function AuthorsList() {
       accessorFn: (row) => row.category?.type || ''
     },
     {
-      header: "Email",
+      header: "Correo",
       accessorKey: "email"
+    },
+    {
+      header: "Teléfono",
+      accessorKey: "phone"
+
+    },
+    {
+      header: "CLABE",
+      accessorKey: "clabe"
+    }, 
+    {
+      header: "Nombre del titular",
+      accessorKey: "name_bank_account"
+    },
+    {
+      header: "Banco",
+      accessorKey: "bank"
+    },
+    {
+      header: "Codigo Swift",
+      accessorKey: "swift"
     },
     {
       header: "Referido",
@@ -83,7 +104,9 @@ function AuthorsList() {
       <div className="table-add-button">
         <button
           onClick={() => openModal("adding", null)}
-          className="blue-button">Añadir nuevo autor</button>
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nuevo autor</button>
       </div>
     ),
     initialState: {
@@ -107,7 +130,7 @@ function AuthorsList() {
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '81vh',
+        maxHeight: '79vh',
         overflowY: 'auto'
       }
     },

@@ -41,7 +41,8 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
       "La cantidad",
       quantity,
       expectationsQuantity,
-      quantityRef
+      quantityRef,
+      "a"
     )
 
     if (errorsQuantity.length > 0) {
@@ -95,7 +96,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
     <div className="modal-proper">
       <div className="form-title">
         <p>Nueva entrega a autor</p>
-        <p>{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
       </div>
       <form
         onSubmit={handleSubmit}

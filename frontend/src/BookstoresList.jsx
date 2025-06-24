@@ -42,7 +42,7 @@ function BookstoresList() {
       }
     },
     {
-      header: "Nombre",
+      header: "Nombre de la librería",
       accessorKey: "name"
     },
     {
@@ -53,7 +53,7 @@ function BookstoresList() {
     {
       header: "Comisiones",
       accessorKey: "comissions",
-      Cell: ({row}) => row.original.comissions ? "Si" : "No"
+      Cell: ({row}) => row.original.comissions ? "Comisiones" : "Regalías"
     },
     {
       header: "Nombre del contacto",
@@ -77,7 +77,9 @@ function BookstoresList() {
       <div className="table-add-button">
         <button
           onClick={() => openModal("adding", null)}
-          className="blue-button">Añadir nueva librería</button>
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nueva librería</button>
       </div>
     ),
     initialState: {
@@ -94,7 +96,13 @@ function BookstoresList() {
         position: "fixed",
         top: "60px",
         left: "10px",
-        width: "99vw"
+        width: "98.5vw"
+      }
+    },
+      muiTableContainerProps: {
+      sx: {
+          maxHeight: '79vh',
+          overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {

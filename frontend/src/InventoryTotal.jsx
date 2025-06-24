@@ -70,7 +70,7 @@ function InventoryTotal({
 
   return(
     <div className="total-and-impressions"
-      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.2rem)`}}>
+      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
       <div className="bookstore-inventory-total">
 
         {logo ?
@@ -99,10 +99,10 @@ function InventoryTotal({
             </div>
           </div>}
 
-        <div>Vendidos: {soldTotal} / {initialTotal}</div>
-        <div>Devueltos: {returnsTotal} / {initialTotal}</div>
-        <div>Entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
-        <div>Disponibles: {currentTotal} / {initialTotal}</div>
+        <div className="inventory-total-details">Vendidos: {soldTotal} / {initialTotal}</div>
+        <div className="inventory-total-details">Devueltos: {returnsTotal} / {initialTotal}</div>
+        <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
+        <div className="inventory-total-details">Disponibles: {currentTotal} / {initialTotal}</div>
         <div className="bookstore-progress-return">
           <ProgressBar
             current={currentTotal}

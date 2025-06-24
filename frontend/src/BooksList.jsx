@@ -42,6 +42,10 @@ function BooksList() {
       }
     },
     {
+      header: "ISBN",
+      accessorKey: "isbn"
+    },
+    {
       header: "Titulo",
       accessorKey: "title",
       maxSize: 400,
@@ -55,10 +59,7 @@ function BooksList() {
       header: "Pasta",
       accessorKey: "pasta"
     },
-    {
-      header: "ISBN",
-      accessorKey: "isbn"
-    },
+    
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -74,7 +75,9 @@ function BooksList() {
       <div className="table-add-button">
         <button
           onClick={() => openModal("adding", null)}
-          className="blue-button">Añadir nuevo libro</button>
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nuevo libro</button>
       </div>
     ),
     initialState: {

@@ -42,10 +42,6 @@ function SalesList () {
       }
     },
     {
-      header: "Editada",
-      accessorKey: "updatedAt"
-    },
-    {
       header: "Cantidad",
       accessorKey: "quantity"
     },
@@ -60,18 +56,18 @@ function SalesList () {
         )
       }
     },
-    {
-      header: "Ganancia de Was",
-      Cell: ({row}) => {
-        const ingresos = row.original.quantity * row.original.inventory.price
-        const remainings = ingresos * row.original.inventory.bookstore.deal_percentage / 100
-        return (
-          <div>
-            {"$ " + remainings.toLocaleString()}
-          </div>
-        )
-      }
-    },
+    // {
+    //   header: "Ganancia de Was",
+    //   Cell: ({row}) => {
+    //     const ingresos = row.original.quantity * row.original.inventory.price
+    //     const remainings = ingresos * row.original.inventory.bookstore.deal_percentage / 100
+    //     return (
+    //       <div>
+    //         {"$ " + remainings.toLocaleString()}
+    //       </div>
+    //     )
+    //   }
+    // },
     {
       header: "Inventario",
       accessorKey:'completeInventory'
@@ -90,11 +86,21 @@ function SalesList () {
     enableRowVirtualization: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nueva venta</button>
+        <button 
+          onClick={() => openModal("adding", null)} 
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nueva venta</button>
       </div>
     ),
     initialState: {
       density: 'compact',
+      sorting: [
+        {
+          id: 'createdAt',
+          asc: true
+        }
+      ]
     },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
@@ -112,7 +118,7 @@ function SalesList () {
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '81vh',
+        maxHeight: '79vh',
         overflowY: 'auto'
       }
     },
@@ -203,7 +209,7 @@ function SalesList () {
   }, [forceRender]);
 
   return (
-    <div>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"ventas"}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}
         clickedRow={clickedRow} closeModal={closeModal}

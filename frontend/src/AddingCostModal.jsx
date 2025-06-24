@@ -38,8 +38,8 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             length: 240
         }
 
-        const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef);
-        const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef);
+        const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef, "o");
+        const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
         const errorInputs = [errorsAmount, errorsNote];
 
         for (const errorInput of errorInputs) {

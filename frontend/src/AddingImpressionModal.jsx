@@ -34,7 +34,7 @@ function AddingImpressionModal({
       range: "positive"
     }
 
-    const errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+    const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
     const errorInputs = [errorsQuantity];
 
     for (const errorInput of errorInputs) {

@@ -122,7 +122,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
       <div className="modal-proper">
       <div className="form-title">
         <p>Editar librería</p>
-        <p>{clickedRow.name}</p>
+        <p className="form-subtitle">{clickedRow.name}</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
         <div className="modal-form-line">

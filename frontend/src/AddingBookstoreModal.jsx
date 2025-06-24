@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
-import AddingBookstoreErrorList from './AddingBookstoreErrorList';
+import checkForErrors from './customHooks/checkForErrors';
+import ErrorsList from './ErrorsList';
 
 function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -12,10 +13,15 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
-  const [errorList, setErrorList] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const nameRef = useRef();
+  const dealPercentageRef = useRef();
+  const comissionsRef = useRef();
+  const contactNameRef = useRef();
+  const contactPhoneRef = useRef();
+  const contactEmailRef = useRef();
 
   async function sendToServer() {
-
     try {
       const response = await fetch(`${baseURL}/admin/bookstore`, {
         method: "POST",
@@ -35,11 +41,11 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
 
       if (response.ok === false) {
         console.log(response.status);
-        const alertMessage = 'No se pude crear una nueva librería.';
+        const alertMessage = 'No se pude registrar una nueva librería.';
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        const alertMessage = `Una nueva librería ${data.name} ha sido creado en la database.`;
+        const alertMessage = `Una nueva librería ${data.name} ha sido registrada en la database.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -48,40 +54,50 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
     }
   }
 
-  function addErrorClass(element) {
-    if (!element.classList.contains("error-inputs")) {
-      element.classList.add("error-inputs");
-    };
-  }
-
-  function checkForErrors() {
+  function checkInputs() {
     let newErrorList = [];
-    const inputName = document.getElementById("adding-bookstore-name");
-    const inputDealPercentage = document.getElementById("adding-bookstore-dealPercentage");
-    const inputContactName = document.getElementById("adding-bookstore-contactName");
-    const inputContactPhone = document.getElementById("adding-bookstore-contactPhone");
-    const inputContactEmail = document.getElementById("adding-bookstore-contactEmail");
-    let inputList = [inputName, inputDealPercentage, inputContactName, inputContactPhone, inputContactEmail];
-
-    inputList.forEach((input) => {
-      if (input.classList.contains("error-inputs")) {
-        input.classList.remove("error-inputs");
+    const nameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    };
+    const dealPercentageExpectations = {
+      type: "number",
+      presence: "not empty",
+      range: "positive",
+      maximum: 100
+    };
+    const contactNameExpectations = {
+      type: "string",
+    };
+    const contactPhoneExpectations = {
+      validity: "phone valid"
+    };
+    const contactEmailExpectations =  {
+      validity: "email valid"
+    };
+    
+    const errorsName = checkForErrors("El nombre de la librería", name, nameExpectations, nameRef, 'o');
+    const errorsDealPercentage = checkForErrors("El percentage", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
+    const errorsContactName = contactName ? checkForErrors("El nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
+    const errorsContactPhone = contactPhone ? checkForErrors("El teléfono", contactPhone, contactPhoneExpectations, contactPhoneRef, 'o') : [];
+    const errorsContactEmail = contactEmail ? checkForErrors("El correo", contactEmail, contactEmailExpectations, contactEmailRef, 'o') : [];
+    const errorInputs = [errorsName, errorsDealPercentage, errorsContactName, errorsContactPhone, errorsContactEmail]
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        newErrorList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
       }
-    });
-
-    if (name === "") {
-      newErrorList.push(11);
-      addErrorClass(inputName);
     }
 
-    setErrorList(newErrorList);
     return newErrorList;
   }
 
   function handleSubmit(e) {
     e.preventDefault();
+    setErrors([]);
 
-    const errorList = checkForErrors();
+    const errorList = checkInputs();
     if (errorList.length > 0) {
       return;
     }
@@ -95,28 +111,34 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         <p>Nueva librería</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Nombre"
+        <input type='text' placeholder="Nombre de la librería"
           className="global-input" id="adding-bookstore-name"
+          ref={nameRef}
           onChange={(e) => setName(e.target.value)}></input>
         <input type='text' placeholder="% Acuerdo"
           className="global-input" id="adding-bookstore-dealPercentage"
+          ref={dealPercentageRef}
           onChange={(e) => setDealPercentage(e.target.value)}></input>
         <select className="select-global"
+          ref={comissionsRef}
           onChange={(e) => setComissions(e.target.value === "true")}>
-          <option value="null">Comisiones</option>
-          <option value="false">No</option>
-          <option value="true">Si</option>
+          <option value="null">Comisiones o regalías</option>
+          <option value="false">Regalías</option>
+          <option value="true">Comisiones</option>
         </select>
         <input type='text' placeholder="Nombre del contacto"
           className="global-input" id="adding-bookstore-contactName"
+          ref={contactNameRef}
           onChange={(e) => setContactName(e.target.value)}></input>
         <input type='text' placeholder="Téléfono"
           className="global-input" id="adding-bookstore-contactPhone"
+          ref={contactPhoneRef}
           onChange={(e) => setContactPhone(e.target.value)}></input>
         <input type='text' placeholder="Correo"
           className="global-input" id="adding-bookstore-contactEmail"
+          ref={contactEmailRef}
           onChange={(e) => setContactEmail(e.target.value)}></input>
-        <AddingBookstoreErrorList errorList={errorList} setErrorList={setErrorList}/>
+        <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

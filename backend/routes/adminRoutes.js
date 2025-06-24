@@ -30,6 +30,11 @@ router.get('/users', async (req, res) => {
         country: true,
         referido: true,
         email: true,
+        phone: true,
+        clabe: true,
+        name_bank_account: true,
+        bank: true,
+        swift: true,
         category: {
           where: {
             isDeleted: false
@@ -1220,21 +1225,33 @@ router.patch('/sale', async (req, res) => {
       return;
     }
 
-    if (selectedInventory.current < quantity) {
+    const previousSale = await prisma.sale.findUnique({where: {id: id}});
+    let quantityUpdate = previousSale.quantity - quantity;
+    console.log("quantityUpdate", quantityUpdate);
+    console.log("selectedInventory.current",selectedInventory.current)
+
+    if ((selectedInventory.current + quantityUpdate) < 0) {
       res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
       return;
     }
-
-    const previousSale = await prisma.sale.findUnique({where: {id: id}});
-    let quantityUpdate = previousSale.quantity - quantity;
 
     const updatedSale = await prisma.sale.update({
       where: {id: id},
       data: {
         inventoryId: selectedInventory.id,
         quantity: quantity
+      },
+      include: {
+        inventory: {
+          include: {
+            book: true,
+            bookstore: true
+          }
+        }
       }
     });
+
+    console.log("updatedSale.createdAt", updatedSale.createdAt);
 
     if (updatedSale) {
       const updatedInventory = await prisma.inventory.update({
@@ -1243,17 +1260,110 @@ router.patch('/sale', async (req, res) => {
           current: selectedInventory.current + quantityUpdate
         }
       });
-      res.status(200).json({message: "Successfully updated inventory"});
+
+      // update all potential authors payments sums as well
+      const date = new Date(updatedSale.createdAt);
+      const year = String(date.getFullYear());
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const currentForMonth = year + "-" + month
+      console.log("currentForMonth", currentForMonth)
+
+      const bookOfSale = await prisma.book.findUnique({
+        where: {
+          id: updatedInventory.bookId
+        },
+        select: {
+          users: {
+            select: {
+              id: true
+            }
+          }
+        }
+      })
+      const userIds = bookOfSale.users.map(user => user.id);
+
+      // update the payment for each author of the book
+      if (userIds.length > 0) {
+        for (const id of userIds) {
+          // using findMany instead of findUnique here to avoid the error if not found.
+          const relatedPayment = await prisma.payment.findMany({
+            where: {
+              userId: id,
+              forMonth: currentForMonth,
+              isDeleted: false
+            }
+          })
+
+          const userCategory = await prisma.user.findUnique({
+            where: {
+              id: id,
+              isDeleted: false
+            },
+            select: {
+              category: {
+                select: {
+                  percentage_royalties: true,
+                  percentage_management_stores: true,
+                  management_min: true
+                }
+              }
+            }
+          })
+
+          if (relatedPayment.length === 0) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: id,
+                amount: 
+                  updatedSale.inventory.bookstore.comissions 
+                    ? (updatedSale.inventory.price 
+                      - userCategory.category.management_min) 
+                      * quantityUpdate
+                      / userIds.length
+                    : updatedSale.inventory.price
+                      * quantityUpdate
+                      * (userCategory.category.percentage_management_stores / 100)
+                      * (userCategory.category.percentage_royalties / 100)
+                      / userIds.length,
+                forMonth: currentForMonth
+              }
+            })
+          } else {
+            const updatedRelatedPayment = await prisma.payment.update({
+              where: {
+                id: relatedPayment[0].id
+              },
+              data: {
+                amount: updatedSale.inventory.bookstore.comissions 
+                    ? relatedPayment[0].amount 
+                      - ((updatedSale.inventory.price 
+                      - userCategory.category.management_min) 
+                      * quantityUpdate 
+                      / userIds.length)
+                    : relatedPayment[0].amount
+                      - (updatedSale.inventory.price
+                      * quantityUpdate 
+                      * (userCategory.category.percentage_management_stores / 100)
+                      * (userCategory.category.percentage_royalties / 100)
+                      / userIds.length),
+              }
+            })
+          }
+        }
+      }
+
+      res.status(200).json({message: "Successfully updated sale"});
     } else {
       if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
         res.status(500).json({message: "Este inventario ya existe"})
         return;
       }
-      res.status(500).json({error: "There was an issue updating the bookstore"});
+      res.status(500).json({error: "There was an issue updating the sale"});
     };
 
   } catch(error) {
-    console.error("Server error at the update bookstore route:", error);
+    console.error("Server error at the update sale route:", error);
+    res.status(500).json({error: "There was an issue updating the sale"});
   }
 });
 

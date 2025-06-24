@@ -6,7 +6,7 @@ function ErrorsList({ errors, setErrors }) {
   }, [])
 
   return (
-    <div className="login-errors">
+    <div className="general-errors">
       {errors.length === 0 ?
         null :
         errors.map((error, index) => (

@@ -19,7 +19,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const bookstoreRef = useRef();
   const countryRef = useRef();
   const quantityRef = useRef();
-  const countries = [
+  const [countries, setCountries] = useState([
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
     "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
@@ -42,7 +42,19 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
     "Yemen",
     "Zambia", "Zimbabue"
-  ];
+  ]);
+
+  useEffect(() => {
+    for (let i = 0; i < countries.length; i++) {
+      if (countries[i] === clickedRow.inventory.country) {
+        countries.splice(i, 1);
+      } 
+    }
+    countries.splice(0, 0, clickedRow.inventory.country);
+    setCountries(countries);
+  }, [clickedRow])
+
+  console.log(clickedRow)
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -75,7 +87,15 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
       if (response.ok) {
         const data = await response.json();
-        setExistingBooks(data);
+        const existingBooksCopy = [...data];
+        for (let i = 0; i < existingBooksCopy.length; i++) {
+          if (existingBooksCopy[i].title === clickedRow.inventory.book.title) {
+            existingBooksCopy.splice(i, 1);
+          }
+        }
+        existingBooksCopy.splice(0, 0, 
+          {"id": clickedRow.inventory.bookId, "title": clickedRow.inventory.book.title})
+        setExistingBooks(existingBooksCopy);
       } else {
         console.log("There was an error fetching existing books:", response.status)
       }
@@ -108,7 +128,15 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
       if (response.ok) {
         const data = await response.json();
-        setExistingBookstores(data);
+        const existingBookstoreCopy = [...data];
+        for (let i = 0; i < existingBookstoreCopy.length; i++) {
+          if (existingBookstoreCopy[i].name === clickedRow.inventory.bookstore.name) {
+            existingBookstoreCopy.splice(i, 1);
+          }
+        }
+        existingBookstoreCopy.splice(0, 0, 
+          {"id": clickedRow.inventory.bookstoreId, "name": clickedRow.inventory.bookstore.name})
+        setExistingBookstores(existingBookstoreCopy);
       } else {
         console.log("There was an error fetching the exisiting bookstores:", response.status)
       }
@@ -190,10 +218,10 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       range: "positive"
     }
 
-    const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-    const errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
-    const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-    const errorsQuantity = checkForErrors("Cantidad inicial", parseInt(quantity), expectationsCantidad, quantityRef);
+    const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
+    const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
+    const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
+    const errorsQuantity = checkForErrors("La cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
     const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -253,39 +281,46 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
-  console.log(clickedRow);
-
   return (
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar venta</p>
-        <p>{clickedRow.completeInventory}</p>
+        <p className="form-subtitle">{clickedRow.completeInventory}</p>
       </div>
       <form className="global-form">
-        <select onChange={(e) => dropDownChange(e, "Book")}
-          className="select-global" ref={bookRef}>
-          <option value={book}>{book}</option>
-          {existingBooks && existingBooks.map((book, index) => (
-            <option key={index} value={book.title}>{book.title}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Bookstore")}
-          className="select-global" ref={bookstoreRef}>
-          <option value={bookstore}>{bookstore}</option>
-          {existingBookstores && existingBookstores.map((bookstore, index) => (
-            <option key={index} value={bookstore.title}>{bookstore.name}</option>
-          ))}
-        </select>
-        <select onChange={(e) => dropDownChange(e, "Country")}
-          className="select-global" ref={countryRef}>
-          <option value={country}>{country}</option>
-          {countries && countries.map((country, index) => (
-            <option key={index} value={country}>{country}</option>
-          ))}
-        </select>
-        <input type="text" placeholder="Cantidad vendida" className="global-input"
-          ref={quantityRef} value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}></input>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Título</label>
+          <select onChange={(e) => dropDownChange(e, "Book")}
+            className="select-global" ref={bookRef}>
+            {existingBooks && existingBooks.map((book, index) => (
+              <option key={index} value={book.title}>{book.title}</option>
+            ))}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Librería</label>
+          <select onChange={(e) => dropDownChange(e, "Bookstore")}
+            className="select-global" ref={bookstoreRef}>
+            {existingBookstores && existingBookstores.map((bookstore, index) => (
+              <option key={index} value={bookstore.title}>{bookstore.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">País</label>
+          <select onChange={(e) => dropDownChange(e, "Country")}
+            className="select-global" ref={countryRef}>
+            {countries && countries.map((country, index) => (
+              <option key={index} value={country}>{country}</option>
+            ))}
+          </select>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Cantidad</label>
+          <input type="text" placeholder="Cantidad vendida" className="global-input"
+            ref={quantityRef} value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}></input>
+        </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

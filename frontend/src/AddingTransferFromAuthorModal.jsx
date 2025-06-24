@@ -39,7 +39,8 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
       "La cantidad",
       quantity,
       expectationsQuantity,
-      quantityRef
+      quantityRef,
+      "a"
     )
 
     if (errorsQuantity.length > 0) {
@@ -88,9 +89,9 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     <div className="modal-proper">
       <div className="form-title">
         <p>Nueva entrega del autor</p>
-        <p>{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
       </div>
-      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor es considerada como una impression y sera visible en las impresiones</p>
+      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor está considerada como una impresión y sera visible en las impresiónes.</p>
       <form
         onSubmit={handleSubmit}
         className="global-form">

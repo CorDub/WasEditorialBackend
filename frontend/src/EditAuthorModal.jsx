@@ -259,7 +259,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       <div className="modal-proper">
         <div className="form-title">
           <p>Editar autor</p>
-          <p>{clickedRow.first_name} {clickedRow.last_name}</p>
+          <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
         </div>
         <form className="global-form">
           <div className="modal-form-line">

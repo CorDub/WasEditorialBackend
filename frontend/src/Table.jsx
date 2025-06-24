@@ -177,8 +177,9 @@ function Table({data, activeMonth, paymentInfo}) {
 
   async function fetchCosts() {
     if (paymentInfo && paymentInfo.id) {
+      console.log(paymentInfo.id)
       try {
-        const response = await fetch(`${baseURL}/author/costs?paymentId=${paymentInfo.id}`, {
+        const response = await fetch(`${baseURL}/author/costs/${paymentInfo.id}`, {
           method: "GET",
           headers: {
             "Content-Type":"application/json"
@@ -188,7 +189,6 @@ function Table({data, activeMonth, paymentInfo}) {
 
         if (response.ok) {
           const costs = await response.json();
-          console.log(costs);
           setCosts(costs);
         }
       } catch (error) {

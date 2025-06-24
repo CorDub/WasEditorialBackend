@@ -177,8 +177,8 @@ router.patch('/user', async (req, res) => {
   }
 })
 
-router.delete('/user', async (req, res) => {
-  const user_id = parseInt(req.query.user_id);
+router.delete('/user/:id', async (req, res) => {
+  const user_id = parseInt(req.params.id);
 
   try {
     const deletedAuthor = await prisma.user.update({
@@ -229,8 +229,8 @@ router.get('/categories-type', async (req, res) => {
   }
 })
 
-router.delete('/category', async (req, res) => {
-  const category_id = parseInt(req.query.category_id);
+router.delete('/category/:id', async (req, res) => {
+  const category_id = parseInt(req.params.id);
 
   try {
     const deletedCategory = await prisma.category.update({where:
@@ -475,8 +475,8 @@ router.post('/book', async (req, res) => {
   }
 });
 
-router.delete('/book', async (req, res) => {
-  const book_id = parseInt(req.query.book_id);
+router.delete('/book/:id', async (req, res) => {
+  const book_id = parseInt(req.params.id);
 
   try {
     const deletedBook = await prisma.book.update({where:
@@ -624,8 +624,8 @@ router.patch('/bookstore', async (req, res) => {
   }
 });
 
-router.delete('/bookstore', async (req, res) => {
-  const bookstore_id = parseInt(req.query.bookstore_id);
+router.delete('/bookstore/:id', async (req, res) => {
+  const bookstore_id = parseInt(req.params.id);
 
   try {
     const deletedBookstore = await prisma.bookstore.update({where:
@@ -726,9 +726,9 @@ router.get('/inventories', async (req, res) => {
   }
 });
 
-router.get('/inventoriesByBook', async (req, res) => {
+router.get('/inventoriesByBook/:id', async (req, res) => {
   try {
-    const queryBookId = parseInt(req.query.bookId);
+    const queryBookId = parseInt(req.params.id);
     const thatBookImpressions = await prisma.impression.findMany({
       where: {
         bookId: queryBookId,
@@ -817,9 +817,9 @@ router.get('/inventoriesByBook', async (req, res) => {
   }
 })
 
-router.get('/inventoriesByBookstore', async (req, res) => {
+router.get('/inventoriesByBookstore/:id', async (req, res) => {
   try {
-    const queryBookstoreId = parseInt(req.query.bookstoreId);
+    const queryBookstoreId = parseInt(req.params.id);
 
     const thatBookstoreInventories = await prisma.inventory.findMany({
       where: {
@@ -976,8 +976,8 @@ router.patch('/inventory', async (req, res) => {
   }
 });
 
-router.delete('/inventory', async (req, res) => {
-  const inventory_id = parseInt(req.query.inventory_id);
+router.delete('/inventory/:id', async (req, res) => {
+  const inventory_id = parseInt(req.params.id);
 
   try {
     const deletedInventory = await prisma.inventory.update({where:
@@ -1364,8 +1364,8 @@ router.patch('/sale', async (req, res) => {
   }
 });
 
-router.delete('/sale', async (req, res) => {
-  const sale_id = parseInt(req.query.sale_id);
+router.delete('/sale/:id', async (req, res) => {
+  const sale_id = parseInt(req.params.id);
   const inventory_id = parseInt(req.query.inventory_id);
   const quantity = parseInt(req.query.quantity);
   try {
@@ -1513,9 +1513,9 @@ router.post('/impression', async (req, res) => {
   }
 })
 
-router.delete('/impression', async (req, res) => {
+router.delete('/impression/:id', async (req, res) => {
   try {
-    const impression_id = parseInt(req.query.impression_id);
+    const impression_id = parseInt(req.params.id);
     const book_id = parseInt(req.query.book_id);
     const quantity = parseInt(req.query.quantity);
     const updatedImpression = await prisma.impression.update({
@@ -1815,9 +1815,9 @@ router.get('/payments', async (req, res) => {
   }
 })
 
-router.patch('/markAsPaid', async (req, res) => {
+router.patch('/markAsPaid/:id', async (req, res) => {
   try {
-    const queryPaymentId = parseInt(req.query.id)
+    const queryPaymentId = parseInt(req.params.id)
     const updatedPayment = await prisma.payment.update({
       where: {
         id: queryPaymentId,

@@ -6,7 +6,7 @@ function DeleteInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter}
 
   async function deleteInventory() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventory?inventory_id=${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/admin/inventory/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

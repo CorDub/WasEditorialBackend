@@ -29,7 +29,7 @@ function EditPaymentModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function markPaymentAsPaid() {
     try {
-      const response = await fetch(`${baseURL}/admin/markAsPaid?id=${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/admin/markAsPaid/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

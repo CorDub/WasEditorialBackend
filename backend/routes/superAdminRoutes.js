@@ -116,8 +116,8 @@ router.patch('/admin', async (req, res) => {
   }
 })
 
-router.delete('/admin', async (req, res) => {
-  const user_id = parseInt(req.query.user_id);
+router.delete('/admin/:id', async (req, res) => {
+  const user_id = parseInt(req.params.id);
 
   try {
     await prisma.user.update({where:

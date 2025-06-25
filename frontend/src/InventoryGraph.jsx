@@ -171,7 +171,9 @@ function InventoryGraph({
     if (generalMax === 0) {
       const sorted = [...listResults].sort((a, b) => b[1]["initial"] - a[1]["initial"]);
       setFilteredData(sorted);
-      setMax(sorted[0][1]["initial"]);
+      if (sorted.length > 0) {
+        setMax(sorted[0][1]["initial"]);
+      }
     } else {
       const sorted = [...listResults].sort((a, b) => getSum(b[1]) - getSum(a[1]));
       setFilteredData(sorted);

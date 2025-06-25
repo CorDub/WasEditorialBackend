@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import InventoriesContext from "./InventoriesContext";
+// import InventoriesContext from "./InventoriesContext";
 import SearchResults from "./SearchResults";
 
 function AdminNavbar({
@@ -14,11 +14,12 @@ function AdminNavbar({
     retreat,
     setRetreat,
     preferredFontSize }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
-  const { inventories, fetchInventories } = useContext(InventoriesContext);
-  const [inventoryNames, setinventoryNames] = useState([]);
-  const [searchResults, setsearchResults] = useState([]);
+  // const { inventories, fetchInventories } = useContext(InventoriesContext);
+  const [inventoryNames, setInventoryNames] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   function declareButtonActive(active) {
     const buttons = document.querySelectorAll(".navbar-button");
@@ -74,28 +75,28 @@ function AdminNavbar({
     declareButtonActive(active);
   }, [active])
 
-  function getListOfInventories() {
-    let inventoryNames = [];
-    for (const inventory of inventories) {
-      const names = inventoryNames.map(item => item.name)
+  // function getListOfInventories() {
+  //   let inventoryNames = [];
+  //   for (const inventory of inventories) {
+  //     const names = inventoryNames.map(item => item.name)
 
-      if (!names.includes(inventory.book.title)) {
-        inventoryNames.push({name: inventory.book.title, type: 'book'})
-      }
+  //     if (!names.includes(inventory.book.title)) {
+  //       inventoryNames.push({name: inventory.book.title, type: 'book'})
+  //     }
 
-      if (!names.includes(inventory.bookstore.name)) {
-        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
-      }
-    }
-    setinventoryNames(inventoryNames);
-  }
+  //     if (!names.includes(inventory.bookstore.name)) {
+  //       inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
+  //     }
+  //   }
+  //   setinventoryNames(inventoryNames);
+  // }
 
-  useEffect(() => {
-    if (!inventories) {
-      fetchInventories();
-    }
-    getListOfInventories();
-  }, [inventories])
+  // useEffect(() => {
+  //   if (!inventories) {
+  //     fetchInventories();
+  //   }
+  //   getListOfInventories();
+  // }, [inventories])
 
   useEffect(() => {
     if (active === "inventories") {
@@ -120,9 +121,32 @@ function AdminNavbar({
   useEffect(() => {
     const res = searchThroughInventoryNames(searchTerms);
     if (searchTerms) {
-      setsearchResults(res);
+      setSearchResults(res);
     };
   }, [searchTerms])
+
+  async function fetchInventories() {
+    try {
+      const response = await fetch(`${baseURL}/admin/inventoryNames`, {
+        method: "GET",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInventoryNames(data);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchInventories()
+  }, []);
 
   return(
     <div className="admin-navbar"

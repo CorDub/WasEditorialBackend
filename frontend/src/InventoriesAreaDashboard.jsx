@@ -85,14 +85,16 @@ function InventoriesAreaDashboard() {
 
     //get percentages split
     let totalCurrentQuantities = 0
+    
     for (const quantity of currentQuantities) {
-      totalCurrentQuantities += quantity
+      totalCurrentQuantities += quantity.quantity
     }
-
+    
     const areaPercentages = Array.from({length: bookstoresCounts.length}).fill(0);
     for (let i = 0; i < currentQuantities.length; i++ ) {
-      areaPercentages[i] = Math.round((currentQuantities[i] / totalCurrentQuantities) * 100);
+      areaPercentages[i] = Math.round((currentQuantities[i].quantity / totalCurrentQuantities) * 100);
     }
+
     let totalAreaPercentage = 0
     for (const percent of areaPercentages) {
       totalAreaPercentage += percent;
@@ -281,9 +283,12 @@ function InventoriesAreaDashboard() {
   };
 
   useEffect(() => {
-    const newArray = Array.from({length: bookstoresCounts.length}, () => 0);
+    let newArray = [];
+    
     for (const inventory of data) {
-      newArray[inventory.bookstoreId - 1] += inventory._sum.current
+      newArray.push({
+        "bookstoreId": inventory.bookstoreId,
+        "quantity": inventory._sum.current})
     }
     setCurrentQuantities(newArray);
   }, [data, bookstoresCounts]);

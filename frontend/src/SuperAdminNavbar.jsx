@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import InventoriesContext from "./InventoriesContext";
+// import InventoriesContext from "./InventoriesContext";
 import SearchResults from "./SearchResults";
 
 function SuperAdminNavbar({
@@ -14,10 +14,12 @@ function SuperAdminNavbar({
     retreat,
     setRetreat,
     preferredFontSize }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const searchBarRef = useRef();
   const [searchTerms, setSearchTerms] = useState("");
-  const { inventories, fetchInventories } = useContext(InventoriesContext);
-  const [inventoryNames, setinventoryNames] = useState([]);
+  // const { inventories, fetchInventories } = useContext(InventoriesContext);
+  // const [inventories, setInventories] = useState([]);  
+  const [inventoryNames, setInventoryNames] = useState([]);
   const [searchResults, setsearchResults] = useState([]);
 
   function declareButtonActive(active) {
@@ -79,28 +81,28 @@ function SuperAdminNavbar({
     declareButtonActive(active);
   }, [active])
 
-  function getListOfInventories() {
-    let inventoryNames = [];
-    for (const inventory of inventories) {
-      const names = inventoryNames.map(item => item.name)
+  // function getListOfInventories() {
+  //   let inventoryNames = [];
+  //   for (const inventory of inventories) {
+  //     const names = inventoryNames.map(item => item.name)
 
-      if (!names.includes(inventory.book.title)) {
-        inventoryNames.push({name: inventory.book.title, type: 'book', id: inventory.bookId})
-      }
+  //     if (!names.includes(inventory.book.title)) {
+  //       inventoryNames.push({name: inventory.book.title, type: 'book', id: inventory.bookId})
+  //     }
 
-      if (!names.includes(inventory.bookstore.name)) {
-        inventoryNames.push({name:inventory.bookstore.name, type: "bookstore", id: inventory.bookstoreId})
-      }
-    }
-    setinventoryNames(inventoryNames);
-  }
+  //     if (!names.includes(inventory.bookstore.name)) {
+  //       inventoryNames.push({name:inventory.bookstore.name, type: "bookstore", id: inventory.bookstoreId})
+  //     }
+  //   }
+  //   setinventoryNames(inventoryNames);
+  // }
 
-  useEffect(() => {
-    if (!inventories) {
-      fetchInventories();
-    }
-    getListOfInventories();
-  }, [inventories])
+  // useEffect(() => {
+  //   // if (!inventories) {
+  //   //   fetchInventories();
+  //   // }
+  //   getListOfInventories();
+  // }, [inventories])
 
   useEffect(() => {
     if (active === "inventories") {
@@ -128,6 +130,29 @@ function SuperAdminNavbar({
       setsearchResults(res);
     };
   }, [searchTerms])
+
+  async function fetchInventories() {
+    try {
+      const response = await fetch(`${baseURL}/admin/inventoryNames`, {
+        method: "GET",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInventoryNames(data);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchInventories()
+  }, []);
 
   return(
     <div className="admin-navbar"

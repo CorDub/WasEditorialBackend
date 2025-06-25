@@ -116,7 +116,8 @@ router.get('/inventories', async (req, res) => {
           select: {
             sales: {
               select: {
-                quantity: true
+                quantity: true,
+                isDeleted: true
               }
             },
             country: true,
@@ -147,7 +148,9 @@ router.get('/inventories', async (req, res) => {
       for (const inventory of book.inventories) {
         if (inventory.sales) {
           for (const sale of inventory.sales) {
-            soldTotal += sale.quantity
+            if (sale.isDeleted === false) {
+              soldTotal += sale.quantity
+            }
           }
         }
       }
@@ -1292,7 +1295,6 @@ router.get("/completeInventory", async (req, res) => {
 
 router.get("/costs/:id", async (req, res) => {
   const paymentIdQuery = parseInt(req.params.id);
-  console.log("paymentIdQuery", paymentIdQuery);
   try {
     const fetchedCosts = await prisma.cost.findMany({
       where: {
@@ -1309,7 +1311,6 @@ router.get("/costs/:id", async (req, res) => {
       }
     });
 
-    console.log("fetchedCosts", fetchedCosts);
     if (fetchedCosts) {
       res.status(200).json(fetchedCosts);
     }

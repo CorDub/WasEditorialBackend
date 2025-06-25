@@ -731,6 +731,84 @@ router.get('/inventories', async (req, res) => {
   }
 });
 
+// router.get('/inventoryNames', async (req, res) => {
+//   try {
+//     const inventoryNames = await prisma.inventory.findMany({
+//       where: {
+//         isDeleted: false
+//       },
+//       select: {
+//         id: true,
+//         bookId: true,
+//         bookstoreId: true,
+//         book: {
+//           select: {
+//             title: true
+//           }
+//         },
+//         bookstore: {
+//           select: {
+//             name: true
+//           }
+//         }
+//       }
+//     });
+
+//     res.status(200).json(inventoryNames);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({error: "Server error at inventoryNames route"});
+//   }
+// })
+
+router.get('/inventoryNames', async (req, res) => {
+  try {
+    const bookInventoryNames = await prisma.book.findMany({
+      where: {
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        title: true
+      }
+    });
+    
+    const bookstoreInventoryNames = await prisma.bookstore.findMany({
+      where: {
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    })
+
+    let inventoryNames = [];
+    for (const book of bookInventoryNames) {
+      const formatted = {
+        "name": book.title,
+        "type": "book",
+        "id": book.id
+      }
+      inventoryNames.push(formatted)
+    }
+
+    for (const bookstore of bookstoreInventoryNames) {
+      const formatted = {
+        "name": bookstore.name,
+        "type": "bookstore",
+        "id": bookstore.id
+      }
+      inventoryNames.push(formatted)
+    }
+
+    res.status(200).json(inventoryNames);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error: "Server error at inventoryNames route"});
+  }
+})
+
 router.get('/inventoriesByBook/:id', async (req, res) => {
   try {
     const queryBookId = parseInt(req.params.id);
@@ -903,6 +981,9 @@ router.get('/inventoriesCurrentTotals', async (req, res) => {
   try {
     const currentTotals = await prisma.inventory.groupBy({
       by: ['bookstoreId'],
+      where: {
+        isDeleted: false
+      },
       _sum: {
         current: true
       }
@@ -2127,22 +2208,109 @@ async function softDeleteSalesOnCascade(IdsList) {
     const relatedSales = await prisma.sale.findMany({
       where: {inventoryId: id},
       select: {
-        id : true
+        id : true,
+        quantity: true,
+        createdAt: true,
+        inventoryId: true,
+        inventory: {
+          select: {
+            bookId: true,
+            price: true,
+            bookstore: {
+              select: {
+                comissions: true
+              }
+            }
+          }
+        }
       }
     });
     for (const sale of relatedSales) {
-      salesToDelete.push(sale.id);
+      salesToDelete.push(sale);
     }
   }
 
   await Promise.all(
-    salesToDelete.map(async (saleId) => {
+    salesToDelete.map(async (sale) => {
       await prisma.sale.update({
-        where: {id: saleId},
+        where: {id: sale.id},
         data: { isDeleted: true}
       })
     })
   );
+
+  for (const sale of salesToDelete) {
+    // update all potential authors payments sums as well
+    const date = new Date(sale.createdAt);
+    const year = String(date.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const saleForMonth = year + "-" + month
+
+    const bookOfSale = await prisma.book.findUnique({
+      where: {
+        id: sale.inventory.bookId
+      },
+      select: {
+        users: {
+          select: {
+            id: true
+          }
+        }
+      }
+    })
+    const userIds = bookOfSale.users.map(user => user.id);
+
+    // update the payment for each author of the book
+    if (userIds.length > 0) {
+      for (const id of userIds) {
+        // using findMany instead of findUnique here to avoid the error if not found.
+        const relatedPayment = await prisma.payment.findMany({
+          where: {
+            userId: id,
+            forMonth: saleForMonth,
+            isDeleted: false
+          }
+        })
+
+        const userCategory = await prisma.user.findUnique({
+          where: {
+            id: id,
+            isDeleted: false
+          },
+          select: {
+            category: {
+              select: {
+                percentage_royalties: true,
+                percentage_management_stores: true,
+                management_min: true
+              }
+            }
+          }
+        })
+
+        let newPaymentAmount = relatedPayment[0].amount - calculateAuthorRevenue(
+          sale.inventory.bookstore.comissions,
+          sale.inventory.price,
+          userCategory.category.management_min,
+          userCategory.category.percentage_management_stores,
+          userCategory.category.percentage_royalties,
+          sale.quantity,
+          userIds.length
+        )
+        if (newPaymentAmount < 0.01) {
+          newPaymentAmount = 0
+        }
+        const updatedRelatedPayment = await prisma.payment.update({
+          where: {
+            id: relatedPayment[0].id
+          },
+          data: {
+            amount: newPaymentAmount
+          }
+        })
+      }
+    }
+  }
 }
 
 async function softDeleteCostsOnCascade(deletedPaymentId) {
@@ -2163,6 +2331,28 @@ async function softDeleteCostsOnCascade(deletedPaymentId) {
   };
 
   return deletedCostsIds;
+}
+
+function calculateAuthorRevenue(
+  onComission, 
+  price, 
+  management, 
+  storeCutPercent, 
+  royaltiesPercent, 
+  quantity, 
+  numberOfAuthors) {
+    let res = 0;
+    if (onComission) {
+      res = ((price - management) * quantity / numberOfAuthors)
+    } else {
+      res = (price * quantity * (storeCutPercent / 100) * (royaltiesPercent / 100) / numberOfAuthors)
+    }
+
+    if (res < 0.001) {
+      res = 0
+    }
+
+    return res
 }
 
 export default router;

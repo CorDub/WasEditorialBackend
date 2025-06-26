@@ -70,6 +70,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   }
 
   async function sendToServer() {
+    console.log("authors", authors);
     try {
       const response = await fetch(`${baseURL}/admin/book`, {
         method: "PATCH",

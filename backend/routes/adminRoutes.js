@@ -517,6 +517,24 @@ router.patch('/book', async (req, res) => {
       authorsIds.push({"id": author.id});
     })
 
+    console.log("authorsIds", authorsIds);
+
+    const previousBook = await prisma.book.findUnique({
+      where: {id: id},
+      select: {
+        users: {
+          select: {
+            id: true
+          }
+        }
+      }
+    });
+
+    let previousNumberOfAuthors = 0
+    if (previousBook) {
+      previousNumberOfAuthors = previousBook.users.length;
+    }
+
     const updatedBook = await prisma.book.update({
       where: {id: id},
       data: {
@@ -529,6 +547,103 @@ router.patch('/book', async (req, res) => {
       }
     });
 
+    if (previousNumberOfAuthors !== authorsIds.length) {
+      const impactedInventories = await prisma.inventory.findMany({
+        where: {
+          bookId: id,
+          isDeleted: false
+        },
+        select: {
+          sales: {
+            select: {
+              id: true,
+              createdAt: true,
+              quantity: true
+            }
+          },
+          bookstore: {
+            select: {
+              comissions: true
+            }
+          },
+          price: true
+        }
+      });
+
+      for (const inventory of impactedInventories) {
+        for (const sale of inventory.sales) {
+          const date = new Date(sale.createdAt);
+          const year = String(date.getFullYear());
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const saleForMonth = year + "-" + month
+
+          for (const authorId of authorsIds) {
+            const author = await prisma.user.findUnique({
+              where: {
+                id: authorId.id
+              },
+              select: {
+                category: {
+                  select: {
+                    percentage_management_stores: true,
+                    percentage_royalties: true,
+                    management_min: true
+                  }
+                },
+                first_name: true
+              }
+            });
+
+            const previousPayment = await prisma.payment.findUnique({
+              where: {
+                userId_forMonth: {
+                  userId: authorId.id,
+                  forMonth: saleForMonth
+                }
+              }
+            });
+
+            if (previousPayment && previousPayment.status !== "paid") {
+              const previousSaleValue = calculateAuthorRevenue(
+                inventory.bookstore.comissions,
+                inventory.price,
+                author.category.management_min,
+                author.category.percentage_management_stores,
+                author.category.percentage_royalties,
+                sale.quantity,
+                previousNumberOfAuthors
+              );
+
+              const newSaleValue = calculateAuthorRevenue(
+                inventory.bookstore.comissions,
+                inventory.price,
+                author.category.management_min,
+                author.category.percentage_management_stores,
+                author.category.percentage_royalties,
+                sale.quantity,
+                authorsIds.length
+              );
+
+              console.log("")
+              console.log("author.first_name", author.first_name)
+              console.log("previousPayment.amount", previousPayment.amount)
+              console.log("previousSaleValue", previousSaleValue)
+              console.log("newSaleValue", newSaleValue)
+
+              const updatedPayment = await prisma.payment.update({
+                where: {
+                  id: previousPayment.id
+                },
+                data: {
+                  amount: previousPayment.amount - previousSaleValue + newSaleValue
+                }
+              })
+            }
+          }
+        }
+      }
+    }
+
     if (updatedBook) {
       res.status(200).json({message: "Successfully updated book"});
     } else {
@@ -537,6 +652,7 @@ router.patch('/book', async (req, res) => {
 
   } catch(error) {
     console.error("Server error at the update book route:", error);
+    res.status(500).json({error: "There was an issue updating the book"});
   }
 });
 
@@ -1313,6 +1429,7 @@ router.patch('/sale', async (req, res) => {
 
     const previousSale = await prisma.sale.findUnique({where: {id: id}});
     let quantityUpdate = previousSale.quantity - quantity;
+    console.log("previousSale.quantity", previousSale.quantity)
     console.log("quantityUpdate", quantityUpdate);
     console.log("selectedInventory.current",selectedInventory.current)
 
@@ -1336,6 +1453,9 @@ router.patch('/sale', async (req, res) => {
         }
       }
     });
+
+    console.log("updatedSale.quantity", updatedSale.quantity);
+    console.log("updatedSale.createdAt", updatedSale.createdAt);
 
     if (updatedSale) {
       const updatedInventory = await prisma.inventory.update({

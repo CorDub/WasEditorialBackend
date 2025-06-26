@@ -330,6 +330,9 @@ router.patch('/category', async (req, res) => {
       regalias,
       gestionTiendas,
       gestionMinima } = req.body;
+    const previousCategory = await prisma.category.findUnique({
+      where: {id: id}
+    });
     const updatedCategory = await prisma.category.update({
       where: {id: id},
       data: {
@@ -339,6 +342,8 @@ router.patch('/category', async (req, res) => {
         management_min: parseInt(gestionMinima),
       }
     });
+
+    updatePaymentsOnCascade(updatedCategory, previousCategory);
 
     if (updatedCategory) {
       res.status(200).json({message: "Successfully updated category"});
@@ -2453,6 +2458,140 @@ async function softDeleteCostsOnCascade(deletedPaymentId) {
   return deletedCostsIds;
 }
 
+// updateOnCascade routes
+
+async function updatePaymentsOnCascade(category, previousCategory) {
+  const impactedUsers = await prisma.user.findMany({
+    where: {
+      categoryId: category.id,
+      isDeleted: false
+    }
+  });
+
+  if (impactedUsers.length === 0) {
+    return;
+  }
+
+  let impactedSales = [];
+  for (const user of impactedUsers) {
+    const impactedBooks = await prisma.book.findMany({
+      where: {
+        users: {
+          some: {
+            id: user.id
+          }
+        },
+        isDeleted: false
+      },
+      include: {
+        users: true
+      }
+    })
+
+    for (const book of impactedBooks) {
+      const numberOfAuthors = book.users.length
+      const impactedInventories = await prisma.inventory.findMany({
+        where: {
+          bookId: book.id,
+          isDeleted: false
+        },
+        include: {
+          bookstore: true
+        }
+      })
+
+      for (const inventory of impactedInventories) {
+        const impactedSalesForInventory = await prisma.sale.findMany({
+          where: {
+            inventoryId: inventory.id,
+            isDeleted: false
+          }
+        });
+  
+        for (const sale of impactedSalesForInventory) {
+          impactedSales.push(
+            {...sale, 
+            "userId": user.id,
+            "price": inventory.price,
+            "comissions": inventory.bookstore.comissions,
+            "numberOfAuthors": numberOfAuthors}
+          )
+        };
+      }
+    }
+  }
+
+  let count = 0
+  for (const sale of impactedSales) {
+    count += 1;
+    const paymentForMonth = getForMonth(sale.createdAt);
+    const previousSaleValue = calculateAuthorRevenue(
+      sale.comissions,
+      sale.price,
+      previousCategory.management_min,
+      previousCategory.percentage_management_stores,
+      previousCategory.percentage_royalties,
+      sale.quantity,
+      sale.numberOfAuthors
+    );
+    const newSaleValue = calculateAuthorRevenue(
+      sale.comissions,
+      sale.price,
+      category.management_min,
+      category.percentage_management_stores,
+      category.percentage_royalties,
+      sale.quantity,
+      sale.numberOfAuthors
+    )
+
+    console.log("");
+    console.log("count", count)
+    console.log("sale.userId", sale.userId)
+    // console.log("previousSaleValue", previousSaleValue);
+    // console.log("newSaleValue", newSaleValue);
+    console.log("previousPayment.amount", previousPayment.amount);
+    // console.log("updatedPayment.amount", updatedPayment.amount);
+    // console.log("impactedSales.length", impactedSales.length)
+    // console.log("impactSales[499]", impactedSales[499])
+    // console.log("sale.comissions", sale.comissions);
+    // console.log("sale.price", sale.price);
+    // console.log("previousCategory.management_mins", previousCategory.management_min);
+    // console.log("previousCategory.percentage_management_stores", previousCategory.percentage_management_stores);
+    // console.log("previousCategory.percentage_royalties", previousCategory.percentage_royalties);
+    // console.log("category.management_mins", category.management_min);
+    // console.log("category.percentage_management_stores", category.percentage_management_stores);
+    // console.log("category.percentage_royalties", category.percentage_royalties);
+    // console.log("sale.quantity", sale.quantity);
+    // console.log("sale.numberOfAuthors", sale.numberOfAuthors);
+    const previousPayment = await prisma.payment.findUnique({
+      where: {
+        userId_forMonth: {
+          userId: sale.userId,
+          forMonth: paymentForMonth,
+        },
+        isDeleted: false
+      }
+    });
+
+    if (previousPayment) {
+      const updatedPayment = await prisma.payment.update({
+        where: {
+          userId_forMonth: {
+            userId: sale.userId,
+            forMonth: paymentForMonth,
+          },
+          isDeleted: false
+        },
+        data: {
+          amount: previousPayment.amount + previousSaleValue - newSaleValue
+        }
+      })
+    }
+  }
+  console.log("");
+  console.log("impactedSales.length", impactedSales.length)
+}
+
 function calculateAuthorRevenue(
   onComission, 
   price, 
@@ -2473,6 +2612,14 @@ function calculateAuthorRevenue(
     }
 
     return res
+}
+
+function getForMonth(timestamp) {
+  const date = new Date(timestamp);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const forMonth = year + "-" + month
+  return forMonth
 }
 
 export default router;

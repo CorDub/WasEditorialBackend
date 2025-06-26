@@ -741,7 +741,7 @@ router.patch('/bookstore', async (req, res) => {
       }
     });
 
-    
+    updatePaymentsOnCascadeFromBookstore(updatedBookstore);
 
     res.status(200).json({message: "Successfully updated bookstore"});
   } catch(error) {
@@ -2521,9 +2521,7 @@ async function updatePaymentsOnCascade(category, previousCategory) {
     }
   }
 
-  let count = 0
   for (const sale of impactedSales) {
-    count += 1;
     const paymentForMonth = getForMonth(sale.createdAt);
     const previousSaleValue = calculateAuthorRevenue(
       sale.comissions,
@@ -2544,25 +2542,6 @@ async function updatePaymentsOnCascade(category, previousCategory) {
       sale.numberOfAuthors
     )
 
-    console.log("");
-    console.log("count", count)
-    console.log("sale.userId", sale.userId)
-    // console.log("previousSaleValue", previousSaleValue);
-    // console.log("newSaleValue", newSaleValue);
-    console.log("previousPayment.amount", previousPayment.amount);
-    // console.log("updatedPayment.amount", updatedPayment.amount);
-    // console.log("impactedSales.length", impactedSales.length)
-    // console.log("impactSales[499]", impactedSales[499])
-    // console.log("sale.comissions", sale.comissions);
-    // console.log("sale.price", sale.price);
-    // console.log("previousCategory.management_mins", previousCategory.management_min);
-    // console.log("previousCategory.percentage_management_stores", previousCategory.percentage_management_stores);
-    // console.log("previousCategory.percentage_royalties", previousCategory.percentage_royalties);
-    // console.log("category.management_mins", category.management_min);
-    // console.log("category.percentage_management_stores", category.percentage_management_stores);
-    // console.log("category.percentage_royalties", category.percentage_royalties);
-    // console.log("sale.quantity", sale.quantity);
-    // console.log("sale.numberOfAuthors", sale.numberOfAuthors);
     const previousPayment = await prisma.payment.findUnique({
       where: {
         userId_forMonth: {
@@ -2588,8 +2567,123 @@ async function updatePaymentsOnCascade(category, previousCategory) {
       })
     }
   }
-  console.log("");
-  console.log("impactedSales.length", impactedSales.length)
+}
+
+async function updatePaymentsOnCascadeFromBookstore(bookstore) {
+  let impactedSales = [];
+  const impactedInventories = await prisma.inventory.findMany({
+    where: {
+      bookstoreId: bookstore.id,
+      isDeleted: false
+    },
+    include: {
+      bookstore: true
+    }
+  });
+
+  for (const inventory of impactedInventories) {
+    const impactedBook = await prisma.book.findFirst({
+      where: {
+        id: inventory.bookId,
+        isDeleted: false
+      },
+      select: {
+        users: {
+          select: {
+            id: true,
+            category: {
+              select: {
+                percentage_management_stores: true,
+                percentage_royalties: true,
+                management_min: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const impactedUsers = impactedBook.users;
+
+    const impactedSalesForInventory = await prisma.sale.findMany({
+      where: {
+        inventoryId: inventory.id,
+        isDeleted: false
+      }
+    });
+
+    for (const sale of impactedSalesForInventory) {
+      for (const user of impactedUsers) {
+        impactedSales.push(
+          {...sale,
+            "userId": user.id,
+            "price": inventory.price,
+            'management_min': user.category.management_min,
+            "percentage_management_stores": user.category.percentage_management_stores,
+            "percentage_royalties": user.category.percentage_royalties,
+            "comissions": inventory.bookstore.comissions,
+            "numberOfAuthors": impactedUsers.length
+          }
+        )
+      }
+    };
+  }
+
+  console.log("impactedSales.length", impactedSales.length);
+  let count = 0;
+  for (const sale of impactedSales) {
+    count += 1
+    console.log("count", count);
+    const paymentForMonth = getForMonth(sale.createdAt);
+    const previousSaleValue = calculateAuthorRevenue(
+      !sale.comissions,
+      sale.price,
+      sale.management_min,
+      sale.percentage_management_stores,
+      sale.percentage_royalties,
+      sale.quantity,
+      sale.numberOfAuthors
+    );
+    const newSaleValue = calculateAuthorRevenue(
+      sale.comissions,
+      sale.price,
+      sale.management_min,
+      sale.percentage_management_stores,
+      sale.percentage_royalties,
+      sale.quantity,
+      sale.numberOfAuthors
+    )
+    const previousPayment = await prisma.payment.findUnique({
+      where: {
+        userId_forMonth: {
+          userId: sale.userId,
+          forMonth: paymentForMonth,
+        },
+        isDeleted: false
+      }
+    });
+    if (previousPayment) {
+      const updatedPayment = await prisma.payment.update({
+        where: {
+          userId_forMonth: {
+            userId: sale.userId,
+            forMonth: paymentForMonth,
+          },
+          isDeleted: false
+        },
+        data: {
+          amount: previousPayment.amount - previousSaleValue + newSaleValue
+        }
+      });
+      console.log("updatedPayment.amount", updatedPayment.amount);
+    }
+
+    console.log("previousSaleValue", previousSaleValue);
+    console.log("newSaleValue", newSaleValue);
+    console.log("previousPayment.amount", previousPayment.amount);
+    
+    console.log("");
+  }
 }
 
 function calculateAuthorRevenue(
@@ -2621,5 +2715,56 @@ function getForMonth(timestamp) {
   const forMonth = year + "-" + month
   return forMonth
 }
+
+// async function updatePaymentsFromSales(impactedSales) {
+//   console.log("impactedSales.length", impactedSales.length);
+//   let count = 0;
+//   for (const sale of impactedSales) {
+//     count += 1
+//     console.log("count", count);
+//     const paymentForMonth = getForMonth(sale.createdAt);
+//     const previousSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       previousCategory.management_min,
+//       previousCategory.percentage_management_stores,
+//       previousCategory.percentage_royalties,
+//       sale.quantity,
+//       sale.numberOfAuthors
+//     );
+//     const newSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       category.management_min,
+//       category.percentage_management_stores,
+//       category.percentage_royalties,
+//       sale.quantity,
+//       sale.numberOfAuthors
+//     )
+//     const previousPayment = await prisma.payment.findUnique({
+//       where: {
+//         userId_forMonth: {
+//           userId: sale.userId,
+//           forMonth: paymentForMonth,
+//         },
+//         isDeleted: false
+//       }
+//     });
+//     if (previousPayment) {
+//       const updatedPayment = await prisma.payment.update({
+//         where: {
+//           userId_forMonth: {
+//             userId: sale.userId,
+//             forMonth: paymentForMonth,
+//           },
+//           isDeleted: false
+//         },
+//         data: {
+//           amount: previousPayment.amount + previousSaleValue - newSaleValue
+//         }
+//       })
+//     }
+//   }
+// }
 
 export default router;

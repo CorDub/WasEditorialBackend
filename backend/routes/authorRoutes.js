@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from "./../server.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
+import { calculateAuthorRevenue, getForMonth } from "../utils.js";
 
 const upload = multer();
 const router = express.Router();
@@ -264,8 +265,6 @@ router.get('/books/:bookId/inventories', async (req, res) => {
       }
     });
 
-    // console.log(`Found ${inventories.length} inventory records for bookId ${req.params.bookId}`);
-
     const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
     const soldTotal = inventories.reduce((sum, inv) => {
       const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
@@ -357,23 +356,15 @@ router.get('/sales', async (req, res) => {
         numberOfAuthors[sale.inventory.book.title] = authorCount._count.users;
       }
 
-      // const comissionsCost = sale.inventory.bookstore.comissions ? author.category.management_min : 0
-      // const saleValue = ((sale.inventory.price * sale.quantity) 
-      //   * (author.category.percentage_management_stores / 100)
-      //   * (author.category.percentage_royalties / 100)
-      //   / numberOfAuthors[sale.inventory.book.title])
-      //   - comissionsCost
-
-      const saleValue = sale.inventory.bookstore.comissions 
-        ? (sale.inventory.price 
-          - author.category.management_min) 
-          * sale.quantity 
-          / numberOfAuthors[sale.inventory.book.title]
-        : sale.inventory.price
-          * sale.quantity
-          * (author.category.percentage_management_stores / 100)
-          * (author.category.percentage_royalties / 100)
-          / numberOfAuthors[sale.inventory.book.title]
+      const saleValue = calculateAuthorRevenue(
+        sale.inventory.bookstore.comissions,
+        sale.inventory.price,
+        author.category.management_min,
+        author.category.percentage_management_stores,
+        author.category.percentage_royalties,
+        sale.quantity,
+        numberOfAuthors[sale.inventory.book.title]
+      )
 
       totalSales += sale.quantity
       totalValue += saleValue
@@ -407,14 +398,15 @@ router.get('/sales', async (req, res) => {
         title: sale.inventory.book.title,
         bookstore_name: sale.inventory.bookstore.name,
         price: sale.inventory.price || 199.99,
-        value: sale.inventory.bookstore.comissions
-          ? ((sale.inventory.price || 199.99) - author.category.management_min)
-            * sale.quantity
-            / numberOfAuthors[sale.inventory.book.title]
-          : ((sale.inventory.price || 199.99) * sale.quantity)
-            * (author.category.percentage_management_stores / 100)
-            * (author.category.percentage_royalties / 100) 
-            / numberOfAuthors[sale.inventory.book.title]
+        value: calculateAuthorRevenue(
+          sale.inventory.bookstore.comissions,
+          sale.inventory.price,
+          author.category.management_min,
+          author.category.percentage_management_stores,
+          author.category.percentage_royalties,
+          sale.quantity,
+          numberOfAuthors[sale.inventory.book.title]
+        )
       }))
     });
   } catch (error) {
@@ -534,16 +526,15 @@ router.get('/monthlySales', async (req, res) => {
               * (userCategory.percentage_royalties / 100),
           sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
         });
-        salesByMonths[key]["total"] += sale.inventory.bookstore.comissions 
-          ? (sale.inventory.price - userCategory.management_min)
-            * sale.quantity
-            / numberOfAuthors[sale.inventory.book.id]
-          : sale.inventory.price
-            * sale.quantity
-            * (userCategory.percentage_management_stores / 100)
-            * (userCategory.percentage_royalties / 100)
-            / numberOfAuthors[sale.inventory.book.id]
-        
+        salesByMonths[key]["total"] += calculateAuthorRevenue(
+          sale.inventory.bookstore.comissions,
+          sale.inventory.price,
+          userCategory.management_min,
+          userCategory.percentage_management_stores,
+          userCategory.royaltiesPercent,
+          sale.quantity,
+          numberOfAuthors[sale.inventory.book.id]
+        )
       } else {
         salesByMonths[key] = {
           sales: [{...sale, 
@@ -563,17 +554,15 @@ router.get('/monthlySales', async (req, res) => {
                 * (userCategory.percentage_royalties / 100)
                 / numberOfAuthors[sale.inventory.book.id]
           ),
-          total: (
-            sale.inventory.bookstore.comissions 
-              ? (sale.inventory.price - userCategory.management_min)
-                * sale.quantity
-                / numberOfAuthors[sale.inventory.book.id]
-              : sale.inventory.price
-                * sale.quantity
-                * (userCategory.percentage_management_stores / 100)
-                * (userCategory.percentage_royalties / 100)
-                / numberOfAuthors[sale.inventory.book.id]
-          ),
+          total: calculateAuthorRevenue(
+              sale.inventory.bookstore.comissions,
+              sale.inventory.price,
+              userCategory.management_min,
+              userCategory.percentage_management_stores,
+              userCategory.royaltiesPercent,
+              sale.quantity,
+              numberOfAuthors[sale.inventory.book.id]
+            ),
           // deep cloning the bookstores to avoid having the same object being mutated later
           // and shared across different months instead of a different object every time
           transfers: bookstores.map(bookstore => ({...bookstore})),
@@ -581,8 +570,6 @@ router.get('/monthlySales', async (req, res) => {
         }
       }
     }
-
-    // console.log("salesByMonth", salesByMonths);
 
     /// Adding transfers for the "entregado" column - same process
     // Get all the transfers from the last 12 months
@@ -619,17 +606,11 @@ router.get('/monthlySales', async (req, res) => {
       }
     });
 
-    // console.log("allAuthorTransfers[0]", allAuthorTransfers[0])
-
     // Then add the transfer data to salesBymonth if the month of the transfer exist
     // Otherwise create it
     if (allAuthorTransfers.length > 0) {
       for (const transfer of allAuthorTransfers) {
-        const date = new Date(transfer.createdAt);
-        const year = date.getFullYear();
-        const month = (date.getMonth() +1).toString().padStart(2, "0");
-        const transferMonth = `${year}-${month}`;
-        // const transferMonth = transfer.createdAt.toISOString().substring(0,7);
+        const transferMonth = getForMonth(transfer.createdAt);
 
         if (!salesByMonths[transferMonth]) {
           salesByMonths[transferMonth] = {
@@ -1036,8 +1017,6 @@ router.get("/wasInventories", async (req, res) => {
         current: true
       }
     });
-
-    console.log("\n RELEVANT INVENTORIES \n", relevantInventories);
 
     let relevantInventoriesByBook = {};
 

@@ -6,9 +6,15 @@ function TableRowDetailsHeader() {
             <div className="trdh-title">Titulo</div>
             <div className="trdh-sold">Vendidos</div>
             <div className="trdh-price">Precio de venta</div>
-            <div className="trdh-comissions">Comisiones (por libro)</div>
-            <div className="trdh-share">Perciento (por autor)</div>
-            <div className="trdh-ganancia">Ganancia (por libro)</div>
+            <div className="trdh-comissions">Comisiones 
+                <div className="trdh-subtitle">(por libro)</div>
+            </div>
+            <div className="trdh-share">Parte 
+                <div className="trdh-subtitle">(por autor)</div>
+            </div>
+            <div className="trdh-ganancia">Ganancia 
+                <div className="trdh-subtitle">(por libro)</div>
+            </div>
             <div className="trdh-total">Total</div>
         </div>
     )

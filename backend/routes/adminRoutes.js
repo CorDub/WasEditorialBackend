@@ -2,7 +2,7 @@ import { Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
-import { createRandomPassword } from './../utils.js';
+import { createRandomPassword, calculateAuthorRevenue, getForMonth } from './../utils.js';
 import { prisma } from "./../server.js"
 
 const router = express.Router();
@@ -11,13 +11,6 @@ const router = express.Router();
 
 router.get('/users', async (req, res) => {
   try {
-    // const cachedData = await redisClient.get("authorsList");
-
-    // if (cachedData) {
-    //   console.log(cachedData);
-    //   return res.json(JSON.parse(cachedData));
-    // }
-
     const users = await prisma.user.findMany({
       where: {
         role: Role.author,
@@ -49,8 +42,6 @@ router.get('/users', async (req, res) => {
         {last_name: 'asc'}
       ]
     });
-
-    // await redisClient.set("authorsList", JSON.stringify(users));
 
     res.json(users);
   } catch (error) {
@@ -150,6 +141,15 @@ router.patch('/user', async (req, res) => {
       referido,
       email,
       categoryId } = req.body;
+    const authorBeforeUpdate = await prisma.user.findUnique({
+      where: {
+        id: id
+      },
+      include: {
+        category: true
+      }
+    });
+
     const updatedAuthor = await prisma.user.update({
       where: {id: parseInt(id)},
       data: {
@@ -163,8 +163,108 @@ router.patch('/user', async (req, res) => {
             id: parseInt(categoryId)
           }
         }
+      },
+      include: {
+        category: true
       }
     });
+
+    if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
+      let impactedSales = [];
+      const impactedBooks = await prisma.book.findMany({
+        where: {
+          isDeleted: false,
+          users: {
+            some: {
+              id: updatedAuthor.id
+            }
+          }
+        },
+        include: {
+          users: true
+        }
+      });
+
+      for (const book of impactedBooks) {
+        const numberOfAuthors = book.users.length
+        const impactedInventories = await prisma.inventory.findMany({
+          where: {
+            isDeleted: false,
+            bookId: book.id
+          },
+          include: {
+            bookstore: true
+          }
+        });
+
+        for (const inventory of impactedInventories) {
+          const impactedSalesForInventory = await prisma.sale.findMany({
+            where: {
+              isDeleted: false,
+              inventoryId: inventory.id
+            }
+          });
+
+          for (const sale of impactedSalesForInventory) {
+            impactedSales.push({
+              ...sale,
+              "userId": updatedAuthor.id,
+              "comissions": inventory.bookstore.comissions,
+              "price": inventory.price,
+              "management_min": updatedAuthor.category.management_min,
+              "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
+              "percentage_royalties": updatedAuthor.category.percentage_royalties,
+              "numberOfAuthors": numberOfAuthors
+            })
+          }
+        }
+      }
+
+      for (const sale of impactedSales) {
+        const saleForMonth = getForMonth(sale.createdAt)
+        const previousPayment = await prisma.payment.findUnique({
+          where: {
+            userId_forMonth: {
+              userId: sale.userId,
+              forMonth: saleForMonth
+            }
+          }
+        })
+
+        const previousSaleValue = calculateAuthorRevenue(
+          sale.comissions,
+          sale.price,
+          authorBeforeUpdate.category.management_min,
+          authorBeforeUpdate.category.percentage_management_stores,
+          authorBeforeUpdate.category.percentage_royalties,
+          sale.quantity,
+          sale.numberOfAuthors
+        )
+
+        const newSaleValue = calculateAuthorRevenue(
+          sale.comissions,
+          sale.price,
+          sale.management_min,
+          sale.percentage_management_stores,
+          sale.percentage_royalties,
+          sale.quantity,
+          sale.numberOfAuthors
+        )
+
+        const quantityUpdate = newSaleValue - previousSaleValue
+
+        if (previousPayment && previousPayment.status !== "paid") {
+          const updatedPayment = await prisma.payment.update({
+            where: {
+              id: previousPayment.id
+            },
+            data: {
+              amount: previousPayment.amount + quantityUpdate
+            }
+          })
+        }
+      }
+    }
 
     if (updatedAuthor) {
       res.status(200).json({message: "Successfully updated user"});
@@ -174,6 +274,7 @@ router.patch('/user', async (req, res) => {
 
   } catch(error) {
     console.error("Server error at the update user route:", error);
+    res.status(500).json({error: "There was an issue updating the author"});
   }
 })
 
@@ -181,20 +282,22 @@ router.delete('/user/:id', async (req, res) => {
   const user_id = parseInt(req.params.id);
 
   try {
-    const deletedAuthor = await prisma.user.update({
-      where: {id: user_id},
-      data: {isDeleted: true}
-    });
+    await prisma.$transaction(async (tx) => {
+      const deletedAuthor = await tx.user.update({
+        where: {id: user_id},
+        data: {isDeleted: true}
+      });
 
-    if (deletedAuthor) {
-      const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor);
-      const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books");
-      await softDeleteSalesOnCascade(deletedInventoriesIds);
-      const deletedPayments = await softDeletePaymentsOnCascade(deletedAuthor);
-      for (const payment of deletedPayments) {
-        await softDeleteCostsOnCascade(payment);
-      }
-    };
+      if (deletedAuthor) {
+        const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor, tx);
+        const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books", tx);
+        await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
+        const deletedPayments = await softDeletePaymentsOnCascade(deletedAuthor, tx);
+        for (const payment of deletedPayments) {
+          await softDeleteCostsOnCascade(payment, tx);
+        }
+      };
+    })
 
     res.status(200).json({message: "El autor ha sido eliminado (recuperable) con exito."})
   } catch(error) {
@@ -2222,8 +2325,8 @@ router.delete('/cost/:id', async (req, res) => {
 
 /// soft delete on cascade
 
-async function softDeleteBooksOnCascade(deletedAuthor) {
-  const booksToDelete = await prisma.book.findMany({
+async function softDeleteBooksOnCascade(deletedAuthor, tx) {
+  const booksToDelete = await tx.book.findMany({
     where: {
       users: {
         some: {
@@ -2242,7 +2345,7 @@ async function softDeleteBooksOnCascade(deletedAuthor) {
     if (book.users.length > 1) {
       continue
     } else {
-      const deletedBook = await prisma.book.update({
+      const deletedBook = await tx.book.update({
         where: {id: book.id},
         data: {isDeleted: true}
       })
@@ -2253,8 +2356,8 @@ async function softDeleteBooksOnCascade(deletedAuthor) {
   return deletedBooksIds;
 }
 
-async function softDeletePaymentsOnCascade(deletedAuthor) {
-  const paymentsToDelete = await prisma.payment.findMany({
+async function softDeletePaymentsOnCascade(deletedAuthor, tx) {
+  const paymentsToDelete = await tx.payment.findMany({
     where: {
       userId: deletedAuthor.id,
       isDeleted: false
@@ -2263,7 +2366,7 @@ async function softDeletePaymentsOnCascade(deletedAuthor) {
 
   let deletedPaymentsIds=[];
   for (const payment of paymentsToDelete) {
-    const deletedPayment = await prisma.payment.update({
+    const deletedPayment = await tx.payment.update({
       where: {
         id: payment.id
       },
@@ -2277,7 +2380,7 @@ async function softDeletePaymentsOnCascade(deletedAuthor) {
   return deletedPaymentsIds;
 }
 
-async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
+async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
   let filter = '';
   if (cascadeType === "books") {
     filter = "bookId"
@@ -2290,7 +2393,7 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
 
   let inventoriesToDelete = [];
   for (const id of IdsList) {
-    const relatedInventories = await prisma.inventory.findMany({
+    const relatedInventories = await tx.inventory.findMany({
       where: {[filter]: id}
     });
     for (const inventory of relatedInventories) {
@@ -2300,7 +2403,7 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType) {
 
   let deletedInventoriesIds = [];
   for (const inventoryId of inventoriesToDelete) {
-    const deletedInventory =  await prisma.inventory.update({
+    const deletedInventory =  await tx.inventory.update({
       where: {id: inventoryId},
       data: {isDeleted: true},
     });
@@ -2328,11 +2431,11 @@ async function softDeleteImpressionsOnCascade(deletedBook) {
   return deletedImpressionsIds;
 }
 
-async function softDeleteSalesOnCascade(IdsList) {
+async function softDeleteSalesOnCascade(IdsList, tx) {
   let salesToDelete = [];
 
   for (const id of IdsList) {
-    const relatedSales = await prisma.sale.findMany({
+    const relatedSales = await tx.sale.findMany({
       where: {inventoryId: id},
       select: {
         id : true,
@@ -2359,7 +2462,7 @@ async function softDeleteSalesOnCascade(IdsList) {
 
   await Promise.all(
     salesToDelete.map(async (sale) => {
-      await prisma.sale.update({
+      await tx.sale.update({
         where: {id: sale.id},
         data: { isDeleted: true}
       })
@@ -2373,7 +2476,7 @@ async function softDeleteSalesOnCascade(IdsList) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const saleForMonth = year + "-" + month
 
-    const bookOfSale = await prisma.book.findUnique({
+    const bookOfSale = await tx.book.findUnique({
       where: {
         id: sale.inventory.bookId
       },
@@ -2391,7 +2494,7 @@ async function softDeleteSalesOnCascade(IdsList) {
     if (userIds.length > 0) {
       for (const id of userIds) {
         // using findMany instead of findUnique here to avoid the error if not found.
-        const relatedPayment = await prisma.payment.findMany({
+        const relatedPayment = await tx.payment.findMany({
           where: {
             userId: id,
             forMonth: saleForMonth,
@@ -2399,7 +2502,7 @@ async function softDeleteSalesOnCascade(IdsList) {
           }
         })
 
-        const userCategory = await prisma.user.findUnique({
+        const userCategory = await tx.user.findUnique({
           where: {
             id: id,
             isDeleted: false
@@ -2427,7 +2530,7 @@ async function softDeleteSalesOnCascade(IdsList) {
         if (newPaymentAmount < 0.01) {
           newPaymentAmount = 0
         }
-        const updatedRelatedPayment = await prisma.payment.update({
+        const updatedRelatedPayment = await tx.payment.update({
           where: {
             id: relatedPayment[0].id
           },
@@ -2441,7 +2544,7 @@ async function softDeleteSalesOnCascade(IdsList) {
 }
 
 async function softDeleteCostsOnCascade(deletedPaymentId) {
-  const costsToDelete = await prisma.cost.findMany({
+  const costsToDelete = await tx.cost.findMany({
     where: {
       paymentId: deletedPaymentId,
       isDeleted: false
@@ -2450,7 +2553,7 @@ async function softDeleteCostsOnCascade(deletedPaymentId) {
 
   let deletedCostsIds = [];
   for (const cost of costsToDelete) {
-    const deletedCost = await prisma.cost.update({
+    const deletedCost = await tx.cost.update({
       where: {id: cost.id},
       data: {isDeleted: true}
     });
@@ -2803,95 +2906,8 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
           amount: previousPayment.amount - previousSaleValue + newSaleValue
         }
       });
-      // console.log("updatedPayment.amount", updatedPayment.amount);
     }
-
-    // console.log("previousSaleValue", previousSaleValue);
-    // console.log("newSaleValue", newSaleValue);
-    // console.log("previousPayment.amount", previousPayment.amount);
-    // console.log("");
   }
 }
-
-function calculateAuthorRevenue(
-  onComission, 
-  price, 
-  management, 
-  storeCutPercent, 
-  royaltiesPercent, 
-  quantity, 
-  numberOfAuthors) {
-    let res = 0;
-    if (onComission) {
-      res = ((price - management) * quantity / numberOfAuthors)
-    } else {
-      res = (price * quantity * (storeCutPercent / 100) * (royaltiesPercent / 100) / numberOfAuthors)
-    }
-
-    if (res < 0.001) {
-      res = 0
-    }
-
-    return res
-}
-
-function getForMonth(timestamp) {
-  const date = new Date(timestamp);
-  const year = String(date.getFullYear());
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const forMonth = year + "-" + month
-  return forMonth
-}
-
-// async function updatePaymentsFromSales(impactedSales) {
-//   console.log("impactedSales.length", impactedSales.length);
-//   let count = 0;
-//   for (const sale of impactedSales) {
-//     count += 1
-//     console.log("count", count);
-//     const paymentForMonth = getForMonth(sale.createdAt);
-//     const previousSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       previousCategory.management_min,
-//       previousCategory.percentage_management_stores,
-//       previousCategory.percentage_royalties,
-//       sale.quantity,
-//       sale.numberOfAuthors
-//     );
-//     const newSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       category.management_min,
-//       category.percentage_management_stores,
-//       category.percentage_royalties,
-//       sale.quantity,
-//       sale.numberOfAuthors
-//     )
-//     const previousPayment = await prisma.payment.findUnique({
-//       where: {
-//         userId_forMonth: {
-//           userId: sale.userId,
-//           forMonth: paymentForMonth,
-//         },
-//         isDeleted: false
-//       }
-//     });
-//     if (previousPayment) {
-//       const updatedPayment = await prisma.payment.update({
-//         where: {
-//           userId_forMonth: {
-//             userId: sale.userId,
-//             forMonth: paymentForMonth,
-//           },
-//           isDeleted: false
-//         },
-//         data: {
-//           amount: previousPayment.amount + previousSaleValue - newSaleValue
-//         }
-//       })
-//     }
-//   }
-// }
 
 export default router;

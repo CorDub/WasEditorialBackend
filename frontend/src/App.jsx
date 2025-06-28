@@ -13,7 +13,7 @@ import AdminsList from "./AdminsList.jsx";
 import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
-import InventoriesProvider from './InventoriesProvider.jsx';
+// import InventoriesProvider from './InventoriesProvider.jsx';
 import BookstoreInventory from './BookstoreInventory.jsx';
 import BookInventory from './BookInventory.jsx';
 import AuthorSales from './AuthorSales.jsx';
@@ -25,7 +25,6 @@ import CostsList from "./CostsList.jsx";
 function App() {
   return (
     <UserProvider>
-    <InventoriesProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
@@ -49,7 +48,6 @@ function App() {
           <Route path='/author/commissions' element={<AuthorCommissions />} />
         </Routes>
       </Router>
-    </InventoriesProvider>
     </UserProvider>
   )
 }

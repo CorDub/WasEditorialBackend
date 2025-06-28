@@ -83,7 +83,6 @@ router.patch('/admin', async (req, res) => {
       email,
       role} = req.body;
     const admin = await prisma.user.findUnique({where: {email: email}})
-    console.log("This is the admin", admin);
     const updatedAdmin = await prisma.user.update({
       where: {id: admin.id},
       data: {
@@ -94,7 +93,6 @@ router.patch('/admin', async (req, res) => {
       }
     });
 
-    console.log(updatedAdmin);
     if (updatedAdmin) {
       res.status(200).json({message: "Successfully updated user"});
     } else {

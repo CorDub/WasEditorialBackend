@@ -54,3 +54,35 @@ export async function matchConfirmationCode(confirmation_code, user_id) {
     console.error('Error during the confirmation function:', error);
   }
 }
+
+export function calculateAuthorRevenue(
+  onComission, 
+  price, 
+  management, 
+  storeCutPercent, 
+  royaltiesPercent, 
+  quantity, 
+  numberOfAuthors) {
+
+    let res = 0;
+    if (onComission) {
+      res = ((price - management) * quantity / numberOfAuthors)
+    } else {
+      res = (price - (price * storeCutPercent / 100) * (royaltiesPercent / 100)) * quantity / numberOfAuthors
+      console.log("res", res)
+    }
+
+    if (res < 0.001) {
+      res = 0
+    }
+
+    return res
+}
+
+export function getForMonth(timestamp) {
+  const date = new Date(timestamp);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const forMonth = year + "-" + month
+  return forMonth
+}

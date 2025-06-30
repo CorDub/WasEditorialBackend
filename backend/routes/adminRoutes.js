@@ -141,141 +141,144 @@ router.patch('/user', async (req, res) => {
       referido,
       email,
       categoryId } = req.body;
-    const authorBeforeUpdate = await prisma.user.findUnique({
-      where: {
-        id: id
-      },
-      include: {
-        category: true
-      }
-    });
 
-    const updatedAuthor = await prisma.user.update({
-      where: {id: parseInt(id)},
-      data: {
-        first_name: first_name,
-        last_name: last_name,
-        country: country,
-        referido: referido,
-        email: email,
-        category: {
-          connect: {
-            id: parseInt(categoryId)
-          }
-        }
-      },
-      include: {
-        category: true
-      }
-    });
-
-    if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
-      let impactedSales = [];
-      const impactedBooks = await prisma.book.findMany({
+    await prisma.$transaction(async (tx) => {
+      const authorBeforeUpdate = await tx.user.findUnique({
         where: {
-          isDeleted: false,
-          users: {
-            some: {
-              id: updatedAuthor.id
+          id: id
+        },
+        include: {
+          category: true
+        }
+      });
+
+      const updatedAuthor = await tx.user.update({
+        where: {id: parseInt(id)},
+        data: {
+          first_name: first_name,
+          last_name: last_name,
+          country: country,
+          referido: referido,
+          email: email,
+          category: {
+            connect: {
+              id: parseInt(categoryId)
             }
           }
         },
         include: {
-          users: true
+          category: true
         }
       });
 
-      for (const book of impactedBooks) {
-        const numberOfAuthors = book.users.length
-        const impactedInventories = await prisma.inventory.findMany({
+      if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
+        let impactedSales = [];
+        const impactedBooks = await tx.book.findMany({
           where: {
             isDeleted: false,
-            bookId: book.id
+            users: {
+              some: {
+                id: updatedAuthor.id
+              }
+            }
           },
           include: {
-            bookstore: true
+            users: true
           }
         });
 
-        for (const inventory of impactedInventories) {
-          const impactedSalesForInventory = await prisma.sale.findMany({
+        for (const book of impactedBooks) {
+          const numberOfAuthors = book.users.length
+          const impactedInventories = await tx.inventory.findMany({
             where: {
               isDeleted: false,
-              inventoryId: inventory.id
+              bookId: book.id
+            },
+            include: {
+              bookstore: true
             }
           });
 
-          for (const sale of impactedSalesForInventory) {
-            impactedSales.push({
-              ...sale,
-              "userId": updatedAuthor.id,
-              "comissions": inventory.bookstore.comissions,
-              "price": inventory.price,
-              "management_min": updatedAuthor.category.management_min,
-              "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
-              "percentage_royalties": updatedAuthor.category.percentage_royalties,
-              "numberOfAuthors": numberOfAuthors
+          for (const inventory of impactedInventories) {
+            const impactedSalesForInventory = await tx.sale.findMany({
+              where: {
+                isDeleted: false,
+                inventoryId: inventory.id
+              }
+            });
+
+            for (const sale of impactedSalesForInventory) {
+              impactedSales.push({
+                ...sale,
+                "userId": updatedAuthor.id,
+                "comissions": inventory.bookstore.comissions,
+                "price": inventory.price,
+                "management_min": updatedAuthor.category.management_min,
+                "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
+                "percentage_royalties": updatedAuthor.category.percentage_royalties,
+                "numberOfAuthors": numberOfAuthors
+              })
+            }
+          }
+        }
+
+        for (const sale of impactedSales) {
+          const saleForMonth = getForMonth(sale.createdAt)
+          const previousPayment = await tx.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: sale.userId,
+                forMonth: saleForMonth
+              }
+            }
+          })
+
+          const previousSaleValue = calculateAuthorRevenue(
+            sale.comissions,
+            sale.price,
+            authorBeforeUpdate.category.management_min,
+            authorBeforeUpdate.category.percentage_management_stores,
+            authorBeforeUpdate.category.percentage_royalties,
+            sale.quantity,
+            sale.numberOfAuthors
+          )
+
+          const newSaleValue = calculateAuthorRevenue(
+            sale.comissions,
+            sale.price,
+            sale.management_min,
+            sale.percentage_management_stores,
+            sale.percentage_royalties,
+            sale.quantity,
+            sale.numberOfAuthors
+          )
+
+          const quantityUpdate = newSaleValue - previousSaleValue
+
+          if (previousPayment && previousPayment.status !== "paid") {
+            const updatedPayment = await tx.payment.update({
+              where: {
+                id: previousPayment.id
+              },
+              data: {
+                amount: previousPayment.amount + quantityUpdate
+              }
             })
           }
         }
       }
 
-      for (const sale of impactedSales) {
-        const saleForMonth = getForMonth(sale.createdAt)
-        const previousPayment = await prisma.payment.findUnique({
-          where: {
-            userId_forMonth: {
-              userId: sale.userId,
-              forMonth: saleForMonth
-            }
-          }
-        })
-
-        const previousSaleValue = calculateAuthorRevenue(
-          sale.comissions,
-          sale.price,
-          authorBeforeUpdate.category.management_min,
-          authorBeforeUpdate.category.percentage_management_stores,
-          authorBeforeUpdate.category.percentage_royalties,
-          sale.quantity,
-          sale.numberOfAuthors
-        )
-
-        const newSaleValue = calculateAuthorRevenue(
-          sale.comissions,
-          sale.price,
-          sale.management_min,
-          sale.percentage_management_stores,
-          sale.percentage_royalties,
-          sale.quantity,
-          sale.numberOfAuthors
-        )
-
-        const quantityUpdate = newSaleValue - previousSaleValue
-
-        if (previousPayment && previousPayment.status !== "paid") {
-          const updatedPayment = await prisma.payment.update({
-            where: {
-              id: previousPayment.id
-            },
-            data: {
-              amount: previousPayment.amount + quantityUpdate
-            }
-          })
-        }
-      }
-    }
-
-    if (updatedAuthor) {
-      res.status(200).json({message: "Successfully updated user"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the author"});
-    };
+      if (updatedAuthor) {
+        res.status(200).json({message: "Successfully updated user"});
+      } else {
+        res.status(500).json({error: "There was an issue updating the author"});
+      };
+    })
 
   } catch(error) {
     console.error("Server error at the update user route:", error);
     res.status(500).json({error: "There was an issue updating the author"});
-  }
+  } 
 })
 
 router.delete('/user/:id', async (req, res) => {
@@ -338,31 +341,32 @@ router.get('/categories-type', async (req, res) => {
 
 router.delete('/category/:id', async (req, res) => {
   const category_id = parseInt(req.params.id);
-
   try {
-    const deletedCategory = await prisma.category.update({where:
-      {id: category_id},
-      data: { isDeleted: true }
-    });
-
-    if (deletedCategory) {
-      const authorsToUpdate = await prisma.user.findMany({
-        where: {
-          isDeleted: false,
-          categoryId: category_id,
-        }
+    await prisma.$transaction(async (tx) => {
+      const deletedCategory = await tx.category.update({
+        where: {id: category_id},
+        data: {isDeleted: true}
       });
 
-      await Promise.all(
-        authorsToUpdate.map(async (author) => {
-          await prisma.user.update({
-            where: {id: author.id},
-            data: {categoryId: null}
-          })
-        })
-      );
-    };
+      if (deletedCategory) {
+        const authorsToUpdate = await tx.user.findMany({
+          where: {
+            isDeleted: false,
+            categoryId: category_id,
+          }
+        });
 
+        await Promise.all(
+          authorsToUpdate.map(async (author) => {
+            await tx.user.update({
+              where: {id: author.id},
+              data: {categoryId: null}
+            })
+          })
+        );
+      };
+    })
+    
     res.status(200).json({message: "La categoria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -378,41 +382,43 @@ router.post('/category', async (req, res) => {
       gestionTiendas,
       gestionMinima } = req.body;
 
-    const existing = await prisma.category.findUnique({
-      where: {
-        type: tipo
-      }
-    });
+    await prisma.$transaction(async (tx) => {
+      const existing = await tx.category.findUnique({
+        where: {
+          type: tipo
+        }
+      });
 
-    if (existing) {
-      if (existing.isDeleted === false) {
-        res.status(500).json({message: "Esta categoria ya existe"})
+      if (existing) {
+        if (existing.isDeleted === false) {
+          res.status(500).json({message: "Esta categoria ya existe"})
+          return;
+        }
+
+        const exhumedUser = await tx.user.update({
+          where: {id: existing.id},
+          data: {
+            type: tipo,
+            percentage_royalties: parseFloat(regalias),
+            percentage_management_stores: parseFloat(gestionTiendas),
+            management_min: parseFloat(gestionMinima),
+            isDeleted: false
+          }
+        });
+        res.status(201).json({name: exhumedUser.type});
         return;
       }
 
-      const exhumedUser = await prisma.user.update({
-        where: {id: existing.id},
+      const new_category =  await tx.category.create({
         data: {
           type: tipo,
           percentage_royalties: parseFloat(regalias),
           percentage_management_stores: parseFloat(gestionTiendas),
           management_min: parseFloat(gestionMinima),
-          isDeleted: false
-        }
+        },
       });
-      res.status(201).json({name: exhumedUser.type});
-      return;
-    }
-
-    const new_category =  await prisma.category.create({
-      data: {
-        type: tipo,
-        percentage_royalties: parseFloat(regalias),
-        percentage_management_stores: parseFloat(gestionTiendas),
-        management_min: parseFloat(gestionMinima),
-      },
-    });
-
+    })
+    
     res.status(201).json({name: new_category.type});
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
@@ -433,26 +439,29 @@ router.patch('/category', async (req, res) => {
       regalias,
       gestionTiendas,
       gestionMinima } = req.body;
-    const previousCategory = await prisma.category.findUnique({
-      where: {id: id}
-    });
-    const updatedCategory = await prisma.category.update({
-      where: {id: id},
-      data: {
-        type: tipo,
-        percentage_royalties: parseInt(regalias),
-        percentage_management_stores: parseInt(gestionTiendas),
-        management_min: parseInt(gestionMinima),
-      }
-    });
 
-    updatePaymentsOnCascade(updatedCategory, previousCategory);
+    await prisma.$transaction(async (tx) => {
+      const previousCategory = await tx.category.findUnique({
+        where: {id: id}
+      });
+      const updatedCategory = await tx.category.update({
+        where: {id: id},
+        data: {
+          type: tipo,
+          percentage_royalties: parseInt(regalias),
+          percentage_management_stores: parseInt(gestionTiendas),
+          management_min: parseInt(gestionMinima),
+        }
+      });
 
-    if (updatedCategory) {
-      res.status(200).json({message: "Successfully updated category"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the category"});
-    };
+      updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
+
+      if (updatedCategory) {
+        res.status(200).json({message: "Successfully updated category"});
+      } else {
+        res.status(500).json({error: "There was an issue updating the category"});
+      };
+    })
 
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
@@ -539,41 +548,43 @@ router.post('/book', async (req, res) => {
     authors.map((authorId) => {
       authorsIds.push({"id": authorId});
     })
+    
+    await prisma.$transaction(async (tx) => {
+      const new_book = await tx.book.create({
+        data: {
+          title: title,
+          pasta: pasta,
+          isbn: isbn,
+          users: {
+            connect: authorsIds,
+          },
+        }
+      });
 
-    const new_book = await prisma.book.create({
-      data: {
-        title: title,
-        pasta: pasta,
-        isbn: isbn,
-        users: {
-          connect: authorsIds,
-        },
+      let new_impression;
+      if (new_book) {
+        new_impression = await tx.impression.create({
+          data: {
+            bookId: new_book.id,
+            quantity: quantity,
+          }
+        })
+      };
+
+      let new_inventory;
+      if (new_impression) {
+        new_inventory = await tx.inventory.create({
+          data: {
+            bookId: new_book.id,
+            bookstoreId: 3,
+            country: "México",
+            price: parseFloat(price),
+            initial: quantity,
+            current: quantity
+          }
+        })
       }
-    });
-
-    let new_impression;
-    if (new_book) {
-      new_impression = await prisma.impression.create({
-        data: {
-          bookId: new_book.id,
-          quantity: quantity,
-        }
-      })
-    };
-
-    let new_inventory;
-    if (new_impression) {
-      new_inventory = await prisma.inventory.create({
-        data: {
-          bookId: new_book.id,
-          bookstoreId: 3,
-          country: "México",
-          price: parseFloat(price),
-          initial: quantity,
-          current: quantity
-        }
-      })
-    }
+    })
 
     res.status(201).json({title: new_book.title});
   } catch(error) {
@@ -591,19 +602,21 @@ router.delete('/book/:id', async (req, res) => {
   const book_id = parseInt(req.params.id);
 
   try {
-    const deletedBook = await prisma.book.update({where:
-      {id: book_id},
-      data: {
-        isDeleted: true
+    await prisma.$transaction(async (tx) => {
+      const deletedBook = await tx.book.update({where:
+        {id: book_id},
+        data: {
+          isDeleted: true
+        }
+      });
+
+      if (deletedBook) {
+        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books", tx);
+        await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
+        await softDeleteImpressionsOnCascade(deletedBook, tx);
       }
-    });
-
-    if (deletedBook) {
-      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books");
-      await softDeleteSalesOnCascade(deletedInventoriesIds);
-      await softDeleteImpressionsOnCascade(deletedBook);
-    }
-
+    })
+    
     res.status(200).json({message: "El libro ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
@@ -625,138 +638,135 @@ router.patch('/book', async (req, res) => {
       authorsIds.push({"id": author.id});
     })
 
-    console.log("authorsIds", authorsIds);
-
-    const previousBook = await prisma.book.findUnique({
-      where: {id: id},
-      select: {
-        users: {
-          select: {
-            id: true
-          }
-        }
-      }
-    });
-
-    let previousNumberOfAuthors = 0
-    if (previousBook) {
-      previousNumberOfAuthors = previousBook.users.length;
-    }
-
-    const updatedBook = await prisma.book.update({
-      where: {id: id},
-      data: {
-        title: title,
-        pasta: pasta,
-        isbn: isbn,
-        users: {
-          connect: authorsIds,
-        }
-      }
-    });
-
-    if (previousNumberOfAuthors !== authorsIds.length) {
-      const impactedInventories = await prisma.inventory.findMany({
-        where: {
-          bookId: id,
-          isDeleted: false
-        },
+    await prisma.$transaction(async (tx) => {
+      const previousBook = await tx.book.findUnique({
+        where: {id: id},
         select: {
-          sales: {
+          users: {
             select: {
-              id: true,
-              createdAt: true,
-              quantity: true
+              id: true
             }
-          },
-          bookstore: {
-            select: {
-              comissions: true
-            }
-          },
-          price: true
+          }
         }
       });
 
-      for (const inventory of impactedInventories) {
-        for (const sale of inventory.sales) {
-          const date = new Date(sale.createdAt);
-          const year = String(date.getFullYear());
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const saleForMonth = year + "-" + month
+      let previousNumberOfAuthors = 0
+      if (previousBook) {
+        previousNumberOfAuthors = previousBook.users.length;
+      }
 
-          for (const authorId of authorsIds) {
-            const author = await prisma.user.findUnique({
-              where: {
-                id: authorId.id
-              },
+      const updatedBook = await tx.book.update({
+        where: {id: id},
+        data: {
+          title: title,
+          pasta: pasta,
+          isbn: isbn,
+          users: {
+            connect: authorsIds,
+          }
+        }
+      });
+
+      if (previousNumberOfAuthors !== authorsIds.length) {
+        const impactedInventories = await tx.inventory.findMany({
+          where: {
+            bookId: id,
+            isDeleted: false
+          },
+          select: {
+            sales: {
               select: {
-                category: {
-                  select: {
-                    percentage_management_stores: true,
-                    percentage_royalties: true,
-                    management_min: true
-                  }
-                },
-                first_name: true
+                id: true,
+                createdAt: true,
+                quantity: true
               }
-            });
-
-            const previousPayment = await prisma.payment.findUnique({
-              where: {
-                userId_forMonth: {
-                  userId: authorId.id,
-                  forMonth: saleForMonth
-                }
+            },
+            bookstore: {
+              select: {
+                comissions: true
               }
-            });
+            },
+            price: true
+          }
+        });
 
-            if (previousPayment && previousPayment.status !== "paid") {
-              const previousSaleValue = calculateAuthorRevenue(
-                inventory.bookstore.comissions,
-                inventory.price,
-                author.category.management_min,
-                author.category.percentage_management_stores,
-                author.category.percentage_royalties,
-                sale.quantity,
-                previousNumberOfAuthors
-              );
+        for (const inventory of impactedInventories) {
+          for (const sale of inventory.sales) {
+            const date = new Date(sale.createdAt);
+            const year = String(date.getFullYear());
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const saleForMonth = year + "-" + month
 
-              const newSaleValue = calculateAuthorRevenue(
-                inventory.bookstore.comissions,
-                inventory.price,
-                author.category.management_min,
-                author.category.percentage_management_stores,
-                author.category.percentage_royalties,
-                sale.quantity,
-                authorsIds.length
-              );
-
-              console.log("")
-              console.log("author.first_name", author.first_name)
-              console.log("previousPayment.amount", previousPayment.amount)
-              console.log("previousSaleValue", previousSaleValue)
-              console.log("newSaleValue", newSaleValue)
-
-              const updatedPayment = await prisma.payment.update({
+            for (const authorId of authorsIds) {
+              const author = await tx.user.findUnique({
                 where: {
-                  id: previousPayment.id
+                  id: authorId.id
                 },
-                data: {
-                  amount: previousPayment.amount - previousSaleValue + newSaleValue
+                select: {
+                  category: {
+                    select: {
+                      percentage_management_stores: true,
+                      percentage_royalties: true,
+                      management_min: true
+                    }
+                  },
+                  first_name: true
                 }
-              })
+              });
+
+              const previousPayment = await tx.payment.findUnique({
+                where: {
+                  userId_forMonth: {
+                    userId: authorId.id,
+                    forMonth: saleForMonth
+                  }
+                }
+              });
+
+              if (previousPayment && previousPayment.status !== "paid") {
+                const previousSaleValue = calculateAuthorRevenue(
+                  inventory.bookstore.comissions,
+                  inventory.price,
+                  author.category.management_min,
+                  author.category.percentage_management_stores,
+                  author.category.percentage_royalties,
+                  sale.quantity,
+                  previousNumberOfAuthors
+                );
+
+                const newSaleValue = calculateAuthorRevenue(
+                  inventory.bookstore.comissions,
+                  inventory.price,
+                  author.category.management_min,
+                  author.category.percentage_management_stores,
+                  author.category.percentage_royalties,
+                  sale.quantity,
+                  authorsIds.length
+                );
+
+                const quantityUpdate = newSaleValue - previousSaleValue
+
+                const updatedPayment = await tx.payment.update({
+                  where: {
+                    id: previousPayment.id
+                  },
+                  data: {
+                    amount: previousPayment.amount + quantityUpdate
+                  }
+                })
+              }
             }
           }
         }
       }
-    }
 
-    if (updatedBook) {
-      res.status(200).json({message: "Successfully updated book"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the book"});
-    };
+      if (updatedBook) {
+        res.status(200).json({message: "Successfully updated book"});
+      } else {
+        res.status(500).json({error: "There was an issue updating the book"});
+      };
+    })
+    
 
   } catch(error) {
     console.error("Server error at the update book route:", error);
@@ -832,19 +842,21 @@ router.patch('/bookstore', async (req, res) => {
       contactPhone,
       contactEmail } = req.body;
 
-    const updatedBookstore = await prisma.bookstore.update({
-      where: {id: id},
-      data: {
-        name: name,
-        comissions: comissions,
-        deal_percentage: parseFloat(dealPercentage),
-        contact_name: contactName,
-        contact_phone: contactPhone,
-        contact_email: contactEmail,
-      }
-    });
+    await prisma.$transaction(async (tx) => {
+      const updatedBookstore = await tx.bookstore.update({
+        where: {id: id},
+        data: {
+          name: name,
+          comissions: comissions,
+          deal_percentage: parseFloat(dealPercentage),
+          contact_name: contactName,
+          contact_phone: contactPhone,
+          contact_email: contactEmail,
+        }
+      });
 
-    updatePaymentsOnCascadeFromBookstore(updatedBookstore);
+      updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
+    })
 
     res.status(200).json({message: "Successfully updated bookstore"});
   } catch(error) {
@@ -857,17 +869,19 @@ router.delete('/bookstore/:id', async (req, res) => {
   const bookstore_id = parseInt(req.params.id);
 
   try {
-    const deletedBookstore = await prisma.bookstore.update({where:
-      {id: bookstore_id},
-      data: {
-        isDeleted: true
-      }
-    });
+    await prisma.$transaction(async (tx) => {
+      const deletedBookstore = await tx.bookstore.update({where:
+        {id: bookstore_id},
+        data: {
+          isDeleted: true
+        }
+      });
 
-    if (deletedBookstore) {
-      const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores");
-      await softDeleteSalesOnCascade(deletedInventoriesIds);
-    }
+      if (deletedBookstore) {
+        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores", tx);
+        await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
+      }
+    })
 
     res.status(200).json({message: "La libreria ha sido eliminada con exito."})
   } catch(error) {
@@ -880,13 +894,6 @@ router.delete('/bookstore/:id', async (req, res) => {
 
 router.get('/inventories', async (req, res) => {
   try {
-    // const cachedData = await redisClient.get("authorsList");
-
-    // if (cachedData) {
-    //   console.log(cachedData);
-    //   return res.json(JSON.parse(cachedData));
-    // }
-
     const inventories = await prisma.inventory.findMany({
       where: {
         isDeleted: false,
@@ -946,44 +953,12 @@ router.get('/inventories', async (req, res) => {
       inventory["totalSales"] = totalSales
     }
 
-    // await redisClient.set("authorsList", JSON.stringify(users));
-
     res.json(inventories);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at inventories route"});
   }
 });
-
-// router.get('/inventoryNames', async (req, res) => {
-//   try {
-//     const inventoryNames = await prisma.inventory.findMany({
-//       where: {
-//         isDeleted: false
-//       },
-//       select: {
-//         id: true,
-//         bookId: true,
-//         bookstoreId: true,
-//         book: {
-//           select: {
-//             title: true
-//           }
-//         },
-//         bookstore: {
-//           select: {
-//             name: true
-//           }
-//         }
-//       }
-//     });
-
-//     res.status(200).json(inventoryNames);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({error: "Server error at inventoryNames route"});
-//   }
-// })
 
 router.get('/inventoryNames', async (req, res) => {
   try {
@@ -1245,46 +1220,49 @@ router.patch('/inventory', async (req, res) => {
       inicial,
       price
     } = req.body;
-    const currentInventory = await prisma.inventory.findUnique({
-      where: {id: id}
-    });
-    const difference = inicial - currentInventory.initial
-    let updatedInventory = await prisma.inventory.update({
-      where: {id: id},
-      data: {
-        bookId: book,
-        bookstoreId: bookstore,
-        country: country,
-        initial: inicial,
-        price: price
-      }
-    });
-    if (updatedInventory.current > updatedInventory.initial) {
-      updatedInventory = await prisma.inventory.update({
+
+    await prisma.$transaction(async (tx) => {
+      const currentInventory = await tx.inventory.findUnique({
+        where: {id: id}
+      });
+      const difference = inicial - currentInventory.initial
+      let updatedInventory = await tx.inventory.update({
         where: {id: id},
-        data: {current: updatedInventory.initial}
-      })
-    } else {
-      updatedInventory = await prisma.inventory.update({
-        where: {id: id},
-        data: {current: updatedInventory.current + difference}
-      })
-    }
-
-    updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price);
-
-    if (updatedInventory) {
-      res.status(200).json({message: "Successfully updated inventory"});
-    } else {
-      if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
-        res.status(500).json({message: "Este inventario ya existe"})
-        return;
+        data: {
+          bookId: book,
+          bookstoreId: bookstore,
+          country: country,
+          initial: inicial,
+          price: price
+        }
+      });
+      if (updatedInventory.current > updatedInventory.initial) {
+        updatedInventory = await tx.inventory.update({
+          where: {id: id},
+          data: {current: updatedInventory.initial}
+        })
+      } else {
+        updatedInventory = await tx.inventory.update({
+          where: {id: id},
+          data: {current: updatedInventory.current + difference}
+        })
       }
-      res.status(500).json({error: "There was an issue updating the bookstore"});
-    };
 
+      updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
+
+      if (updatedInventory) {
+        res.status(200).json({message: "Successfully updated inventory"});
+      } else {
+        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+          res.status(500).json({message: "Este inventario ya existe"})
+          return;
+        }
+        res.status(500).json({error: "There was an issue updating the bookstore"});
+      };
+    })
   } catch(error) {
     console.error("Server error at the update bookstore route:", error);
+    res.status(500).json({error: "There was an issue updating the bookstore"});
   }
 });
 
@@ -1292,16 +1270,17 @@ router.delete('/inventory/:id', async (req, res) => {
   const inventory_id = parseInt(req.params.id);
 
   try {
-    const deletedInventory = await prisma.inventory.update({where:
-      {id: inventory_id},
-      data: {
-        isDeleted: true
-      }
-    });
 
-    if (deletedInventory) {
-      await softDeleteSalesOnCascade([inventory_id]);
-    }
+    await prisma.$transaction(async (tx) => {
+      const deletedInventory = await tx.inventory.update({
+        where:{id: inventory_id},
+        data: {isDeleted: true}
+      });
+
+      if (deletedInventory) {
+        await softDeleteSalesOnCascade([inventory_id], tx);
+      }
+    })
 
     res.status(200).json({message: "El inventario ha sido eliminado con exito."})
   } catch(error) {
@@ -1315,13 +1294,6 @@ router.delete('/inventory/:id', async (req, res) => {
 
 router.get('/sales', async (req, res) => {
   try {
-    // const cachedData = await redisClient.get("authorsList");
-
-    // if (cachedData) {
-    //   console.log(cachedData);
-    //   return res.json(JSON.parse(cachedData));
-    // }
-
     const sales = await prisma.sale.findMany({
       where: {
         isDeleted: false,
@@ -1358,7 +1330,6 @@ router.get('/sales', async (req, res) => {
       }
     });
 
-    // await redisClient.set("authorsList", JSON.stringify(users));
     sales.map((sale) => {
       sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name + ", " + sale.inventory.country
       sale.createdAt = sale.createdAt.toLocaleString();
@@ -1381,133 +1352,129 @@ router.post('/sale', async (req, res) => {
       quantity
     } = req.body;
 
-    const selectedInventory = await prisma.inventory.findUnique({where : {
-      bookId_bookstoreId_country: {
-        bookId : book,
-        bookstoreId: bookstore,
-        country: country
-      }}});
+    await prisma.$transaction(async (tx) => {
+      const selectedInventory = await tx.inventory.findUnique({where : {
+        bookId_bookstoreId_country: {
+          bookId : book,
+          bookstoreId: bookstore,
+          country: country
+        }}});
 
-    if (!selectedInventory) {
-      res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
-      return;
-    }
-
-    if (selectedInventory.current < quantity) {
-      res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
-      return;
-    }
-
-    const createdSale = await prisma.sale.create({
-      data: {
-        inventoryId: selectedInventory.id,
-        quantity: quantity
-      },
-      include: {
-        inventory: {
-          include: {
-            bookstore: true
-          }
-        }
+      if (!selectedInventory) {
+        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+        return;
       }
-    });
 
-    if (createdSale) {
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: selectedInventory.id},
+      if (selectedInventory.current < quantity) {
+        res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+        return;
+      }
+
+      const createdSale = await tx.sale.create({
         data: {
-          current: selectedInventory.current-quantity
+          inventoryId: selectedInventory.id,
+          quantity: quantity
+        },
+        include: {
+          inventory: {
+            include: {
+              bookstore: true
+            }
+          }
         }
       });
 
-      // update all potential authors payments sums as well
-      const now = new Date();
-      const year = String(now.getFullYear());
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const currentForMonth = year + "-" + month;
+      if (createdSale) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: selectedInventory.id},
+          data: {
+            current: selectedInventory.current-quantity
+          }
+        });
 
-      const bookOfSale = await prisma.book.findUnique({
-        where: {
-          id: updatedInventory.bookId
-        },
-        select: {
-          users: {
-            select: {
-              id: true
+        // update all potential authors payments sums as well
+        const now = new Date();
+        const year = String(now.getFullYear());
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const currentForMonth = year + "-" + month;
+
+        const bookOfSale = await prisma.book.findUnique({
+          where: {
+            id: updatedInventory.bookId
+          },
+          select: {
+            users: {
+              select: {
+                id: true
+              }
             }
           }
-        }
-      })
-      const userIds = bookOfSale.users.map(user => user.id);
+        })
+        const userIds = bookOfSale.users.map(user => user.id);
 
-      // update the payment for each author of the book
-      if (userIds.length > 0) {
-        for (const id of userIds) {
-          // using findMany instead of findUnique here to avoid the error if not found.
-          const relatedPayment = await prisma.payment.findMany({
-            where: {
-              userId: id,
-              forMonth: currentForMonth
-            }
-          })
+        // update the payment for each author of the book
+        if (userIds.length > 0) {
+          for (const id of userIds) {
+            const relatedPayment = await tx.payment.findFirst({
+              where: {
+                userId_forMonth: {
+                  userId: id,
+                  forMonth: currentForMonth
+                },
+                isDeleted: false
+              }
+            });
 
-          const userCategory = await prisma.user.findUnique({
-            where: {
-              id: id,
-              isDeleted: false
-            },
-            select: {
-              category: {
-                select: {
-                  percentage_royalties: true,
-                  percentage_management_stores: true,
-                  management_min: true
+            const userCategory = await tx.user.findUnique({
+              where: {
+                id: id,
+                isDeleted: false
+              },
+              select: {
+                category: {
+                  select: {
+                    percentage_royalties: true,
+                    percentage_management_stores: true,
+                    management_min: true
+                  }
                 }
               }
-            }
-          })
+            })
 
-          if (relatedPayment.length === 0) {
-            const createdPayment = await prisma.payment.create({
-              data: {
-                userId: id,
-                amount: 
-                  createdSale.inventory.bookstore.comissions 
-                    ? (createdSale.inventory.price 
-                      - userCategory.category.management_min) 
-                      * createdSale.quantity 
-                      / userIds.length
-                    : createdSale.inventory.price
-                      * createdSale.quantity 
-                      * (userCategory.category.percentage_management_stores / 100)
-                      * (userCategory.category.percentage_royalties / 100)
-                      / userIds.length,
-                forMonth: currentForMonth
-              }
-            })
-          } else {
-            const updatedRelatedPayment = await prisma.payment.update({
-              where: {
-                id: relatedPayment[0].id
-              },
-              data: {
-                amount: createdSale.inventory.bookstore.comissions 
-                    ? (createdSale.inventory.price 
-                      - userCategory.category.management_min) 
-                      * createdSale.quantity 
-                      / userIds.length
-                    : createdSale.inventory.price
-                      * createdSale.quantity 
-                      * (userCategory.category.percentage_management_stores / 100)
-                      * (userCategory.category.percentage_royalties / 100)
-                      / userIds.length,
-              }
-            })
+            const saleValue = calculateAuthorRevenue(
+                createdSale.inventory.bookstore.comissions,
+                createdSale.inventory.price,
+                userCategory.category.management_min,
+                userCategory.category.percentage_management_stores,
+                userCategory.category.percentage_royalties,
+                createdSale.quantity,
+                userIds.length
+              )
+
+            if (relatedPayment.length === 0) {
+              const createdPayment = await tx.payment.create({
+                data: {
+                  userId: id,
+                  amount: saleValue,
+                  forMonth: currentForMonth
+                }
+              })
+            } else {
+              const updatedRelatedPayment = await tx.payment.update({
+                where: {
+                  id: relatedPayment.id
+                },
+                data: {
+                  amount: relatedPayment.amount + saleValue
+                }
+              })
+            }
           }
         }
       }
-    }
 
+    })
+   
     res.status(201).json(createdSale);
   } catch (error) {
     console.error(error);
@@ -1525,154 +1492,141 @@ router.patch('/sale', async (req, res) => {
       quantity
     } = req.body;
 
-    const selectedInventory = await prisma.inventory.findUnique({where : {
-      bookId_bookstoreId_country: {
-        bookId : book,
-        bookstoreId: bookstore,
-        country: country
-      }}});
+    await prisma.$transaction(async (tx) => {
+      const selectedInventory = await tx.inventory.findUnique({where : {
+        bookId_bookstoreId_country: {
+          bookId : book,
+          bookstoreId: bookstore,
+          country: country
+        }}});
 
-    if (!selectedInventory) {
-      res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
-      return;
-    }
-
-    const previousSale = await prisma.sale.findUnique({where: {id: id}});
-    let quantityUpdate = previousSale.quantity - quantity;
-    console.log("previousSale.quantity", previousSale.quantity)
-    console.log("quantityUpdate", quantityUpdate);
-    console.log("selectedInventory.current",selectedInventory.current)
-
-    if ((selectedInventory.current + quantityUpdate) < 0) {
-      res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
-      return;
-    }
-
-    const updatedSale = await prisma.sale.update({
-      where: {id: id},
-      data: {
-        inventoryId: selectedInventory.id,
-        quantity: quantity
-      },
-      include: {
-        inventory: {
-          include: {
-            book: true,
-            bookstore: true
-          }
-        }
+      if (!selectedInventory) {
+        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+        return;
       }
-    });
 
-    console.log("updatedSale.quantity", updatedSale.quantity);
-    console.log("updatedSale.createdAt", updatedSale.createdAt);
+      const previousSale = await tx.sale.findUnique({where: {id: id}});
+      let quantityUpdate = previousSale.quantity - quantity;
 
-    if (updatedSale) {
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: selectedInventory.id},
+      if ((selectedInventory.current + quantityUpdate) < 0) {
+        res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+        return;
+      }
+
+      const updatedSale = await tx.sale.update({
+        where: {id: id},
         data: {
-          current: selectedInventory.current + quantityUpdate
+          inventoryId: selectedInventory.id,
+          quantity: quantity
+        },
+        include: {
+          inventory: {
+            include: {
+              book: true,
+              bookstore: true
+            }
+          }
         }
       });
 
-      // update all potential authors payments sums as well
-      const date = new Date(updatedSale.createdAt);
-      const year = String(date.getFullYear());
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const currentForMonth = year + "-" + month
+      if (updatedSale) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: selectedInventory.id},
+          data: {
+            current: selectedInventory.current + quantityUpdate
+          }
+        });
 
-      const bookOfSale = await prisma.book.findUnique({
-        where: {
-          id: updatedInventory.bookId
-        },
-        select: {
-          users: {
-            select: {
-              id: true
+        // update all potential authors payments sums as well
+        const date = new Date(updatedSale.createdAt);
+        const year = String(date.getFullYear());
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const currentForMonth = year + "-" + month
+
+        const bookOfSale = await tx.book.findUnique({
+          where: {
+            id: updatedInventory.bookId
+          },
+          select: {
+            users: {
+              select: {
+                id: true
+              }
             }
           }
-        }
-      })
-      const userIds = bookOfSale.users.map(user => user.id);
+        })
+        const userIds = bookOfSale.users.map(user => user.id);
 
-      // update the payment for each author of the book
-      if (userIds.length > 0) {
-        for (const id of userIds) {
-          // using findMany instead of findUnique here to avoid the error if not found.
-          const relatedPayment = await prisma.payment.findMany({
-            where: {
-              userId: id,
-              forMonth: currentForMonth,
-              isDeleted: false
-            }
-          })
+        // update the payment for each author of the book
+        if (userIds.length > 0) {
+          for (const id of userIds) {
+            // using findMany instead of findUnique here to avoid the error if not found.
+            const relatedPayment = await tx.payment.findFirst({
+              where: {
+                userId_forMonth: {
+                  userId: id,
+                  forMonth: currentForMonth,
+                },
+                isDeleted: false
+              }
+            })
 
-          const userCategory = await prisma.user.findUnique({
-            where: {
-              id: id,
-              isDeleted: false
-            },
-            select: {
-              category: {
-                select: {
-                  percentage_royalties: true,
-                  percentage_management_stores: true,
-                  management_min: true
+            const userCategory = await tx.user.findUnique({
+              where: {
+                id: id,
+                isDeleted: false
+              },
+              select: {
+                category: {
+                  select: {
+                    percentage_royalties: true,
+                    percentage_management_stores: true,
+                    management_min: true
+                  }
                 }
               }
-            }
-          })
+            })
 
-          if (relatedPayment.length === 0) {
-            const createdPayment = await prisma.payment.create({
-              data: {
-                userId: id,
-                amount: 
-                  updatedSale.inventory.bookstore.comissions 
-                    ? (updatedSale.inventory.price 
-                      - userCategory.category.management_min) 
-                      * quantityUpdate
-                      / userIds.length
-                    : updatedSale.inventory.price
-                      * quantityUpdate
-                      * (userCategory.category.percentage_management_stores / 100)
-                      * (userCategory.category.percentage_royalties / 100)
-                      / userIds.length,
-                forMonth: currentForMonth
-              }
-            })
-          } else {
-            const updatedRelatedPayment = await prisma.payment.update({
-              where: {
-                id: relatedPayment[0].id
-              },
-              data: {
-                amount: updatedSale.inventory.bookstore.comissions 
-                    ? relatedPayment[0].amount 
-                      - ((updatedSale.inventory.price 
-                      - userCategory.category.management_min) 
-                      * quantityUpdate 
-                      / userIds.length)
-                    : relatedPayment[0].amount
-                      - (updatedSale.inventory.price
-                      * quantityUpdate 
-                      * (userCategory.category.percentage_management_stores / 100)
-                      * (userCategory.category.percentage_royalties / 100)
-                      / userIds.length),
-              }
-            })
+            const saleAmount = calculateAuthorRevenue(
+                updatedSale.inventory.bookstore.comissions,
+                updatedSale.inventory.price,
+                userCategory.category.management_min,
+                userCategory.category.percentage_management_stores,
+                userCategory.category.percentage_royalties,
+                quantityUpdate,
+                userIds.length
+              )
+
+            if (!relatedPayment) {
+              const createdPayment = await tx.payment.create({
+                data: {
+                  userId: id,
+                  amount: paymentAmount,
+                  forMonth: currentForMonth
+                }
+              })
+            } else {
+              const updatedRelatedPayment = await tx.payment.update({
+                where: {
+                  id: relatedPayment[0].id
+                },
+                data: {
+                  amount: relatedPayment.amount + saleAmount
+                }
+              })
+            }
           }
         }
-      }
 
-      res.status(200).json({message: "Successfully updated sale"});
-    } else {
-      if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
-        res.status(500).json({message: "Este inventario ya existe"})
-        return;
-      }
-      res.status(500).json({error: "There was an issue updating the sale"});
-    };
+        res.status(200).json({message: "Successfully updated sale"});
+      } else {
+        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+          res.status(500).json({message: "Este inventario ya existe"})
+          return;
+        }
+        res.status(500).json({error: "There was an issue updating the sale"});
+      };
+    })
 
   } catch(error) {
     console.error("Server error at the update sale route:", error);
@@ -1685,100 +1639,101 @@ router.delete('/sale/:id', async (req, res) => {
   const inventory_id = parseInt(req.query.inventory_id);
   const quantity = parseInt(req.query.quantity);
   try {
-    const deletedSale = await prisma.sale.update({where:
-      {id: sale_id},
-      data: {
-        isDeleted: true
-      },
-      include: {
-        inventory: {
-          include: {
-            bookstore: true
-          }
-        }
-      }
-    });
-
-    if (deletedSale) {
-      const selectedInventory = await prisma.inventory.findUnique({where: {id: inventory_id}});
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: inventory_id},
+    await prisma.$transaction(async (tx) =>  {
+      const deletedSale = await tx.sale.update({where:
+        {id: sale_id},
         data: {
-          current: selectedInventory.current + quantity
+          isDeleted: true
+        },
+        include: {
+          inventory: {
+            include: {
+              bookstore: true
+            }
+          }
         }
       });
 
-      // update all potential authors payments sums as well
-      const date = new Date(deletedSale.createdAt);
-      const year = String(date.getFullYear());
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const currentForMonth = year + "-" + month
-
-      const bookOfSale = await prisma.book.findUnique({
-        where: {
-          id: updatedInventory.bookId
-        },
-        select: {
-          users: {
-            select: {
-              id: true
-            }
+      if (deletedSale) {
+        const selectedInventory = await tx.inventory.findUnique({where: {id: inventory_id}});
+        const updatedInventory = await tx.inventory.update({
+          where: {id: inventory_id},
+          data: {
+            current: selectedInventory.current + quantity
           }
-        }
-      })
-      const userIds = bookOfSale.users.map(user => user.id);
+        });
 
-      // update the payment for each author of the book
-      if (userIds.length > 0) {
-        for (const id of userIds) {
-          // using findMany instead of findUnique here to avoid the error if not found.
-          const relatedPayment = await prisma.payment.findMany({
-            where: {
-              userId: id,
-              forMonth: currentForMonth,
-              isDeleted: false
-            }
-          })
+        // update all potential authors payments sums as well
+        const date = new Date(deletedSale.createdAt);
+        const year = String(date.getFullYear());
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const currentForMonth = year + "-" + month
 
-          const userCategory = await prisma.user.findUnique({
-            where: {
-              id: id,
-              isDeleted: false
-            },
-            select: {
-              category: {
-                select: {
-                  percentage_royalties: true,
-                  percentage_management_stores: true,
-                  management_min: true
-                }
+        const bookOfSale = await tx.book.findUnique({
+          where: {
+            id: updatedInventory.bookId
+          },
+          select: {
+            users: {
+              select: {
+                id: true
               }
             }
-          })
+          }
+        })
+        const userIds = bookOfSale.users.map(user => user.id);
 
-          const updatedRelatedPayment = await prisma.payment.update({
-            where: {
-              id: relatedPayment[0].id
-            },
-            data: {
-              amount: deletedSale.inventory.bookstore.comissions 
-                  ? relatedPayment[0].amount 
-                    - ((deletedSale.inventory.price 
-                    - userCategory.category.management_min) 
-                    * quantity 
-                    / userIds.length)
-                  : relatedPayment[0].amount
-                    - (deletedSale.inventory.price
-                    * quantity
-                    * (userCategory.category.percentage_management_stores / 100)
-                    * (userCategory.category.percentage_royalties / 100)
-                    / userIds.length),
-            }
-          })
+        // update the payment for each author of the book
+        if (userIds.length > 0) {
+          for (const id of userIds) {
+            // using findMany instead of findUnique here to avoid the error if not found.
+            const relatedPayment = await tx.payment.findMany({
+              where: {
+                userId: id,
+                forMonth: currentForMonth,
+                isDeleted: false
+              }
+            })
+
+            const userCategory = await tx.user.findUnique({
+              where: {
+                id: id,
+                isDeleted: false
+              },
+              select: {
+                category: {
+                  select: {
+                    percentage_royalties: true,
+                    percentage_management_stores: true,
+                    management_min: true
+                  }
+                }
+              }
+            })
+
+            const saleValue = calculateAuthorRevenue(
+              deletedSale.inventory.bookstore.comissions,
+              deletedSale.inventory.price,
+              userCategory.category.management_min,
+              userCategory.category.percentage_management_stores,
+              userCategory.category.percentage_royalties,
+              quantity,
+              userIds.length
+            )
+
+            const updatedRelatedPayment = await tx.payment.update({
+              where: {
+                id: relatedPayment[0].id
+              },
+              data: {
+                amount: relatedPayment[0].amount - saleValue
+              }
+            })
+          }
         }
       }
-    }
-
+    })
+    
     res.status(200).json({message: "La venta ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -1794,33 +1749,35 @@ router.post('/impression', async (req, res) => {
     const id = parseInt(req.body.id);
     const note = (req.body.note);
 
-    const createdImpression = await prisma.impression.create({
-      data: {
-        bookId: id,
-        quantity: quantity,
-        note: note
-      }
-    })
-
-    const wasInventory = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: id,
-          bookstoreId: 3,
-          country: "México"
-        }
-      }
-    });
-
-    if (wasInventory && !wasInventory.isDeleted) {
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: wasInventory.id},
+    await prisma.$transaction(async (tx) => {
+      const createdImpression = await tx.impression.create({
         data: {
-          current: wasInventory.current + quantity,
-          initial: wasInventory.initial + quantity
+          bookId: id,
+          quantity: quantity,
+          note: note
         }
       })
-    };
+
+      const wasInventory = await tx.inventory.findUnique({
+        where: {
+          bookId_bookstoreId_country: {
+            bookId: id,
+            bookstoreId: 3,
+            country: "México"
+          }
+        }
+      });
+
+      if (wasInventory && !wasInventory.isDeleted) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: wasInventory.id},
+          data: {
+            current: wasInventory.current + quantity,
+            initial: wasInventory.initial + quantity
+          }
+        })
+      };
+    })
 
     res.status(201).json(createdImpression);
   } catch (error) {
@@ -1834,32 +1791,35 @@ router.delete('/impression/:id', async (req, res) => {
     const impression_id = parseInt(req.params.id);
     const book_id = parseInt(req.query.book_id);
     const quantity = parseInt(req.query.quantity);
-    const updatedImpression = await prisma.impression.update({
-      where: {id: impression_id},
-      data: {
-        isDeleted: true
-      }
-    })
 
-    const wasInventory = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: book_id,
-          bookstoreId: 3,
-          country: "México"
-        }
-      }
-    });
-
-    if (wasInventory && !wasInventory.isDeleted) {
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: wasInventory.id},
+    await prisma.$transaction(async (tx) => {
+      const updatedImpression = await tx.impression.update({
+        where: {id: impression_id},
         data: {
-          current: wasInventory.current - quantity,
-          initial: wasInventory.initial - quantity
+          isDeleted: true
         }
       })
-    }
+
+      const wasInventory = await tx.inventory.findUnique({
+        where: {
+          bookId_bookstoreId_country: {
+            bookId: book_id,
+            bookstoreId: 3,
+            country: "México"
+          }
+        }
+      });
+
+      if (wasInventory && !wasInventory.isDeleted) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: wasInventory.id},
+          data: {
+            current: wasInventory.current - quantity,
+            initial: wasInventory.initial - quantity
+          }
+        })
+      }
+    })
     res.status(200).json(updatedImpression);
   } catch (error) {
     console.error('\n ERROR WHILE DELETING THE IMPRESSION: \n', error);
@@ -1875,35 +1835,38 @@ router.patch('/impression', async (req, res) => {
       book_id
     } = req.body;
 
-    const currentImpression = await prisma.impression.findUnique({ where: {id: id}});
-    const diff = parseInt(quantity) - currentImpression.quantity;
+    await prisma.$transaction(async (tx) => {
+      const currentImpression = await tx.impression.findUnique({ where: {id: id}});
+      const diff = parseInt(quantity) - currentImpression.quantity;
 
-    const updatedImpression = await prisma.impression.update({
-      where: {id: id},
-      data: {
-        quantity: parseInt(quantity)
-      }
-    });
-
-    const wasInventory = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: book_id,
-          bookstoreId: 3,
-          country: "México"
-        }
-      }
-    });
-
-    if (wasInventory && !wasInventory.isDeleted) {
-      const updatedInventory = await prisma.inventory.update({
-        where: {id: wasInventory.id},
+      const updatedImpression = await tx.impression.update({
+        where: {id: id},
         data: {
-          current: wasInventory.current + diff,
-          initial: wasInventory.initial + diff
+          quantity: parseInt(quantity)
         }
-      })
-    }
+      });
+
+      const wasInventory = await tx.inventory.findUnique({
+        where: {
+          bookId_bookstoreId_country: {
+            bookId: book_id,
+            bookstoreId: 3,
+            country: "México"
+          }
+        }
+      });
+
+      if (wasInventory && !wasInventory.isDeleted) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: wasInventory.id},
+          data: {
+            current: wasInventory.current + diff,
+            initial: wasInventory.initial + diff
+          }
+        })
+      }
+    })
+    
     res.status(200).json(updatedImpression);
   } catch(error) {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
@@ -1933,163 +1896,164 @@ router.post('/transfer', async (req, res) => {
     const dateInDateTime = new Date(deliveryDate);
 
     // Start by getting the inventoryFrom
-    const currentInventoryFrom = await prisma.inventory.findUnique({
-      where: {
-        id: parseInt(inventoryFromId),
-        isDeleted: false
-      }
-    });
-
-    // Route 1 : delivered to Author
-    if (type === "send" && !bookstoreToId) {
-
-      if (country !== "México") {
-        res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
-        return;
-      }
-
-      const newTransferToAuthor = await prisma.transfer.create({
-        data: {
-          fromInventoryId: inventoryFromId,
-          quantity: parseInt(quantity),
-          note: note,
-          deliveryDate: dateInDateTime,
-          place: place,
-          person: person
+    await prisma.$transaction(async (tx) => {
+      const currentInventoryFrom = await tx.inventory.findUnique({
+        where: {
+          id: parseInt(inventoryFromId),
+          isDeleted: false
         }
       });
 
-      if(newTransferToAuthor) {
-        const updatedFromInventory = await prisma.inventory.update({
-          where: {id: inventoryFromId},
+      // Route 1 : delivered to Author
+      if (type === "send" && !bookstoreToId) {
+
+        if (country !== "México") {
+          res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
+          return;
+        }
+
+        const newTransferToAuthor = await tx.transfer.create({
           data: {
-            givenToAuthor: currentInventoryFrom.givenToAuthor + parseInt(quantity),
-            current: currentInventoryFrom.current - parseInt(quantity)
+            fromInventoryId: inventoryFromId,
+            quantity: parseInt(quantity),
+            note: note,
+            deliveryDate: dateInDateTime,
+            place: place,
+            person: person
           }
         });
-      };
 
-      res.status(200).json(newTransferToAuthor);
-      return;
-    }
+        if(newTransferToAuthor) {
+          const updatedFromInventory = await tx.inventory.update({
+            where: {id: inventoryFromId},
+            data: {
+              givenToAuthor: currentInventoryFrom.givenToAuthor + parseInt(quantity),
+              current: currentInventoryFrom.current - parseInt(quantity)
+            }
+          });
+        };
 
-    // Route 2: Return and Send
-    // Get the inventoryTo if it exists
-    let currentInventoryTo = await prisma.inventory.findUnique({
-      where: {
-        bookId_bookstoreId_country: {
-          bookId: parseInt(bookId),
-          bookstoreId: parseInt(bookstoreToId),
-          country: country
-        },
-        isDeleted: false
+        res.status(200).json(newTransferToAuthor);
+        return;
       }
-    });
 
-    let newInventoryTo;
-    let recoveredInventoryTo;
-
-    // if it doesnt exist check if it isn't soft deleted. 1/ Get it if deleted
-    if (!currentInventoryTo) {
-      const deletedInventoryMaybe = await prisma.inventory.findUnique({
+      // Route 2: Return and Send
+      // Get the inventoryTo if it exists
+      let currentInventoryTo = await tx.inventory.findUnique({
         where: {
           bookId_bookstoreId_country: {
             bookId: parseInt(bookId),
             bookstoreId: parseInt(bookstoreToId),
             country: country
           },
-          isDeleted: true
+          isDeleted: false
         }
       });
 
-      // 2/ If it is not, create it.
-      if (!deletedInventoryMaybe) {
-        newInventoryTo = await prisma.inventory.create({
-          data: {
-            bookId: parseInt(bookId),
-            bookstoreId: parseInt(bookstoreToId),
-            country: country,
-            initial: parseInt(quantity),
-            current: parseInt(quantity)
+      let newInventoryTo;
+      let recoveredInventoryTo;
+
+      // if it doesnt exist check if it isn't soft deleted. 1/ Get it if deleted
+      if (!currentInventoryTo) {
+        const deletedInventoryMaybe = await tx.inventory.findUnique({
+          where: {
+            bookId_bookstoreId_country: {
+              bookId: parseInt(bookId),
+              bookstoreId: parseInt(bookstoreToId),
+              country: country
+            },
+            isDeleted: true
           }
         });
-      // 3/ Otherwise recover it
-      } else {
-        recoveredInventoryTo = await prisma.inventory.update({
-          where: {id: deletedInventoryMaybe.id},
-          data: {
-            isDeleted: false,
-            current: parseInt(quantity),
-            initial: parseInt(quantity)
-          }
-        });
-      }
-    };
 
-    // 4/ Set it to current
-    if (newInventoryTo) {
-      currentInventoryTo = newInventoryTo
-    };
-
-    if (recoveredInventoryTo) {
-      currentInventoryTo = recoveredInventoryTo
-    }
-
-    // 5-Create the actual transfer now that you got the proper inventory To and From
-    const newTransfer = await prisma.transfer.create({
-      data: {
-        fromInventoryId: parseInt(inventoryFromId),
-        toInventoryId: parseInt(currentInventoryTo.id),
-        quantity: parseInt(quantity),
-        type: type
-      }
-    });
-
-    // 6- If creating the inventory succeeded, proceed further
-    // (don't want to proceed further if that step fails for whichever reason)
-    if (newTransfer) {
-      // If it's a send - update both From and To inventories
-      if (newTransfer.type === "send") {
-        const updatedInventoryFrom = await prisma.inventory.update({
-          where: {id: parseInt(inventoryFromId)},
-          data: {
-            current: currentInventoryFrom.current - parseInt(quantity),
-            initial: currentInventoryFrom.initial - parseInt(quantity)
-          }
-        });
-        // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
-        if (!newInventoryTo && !recoveredInventoryTo) {
-          const updatedInventoryTo = await prisma.inventory.update({
-            where: {id: currentInventoryTo.id},
+        // 2/ If it is not, create it.
+        if (!deletedInventoryMaybe) {
+          newInventoryTo = await tx.inventory.create({
             data: {
-              current: currentInventoryTo.current + parseInt(quantity),
-              initial: currentInventoryTo.initial + parseInt(quantity)
+              bookId: parseInt(bookId),
+              bookstoreId: parseInt(bookstoreToId),
+              country: country,
+              initial: parseInt(quantity),
+              current: parseInt(quantity)
+            }
+          });
+        // 3/ Otherwise recover it
+        } else {
+          recoveredInventoryTo = await tx.inventory.update({
+            where: {id: deletedInventoryMaybe.id},
+            data: {
+              isDeleted: false,
+              current: parseInt(quantity),
+              initial: parseInt(quantity)
             }
           });
         }
-      // If it's a return - same process
-      } else {
-        const updatedInventoryFrom = await prisma.inventory.update({
-          where: {id: parseInt(inventoryFromId)},
-          data: {
-            current: currentInventoryFrom.current - parseInt(quantity),
-            returns: currentInventoryFrom.returns + parseInt(quantity),
-          }
-        });
+      };
 
-        if (!newInventoryTo && !recoveredInventoryTo) {
-          const updatedInventoryTo = await prisma.inventory.update({
-            where: {id: currentInventoryTo.id},
-            data: {
-              current: currentInventoryTo.current + parseInt(quantity),
-              initial: currentInventoryTo.initial + parseInt(quantity),
-            }
-          });
-        }
+      // 4/ Set it to current
+      if (newInventoryTo) {
+        currentInventoryTo = newInventoryTo
+      };
+
+      if (recoveredInventoryTo) {
+        currentInventoryTo = recoveredInventoryTo
       }
 
-    }
+      // 5-Create the actual transfer now that you got the proper inventory To and From
+      const newTransfer = await tx.transfer.create({
+        data: {
+          fromInventoryId: parseInt(inventoryFromId),
+          toInventoryId: parseInt(currentInventoryTo.id),
+          quantity: parseInt(quantity),
+          type: type
+        }
+      });
 
+      // 6- If creating the inventory succeeded, proceed further
+      // (don't want to proceed further if that step fails for whichever reason)
+      if (newTransfer) {
+        // If it's a send - update both From and To inventories
+        if (newTransfer.type === "send") {
+          const updatedInventoryFrom = await tx.inventory.update({
+            where: {id: parseInt(inventoryFromId)},
+            data: {
+              current: currentInventoryFrom.current - parseInt(quantity),
+              initial: currentInventoryFrom.initial - parseInt(quantity)
+            }
+          });
+          // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
+          if (!newInventoryTo && !recoveredInventoryTo) {
+            const updatedInventoryTo = await tx.inventory.update({
+              where: {id: currentInventoryTo.id},
+              data: {
+                current: currentInventoryTo.current + parseInt(quantity),
+                initial: currentInventoryTo.initial + parseInt(quantity)
+              }
+            });
+          }
+        // If it's a return - same process
+        } else {
+          const updatedInventoryFrom = await tx.inventory.update({
+            where: {id: parseInt(inventoryFromId)},
+            data: {
+              current: currentInventoryFrom.current - parseInt(quantity),
+              returns: currentInventoryFrom.returns + parseInt(quantity),
+            }
+          });
+
+          if (!newInventoryTo && !recoveredInventoryTo) {
+            const updatedInventoryTo = await tx.inventory.update({
+              where: {id: currentInventoryTo.id},
+              data: {
+                current: currentInventoryTo.current + parseInt(quantity),
+                initial: currentInventoryTo.initial + parseInt(quantity),
+              }
+            });
+          }
+        }
+      }
+    })
+    
     res.status(200).json(newTransfer)
   } catch (error) {
     console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
@@ -2146,11 +2110,13 @@ router.patch('/markAsPaid/:id', async (req, res) => {
 
     if (updatedPayment) {
       res.status(200).json({message: "Successfully marked payment as paid"})
+    } else {
+      res.status(500).json({error:"a server error occurred while updating payments"});
     }
 
   } catch(error) {
     console.error("\n ERROR MARKING PAYMENT AS PAID \n", error);
-    res.status(500).json({error:"a server error occurred while fetching payments"})
+    res.status(500).json({error:"a server error occurred while updating payments"})
   }
 })
 
@@ -2202,34 +2168,39 @@ router.post('/cost', async (req, res) => {
       note
     } = req.body;
 
-    const createdCost = await prisma.cost.create({
-      data: {
-        paymentId: paymentId,
-        amount: amount,
-        note: note
-      }
-    });
-
-    if (createdCost) {
-      const previousPayment = await prisma.payment.findUnique({
-        where: {
-          id: paymentId
-        },
-        select: {
-          amount: true
+    await prisma.$transaction(async (tx) => {
+      const createdCost = await tx.cost.create({
+        data: {
+          paymentId: paymentId,
+          amount: amount,
+          note: note
         }
       });
 
-      const updatedPayment = await prisma.payment.update({
-        where: {
-          id: paymentId
-        },
-        data: {
-          amount: previousPayment.amount - createdCost.amount
-        }
-      })
-      res.status(200).json({message: "Cost created sucessfully"});
-    }
+      if (createdCost) {
+        const previousPayment = await tx.payment.findUnique({
+          where: {
+            id: paymentId
+          },
+          select: {
+            amount: true
+          }
+        });
+
+        const updatedPayment = await tx.payment.update({
+          where: {
+            id: paymentId
+          },
+          data: {
+            amount: previousPayment.amount - createdCost.amount
+          }
+        })
+        res.status(200).json({message: "Cost created sucessfully"});
+      } else {
+        res.status(500).json({error:"a server error occurred while creating the cost"})
+      }
+    })
+    
   } catch (error) {
     console.error("\n ERROR CREATING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while creating the cost"})
@@ -2244,40 +2215,43 @@ router.patch("/cost/:id", async (req, res) => {
       note
     } = req.body;
 
-    const previousCost = await prisma.cost.findUnique({
-      where: {
-        id: costId
-      }
-    })
-    
-    const updatedCost = await prisma.cost.update({
-      where: {
-        id: costId
-      },
-      data: {
-        amount: amount,
-        note: note
-      }
-    })
-
-    if (updatedCost) {
-      const previousPayment = await prisma.payment.findUnique({
+    await prisma.$transaction(async (tx) => {
+      const previousCost = await tx.cost.findUnique({
         where: {
-          id: updatedCost.paymentId
+          id: costId
         }
-      });
+      })
+      
+      const updatedCost = await tx.cost.update({
+        where: {
+          id: costId
+        },
+        data: {
+          amount: amount,
+          note: note
+        }
+      })
 
-      if (previousPayment) {
-        const updatedPayment = await prisma.payment.update({
+      if (updatedCost) {
+        const previousPayment = await tx.payment.findUnique({
           where: {
             id: updatedCost.paymentId
-          },
-          data: {
-            amount: previousPayment.amount + previousCost.amount - updatedCost.amount
           }
-        })
+        });
+
+        if (previousPayment) {
+          const updatedPayment = await tx.payment.update({
+            where: {
+              id: updatedCost.paymentId
+            },
+            data: {
+              amount: previousPayment.amount + previousCost.amount - updatedCost.amount
+            }
+          })
+        }
       }
-    }
+    })
+
     res.status(200).json({message: "The cost was updated successfully"});
   } catch (error) {
     console.error("\n ERROR UPDATING THE ADDITIONAL COST \n", error);
@@ -2288,33 +2262,36 @@ router.patch("/cost/:id", async (req, res) => {
 router.delete('/cost/:id', async (req, res) => {
   try {
     const costId = parseInt(req.params.id);
-    const markedAsDeletedCost = await prisma.cost.update({
-      where: {
-        id: costId
-      },
-      data: {
-        isDeleted: true
-      }
-    });
 
-    if (markedAsDeletedCost) {
-      const previousPayment = await prisma.payment.findUnique({
+    await prisma.$transaction(async (tx) => {
+      const markedAsDeletedCost = await tx.cost.update({
         where: {
-          id: markedAsDeletedCost.paymentId
+          id: costId
+        },
+        data: {
+          isDeleted: true
         }
       });
 
-      if (previousPayment) {
-        const updatedPayment = await prisma.payment.update({
+      if (markedAsDeletedCost) {
+        const previousPayment = await tx.payment.findUnique({
           where: {
             id: markedAsDeletedCost.paymentId
-          },
-          data: {
-            amount: previousPayment.amount + markedAsDeletedCost.amount
           }
-        })
+        });
+
+        if (previousPayment) {
+          const updatedPayment = await tx.payment.update({
+            where: {
+              id: markedAsDeletedCost.paymentId
+            },
+            data: {
+              amount: previousPayment.amount + markedAsDeletedCost.amount
+            }
+          })
+        }
       }
-    }
+    })
 
     res.status(200).json({message: "The cost was deleted successfully"});
   } catch (error) {
@@ -2412,8 +2389,8 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
   return deletedInventoriesIds;
 }
 
-async function softDeleteImpressionsOnCascade(deletedBook) {
-  const impressionsToDelete = await prisma.impression.findMany({
+async function softDeleteImpressionsOnCascade(deletedBook, tx) {
+  const impressionsToDelete = await tx.impression.findMany({
     where: {
       bookId: deletedBook.id,
       isDeleted: false
@@ -2422,7 +2399,7 @@ async function softDeleteImpressionsOnCascade(deletedBook) {
 
   let deletedImpressionsIds = [];
   for (const impression of impressionsToDelete) {
-    const deletedImpression = await prisma.impression.update({
+    const deletedImpression = await tx.impression.update({
       where : {id: impression.id},
       data: {isDeleted: true}
     })
@@ -2543,7 +2520,7 @@ async function softDeleteSalesOnCascade(IdsList, tx) {
   }
 }
 
-async function softDeleteCostsOnCascade(deletedPaymentId) {
+async function softDeleteCostsOnCascade(deletedPaymentId, tx) {
   const costsToDelete = await tx.cost.findMany({
     where: {
       paymentId: deletedPaymentId,
@@ -2565,8 +2542,8 @@ async function softDeleteCostsOnCascade(deletedPaymentId) {
 
 // updateOnCascade routes
 
-async function updatePaymentsOnCascade(category, previousCategory) {
-  const impactedUsers = await prisma.user.findMany({
+async function updatePaymentsOnCascade(category, previousCategory, tx) {
+  const impactedUsers = await tx.user.findMany({
     where: {
       categoryId: category.id,
       isDeleted: false
@@ -2579,7 +2556,7 @@ async function updatePaymentsOnCascade(category, previousCategory) {
 
   let impactedSales = [];
   for (const user of impactedUsers) {
-    const impactedBooks = await prisma.book.findMany({
+    const impactedBooks = await tx.book.findMany({
       where: {
         users: {
           some: {
@@ -2595,7 +2572,7 @@ async function updatePaymentsOnCascade(category, previousCategory) {
 
     for (const book of impactedBooks) {
       const numberOfAuthors = book.users.length
-      const impactedInventories = await prisma.inventory.findMany({
+      const impactedInventories = await tx.inventory.findMany({
         where: {
           bookId: book.id,
           isDeleted: false
@@ -2606,7 +2583,7 @@ async function updatePaymentsOnCascade(category, previousCategory) {
       })
 
       for (const inventory of impactedInventories) {
-        const impactedSalesForInventory = await prisma.sale.findMany({
+        const impactedSalesForInventory = await tx.sale.findMany({
           where: {
             inventoryId: inventory.id,
             isDeleted: false
@@ -2647,7 +2624,7 @@ async function updatePaymentsOnCascade(category, previousCategory) {
       sale.numberOfAuthors
     )
 
-    const previousPayment = await prisma.payment.findUnique({
+    const previousPayment = await tx.payment.findUnique({
       where: {
         userId_forMonth: {
           userId: sale.userId,
@@ -2657,8 +2634,10 @@ async function updatePaymentsOnCascade(category, previousCategory) {
       }
     });
 
+    const quantityUpdate = newSaleValue - previousSaleValue
+
     if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await prisma.payment.update({
+      const updatedPayment = await tx.payment.update({
         where: {
           userId_forMonth: {
             userId: sale.userId,
@@ -2667,16 +2646,16 @@ async function updatePaymentsOnCascade(category, previousCategory) {
           isDeleted: false
         },
         data: {
-          amount: previousPayment.amount + previousSaleValue - newSaleValue
+          amount: previousPayment.amount + quantityUpdate
         }
       })
     }
   }
 }
 
-async function updatePaymentsOnCascadeFromBookstore(bookstore) {
+async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
   let impactedSales = [];
-  const impactedInventories = await prisma.inventory.findMany({
+  const impactedInventories = await tx.inventory.findMany({
     where: {
       bookstoreId: bookstore.id,
       isDeleted: false
@@ -2687,7 +2666,7 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
   });
 
   for (const inventory of impactedInventories) {
-    const impactedBook = await prisma.book.findFirst({
+    const impactedBook = await tx.book.findFirst({
       where: {
         id: inventory.bookId,
         isDeleted: false
@@ -2710,7 +2689,7 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
 
     const impactedUsers = impactedBook.users;
 
-    const impactedSalesForInventory = await prisma.sale.findMany({
+    const impactedSalesForInventory = await tx.sale.findMany({
       where: {
         inventoryId: inventory.id,
         isDeleted: false
@@ -2734,11 +2713,8 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
     };
   }
 
-  console.log("impactedSales.length", impactedSales.length);
   let count = 0;
   for (const sale of impactedSales) {
-    count += 1
-    console.log("count", count);
     const paymentForMonth = getForMonth(sale.createdAt);
     const previousSaleValue = calculateAuthorRevenue(
       !sale.comissions,
@@ -2758,7 +2734,7 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
       sale.quantity,
       sale.numberOfAuthors
     )
-    const previousPayment = await prisma.payment.findUnique({
+    const previousPayment = await tx.payment.findUnique({
       where: {
         userId_forMonth: {
           userId: sale.userId,
@@ -2767,8 +2743,11 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
         isDeleted: false
       }
     });
+
+    const quantityUpdate = newSaleValue - previousSaleValue
+
     if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await prisma.payment.update({
+      const updatedPayment = await tx.payment.update({
         where: {
           userId_forMonth: {
             userId: sale.userId,
@@ -2777,23 +2756,16 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore) {
           isDeleted: false
         },
         data: {
-          amount: previousPayment.amount - previousSaleValue + newSaleValue
+          amount: previousPayment.amount + quantityUpdate
         }
       });
-      console.log("updatedPayment.amount", updatedPayment.amount);
     }
-
-    console.log("previousSaleValue", previousSaleValue);
-    console.log("newSaleValue", newSaleValue);
-    console.log("previousPayment.amount", previousPayment.amount);
-    
-    console.log("");
   }
 }
 
-async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
+async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice, tx) {
   let impactedSales = [];
-  const impactedBook = await prisma.book.findFirst({
+  const impactedBook = await tx.book.findFirst({
     where: {
       id: inventory.bookId,
       isDeleted: false
@@ -2815,7 +2787,7 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
   });
 
   const impactedUsers = impactedBook.users;
-  const relatedBookstore = await prisma.bookstore.findFirst({
+  const relatedBookstore = await tx.bookstore.findFirst({
     where: {
       id: inventory.bookstoreId,
       isDeleted: false
@@ -2825,7 +2797,7 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
     }
   })
 
-  const impactedSalesForInventory = await prisma.sale.findMany({
+  const impactedSalesForInventory = await tx.sale.findMany({
     where: {
       inventoryId: inventory.id,
       isDeleted: false
@@ -2848,23 +2820,7 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
     }
   };
 
-  console.log("impactedSales.length", impactedSales.length);
-  let count = 0;
   for (const sale of impactedSales) {
-    count += 1
-
-    console.log("");
-    console.log("count", count);
-    console.log("userId", sale.userId);
-    console.log("sale.comissions", sale.comissions);
-    console.log("previousPrice", previousPrice);
-    console.log("sale.price", sale.price);
-    console.log("sale.management_min", sale.management_min);
-    console.log("sale.percentage_management_stores", sale.percentage_management_stores);
-    console.log("sale.percentage_royalties", sale.percentage_royalties);
-    console.log("sale.quantity", sale.quantity);
-    console.log("sale.numberOfAuthors", sale.numberOfAuthors);
-
     const paymentForMonth = getForMonth(sale.createdAt);
     const previousSaleValue = calculateAuthorRevenue(
       sale.comissions,
@@ -2884,7 +2840,7 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
       sale.quantity,
       sale.numberOfAuthors
     )
-    const previousPayment = await prisma.payment.findUnique({
+    const previousPayment = await tx.payment.findUnique({
       where: {
         userId_forMonth: {
           userId: sale.userId,
@@ -2893,8 +2849,11 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
         isDeleted: false
       }
     });
+
+    const quantityUpdate = newSaleValue - previousSaleValue
+
     if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await prisma.payment.update({
+      const updatedPayment = await tx.payment.update({
         where: {
           userId_forMonth: {
             userId: sale.userId,
@@ -2903,7 +2862,7 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice) {
           isDeleted: false
         },
         data: {
-          amount: previousPayment.amount - previousSaleValue + newSaleValue
+          amount: previousPayment.amount + quantityUpdate
         }
       });
     }

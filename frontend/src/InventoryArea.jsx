@@ -76,7 +76,10 @@ function InventoryArea({
           </div>
         }
       </div>
-      <div className="inventory-count">{count}</div>
+      <div className="inventory-count">
+        <p className="ic-title">{count}</p>
+        <p className="ic-subtitle">libros en ventas</p>
+      </div>
     </div>
   )
 }

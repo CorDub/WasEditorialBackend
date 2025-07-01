@@ -60,26 +60,47 @@ router.post('/user', async (req, res) => {
       email,
       category } = req.body;
 
-    const existing = await prisma.user.findUnique({
-      where: {
-        first_name_last_name: {
-          first_name: firstName,
-          last_name: lastName
+    await prisma.$transaction(async (tx) => {
+      const existing = await tx.user.findUnique({
+        where: {
+          first_name_last_name: {
+            first_name: firstName,
+            last_name: lastName
+          }
         }
-      }
-    });
+      });
 
-    const password = createRandomPassword();
-    const hashedPassword = await bcrypt.hash(password, 10);
+      const password = createRandomPassword();
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (existing) {
-      if (existing.isDeleted === false) {
-        res.status(500).json({message: "Este usuario ya existe"})
+      if (existing) {
+        if (existing.isDeleted === false) {
+          res.status(500).json({message: "Este usuario ya existe"})
+          return;
+        }
+
+        const exhumedUser = await tx.user.update({
+          where: {id: existing.id},
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            country: country,
+            referido: referido,
+            email: email,
+            password: hashedPassword,
+            categoryId: parseInt(category),
+            isDeleted: false
+          }
+        });
+        res.status(201).json({
+          firstName: exhumedUser.first_name,
+          lastName: exhumedUser.last_name,
+          email: exhumedUser.email});
+        sendSetPasswordMail(email, firstName, password);
         return;
       }
 
-      const exhumedUser = await prisma.user.update({
-        where: {id: existing.id},
+      const new_author =  await tx.user.create({
         data: {
           first_name: firstName,
           last_name: lastName,
@@ -87,35 +108,17 @@ router.post('/user', async (req, res) => {
           referido: referido,
           email: email,
           password: hashedPassword,
-          categoryId: parseInt(category),
-          isDeleted: false
-        }
+          categoryId: parseInt(category)
+        },
       });
+
       res.status(201).json({
-        firstName: exhumedUser.first_name,
-        lastName: exhumedUser.last_name,
-        email: exhumedUser.email});
+        firstName: new_author.first_name,
+        lastName: new_author.last_name,
+        email: new_author.email});
       sendSetPasswordMail(email, firstName, password);
-      return;
-    }
+    })
 
-    const new_author =  await prisma.user.create({
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        country: country,
-        referido: referido,
-        email: email,
-        password: hashedPassword,
-        categoryId: parseInt(category)
-      },
-    });
-
-    res.status(201).json({
-      firstName: new_author.first_name,
-      lastName: new_author.last_name,
-      email: new_author.email});
-    sendSetPasswordMail(email, firstName, password);
   } catch(error) {
     console.error(error);
     if (String(error).includes(("Unique constraint failed on the fields: (`email`)"))) {
@@ -339,10 +342,47 @@ router.get('/categories-type', async (req, res) => {
   }
 })
 
-router.delete('/category/:id', async (req, res) => {
+router.get('/categoryImpactedUsers/:id', async (req, res) => {
   const category_id = parseInt(req.params.id);
   try {
+    const impactedUsers = await prisma.user.findMany({
+        where: {
+          categoryId: category_id
+        }
+      });
+
+    res.status(200).json({"numImpactedUsers": impactedUsers.length});
+  } catch(error) {
+    console.error("Error while checking impaced users:", error);
+    res.status(500).json({error: "A server error occurred while checking impacted users"});
+  }
+})
+
+router.delete('/category/:id', async (req, res) => {
+  const category_id = parseInt(req.params.id);
+  const selectedCategory = parseInt(req.body.selectedCategory);
+
+  try {
     await prisma.$transaction(async (tx) => {
+      if (selectedCategory !== 0) {
+        const impactedUsers = await tx.user.findMany({
+          where: {
+            categoryId: category_id
+          }
+        });
+
+        for (const user of impactedUsers) {
+          await tx.user.update({
+            where: {
+              id: user.id
+            },
+            data: {
+              categoryId: selectedCategory
+            }
+          })
+        };
+      };
+
       const deletedCategory = await tx.category.update({
         where: {id: category_id},
         data: {isDeleted: true}
@@ -417,9 +457,9 @@ router.post('/category', async (req, res) => {
           management_min: parseFloat(gestionMinima),
         },
       });
+
+      res.status(201).json({name: new_category.type});
     })
-    
-    res.status(201).json({name: new_category.type});
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
       res.status(500).json({message: "Uniqueness error - tipo"})
@@ -454,7 +494,7 @@ router.patch('/category', async (req, res) => {
         }
       });
 
-      updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
+      await updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
 
       if (updatedCategory) {
         res.status(200).json({message: "Successfully updated category"});
@@ -584,9 +624,10 @@ router.post('/book', async (req, res) => {
           }
         })
       }
+
+      res.status(201).json({title: new_book.title});
     })
 
-    res.status(201).json({title: new_book.title});
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`isbn`)"))) {
       res.status(500).json({message: "Este ISBN ya existe"})
@@ -615,9 +656,9 @@ router.delete('/book/:id', async (req, res) => {
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
         await softDeleteImpressionsOnCascade(deletedBook, tx);
       }
+
+      res.status(200).json({message: "El libro ha sido eliminado con exito."})
     })
-    
-    res.status(200).json({message: "El libro ha sido eliminado con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the book'});
@@ -855,10 +896,10 @@ router.patch('/bookstore', async (req, res) => {
         }
       });
 
-      updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
-    })
+      await updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
 
-    res.status(200).json({message: "Successfully updated bookstore"});
+      res.status(200).json({message: "Successfully updated bookstore"});
+    })
   } catch(error) {
     console.error("Server error at the update bookstore route:", error);
     res.status(500).json({error: "There was an issue updating the bookstore"});
@@ -881,9 +922,10 @@ router.delete('/bookstore/:id', async (req, res) => {
         const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores", tx);
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
       }
+
+      res.status(200).json({message: "La libreria ha sido eliminada con exito."})
     })
 
-    res.status(200).json({message: "La libreria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the bookstore'});
@@ -1248,7 +1290,7 @@ router.patch('/inventory', async (req, res) => {
         })
       }
 
-      updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
+      await updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
 
       if (updatedInventory) {
         res.status(200).json({message: "Successfully updated inventory"});
@@ -1280,9 +1322,10 @@ router.delete('/inventory/:id', async (req, res) => {
       if (deletedInventory) {
         await softDeleteSalesOnCascade([inventory_id], tx);
       }
-    })
 
-    res.status(200).json({message: "El inventario ha sido eliminado con exito."})
+      res.status(200).json({message: "El inventario ha sido eliminado con exito."})
+    })
+    
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the inventory'});
@@ -1290,7 +1333,6 @@ router.delete('/inventory/:id', async (req, res) => {
 })
 
 /// Sales routes
-
 
 router.get('/sales', async (req, res) => {
   try {
@@ -1473,9 +1515,9 @@ router.post('/sale', async (req, res) => {
         }
       }
 
+    res.status(201).json(createdSale);
     })
    
-    res.status(201).json(createdSale);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error });
@@ -1561,7 +1603,7 @@ router.patch('/sale', async (req, res) => {
         if (userIds.length > 0) {
           for (const id of userIds) {
             // using findMany instead of findUnique here to avoid the error if not found.
-            const relatedPayment = await tx.payment.findFirst({
+            const relatedPayment = await tx.payment.findUnique({
               where: {
                 userId_forMonth: {
                   userId: id,
@@ -1608,7 +1650,7 @@ router.patch('/sale', async (req, res) => {
             } else {
               const updatedRelatedPayment = await tx.payment.update({
                 where: {
-                  id: relatedPayment[0].id
+                  id: relatedPayment.id
                 },
                 data: {
                   amount: relatedPayment.amount + saleAmount
@@ -1777,9 +1819,10 @@ router.post('/impression', async (req, res) => {
           }
         })
       };
-    })
 
     res.status(201).json(createdImpression);
+    })
+
   } catch (error) {
     console.error("\n ERROR CREATING THE IMPRESSION: \n", error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
@@ -1819,8 +1862,9 @@ router.delete('/impression/:id', async (req, res) => {
           }
         })
       }
-    })
+
     res.status(200).json(updatedImpression);
+    })
   } catch (error) {
     console.error('\n ERROR WHILE DELETING THE IMPRESSION: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
@@ -1865,9 +1909,10 @@ router.patch('/impression', async (req, res) => {
           }
         })
       }
+
+      res.status(200).json(updatedImpression);
     })
     
-    res.status(200).json(updatedImpression);
   } catch(error) {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
@@ -2052,9 +2097,10 @@ router.post('/transfer', async (req, res) => {
           }
         }
       }
+
+    res.status(200).json(newTransfer)
     })
     
-    res.status(200).json(newTransfer)
   } catch (error) {
     console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
     res.status(500).json({error: "a server error occurred while creating the transfer"})

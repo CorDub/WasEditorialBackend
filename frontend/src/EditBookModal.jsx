@@ -70,7 +70,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   }
 
   async function sendToServer() {
-    console.log("authors", authors);
     try {
       const response = await fetch(`${baseURL}/admin/book`, {
         method: "PATCH",
@@ -178,8 +177,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
       existingAuthors.map((authorBot) => {
         authorsIds.push(authorBot.id);
       })
-      // console.log(authorTop.id);
-      // console.log(authorsIds);
+
       if (!authorsIds.includes(authorTop.id)) {
         newErrorList.push(42);
         addErrorClass(inputAuthors[index]);
@@ -258,9 +256,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
             <label className="modal-form-label">Pasta</label>
             <select onChange={(e) =>dropDownChange(e, "Pasta")}
               className="select-global" id="pasta-select">
-              {/* <option value={pasta}>{pasta}</option>
-              <option value="Blanda">Blanda</option>
-              <option value="Dura">Dura</option> */}
               {pastaDisplay.map((pasta, index) => (
                 <option key={index} value={pasta}>{pasta}</option>
               ))}

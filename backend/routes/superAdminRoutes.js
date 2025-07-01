@@ -124,7 +124,7 @@ router.delete('/admin/:id', async (req, res) => {
         isDeleted: true,
       }
     });
-    res.status(200).json({message: "El admin ha sido eliminado (recuperable) con exito."})
+    res.status(200).json({message: "El admin ha sido eliminado con exito."})
   } catch (error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the admin'});

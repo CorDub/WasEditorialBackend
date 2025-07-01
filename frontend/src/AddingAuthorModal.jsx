@@ -144,7 +144,9 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       addErrorClass(inputLastName);
     };
 
-    if (serverError === "Un autor con el mismo nombre completo ya existe") {
+    if (serverError === "Un autor con el mismo nombre completo ya existe" 
+      || serverError === "Este usuario ya existe"
+    ) {
       errorList.push(121);
       addErrorClass(inputFirstName);
       addErrorClass(inputLastName);

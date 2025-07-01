@@ -99,7 +99,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           <button
             type="button"
             className='blue-button'
-            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, true)}>Cancelar</button>
           <button
             type='button'
             onClick={handleSubmit}

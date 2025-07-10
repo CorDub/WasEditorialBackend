@@ -287,9 +287,12 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         <p>Editar venta</p>
         <p className="form-subtitle">{clickedRow.completeInventory}</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
         <div className="modal-form-line">
-          <label className="modal-form-label">Título</label>
+          <label className="modal-form-label">Título *</label>
           <select onChange={(e) => dropDownChange(e, "Book")}
             className="select-global" ref={bookRef}>
             {existingBooks && existingBooks.map((book, index) => (
@@ -298,7 +301,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           </select>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Librería</label>
+          <label className="modal-form-label">Librería *</label>
           <select onChange={(e) => dropDownChange(e, "Bookstore")}
             className="select-global" ref={bookstoreRef}>
             {existingBookstores && existingBookstores.map((bookstore, index) => (
@@ -307,7 +310,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           </select>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">País</label>
+          <label className="modal-form-label">País *</label>
           <select onChange={(e) => dropDownChange(e, "Country")}
             className="select-global" ref={countryRef}>
             {countries && countries.map((country, index) => (
@@ -316,7 +319,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           </select>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Cantidad</label>
+          <label className="modal-form-label">Cantidad *</label>
           <input type="text" placeholder="Cantidad vendida" className="global-input"
             ref={quantityRef} value={quantity}
             onChange={(e) => setQuantity(e.target.value)}></input>

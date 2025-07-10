@@ -135,12 +135,15 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       <div className="form-title">
         <p>Nuevo admin</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
-        <input type='text' placeholder="Nombre"
+        <input type='text' placeholder="Nombre*"
           className="global-input" id='adding-author-first-name'
           ref={firstNameRef}
           onChange={(e) => setFirstName(e.target.value)}></input>
-        <input type='text' placeholder="Apellido"
+        <input type='text' placeholder="Apellido*"
           className="global-input" id="adding-author-last-name"
           ref={lastNameRef}
           onChange={(e) => setLastName(e.target.value)}></input>
@@ -150,7 +153,7 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           onChange={(e) => setEmail(e.target.value)}></input>
         <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
           ref={roleRef}>
-          <option value="null">Selecciona rol</option>
+          <option value="null">Selecciona rol*</option>
           <option value="superadmin">Superadmin</option>
           <option value="admin">Admin</option>
           <option value="author">Usuario</option>

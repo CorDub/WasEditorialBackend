@@ -143,17 +143,20 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
       <div className="form-title">
         <p>Nueva categoría</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Tipo"
+        <input type='text' placeholder="Tipo*"
           className="global-input" id="adding-category-type"
           onChange={(e) => setTipo(e.target.value)}></input>
-        <input type='text' placeholder="% Regalias de venta"
+        <input type='text' placeholder="% Regalias de venta*"
           className="global-input" id="adding-category-regalias"
           onChange={(e) => setRegalias(e.target.value)}></input>
-        <input type='text' placeholder="% Gestion tiendas"
+        <input type='text' placeholder="% Gestion tiendas*"
           className="global-input" id="adding-category-gestionTiendas"
           onChange={(e) => setGestionTiendas(e.target.value)}></input>
-        <input type='text' placeholder="Gestion minima"
+        <input type='text' placeholder="Gestion minima*"
           className="global-input" id="adding-category-gestionMinima"
           onChange={(e) => setGestionMinima(e.target.value)}></input>
         <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/>

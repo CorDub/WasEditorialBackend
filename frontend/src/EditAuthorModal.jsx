@@ -261,21 +261,24 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <p>Editar autor</p>
           <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
         </div>
+        <div className="campos-obligatorios">
+          <p>*Campos obligatorios</p>
+        </div>
         <form className="global-form">
           <div className="modal-form-line">
-            <label className="modal-form-label">Nombre</label>
+            <label className="modal-form-label">Nombre *</label>
             <input type="text" value={`${firstName}`}
               className="global-input" id='adding-author-first-name'
               onChange={(e)=>setFirstName(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Apellido</label>
+            <label className="modal-form-label">Apellido *</label>
             <input type="text" value={`${lastName}`} placeholder="Apellido"
               className="global-input" id="adding-author-last-name"
               onChange={(e)=>setLastName(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">País</label>
+            <label className="modal-form-label">País *</label>
             <select className="select-global"
               id="country-select"
               onChange={(e) => dropDownChange(e, "Country")} >

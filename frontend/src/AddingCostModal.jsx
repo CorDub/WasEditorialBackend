@@ -84,10 +84,13 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
              <div className="form-title">
                 <p>Nuevo costo addicional</p>
             </div>
+            <div className="campos-obligatorios">
+                <p>*Campos obligatorios</p>
+            </div>
             <form className="global-form">
                 <input type="text"
                     className="global-input"
-                    placeholder="Monto"
+                    placeholder="Monto*"
                     ref={amountRef}
                     onChange={(e) => setAmount(parseFloat(e.target.value))}/>
                 <input type='text'

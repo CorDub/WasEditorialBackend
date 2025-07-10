@@ -179,6 +179,17 @@ a {
   font-style: italic;
 }
 
+.campos-obligatorios {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  p {
+    margin: 0;
+    font-style: italic;
+    color: grey
+  }
+}
+
 .harddel-checkbox {
   display: flex;
   flex-direction: column;

@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function ErrorsList({ errors, setErrors }) {
+
   useEffect(()=> {
     setErrors([]);
   }, [])
 
   return (
     <div className="general-errors">
-      {errors.length === 0 ?
+      {errors.flat().length === 0 ?
         null :
-        errors.map((error, index) => (
+        errors.flat().map((error, index) => (
           <div key={index} className="login-error">
             <p className="login-error">{error}</p>
           </div>

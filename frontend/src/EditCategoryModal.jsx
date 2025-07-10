@@ -144,27 +144,30 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         <p>Editar categoría</p>
         <p className="form-subtitle">{clickedRow.type}</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form onSubmit={handleSubmit} className="global-form">
         <div className="modal-form-line">
-          <label className="modal-form-label">Tipo</label>
+          <label className="modal-form-label">Tipo *</label>
           <input type='text' placeholder="Tipo" value={tipo}
             className="global-input" id="adding-category-type"
             onChange={(e) => setTipo(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Regalias de venta (%)</label>
+          <label className="modal-form-label">Regalias de venta (%) *</label>
           <input type='text' placeholder="% Regalias de venta" value={regalias}
             className="global-input" id="adding-category-regalias"
             onChange={(e) => setRegalias(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Gestión tiendas (%)</label>
+          <label className="modal-form-label">Gestión tiendas (%) *</label>
           <input type='text' placeholder="% Gestion tiendas" value={gestionTiendas}
             className="global-input" id="adding-category-gestionTiendas"
             onChange={(e) => setGestionTiendas(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Gestión minima ($)</label>
+          <label className="modal-form-label">Gestión minima ($) *</label>
           <input type='text' placeholder="Gestion minima" value={gestionMinima}
             className="global-input" id="adding-category-gestionMinima"
             onChange={(e) => setGestionMinima(e.target.value)}></input>

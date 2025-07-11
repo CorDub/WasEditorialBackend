@@ -157,6 +157,23 @@ a {
   color: red;
 }
 
+.modal-birthday {
+  display: flex;
+  width: 70%
+}
+
+.birthday-day {
+  width: 25% !important;
+}
+
+.birthday-month {
+  width: 25% !important;
+}
+
+.birthday-year {
+  width: 50% !important;
+}
+
 /// Form
 
 .global-form {

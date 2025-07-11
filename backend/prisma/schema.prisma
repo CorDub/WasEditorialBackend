@@ -38,6 +38,7 @@ model User {
   referido            String?
   email               String?   @unique
   phone               String?
+  birthday            String?
   clabe               String?
   name_bank_account   String?
   bank                String?

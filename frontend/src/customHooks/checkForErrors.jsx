@@ -82,7 +82,14 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
 
       case "maximum":
         if (fieldExpectations.maximum < fieldValue) {
-          errorList.push(`${fieldName} es superior al maximo disponible.`);
+          errorList.push(`${fieldName} es superior al maximo posible. (${fieldExpectations.maximum})`);
+          addErrorClass(fieldRef);
+        };
+        break;
+
+      case "minimum":
+        if (fieldExpectations.minimum > fieldValue) {
+          errorList.push(`${fieldName} es inferior al minimo posible. (${fieldExpectations.minimum})`);
           addErrorClass(fieldRef);
         };
         break;

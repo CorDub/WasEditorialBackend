@@ -58,6 +58,8 @@ router.post('/user', async (req, res) => {
       country,
       referido,
       email,
+      phone,
+      birthday,
       category } = req.body;
 
     await prisma.$transaction(async (tx) => {
@@ -87,6 +89,8 @@ router.post('/user', async (req, res) => {
             country: country,
             referido: referido,
             email: email,
+            phone: phone,
+            birthday: birthday,
             password: hashedPassword,
             categoryId: parseInt(category),
             isDeleted: false
@@ -107,6 +111,8 @@ router.post('/user', async (req, res) => {
           country: country,
           referido: referido,
           email: email,
+          phone: phone,
+          birthday: birthday,
           password: hashedPassword,
           categoryId: parseInt(category)
         },

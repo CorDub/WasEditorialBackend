@@ -282,34 +282,37 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       <div className="form-title">
         <p>Nueva venta</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
         {clickedRow ?
           null :
            <>
            <select onChange={(e) => dropDownChange(e, "Book")}
              className="select-global" ref={bookRef}>
-             <option value="null">Selecciona libro</option>
+             <option value="null">Selecciona libro*</option>
              {existingBooks && existingBooks.map((book, index) => (
                <option key={index} value={book.id}>{book.title}</option>
              ))}
            </select>
            <select onChange={(e) => dropDownChange(e, "Bookstore")}
              className="select-global" ref={bookstoreRef}>
-             <option value="null">Selecciona libreria</option>
+             <option value="null">Selecciona libreria*</option>
              {existingBookstores && existingBookstores.map((bookstore, index) => (
                <option key={index} value={bookstore.id}>{bookstore.name}</option>
              ))}
            </select>
            <select onChange={(e) => dropDownChange(e, "Country")}
              className="select-global" ref={countryRef}>
-             <option value="null">Selecciona pais</option>
+             <option value="null">Selecciona pais*</option>
              {countries && countries.map((country, index) => (
                <option key={index} value={country}>{country}</option>
              ))}
            </select>
          </>
         }
-        <input type="text" placeholder="Cantidad vendida" className="global-input"
+        <input type="text" placeholder="Cantidad vendida*" className="global-input"
           ref={quantityRef} onChange={(e) => setQuantity(parseInt(e.target.value))}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

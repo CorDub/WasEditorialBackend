@@ -2,12 +2,16 @@
   width: 100%;
   position: absolute;
   top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #author-page-container {
     width: 98%;
     margin-top: 50px;
     height: 90%;
+    max-width: 1500px;
 }
 
 #author-page-title {

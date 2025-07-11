@@ -62,7 +62,7 @@ function AuthorSales() {
 
     const sortedData = Object.values(monthlySales).sort((a, b) => a.month.localeCompare(b.month));
     for (const month of sortedData) {
-      month.value = (month.value).toFixed(2);
+      month.value = Number((month.value).toFixed(2));
     }
     setMonthlyData(sortedData);
   }

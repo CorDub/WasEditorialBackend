@@ -245,15 +245,18 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           <p>Editar libro</p>
           <p className="form-subtitle">{clickedRow.title}</p>
         </div>
+        <div className="campos-obligatorios">
+          <p>*Campos obligatorios</p>
+        </div>
         <form className="global-form" onSubmit={handleSubmit}>
           <div className="modal-form-line">
-            <label className="modal-form-label">Título</label>
+            <label className="modal-form-label">Título *</label>
             <input type='text' value={title}
               className="global-input" id="adding-book-title"
               onChange={(e) => setTitle(e.target.value)}></input>
             </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Pasta</label>
+            <label className="modal-form-label">Pasta *</label>
             <select onChange={(e) =>dropDownChange(e, "Pasta")}
               className="select-global" id="pasta-select">
               {pastaDisplay.map((pasta, index) => (
@@ -268,7 +271,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
               onChange={(e) => setIsbn(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Autores</label>
+            <label className="modal-form-label">Autores *</label>
             {authors.map((author, index) => (
               <div key={index} className="book-edit-author-dropdown">
                 <select onChange={(e) =>dropDownChange(e, "Autor", index)}

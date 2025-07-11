@@ -240,22 +240,25 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       <div className="form-title">
         <p>Nuevo autor</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
-        <input type='text' placeholder="Nombre"
+        <input type='text' placeholder="Nombre*"
           className="global-input" id='adding-author-first-name'
           onChange={(e) => setFirstName(e.target.value)}></input>
-        <input type='text' placeholder="Apellido"
+        <input type='text' placeholder="Apellido*"
           className="global-input" id="adding-author-last-name"
           onChange={(e) => setLastName(e.target.value)}></input>
         <select className="select-global"
           id="country-select"
           onChange={(e) => dropDownChange(e, "Country")} >
-          <option value="null">País</option>
+          <option value="null">País*</option>
           {countries.map((country, index) => (
             <option key={index} value={country}>{country}</option>
           ))}
         </select>
-        <input type='text' placeholder="Referido (opcional)"
+        <input type='text' placeholder="Referido"
           className="global-input" id="adding-author-referido"
           onChange={(e) => setReferido(e.target.value)}></input>
         <input type='text' placeholder="Correo"

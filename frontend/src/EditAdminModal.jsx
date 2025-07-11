@@ -156,9 +156,12 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         <p>Editar admin</p>
         <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
         <div className="modal-form-line">
-          <label className="modal-form-label">Nombre</label>
+          <label className="modal-form-label">Nombre *</label>
           <input type='text' placeholder="Nombre"
             value={firstName}
             className="global-input" id='adding-author-first-name'
@@ -166,7 +169,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             onChange={(e) => setFirstName(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Apellido</label>
+          <label className="modal-form-label">Apellido *</label>
           <input type='text' placeholder="Apellido" value={lastName}
             className="global-input" id="adding-author-last-name"
             ref={lastNameRef}
@@ -180,7 +183,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             onChange={(e) => setEmail(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Role</label>
+          <label className="modal-form-label">Role *</label>
           <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
             ref={roleRef}>
             {roles.map((role, index) => (

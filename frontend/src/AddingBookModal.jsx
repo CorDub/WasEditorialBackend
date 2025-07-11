@@ -298,17 +298,20 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       <div className="form-title">
         <p>Nuevo libro</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Titulo"
+        <input type='text' placeholder="Titulo*"
           className="global-input" id="adding-book-title"
           onChange={(e) => setTitle(e.target.value)}></input>
         <select onChange={(e) =>dropDownChange(e, "Pasta")} className="select-global"
           id="pasta-select">
-          <option value="null">Selecciona pasta</option>
+          <option value="null">Selecciona pasta*</option>
           <option value="Blanda">Blanda</option>
           <option value="Dura">Dura</option>
         </select>
-        <input type='text' placeholder="Precio"
+        <input type='text' placeholder="Precio*"
           className="global-input" id="adding-book-price"
           onChange={(e) => setPrice(e.target.value)}></input>
         <input type='text' placeholder="ISBN"
@@ -316,7 +319,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           onChange={(e) => setIsbn(e.target.value)}></input>
         <input
           type='text'
-          placeholder='Cantidad inicial imprimida'
+          placeholder='Cantidad inicial imprimida*'
           className="global-input"
           id="adding-book-quantity"
           onChange={(e) => setQuantity(e.target.value)}></input>
@@ -324,7 +327,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <div key={index} className="book-edit-author-dropdown">
             <select onChange={(e) =>dropDownChange(e, "Autor", index)} className="select-global"
               id={`author-select-${index}`}>
-              <option key={index} value="null">Selecciona un autor</option>
+              <option key={index} value="null">Selecciona un autor*</option>
               {existingAuthors && existingAuthors.map((author, index) => {
                 return (
                   <>

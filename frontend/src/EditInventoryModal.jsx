@@ -287,26 +287,21 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <p>Editar inventario</p>
         <p className="form-subtitle">{clickedRow.book.title} de {clickedRow.bookstore.name} en {clickedRow.country}</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
-        {/* <select onChange={(e) => dropDownChange(e, "Book")}
-          className="select-global" ref={bookRef}>
-          <option value={book}>{book}</option>
-          {existingBooks && existingBooks.map((book, index) => (
-            <option key={index} value={book.title}>{book.title}</option>
-          ))}
-        </select> */}
         <div className="modal-form-line">
-          <label className="modal-form-label">Librería</label>
+          <label className="modal-form-label">Librería *</label>
           <select onChange={(e) => dropDownChange(e, "Bookstore")}
             className="select-global" ref={bookstoreRef}>
-            {/* <option value={bookstore}>{bookstore}</option> */}
             {existingBookstores && existingBookstores.map((bookstore, index) => (
               <option key={index} value={bookstore.title}>{bookstore.name}</option>
             ))}
           </select>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">País</label>
+          <label className="modal-form-label">País *</label>
           <select onChange={(e) => dropDownChange(e, "Country")}
             className="select-global" ref={countryRef}>
             {countries && countries.map((country, index) => (
@@ -315,7 +310,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
           </select>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Total del inventario</label>
+          <label className="modal-form-label">Total del inventario *</label>
           <input type="text" placeholder="Cantidad inicial de libros"
             className="global-input" value={inicial}
             ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>

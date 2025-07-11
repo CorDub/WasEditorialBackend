@@ -110,8 +110,11 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
       <div className="form-title">
         <p>Nueva librería</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Nombre de la librería"
+        <input type='text' placeholder="Nombre de la librería*"
           className="global-input" id="adding-bookstore-name"
           ref={nameRef}
           onChange={(e) => setName(e.target.value)}></input>
@@ -122,7 +125,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         <select className="select-global"
           ref={comissionsRef}
           onChange={(e) => setComissions(e.target.value === "true")}>
-          <option value="null">Comisiones o regalías</option>
+          <option value="null">Comisiones o regalías*</option>
           <option value="false">Regalías</option>
           <option value="true">Comisiones</option>
         </select>

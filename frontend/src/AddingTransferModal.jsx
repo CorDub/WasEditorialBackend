@@ -322,6 +322,9 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         <p>{transferType && transferType === "send" ? 'Nueva transferencia' : 'Nueva devolución'}</p>
         <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="global-form">
@@ -338,7 +341,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 <option
                   key={index}
                   value="null">
-                  Libreria
+                  Libreria*
                 </option>
                 {existingBookstores && existingBookstores.map((bookstore, index) => (
                   <option
@@ -355,7 +358,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 <option
                   key={index}
                   value="null">
-                  País
+                  País*
                   </option>
                 {countries.map((country, index) => (
                   <option
@@ -367,7 +370,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               </select>
               <input
                 type='text'
-                placeholder="Cantidad"
+                placeholder="Cantidad*"
                 className="global-input transfer-quantity"
                 id={`quantity-select-${index}`}
                 onChange={(e) => updateQuantity(e, index)}>

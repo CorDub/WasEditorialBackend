@@ -85,8 +85,9 @@ function AdminsList() {
         backgroundColor: "#fff",
         position: "fixed",
         top: "60px",
-        left: "10px",
-        width: "99vw"
+        // left: "10px",
+        width: "99vw",
+        // maxWidth: "1500px"
       }
     },
     muiTableContainerProps: {
@@ -192,7 +193,9 @@ function AdminsList() {
           closeModal={closeModal} pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
       {isLoading && <LoadingWheel />}
-      {data && !isLoading && <MaterialReactTable table={table}/>}
+      <div className="contain">
+        {data && !isLoading && <MaterialReactTable table={table}/>}
+      </div>
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>

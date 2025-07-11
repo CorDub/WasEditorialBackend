@@ -124,9 +124,12 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <p>Editar librería</p>
         <p className="form-subtitle">{clickedRow.name}</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form onSubmit={handleSubmit} className="global-form">
         <div className="modal-form-line">
-            <label className="modal-form-label">Nombre</label>
+            <label className="modal-form-label">Nombre *</label>
             <input type='text' placeholder="Nombre" value={name}
               className="global-input" id="adding-bookstore-name"
               onChange={(e) => setName(e.target.value)}></input>
@@ -138,7 +141,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               onChange={(e) => setDealPercentage(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Comisiones</label>
+          <label className="modal-form-label">Comisiones *</label>
           <select className="select-global"
             id="adding-bookstore-comissions"
             onChange={(e) => convertComissionsValue(e)}>

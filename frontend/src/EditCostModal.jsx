@@ -79,12 +79,15 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
     return(
         <div className="modal-proper">
-             <div className="form-title">
+            <div className="form-title">
                 <p>Editar costo addicional</p>
+            </div>
+            <div className="campos-obligatorios">
+                <p>*Campos obligatorios</p>
             </div>
             <form className="global-form">
                 <div className="modal-form-line">
-                    <label className="modal-form-label">Monto</label>
+                    <label className="modal-form-label">Monto *</label>
                     <input type="text"
                         className="global-input"
                         placeholder="Monto"

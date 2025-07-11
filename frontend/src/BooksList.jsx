@@ -206,7 +206,9 @@ function BooksList() {
           globalFilter={globalFilter}
           userFontSize={user.font_size} />}
       {isLoading && <LoadingWheel/>}
-      {data && !isLoading && <MaterialReactTable table={table} />}
+      <div className="contain">
+        {data && !isLoading && <MaterialReactTable table={table} />}
+      </div>
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./DemandPaymentModal.scss";
 
 function DemandPaymentModal({closeModal, paymentInfo}) {
   const [uso, setUso] = useState("");
@@ -126,7 +127,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     <div className="modal-proper">
       <div className="modal-stuff-to-add">
         <div className="modal-form-upload">
-          <label className="modal-form-label">Factura (pdf, jpeg, png, max 5MB)</label>
+          <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>
           <input type="file"
             className="modal-form-file"
             accept=".pdf,image/jpeg,image/pdf"
@@ -134,7 +135,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
           <div className="modal-form-error">{errorFactura}</div>
         </div>
         <div className="modal-form-upload">
-          <label className="modal-form-label">Constancia de situación fiscal (pdf, jpeg, png, max 5MB)</label>
+          <label className="modal-form-label dempay-title">Constancia de situación fiscal (pdf, jpeg, png, max 5MB)</label>
           <input type="file"
             accept=".pdf,image/jpeg,image/pdf"
             className="modal-form-file"
@@ -143,7 +144,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Uso de CFDI</label>
-          <select className="select-global"
+          <select className="select-global dempay-title"
             onChange={(e) => setUso(e.target.value)}>
             <option value=""></option>
             {usosDeCFDI && usosDeCFDI.map((uso, index) => (

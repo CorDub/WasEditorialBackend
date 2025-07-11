@@ -3,6 +3,9 @@
   position: absolute;
   top: 10px;
   left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #author-sales-container {
@@ -12,6 +15,7 @@
   margin-top: 50px;
   height: 90%;
   width: 98%;
+  max-width: 1500px;
 }
 
 #sales-container h2 {

@@ -9,7 +9,7 @@ $global-second-font: 'Roboto Slab';
 
 html, body {
   background: $bg-second-color;
-  background-image: url("/home/cordub/code/CorDub/WasEditorialBackend/frontend/src/assets/triangles.png");
+  background-image: url("./assets/triangles.png");
   background-size: cover;
   background-position: center;
   font-family: $global-font;
@@ -27,6 +27,13 @@ html, body {
 
 a {
   text-decoration: none;
+}
+
+.contain {
+  width: 100%;
+  max-width: 1500px;
+  display: flex;
+  justify-content: center;
 }
 
 // Buttons

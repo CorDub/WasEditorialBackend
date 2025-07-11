@@ -152,42 +152,45 @@ function AuthorCommissions() {
       <Navbar
         subNav={user && user.role}
         active={"comisiones"} />
-      <CommissionMonthSelector
-        activeMonth={activeMonth}
-        setActiveMonth={setActiveMonth}
-        payments={payments}
-        preferredFontSize={user.font_size}
-        setPaymentInfo={setPaymentInfo}/>
-      <div className="author-commissions-right-side">
-        <Table
-          data={dataByMonths}
+      <div className="contain">
+        <CommissionMonthSelector
           activeMonth={activeMonth}
           setActiveMonth={setActiveMonth}
-          paymentInfo={paymentInfo}/>
-        {isDemandPaymentPossible === "available" && (
-          <div className="author-commissions-solicitar-pago"
-            onClick={() => setModalOpen(true)}>Solicitar Pago</div>
-        )}
-        {isDemandPaymentPossible === "currentMonth" && (
-          null
-        )}
-        {isDemandPaymentPossible === "noVentas" && (
-          null
-        )}
-        {isDemandPaymentPossible === "tooLateInTheMonth" && (
-          <div className="author-commissions-solicitar-pago-unavailable"
-            onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
-            onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
-            {isDemandPaymentTooltipOpen && (
-              <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
-          </div>
-        )}
-        {isDemandPaymentPossible === "solicited" && (
-          <div className="author-commissions-solicitar-pago-unavailable">Pago solicitado</div>
-        )}
-        {isDemandPaymentPossible === "paid" && (
-          <div className="author-commissions-solicitar-pago-paid">Pagado</div>
-        )}
+          payments={payments}
+          preferredFontSize={user.font_size}
+          setPaymentInfo={setPaymentInfo}/>
+      
+        <div className="author-commissions-right-side">
+          <Table
+            data={dataByMonths}
+            activeMonth={activeMonth}
+            setActiveMonth={setActiveMonth}
+            paymentInfo={paymentInfo}/>
+          {isDemandPaymentPossible === "available" && (
+            <div className="author-commissions-solicitar-pago"
+              onClick={() => setModalOpen(true)}>Solicitar Pago</div>
+          )}
+          {isDemandPaymentPossible === "currentMonth" && (
+            null
+          )}
+          {isDemandPaymentPossible === "noVentas" && (
+            null
+          )}
+          {isDemandPaymentPossible === "tooLateInTheMonth" && (
+            <div className="author-commissions-solicitar-pago-unavailable"
+              onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
+              onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
+              {isDemandPaymentTooltipOpen && (
+                <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
+            </div>
+          )}
+          {isDemandPaymentPossible === "solicited" && (
+            <div className="author-commissions-solicitar-pago-unavailable">Pago solicitado</div>
+          )}
+          {isDemandPaymentPossible === "paid" && (
+            <div className="author-commissions-solicitar-pago-paid">Pagado</div>
+          )}
+        </div>
       </div>
       {isModalOpen && <Modal
           paymentInfo={paymentInfo}

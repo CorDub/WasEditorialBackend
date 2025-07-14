@@ -534,6 +534,18 @@ router.get('/book', async (req, res) => {
             first_name: true,
             last_name: true,
           }
+        },
+        inventories: {
+          select: {
+            id: true,
+            bookstore: {
+              select: {
+                name: true
+              },
+            },
+            bookstoreId: true,
+            price: true
+          }
         }
       },
       orderBy: {
@@ -544,6 +556,12 @@ router.get('/book', async (req, res) => {
     books.map((book) => {
       book.authorNames = "";
       book.users.map((user) => {
+        for (const inv of book.inventories) {
+          if (inv.bookstoreId === 3) {
+            book.price = inv.price
+          }
+        }
+
         if (book.authorNames === "") {
           book.authorNames = ((user.first_name + " " + user.last_name))
         } else {
@@ -709,7 +727,7 @@ router.patch('/book', async (req, res) => {
           pasta: pasta,
           isbn: isbn,
           users: {
-            connect: authorsIds,
+            set: authorsIds,
           }
         }
       });
@@ -820,6 +838,29 @@ router.patch('/book', async (req, res) => {
     res.status(500).json({error: "There was an issue updating the book"});
   }
 });
+
+router.patch('/book/:id/prices', async (req, res) => {
+  const {
+    id,
+    prices
+  } = req.body
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      for (const price of prices) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: parseInt(price.inventoryId)},
+          data: {price: parseFloat(price.price)}
+        })
+      }
+
+      res.status(200).json({message: "Successfully updated the book prices"});
+    })
+  } catch (error) {
+    console.error("Server error at the update book route:", error);
+    res.status(500).json({error: "There was an issue updating the prices"});
+  }
+})
 
 // Bookstores routes
 

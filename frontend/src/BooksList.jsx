@@ -32,7 +32,7 @@ function BooksList() {
       header: "Acciones",
       Cell: ({row}) => (
         <div style={{overflow:"visible"}}>
-          <TableActions openModal={openModal} row={row}/>
+          <TableActions openModal={openModal} row={row} type={"book"}/>
         </div>
       ),
       muiTableBodyCellProps: {
@@ -40,6 +40,10 @@ function BooksList() {
           overflow: "visible"
         }
       }
+    },
+    {
+      header: "Precio en Was",
+      accessorKey: "price"
     },
     {
       header: "ISBN",
@@ -169,6 +173,9 @@ function BooksList() {
         break;
       case 'edit':
         setModalAction("edit");
+        break;
+      case 'editBookPrices':
+        setModalAction("editBookPrices");
         break;
       case 'delete':
         setModalAction("delete");

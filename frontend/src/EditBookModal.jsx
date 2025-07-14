@@ -70,6 +70,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   }
 
   async function sendToServer() {
+    console.log("authors", authors);
     try {
       const response = await fetch(`${baseURL}/admin/book`, {
         method: "PATCH",
@@ -274,7 +275,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
             <label className="modal-form-label">Autores *</label>
             {authors.map((author, index) => (
               <div key={index} className="book-edit-author-dropdown">
-                <select onChange={(e) =>dropDownChange(e, "Autor", index)}
+                <select onChange={(e) => dropDownChange(e, "Autor", index)}
                   className="select-global" id={`author-select-${index}`}>
                   <option key={index}>{authors[index].first_name} {authors[index].last_name}</option>
                   {existingAuthors && existingAuthors.map((author, index) => {

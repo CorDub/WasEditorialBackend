@@ -32,6 +32,7 @@ import DemandPaymentModal from './DemandPaymentModal';
 import AddingCostModal from "./AddingCostModal";
 import EditCostModal from './EditCostModal';
 import DeleteCostModal from './DeleteCostModal';
+import EditBookPricesModal from "./EditBookPricesModal";
 
 function Modal({
   modalType,
@@ -82,6 +83,7 @@ function Modal({
     book: {
       adding: AddingBookModal,
       edit: EditBookModal,
+      editBookPrices: EditBookPricesModal,
       delete: DeleteBookModal
     },
     bookstore: {

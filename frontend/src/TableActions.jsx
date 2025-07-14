@@ -34,6 +34,7 @@ function TableActions ({
   const [isReceivedFromAuthorTooltipOpen, setReceivedFromAuthorTooltipOpen ] = useState(false);
   const [isPaymentsTooltipOpen, setPaymentsTooltipOpen] = useState(false);
   const [isCostTooltipOpen, setCostTooltipOpen] = useState(false);
+  const [isEditBookPricesTooltipOpen, setEditBookPricesTooltipOpen] = useState(false);
 
   useEffect(() => {
     if (row.original.bookstoreId === 3) {
@@ -118,6 +119,10 @@ function TableActions ({
     openModal("adding", row.original);
   }
 
+  function editBookPrices() {
+    openModal("editBookPrices", row.original);
+  }
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
@@ -146,6 +151,37 @@ function TableActions ({
           {isDeleteTooltipOpen && (
             <div className="ta-tooltip">Eliminar</div>)}
           </>)
+        }
+
+        {type && type === "book" &&
+          <>
+            <FontAwesomeIcon
+              icon={faPen}
+              className="ta-button ta-edit"
+              id={`ta-edit-${row.index}`}
+              onClick={() => openModal("edit", row.original)}
+              onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+              onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+            {isEditTooltipOpen && (
+              <div className="ta-tooltip">Editar</div>)}
+            <FontAwesomeIcon icon={faDollarSign}
+              className='ta-button ta-sale'
+              id={`ta-payment-${row.index}`}
+              onClick={editBookPrices}
+              onMouseEnter={() => setEditBookPricesTooltipOpen(!isEditBookPricesTooltipOpen)}
+              onMouseLeave={() => setEditBookPricesTooltipOpen(!isEditBookPricesTooltipOpen)}/>
+            {isEditBookPricesTooltipOpen && (
+              <div className="ta-tooltip">Editar precios</div>)}
+            <FontAwesomeIcon
+              icon={faCircleXmark}
+              className="ta-button ta-delete"
+              id={`ta-delete-${row.index}`}
+              onClick={() => openModal("delete", row.original)}
+              onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+              onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+            {isDeleteTooltipOpen && (
+              <div className="ta-tooltip">Eliminar</div>)}
+          </>
         }
 
         {type && type === "payment" &&

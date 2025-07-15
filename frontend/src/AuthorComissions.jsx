@@ -7,6 +7,7 @@ import CommissionMonthSelector from "./CommissionMonthSelector";
 import "./AuthorCommissions.scss"
 import Modal from "./Modal";
 import Alert from "./Alert";
+import TableBookstores from "./TableBookstores";
 
 function AuthorCommissions() {
   useCheckUser();
@@ -24,6 +25,7 @@ function AuthorCommissions() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const [paymentInfo, setPaymentInfo] = useState(null);
+  const [salesByPayments, setSalesByPayments] = useState([]);
 
   // set the status of payment
   useEffect(() => {
@@ -125,6 +127,8 @@ function AuthorCommissions() {
     }
   }
 
+  // console.log(dataByMonths)
+
   useEffect(() => {
     fetchPayments();
   }, [forceRender])
@@ -146,6 +150,33 @@ function AuthorCommissions() {
     }
   }
 
+  async function fetchSalesByPayments() {
+    try {
+      const response = await fetch(`${baseURL}/author/monthlySalesByPayments`, {
+        method: "GET",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const salesByPayments = await response.json();
+        // console.log("salesByPayments", salesByPayments);
+        setSalesByPayments(salesByPayments);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // console.log("salesbypayments in authorcomm", salesByPayments)
+  // console.log("activeMonth in authorcomm", activeMonth)
+
+  useEffect(() => {
+    fetchSalesByPayments()
+  }, [])
+
   return(
     <div className="author-commissions"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -166,6 +197,9 @@ function AuthorCommissions() {
             activeMonth={activeMonth}
             setActiveMonth={setActiveMonth}
             paymentInfo={paymentInfo}/>
+          <TableBookstores
+            salesByPayments={salesByPayments}
+            activeMonth={activeMonth}/>
           {isDemandPaymentPossible === "available" && (
             <div className="author-commissions-solicitar-pago"
               onClick={() => setModalOpen(true)}>Solicitar Pago</div>

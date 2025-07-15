@@ -21,6 +21,7 @@ function Table({data, activeMonth, paymentInfo}) {
   const [totalData, setTotalData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [costs, setCosts] = useState([]);
+  const [salesByPayments, setSalesByPayments] = useState([]);
 
   /// Select only the data for the month displayed
   useEffect(() => {
@@ -51,7 +52,7 @@ function Table({data, activeMonth, paymentInfo}) {
       for (const row of rowData) {
         if (bookstoreName === row.name) {
           row.sold += sale.quantity
-          row.total += sale.quantity * (sale.inventory.price - sale.comissions) * parseFloat(sale.sharePerAuthor) / 100;
+          row.total += sale.quantity * (sale.inventory.price - sale.comissions);
 
           // Fill in sales details for TableRowDetails
           // If the book object already exists, add the quantity
@@ -69,7 +70,7 @@ function Table({data, activeMonth, paymentInfo}) {
               price: sale.inventory.price,
               comissions: sale.comissions,
               ganancia: monthData.ganancia,
-              sharePerAuthor: sale.sharePerAuthor,
+              // sharePerAuthor: sale.sharePerAuthor,
               quantity: sale.quantity
             })
           }
@@ -177,7 +178,7 @@ function Table({data, activeMonth, paymentInfo}) {
 
   async function fetchCosts() {
     if (paymentInfo && paymentInfo.id) {
-      console.log(paymentInfo.id)
+      // console.log(paymentInfo.id)
       try {
         const response = await fetch(`${baseURL}/author/costs/${paymentInfo.id}`, {
           method: "GET",
@@ -200,6 +201,8 @@ function Table({data, activeMonth, paymentInfo}) {
   useEffect(() => {
     fetchCosts()
   }, [paymentInfo])
+
+
 
   return (
     <div className="table">

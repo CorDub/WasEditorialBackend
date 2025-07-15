@@ -1,6 +1,7 @@
 import "./TableHeader.scss";
 
 function TableHeader({headerList}) {
+
   return(
     <div className="table-header">
       {headerList.map((headerName, index) => (

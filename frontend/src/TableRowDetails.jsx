@@ -11,7 +11,7 @@ function TableRowDetails({sales}) {
           book={sale.book}
           price={sale.price}
           comissions={sale.comissions}
-          ganancia={(sale.price - sale.comissions) * parseFloat(sale.sharePerAuthor) / 100}
+          ganancia={(sale.price - sale.comissions)}
           sharePerAuthor={sale.sharePerAuthor}
           quantity={sale.quantity} />
       ))}

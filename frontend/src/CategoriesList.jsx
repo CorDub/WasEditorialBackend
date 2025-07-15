@@ -45,16 +45,16 @@ function CategoriesList() {
       header: "Tipo",
       accessorKey: "type"
     },
-    {
-      header: "Regalias de venta",
-      accessorKey: "percentage_royalties",
-      Cell: ({ row }) => `${row.original.percentage_royalties}%`
-    },
-    {
-      header: "Gestión tiendas",
-      accessorKey: "percentage_management_stores",
-      Cell: ({ row }) => `${row.original.percentage_management_stores}%`
-    },
+    // {
+    //   header: "Regalias de venta",
+    //   accessorKey: "percentage_royalties",
+    //   Cell: ({ row }) => `${row.original.percentage_royalties}%`
+    // },
+    // {
+    //   header: "Gestión tiendas",
+    //   accessorKey: "percentage_management_stores",
+    //   Cell: ({ row }) => `${row.original.percentage_management_stores}%`
+    // },
     {
       header: "Gestión minima",
       accessorKey: "management_min",

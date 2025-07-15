@@ -360,10 +360,8 @@ router.get('/sales', async (req, res) => {
         sale.inventory.bookstore.comissions,
         sale.inventory.price,
         author.category.management_min,
-        author.category.percentage_management_stores,
-        author.category.percentage_royalties,
+        sale.inventory.bookstore.deal_percentage,
         sale.quantity,
-        numberOfAuthors[sale.inventory.book.title]
       )
 
       totalSales += sale.quantity
@@ -402,10 +400,8 @@ router.get('/sales', async (req, res) => {
           sale.inventory.bookstore.comissions,
           sale.inventory.price,
           author.category.management_min,
-          author.category.percentage_management_stores,
-          author.category.percentage_royalties,
+          sale.inventory.bookstore.deal_percentage,
           sale.quantity,
-          numberOfAuthors[sale.inventory.book.title]
         )
       }))
     });
@@ -453,6 +449,7 @@ router.get('/monthlySales', async (req, res) => {
               select: {
                 name: true,
                 comissions: true,
+                deal_percentage: true
               }
             },
             book: {
@@ -517,23 +514,31 @@ router.get('/monthlySales', async (req, res) => {
         numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
       }
 
+      // console.log("")
+      // console.log("sale.inventory.bookstore.comissions", sale.inventory.bookstore.comissions)
+      // console.log("sale.inventory.price ", sale.inventory.price )
+      // console.log("userCategory.management_min", userCategory.management_min)
+      // console.log("sale.inventory.bookstore.deal_percentage", sale.inventory.bookstore.deal_percentage)
+      // console.log("sale.quantity", sale.quantity)
+
       if (salesByMonths[key]) {
         salesByMonths[key]["sales"].push({...sale, 
           comissions: sale.inventory.bookstore.comissions
             ? userCategory.management_min
             : sale.inventory.price 
-              * (userCategory.percentage_management_stores / 100)
-              * (userCategory.percentage_royalties / 100),
-          sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
+              * (sale.inventory.bookstore.deal_percentage / 100)
+          //     * (userCategory.percentage_royalties / 100),
+          // sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
         });
+        
+        // console.log("comissions", salesByMonths[key]["sales"]);
+
         salesByMonths[key]["total"] += calculateAuthorRevenue(
           sale.inventory.bookstore.comissions,
           sale.inventory.price,
           userCategory.management_min,
-          userCategory.percentage_management_stores,
-          userCategory.royaltiesPercent,
+          sale.inventory.bookstore.deal_percentage,
           sale.quantity,
-          numberOfAuthors[sale.inventory.book.id]
         )
       } else {
         salesByMonths[key] = {
@@ -541,27 +546,25 @@ router.get('/monthlySales', async (req, res) => {
           comissions: sale.inventory.bookstore.comissions
             ? userCategory.management_min
             : sale.inventory.price 
-              * (userCategory.percentage_management_stores / 100)
-              * (userCategory.percentage_royalties / 100),
-          sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
+              * (sale.inventory.bookstore.deal_percentage / 100)
+              // * (userCategory.percentage_royalties / 100),
+          // sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
         }],
           ganancia: (
             sale.inventory.bookstore.comissions 
               ? (sale.inventory.price - userCategory.management_min)
-                / numberOfAuthors[sale.inventory.book.id]
+                // / numberOfAuthors[sale.inventory.book.id]
               : sale.inventory.price
-                * (userCategory.percentage_management_stores / 100)
-                * (userCategory.percentage_royalties / 100)
-                / numberOfAuthors[sale.inventory.book.id]
+                * (sale.inventory.bookstore.deal_percentage / 100)
+                // * (userCategory.percentage_royalties / 100)
+                // / numberOfAuthors[sale.inventory.book.id]
           ),
           total: calculateAuthorRevenue(
               sale.inventory.bookstore.comissions,
               sale.inventory.price,
               userCategory.management_min,
-              userCategory.percentage_management_stores,
-              userCategory.royaltiesPercent,
+              sale.inventory.bookstore.deal_percentage,
               sale.quantity,
-              numberOfAuthors[sale.inventory.book.id]
             ),
           // deep cloning the bookstores to avoid having the same object being mutated later
           // and shared across different months instead of a different object every time
@@ -683,6 +686,84 @@ router.get('/monthlySales', async (req, res) => {
     res.status(200).json(newSalesByMonthsList);
   } catch (error) {
     console.error("error fetching monthly sales", error);
+    res.status(500).json({error: 'Internal server error'});
+  }
+})
+
+router.get('/monthlySalesByPayments', async (req, res) => {
+  // Get the last twelfth month first day as a cutoff date
+  const ltm = new Date();
+  ltm.setMonth(ltm.getMonth()-12);
+  ltm.setDate(1);
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: req.session.user_id
+    },
+    include: {
+      category: true
+    }
+  })
+
+  try {
+    // Get all existing payments and tied sales for that author
+    const allAuthorPayments = await prisma.payment.findMany({
+      where: {
+        userId: req.session.user_id,
+        createdAt: {
+          gte: ltm
+        }
+      },
+      select: {
+        forMonth: true,
+        createdAt: true,
+        sales: {
+          select: {
+            quantity: true,
+            inventory: {
+              select: {
+                bookstore: {
+                  select: {
+                    name: true,
+                    comissions: true,
+                    deal_percentage: true
+                  }
+                },
+                price: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+
+    let monthlySales = [];
+    for (const payment of allAuthorPayments) {
+      let paymentSales = {"forMonth":payment.forMonth, "sales": []}
+      for (const sale of payment.sales) {
+        paymentSales.sales.push({
+          "name": sale.inventory.bookstore.name,
+          "quantity": sale.quantity,
+          "price": sale.inventory.price,
+          "comissions": sale.inventory.bookstore.comissions 
+            ? user.category.management_min
+            : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+          "ganancia": sale.inventory.bookstore.comissions
+            ? sale.inventory.price - user.category.management_min
+            : sale.inventory.price - sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+        })
+      }
+      monthlySales.push(paymentSales);
+    }
+
+    // console.log("monthlySales", monthlySales);
+
+    res.status(200).json(monthlySales);
+  } catch (error) {
+    console.log('eror fetching monthly sales by payments', error) 
     res.status(500).json({error: 'Internal server error'});
   }
 })

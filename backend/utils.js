@@ -60,16 +60,18 @@ export function calculateAuthorRevenue(
   price, 
   management, 
   storeCutPercent, 
-  royaltiesPercent, 
-  quantity, 
-  numberOfAuthors) {
+  quantity) {
 
     let res = 0;
     if (onComission) {
-      res = ((price - management) * quantity / numberOfAuthors)
+      res = ((price - management) * quantity)
     } else {
-      res = (price - (price * storeCutPercent / 100) * (royaltiesPercent / 100)) * quantity / numberOfAuthors
-      console.log("res", res)
+      // console.log("")
+      // console.log("price", price)
+      // console.log("storeCutPercent", storeCutPercent)
+      // console.log("quantity", quantity)
+      res = ((price - (price * storeCutPercent / 100)) * quantity)
+      // console.log("res", res)
     }
 
     if (res < 0.001) {

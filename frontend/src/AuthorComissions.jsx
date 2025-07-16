@@ -162,7 +162,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const salesByPayments = await response.json();
-        // console.log("salesByPayments", salesByPayments);
+        console.log("salesByPayments", salesByPayments);
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {
@@ -192,11 +192,11 @@ function AuthorCommissions() {
           setPaymentInfo={setPaymentInfo}/>
       
         <div className="author-commissions-right-side">
-          <Table
+          {/* <Table
             data={dataByMonths}
             activeMonth={activeMonth}
             setActiveMonth={setActiveMonth}
-            paymentInfo={paymentInfo}/>
+            paymentInfo={paymentInfo}/> */}
           <TableBookstores
             salesByPayments={salesByPayments}
             activeMonth={activeMonth}/>

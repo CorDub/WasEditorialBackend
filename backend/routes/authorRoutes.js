@@ -729,6 +729,11 @@ router.get('/monthlySalesByPayments', async (req, res) => {
                     deal_percentage: true
                   }
                 },
+                book: {
+                  select: {
+                    title: true
+                  }
+                },
                 price: true
               }
             }
@@ -742,20 +747,152 @@ router.get('/monthlySalesByPayments', async (req, res) => {
 
     let monthlySales = [];
     for (const payment of allAuthorPayments) {
-      let paymentSales = {"forMonth":payment.forMonth, "sales": []}
-      for (const sale of payment.sales) {
-        paymentSales.sales.push({
-          "name": sale.inventory.bookstore.name,
-          "quantity": sale.quantity,
-          "price": sale.inventory.price,
-          "comissions": sale.inventory.bookstore.comissions 
-            ? user.category.management_min
-            : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-          "ganancia": sale.inventory.bookstore.comissions
-            ? sale.inventory.price - user.category.management_min
-            : sale.inventory.price - sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-        })
+      let paymentSales = {
+        "forMonth": payment.forMonth, 
+        "sales": [], 
+        "totalQuantity": 0, 
+        "totalValue": 0
       }
+
+      for (const sale of payment.sales) {
+        if (paymentSales.sales.length === 0) {
+          paymentSales.sales.push({
+            "title": sale.inventory.book.title,
+            "bookstores": [{
+              "name": sale.inventory.bookstore.name,
+              "quantity": sale.quantity,
+              "price": sale.inventory.price,
+              "comissions": sale.inventory.bookstore.comissions 
+                ? user.category.management_min
+                : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+              "ganancia": sale.inventory.bookstore.comissions
+                ? sale.inventory.price - user.category.management_min
+                : sale.inventory.price - sale.inventory.price 
+                  * (sale.inventory.bookstore.deal_percentage / 100)
+            }],
+            "totalTitleQuantity": sale.quantity,
+            "totalTitleValue": sale.inventory.bookstore.comissions
+              ? sale.quantity * (sale.inventory.price - user.category.management_min)
+              : sale.quantity * 
+                (sale.inventory.price - sale.inventory.price 
+                  * (sale.inventory.bookstore.deal_percentage / 100))
+          })
+
+          paymentSales.totalQuantity += sale.quantity
+          paymentSales.totalValue += sale.inventory.bookstore.comissions
+            ? sale.quantity * (sale.inventory.price - user.category.management_min)
+            : sale.quantity * 
+              (sale.inventory.price - sale.inventory.price 
+                * (sale.inventory.bookstore.deal_percentage / 100))
+          continue;
+        }
+
+        let existingBook = false;
+        for (const entry of paymentSales.sales) {
+          if (entry.title === sale.inventory.book.title) {
+
+            let existingBookstore = false;
+            for (const bookstore of entry.bookstores) {
+              if (bookstore.name === sale.inventory.bookstore.name) {
+                  bookstore.quantity += sale.quantity;
+                  entry.totalTitleQuantity += sale.quantity;
+                  entry.totalTitleValue += sale.inventory.bookstore.comissions
+                    ? sale.quantity * (sale.inventory.price - user.category.management_min)
+                    : sale.quantity * 
+                      (sale.inventory.price - sale.inventory.price 
+                        * (sale.inventory.bookstore.deal_percentage / 100))
+                  existingBookstore = true;
+              }
+            }
+
+            if (!existingBookstore) {
+              entry.bookstores.push({
+                "name": sale.inventory.bookstore.name,
+                "quantity": sale.quantity,
+                "price": sale.inventory.price,
+                "comissions": sale.inventory.bookstore.comissions 
+                  ? user.category.management_min
+                  : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+                "ganancia": sale.inventory.bookstore.comissions
+                  ? sale.inventory.price - user.category.management_min
+                  : sale.inventory.price - sale.inventory.price 
+                    * (sale.inventory.bookstore.deal_percentage / 100)
+              })
+
+              entry.totalTitleQuantity += sale.quantity;
+              entry.totalTitleValue += sale.inventory.bookstore.comissions
+                ? sale.quantity * (sale.inventory.price - user.category.management_min)
+                : sale.quantity * 
+                  (sale.inventory.price - sale.inventory.price 
+                    * (sale.inventory.bookstore.deal_percentage / 100))
+            }
+
+            // paymentSales.totalQuantity += sale.quantity
+            // paymentSales.totalValue += sale.inventory.bookstore.comissions
+            //   ? sale.quantity * (sale.inventory.price - user.category.management_min)
+            //   : sale.quantity * 
+            //     (sale.inventory.price - sale.inventory.price 
+            //       * (sale.inventory.bookstore.deal_percentage / 100))
+          
+            existingBook = true;
+          }
+        }
+
+        if (!existingBook) {
+          paymentSales.sales.push({
+            "title": sale.inventory.book.title,
+            "bookstores": [{
+              "name": sale.inventory.bookstore.name,
+              "quantity": sale.quantity,
+              "price": sale.inventory.price,
+              "comissions": sale.inventory.bookstore.comissions 
+                ? user.category.management_min
+                : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+              "ganancia": sale.inventory.bookstore.comissions
+                ? sale.inventory.price - user.category.management_min
+                : sale.inventory.price - sale.inventory.price 
+                  * (sale.inventory.bookstore.deal_percentage / 100)
+            }],
+            "totalTitleQuantity": sale.quantity,
+            "totalTitleValue": sale.inventory.bookstore.comissions
+              ? sale.quantity * (sale.inventory.price - user.category.management_min)
+              : sale.quantity * 
+                (sale.inventory.price - sale.inventory.price 
+                  * (sale.inventory.bookstore.deal_percentage / 100))
+          })
+
+          // paymentSales.totalQuantity += sale.quantity
+          // paymentSales.totalValue += sale.inventory.bookstore.comissions
+          //   ? sale.quantity * (sale.inventory.price - user.category.management_min)
+          //   : sale.quantity * 
+          //     (sale.inventory.price - sale.inventory.price 
+          //       * (sale.inventory.bookstore.deal_percentage / 100))
+        }
+
+        // paymentSales.sales.push({
+        //   "title": sale.inventory.book.title,
+        //   "bookstores": [{
+        //     "name": sale.inventory.bookstore.name,
+        //     "quantity": sale.quantity,
+        //     "price": sale.inventory.price,
+        //     "comissions": sale.inventory.bookstore.comissions 
+        //       ? user.category.management_min
+        //       : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
+        //     "ganancia": sale.inventory.bookstore.comissions
+        //       ? sale.inventory.price - user.category.management_min
+        //       : sale.inventory.price - sale.inventory.price 
+        //         * (sale.inventory.bookstore.deal_percentage / 100)
+        //   }]
+        // })
+
+        paymentSales.totalQuantity += sale.quantity
+        paymentSales.totalValue += sale.inventory.bookstore.comissions
+          ? sale.quantity * (sale.inventory.price - user.category.management_min)
+          : sale.quantity * 
+            (sale.inventory.price - sale.inventory.price 
+              * (sale.inventory.bookstore.deal_percentage / 100))
+      }
+
       monthlySales.push(paymentSales);
     }
 

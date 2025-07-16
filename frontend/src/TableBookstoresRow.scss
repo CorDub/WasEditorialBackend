@@ -6,3 +6,9 @@
 .tbr-first {
   width: 25% !important;
 }
+
+.tbr-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

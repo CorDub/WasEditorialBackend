@@ -21,7 +21,6 @@ function Table({data, activeMonth, paymentInfo}) {
   const [totalData, setTotalData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [costs, setCosts] = useState([]);
-  const [salesByPayments, setSalesByPayments] = useState([]);
 
   /// Select only the data for the month displayed
   useEffect(() => {

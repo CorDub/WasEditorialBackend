@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { prisma } from "./../server.js"
+import { prisma } from "../prisma/client.js"
 import express from "express";
 import { createRandomPassword } from "../utils.js";
 import bcrypt from "bcrypt";

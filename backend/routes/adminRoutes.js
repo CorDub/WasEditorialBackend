@@ -3,7 +3,7 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { createRandomPassword, calculateAuthorRevenue, getForMonth } from './../utils.js';
-import { prisma } from "./../server.js"
+import { prisma } from "../prisma/client.js"
 
 const router = express.Router();
 

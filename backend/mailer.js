@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { setResetPasswordCode } from './utils.js';
-import { prisma } from "./server.js"
+import { prisma } from "./prisma/client.js"
 
 var transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",

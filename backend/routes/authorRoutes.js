@@ -1,6 +1,6 @@
 import express from "express";
 import bcrypt from 'bcrypt';
-import { prisma } from "./../server.js"
+import { prisma } from "../prisma/client.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { calculateAuthorRevenue, getForMonth } from "../utils.js";

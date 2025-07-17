@@ -7,3 +7,15 @@
 .tbhn-first {
   width: 25% !important;
 }
+
+.table-bookstores-no-sales {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-bookstores-no-sales-message {
+  font-style: italic
+}

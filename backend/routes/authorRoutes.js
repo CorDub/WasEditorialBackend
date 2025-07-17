@@ -4,6 +4,7 @@ import { prisma } from "../prisma/client.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { calculateAuthorRevenue, getForMonth } from "../utils.js";
+import e from "express";
 
 const upload = multer();
 const router = express.Router();
@@ -364,38 +365,65 @@ router.get('/sales', async (req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
 
+    // let sales = await prisma.sale.findMany({
+    //     where: {
+    //       inventory: {
+    //         book: {
+    //           users: {
+    //             some: {
+    //               id: authorId
+    //             }
+    //           }
+    //         }
+    //       },
+    //       createdAt: {
+    //         gte: startDate,
+    //         lte: endDate
+    //       },
+    //       isDeleted: false
+    //     },
+    //     include: {
+    //       inventory: {
+    //         include: {
+    //           book: true,
+    //           bookstore: true
+    //         }
+    //       },
+    //       payments: true
+    //     },
+    //     orderBy: {
+    //       createdAt: 'desc'
+    //     }
+    //   });
+    
     let sales = await prisma.sale.findMany({
-        where: {
-          inventory: {
-            book: {
-              users: {
-                some: {
-                  id: authorId
-                }
-              }
-            }
-          },
-          createdAt: {
-            gte: startDate,
-            lte: endDate
-          },
-          isDeleted: false
+      where: {
+        payments: {
+          some: {
+            userId: authorId
+          }
         },
-        include: {
-          inventory: {
-            include: {
-              book: true,
-              bookstore: true
-            }
-          },
-          payment: true
+        createdAt: {
+          gte: startDate,
+          lte: endDate
         },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
+        isDeleted: false
+      },
+      include: {
+        inventory: {
+          include: {
+            book: true,
+            bookstore: true
+          }
+        },
+        payments: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
-    sales = sales.filter(sale => sale.payment.userId === authorId);
+    // sales = sales.filter(sale => sale.payment.userId === authorId);
 
     let totalSales = 0;
     let totalValue = 0;
@@ -968,8 +996,39 @@ router.get('/monthlySalesByPayments', async (req, res) => {
 
       monthlySales.push(paymentSales);
     }
+    // console.log("monthlySales.length", monthlySales.length);
+    if (monthlySales.length < 13) {
+      const now = new Date()
+      let currentMonth = getForMonth(now);
 
-    // console.log("monthlySales", monthlySales);
+      function decrementMonth() {
+        let year = parseInt(currentMonth.substring(0,4))
+        let month = parseInt(currentMonth.substring(5,7))
+        
+        if (month - 1 === 0) {
+          const newYear = year - 1;
+          const newMonth = 12;
+          year = newYear;
+          month = newMonth
+        } else {
+          const newMonth = month - 1;
+          month = newMonth;
+        }
+
+        const nextCurrentMonth = year.toString() + '-' + month.toString().padStart(2, "0");
+        currentMonth = nextCurrentMonth;
+      }  
+
+      for (let i = 0; i < 13; i++) {
+        if (monthlySales[i].forMonth !== currentMonth) {
+          monthlySales.splice(i, 0, {"forMonth": currentMonth, "sales": []});
+          decrementMonth()
+        } else {
+          decrementMonth()
+          continue;
+        }
+      }
+    }
 
     res.status(200).json(monthlySales);
   } catch (error) {
@@ -1551,8 +1610,7 @@ router.get("/completeInventory", async (req, res) => {
           select: {
             quantity: true,
             isDeleted: true,
-            paymentId: true,
-            payment: {
+            payments: {
               select: {
                 userId: true
               }
@@ -1564,7 +1622,7 @@ router.get("/completeInventory", async (req, res) => {
 
     for (const inventory of allAuthorInventories) {
       inventory.sales = inventory.sales.filter(
-        sale => sale.payment.userId === req.session.user_id
+        sale => sale.payments.some(payment => payment.userId === req.session.user_id)
       );
     }
 

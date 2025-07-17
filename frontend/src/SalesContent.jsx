@@ -18,7 +18,7 @@ const SalesContent = ({
 
   const selectedBookTitle = salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.title || "";
 
-  console.log(monthlyData);
+  // console.log(monthlyData);
 
   return (
     <div id="author-sales-content">

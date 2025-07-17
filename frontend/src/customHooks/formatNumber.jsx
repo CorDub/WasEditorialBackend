@@ -1,5 +1,7 @@
 function formatNumber(total) {
-  if (total === 0) {
+  if (total === 0
+    || total === undefined
+  ) {
     return;
   }
 

@@ -39,7 +39,7 @@ function AuthorSales() {
     const monthlySales = {};
     if (!sales || sales.length === 0) return;
 
-    console.log(sales);
+    // console.log(sales);
 
     const filteredSales = bookId === 'total'
       ? sales
@@ -106,6 +106,8 @@ function AuthorSales() {
       setLoading(false);
     }
   };
+
+  // console.log(salesData);
 
   useEffect(() => {
     if (dateRange !== null) {

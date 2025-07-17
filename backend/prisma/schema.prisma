@@ -124,8 +124,7 @@ model Sale {
   id          Int       @id @default(autoincrement())
   inventory   Inventory @relation(fields: [inventoryId], references: [id])
   inventoryId Int
-  payment     Payment   @relation(fields: [paymentId], references: [id])
-  paymentId   Int
+  payments    Payment[]
   quantity    Int       @default(1)
   isDeleted   Boolean   @default(false)
   createdAt   DateTime  @default(now())
@@ -166,7 +165,7 @@ model Payment {
   userId    Int
   costs     Cost[]
   sales     Sale[]
-  amount    Float
+  amount    Float         @default(0)
   forMonth  String
   status    PaymentStatus @default(created)
   isDeleted Boolean       @default(false)

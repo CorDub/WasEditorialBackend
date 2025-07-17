@@ -1442,12 +1442,19 @@ router.post('/sale', async (req, res) => {
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
-      const selectedInventory = await tx.inventory.findUnique({where : {
-        bookId_bookstoreId_country: {
-          bookId : book,
-          bookstoreId: bookstore,
-          country: country
-        }}});
+      const selectedInventory = await tx.inventory.findUnique({
+        where : {
+          bookId_bookstoreId_country: {
+            bookId : book,
+            bookstoreId: bookstore,
+            country: country
+          }
+        },
+        include: {
+          bookstore: true,
+          book: true
+        }
+      });
 
       if (!selectedInventory) {
         res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
@@ -1455,110 +1462,96 @@ router.post('/sale', async (req, res) => {
       }
 
       if (selectedInventory.current < quantity) {
-        res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+        res.status(400).json(
+          { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
+        );
         return;
       }
 
-      const createdSale = await tx.sale.create({
-        data: {
-          inventoryId: selectedInventory.id,
-          quantity: quantity
+      const bookWithUsers = await tx.book.findUnique({
+        where: {
+          id: book
         },
-        include: {
-          inventory: {
-            include: {
-              bookstore: true
-            }
-          }
-        }
-      });
+        include: users
+      })
 
-      if (createdSale) {
-        const updatedInventory = await tx.inventory.update({
-          where: {id: selectedInventory.id},
-          data: {
-            current: selectedInventory.current-quantity
-          }
-        });
+      const authorListIds = bookWithUsers.users.map(user => user.id);
+      const saleForMonth = getForMonth(new Date())
 
-        // update all potential authors payments sums as well
-        const now = new Date();
-        const year = String(now.getFullYear());
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const currentForMonth = year + "-" + month;
-
-        const bookOfSale = await prisma.book.findUnique({
+      for (const authorId of authorListIds) {
+        const existingPayment = await tx.payment.findUnique({
           where: {
-            id: updatedInventory.bookId
-          },
-          select: {
-            users: {
-              select: {
-                id: true
-              }
+            userId_forMonth: {
+              userId: authorId,
+              forMonth: saleForMonth
             }
           }
         })
-        const userIds = bookOfSale.users.map(user => user.id);
 
-        // update the payment for each author of the book
-        if (userIds.length > 0) {
-          for (const id of userIds) {
-            const relatedPayment = await tx.payment.findFirst({
-              where: {
-                userId_forMonth: {
-                  userId: id,
-                  forMonth: currentForMonth
-                },
-                isDeleted: false
-              }
-            });
-
-            const userCategory = await tx.user.findUnique({
-              where: {
-                id: id,
-                isDeleted: false
-              },
-              select: {
-                category: {
-                  select: {
-                    percentage_royalties: true,
-                    percentage_management_stores: true,
-                    management_min: true
-                  }
-                }
-              }
-            })
-
-            const saleValue = calculateAuthorRevenue(
-                createdSale.inventory.bookstore.comissions,
-                createdSale.inventory.price,
-                userCategory.category.management_min,
-                userCategory.category.percentage_management_stores,
-                userCategory.category.percentage_royalties,
-                createdSale.quantity,
-                userIds.length
-              )
-
-            if (relatedPayment.length === 0) {
-              const createdPayment = await tx.payment.create({
-                data: {
-                  userId: id,
-                  amount: saleValue,
-                  forMonth: currentForMonth
-                }
-              })
-            } else {
-              const updatedRelatedPayment = await tx.payment.update({
-                where: {
-                  id: relatedPayment.id
-                },
-                data: {
-                  amount: relatedPayment.amount + saleValue
-                }
-              })
+        let createdSale;
+        if (!existingPayment) {
+          const userWithCategory = await tx.user.findUnique({
+            where: {
+              id: authorId
+            },
+            include: {
+              category: true
             }
-          }
+          });
+
+          const createdPayment = await tx.payment.create({
+            data: {
+              userId: authorId,
+              forMonth: saleForMonth,
+              amount: calculateAuthorRevenue(
+                selectedInventory.bookstore.comissions,
+                selectedInventory.price,
+                userWithCategory.category.management_min,
+                selectedInventory.bookstore.deal_percentage,
+                quantity
+              )
+            }
+          });
+
+          createdSale = await tx.sale.create({
+            data: {
+              inventoryId: selectedInventory.id,
+              quantity: quantity,
+              paymentId: createdPayment.id
+            }
+          })
+        } else {
+          createdSale = await tx.sale.create({
+            data: {
+              inventoryId: selectedInventory.id,
+              quantity: quantity,
+              paymentId: existingPayment.id
+            }
+          })
+
+          const updatedPayment = await tx.payment.update({
+            where: {
+              paymentId: existingPayment.id
+            },
+            data: {
+              amount: existingPayment.amount + calculateAuthorRevenue(
+                selectedInventory.bookstore.comissions,
+                selectedInventory.price,
+                userWithCategory.category.management_min,
+                selectedInventory.bookstore.deal_percentage,
+                quantity
+              )
+            }
+          });
+        }
+
+        if (createdSale) {
+          const updatedInventory = await tx.inventory.update({
+            where: {id: selectedInventory.id},
+            data: {
+              current: selectedInventory.current-quantity
+            }
+          });
         }
       }
 

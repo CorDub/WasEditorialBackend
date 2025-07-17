@@ -469,9 +469,13 @@ async function main() {
           }
         })
 
-        for (const author of book.users) {
-          const user = await prisma.user.findUnique({
-            where: {id: author.id},
+        const authorIds = book.users.map(user => user.id)
+        let paymentsIds = [];
+        for (const author of authorIds) {
+          const userWithCategory = await prisma.user.findUnique({
+            where: {
+              id: author
+            },
             include: {
               category: true
             }
@@ -480,100 +484,69 @@ async function main() {
           const saleAmount = calculateAuthorRevenue(
             inventory.bookstore.comissions,
             inventory.price,
-            user.category.management_min,
+            userWithCategory.category.management_min,
             inventory.bookstore.deal_percentage,
             randQuantToSell
           )
-          // console.log("inventory comissions", inventory.bookstore.comissions)
-          // console.log("inventory price", inventory.price)
-          // console.log("user category management_min", user.category.management_min)
-          // console.log("inventory.bookstore.deal_percentage", inventory.bookstore.deal_percentage)
-          // console.log("randQuantToSell", randQuantToSell)
-          console.log("sale amount", saleAmount)
 
           const existingPayment = await prisma.payment.findUnique({
             where: {
               userId_forMonth: {
-                userId: author.id,
+                userId: author,
                 forMonth: saleForMonth
               }
             }
           });
 
-          let createdSale;
-          if (existingPayment) {
-            createdSale = await prisma.sale.create({
-              data: {
-                inventoryId: inventory.id,
-                paymentId: existingPayment.id,
-                quantity: randQuantToSell,
-                createdAt: saleDate
-              }
-            })
-
-            const updatedPayment = await prisma.payment.update({
-              where:{
-                id: existingPayment.id
-              },
-              data: {
-                amount: existingPayment.amount + saleAmount
-              }
-            })
-
-          } else {
+          if (!existingPayment) {
             const createdPayment = await prisma.payment.create({
               data: {
-                userId: author.id,
-                amount: saleAmount,
+                userId: author,
                 forMonth: saleForMonth,
-                createdAt: saleDate
+                createdAt: saleDate,
+                amount: saleAmount
               }
             });
 
-            createdSale = await prisma.sale.create({
-              data: {
-                inventoryId: inventory.id,
-                paymentId: createdPayment.id,
-                quantity: randQuantToSell,
-                createdAt: saleDate
-              }
-            })
+            paymentsIds.push({"id": createdPayment.id})
+            continue;
           }
 
-          if (createdSale) {
-            const updatedInventory = await prisma.inventory.update({
-              where: {id: inventory.id},
-              data: {
-                current: inventory.current - randQuantToSell
-              }
-            });
-          } else {
-            console.log("\n SALE WASNT CREATED \n");
-            console.log("\n INVENTORY \n", inventory);
-            console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
-          }
+          const updatedPayment = await prisma.payment.update({
+            where: {
+              id: existingPayment.id
+            },
+            data: {
+              amount: existingPayment.amount + saleAmount
+            }
+          })
+
+          paymentsIds.push({"id": existingPayment.id})
         }
 
-        // const createdSale = await prisma.sale.create({
-        //   data: {
-        //     inventoryId: inventory.id,
-        //     quantity: randQuantToSell,
-        //     createdAt: saleDate
-        //   }
-        // });
+        const createdSale = await prisma.sale.create({
+          data: {
+            inventoryId: inventory.id,
+            quantity: randQuantToSell,
+            payments: {
+              connect: paymentsIds
+            },
+            createdAt: saleDate
+          }
+        })
 
-        // if (createdSale) {
-        //   const updatedInventory = await prisma.inventory.update({
-        //     where: {id: inventory.id},
-        //     data: {
-        //       current: inventory.current - randQuantToSell
-        //     }
-        //   });
-        // } else {
-        //   console.log("\n SALE WASNT CREATED \n");
-        //   console.log("\n INVENTORY \n", inventory);
-        //   console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
-        // }
+        if (createdSale) {
+          const updatedInventory = await prisma.inventory.update({
+            where: {id: inventory.id},
+            data: {
+              current: inventory.current - randQuantToSell
+            }
+          });
+        } else {
+          console.log("\n SALE WASNT CREATED \n");
+          console.log("\n INVENTORY \n", inventory);
+          console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
+        }
       };
     }
 

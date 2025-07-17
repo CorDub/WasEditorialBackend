@@ -12,7 +12,8 @@ function TableBookstores({salesByPayments, activeMonth}) {
     }
   }, [salesByPayments, activeMonth])
 
-  // console.log(salesByPayments)
+  // console.log(salesByPayments[9].sales);
+  // console.log(monthlySalesData);
 
   return(
     <div className="table">
@@ -28,27 +29,36 @@ function TableBookstores({salesByPayments, activeMonth}) {
         </div>
         <div className="table-bookstore-header-name">Total</div>
       </div>
-      {monthlySalesData && monthlySalesData.map((monthlySalesData, index) => (
+      {monthlySalesData 
+        && monthlySalesData.length > 0
+        && monthlySalesData.map((monthlySalesData, index) => (
         <TableBookstoresRow 
           key={index} 
           monthlySalesData={monthlySalesData} />
       ))}
-      <div className="table-total">
-        <div className="tbr-first tbr-title">Total</div>
-        <div className="tbr-name">
-          {salesByPayments.length > 0 
-          && Number.isInteger(activeMonth) 
-          && salesByPayments[activeMonth].totalQuantity}
+      {monthlySalesData && monthlySalesData.length > 0 && (
+        <div className="table-total">
+          <div className="tbr-first tbr-title">Total</div>
+          <div className="tbr-name">
+            {salesByPayments.length > 0 
+            && Number.isInteger(activeMonth) 
+            && salesByPayments[activeMonth].totalQuantity}
+          </div>
+          <div className="tbr-name"></div>
+          <div className="tbr-name"></div>
+          <div className="tbr-name"></div>
+          <div className="tbr-name">
+            {salesByPayments.length > 0 
+            && Number.isInteger(activeMonth) 
+            && formatNumber(salesByPayments[activeMonth].totalValue)}
+          </div>
         </div>
-        <div className="tbr-name"></div>
-        <div className="tbr-name"></div>
-        <div className="tbr-name"></div>
-        <div className="tbr-name">
-          {salesByPayments.length > 0 
-          && Number.isInteger(activeMonth) 
-          && formatNumber(salesByPayments[activeMonth].totalValue)}
+      )}
+      {monthlySalesData.length === 0 && (
+        <div className="table-bookstores-no-sales">
+          <div className="table-bookstores-no-sales-message">No ventas este mes</div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

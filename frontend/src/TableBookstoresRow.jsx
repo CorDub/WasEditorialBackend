@@ -11,6 +11,8 @@ function TableBookstoresRow({monthlySalesData}) {
       setDetailsOpen(true);
     }, [monthlySalesData])
 
+    console.log(monthlySalesData);
+
   return(
     <div className={isDetailsOpen 
       ? "enveloppe-table-row envtr-open" 

@@ -54,6 +54,8 @@ function InventoryGraph({
     }
   }
 
+  console.log(data)
+
   // fetch all inventories with relevant data on load
   useEffect(() => {
     fetchAllAuthorInventories();

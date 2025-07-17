@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import TableBookstoresRow from "./TableBookstoresRow";
 import formatNumber from "./customHooks/formatNumber";
-import TableCosts from "./TableCosts";
-import TableTotal from "./TableTotal";
 import "./TableBookstores.scss";
 
 function TableBookstores({salesByPayments, activeMonth}) {
@@ -14,7 +12,7 @@ function TableBookstores({salesByPayments, activeMonth}) {
     }
   }, [salesByPayments, activeMonth])
 
-  console.log(salesByPayments)
+  // console.log(salesByPayments)
 
   return(
     <div className="table">

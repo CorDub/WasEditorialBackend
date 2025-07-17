@@ -131,6 +131,66 @@ router.get('/inventories', async (req, res) => {
       }
     });
 
+    const allAuthorPayments = await prisma.payment.findMany({
+      where: {
+        userId: req.session.user_id
+      },
+      select: {
+        sales: {
+          select: {
+            quantity: true,
+            isDeleted: true,
+            inventory: {
+              select: {
+                book: {
+                  select: {
+                    id: true,
+                    title: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    let soldByBooks = [];
+    for (const payment of allAuthorPayments) {
+      for (const sale of payment.sales) {
+        if (soldByBooks.length === 0) {
+          if (sale.isDeleted === false) {
+            soldByBooks.push({
+              "id": sale.inventory.book.id,
+              "title": sale.inventory.book.title,
+              "sold": sale.quantity
+            })
+            continue;
+          }
+        }
+
+        let existingBook = false;
+        for (const book of soldByBooks) {
+          if (book.title === sale.inventory.book.title) {
+            if (sale.isDeleted === false) {
+              book.sold += sale.quantity
+              existingBook = true
+            }
+          }
+        }
+        
+        if (!existingBook) {
+          if (sale.isDeleted === false) {
+            soldByBooks.push({
+              "id": sale.inventory.book.id,
+              'title': sale.inventory.book.title,
+              'sold': sale.quantity
+            })
+          }
+        }
+      }
+    }
+
     // Calculate overall totals across all books
     let overallInitialTotal = 0;
     let overallSoldTotal = 0;
@@ -146,15 +206,25 @@ router.get('/inventories', async (req, res) => {
 
       // sold
       let soldTotal = 0;
-      for (const inventory of book.inventories) {
-        if (inventory.sales) {
-          for (const sale of inventory.sales) {
-            if (sale.isDeleted === false) {
-              soldTotal += sale.quantity
-            }
-          }
+      // for (const inventory of book.inventories) {
+      //   if (inventory.sales) {
+      //     for (const sale of inventory.sales) {
+      //       if (sale.isDeleted === false) {
+      //         soldTotal += sale.quantity
+      //       }
+      //     }
+      //   }
+      // }
+      // console.log("")
+      // console.log("soldTotal", soldTotal)
+
+      // let soldTotalPayments = 0;
+      for (const bookSold of soldByBooks) {
+        if (book.id === bookSold.id) {
+          soldTotal = bookSold.sold
         }
       }
+      // console.log("soldTotalPayments", soldTotalPayments)
 
       //givenToAuthor
       let entregadosAlAutor = 0;
@@ -1477,11 +1547,14 @@ router.get("/completeInventory", async (req, res) => {
         sales: {
           select: {
             quantity: true,
-            isDeleted: true
+            isDeleted: true,
+            paymentId: true
           }
         }
       }
     });
+
+    
 
     res.status(200).json(allAuthorInventories);
   } catch (error) {

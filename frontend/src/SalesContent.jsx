@@ -1,5 +1,6 @@
 import useCheckUser from "./customHooks/useCheckUser";
 import { Label, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import formatNumber from "./customHooks/formatNumber.jsx"
 
 const SalesContent = ({
   salesData,
@@ -25,7 +26,7 @@ const SalesContent = ({
         <div id="total-sales">
           <h3>Libros vendidos</h3>
           <p>{selectedBookSales} libros</p>
-          <p className="sales-value">$ {selectedBookValue.toFixed(2)}</p>
+          <p className="sales-value">{formatNumber(selectedBookValue)}</p>
         </div>
         <div id="books-sold">
           {selectedBook === 'total'

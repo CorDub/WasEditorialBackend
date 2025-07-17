@@ -136,12 +136,12 @@ function AuthorCommissions() {
   function closeModal(reload, alertMessage, alertType) {
     setModalOpen(false);
     if (reload === true) {
-      console.log("forceRender to true");
+      // console.log("forceRender to true");
       setPaymentInfo(prev => ({
         ...prev,
         status: "solicited"
         }));
-      console.log("solicited");
+      // console.log("solicited");
       setForceRender(true);
     }
     if (alertMessage) {
@@ -162,7 +162,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const salesByPayments = await response.json();
-        console.log("salesByPayments", salesByPayments);
+        // console.log("salesByPayments", salesByPayments);
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {

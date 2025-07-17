@@ -95,6 +95,8 @@ function AuthorInventory(){
     }
   }, [selectedBookId]);
 
+  // console.log(inventories)
+
   return (
     <div className="author-inventory"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>

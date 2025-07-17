@@ -54,7 +54,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
         onMouseLeave={() => setBookstoreTooltipOpen(false)} />
       {isBookstoreTooltipOpen && (
         <div className="scope-selector-tooltip-libreria">Librería</div>)}
-      <FontAwesomeIcon
+      {/* <FontAwesomeIcon
         icon={faEarthAmericas}
         className={scope === "country" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
         onClick={() => {
@@ -68,7 +68,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
         onMouseEnter={() => setCountryTooltipOpen(true)}
         onMouseLeave={() => setCountryTooltipOpen(false)} />
       {isCountryTooltipOpen && (
-        <div className="scope-selector-tooltip-pais">País</div>)}
+        <div className="scope-selector-tooltip-pais">País</div>)} */}
       <div
         className="scope-selector-slider"
         style={{ left: `${determineLeft()}`}}></div>

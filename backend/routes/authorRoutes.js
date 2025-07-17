@@ -364,7 +364,7 @@ router.get('/sales', async (req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
 
-    const sales = await prisma.sale.findMany({
+    let sales = await prisma.sale.findMany({
         where: {
           inventory: {
             book: {
@@ -387,12 +387,15 @@ router.get('/sales', async (req, res) => {
               book: true,
               bookstore: true
             }
-          }
+          },
+          payment: true
         },
         orderBy: {
           createdAt: 'desc'
         }
       });
+
+    sales = sales.filter(sale => sale.payment.userId === authorId);
 
     let totalSales = 0;
     let totalValue = 0;
@@ -1548,13 +1551,22 @@ router.get("/completeInventory", async (req, res) => {
           select: {
             quantity: true,
             isDeleted: true,
-            paymentId: true
+            paymentId: true,
+            payment: {
+              select: {
+                userId: true
+              }
+            }
           }
         }
       }
     });
 
-    
+    for (const inventory of allAuthorInventories) {
+      inventory.sales = inventory.sales.filter(
+        sale => sale.payment.userId === req.session.user_id
+      );
+    }
 
     res.status(200).json(allAuthorInventories);
   } catch (error) {

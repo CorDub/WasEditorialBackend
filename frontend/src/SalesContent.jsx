@@ -35,8 +35,8 @@ const SalesContent = ({
                 <li key={book.bookId}
                   className='books-sold-item'
                   style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
-                  title={`${book.title}: ${book.quantity} libros ($ ${book.value.toFixed(2)})`}>
-                  {book.title}: {book.quantity} libros <span>($ {book.value.toFixed(2)})</span>
+                  title={`${book.title}: ${book.quantity} libros ($ ${formatNumber(book.value)})`}>
+                  {book.title}: {book.quantity} libros <span>({formatNumber(book.value)})</span>
                 </li>
               ))}
             </ul>
@@ -70,7 +70,7 @@ const SalesContent = ({
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                tickFormatter={(value) => value.toLocaleString()}
+                tickFormatter={(value) => "$ " + value.toLocaleString()}
                 >
                 <Label
                   value="Valor de ventas ($)"
@@ -79,7 +79,30 @@ const SalesContent = ({
                   angle={0}
                 />
               </YAxis>
-              <Tooltip />
+              <Tooltip 
+                // formatter={(value, name) => {
+                //   if (name === 'Valor de ventas ($)') {
+                //     return [`${formatNumber(value)}`, name]
+                //   }
+                //   return [value, name];
+                // }}
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const quantity = payload.find(p => p.name === 'Libros vendidos')?.value ?? 0;
+                    const value = payload[0].payload.value ?? 0; // From data
+
+                    return (
+                      <div style={{ background: "#fff", padding: "8px", border: "1px solid #ccc" }}>
+                        <p><strong>{label}</strong></p>
+                        <p>Libros vendidos: {quantity}</p>
+                        <p>Valor de ventas: {formatNumber(value)}</p>
+                      </div>
+                    );
+                  }
+
+                  return null;
+                }}
+              />
               <Legend />
               <Line
                 yAxisId="left"
@@ -88,13 +111,13 @@ const SalesContent = ({
                 stroke="#8884d8"
                 name="Libros vendidos"
               />
-              <Line
+              {/* <Line
                 yAxisId="right"
                 type="monotone"
                 dataKey="value"
                 stroke="#82ca9d"
                 name="Valor de ventas ($)"
-              />
+              /> */}
             </LineChart>
           </ResponsiveContainer>
           )}

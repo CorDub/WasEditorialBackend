@@ -127,6 +127,7 @@ function AuthorCommissions() {
     }
   }
 
+  console.log("payments", payments)
   // console.log(dataByMonths)
 
   useEffect(() => {

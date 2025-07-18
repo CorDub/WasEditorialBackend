@@ -22,8 +22,9 @@ function TableBookstores({salesByPayments, activeMonth}) {
         <div className="table-bookstore-header-name">Vendidos</div>
         <div className="table-bookstore-header-name">Precio de venta</div>
         <div className="table-bookstore-header-name">% de comisión
-          <div className="trdh-subtitle">de la tienda</div>
+          <div className="trdh-subtitle">de la librería</div>
         </div>
+        <div className="table-bookstore-header-name">Comisión</div>
         <div className="table-bookstore-header-name">Ganancia 
           <div className="trdh-subtitle">por libro</div>
         </div>
@@ -44,6 +45,7 @@ function TableBookstores({salesByPayments, activeMonth}) {
             && Number.isInteger(activeMonth) 
             && salesByPayments[activeMonth].totalQuantity}
           </div>
+          <div className="tbr-name"></div>
           <div className="tbr-name"></div>
           <div className="tbr-name"></div>
           <div className="tbr-name"></div>

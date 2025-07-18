@@ -4,7 +4,6 @@ import { prisma } from "../prisma/client.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { calculateAuthorRevenue, getForMonth } from "../utils.js";
-import e from "express";
 
 const upload = multer();
 const router = express.Router();
@@ -821,6 +820,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
         sales: {
           select: {
             quantity: true,
+            isDeleted: true,
             inventory: {
               select: {
                 bookstore: {
@@ -856,6 +856,10 @@ router.get('/monthlySalesByPayments', async (req, res) => {
       }
 
       for (const sale of payment.sales) {
+        if (sale.isDeleted === true) {
+          continue;
+        }
+        
         if (paymentSales.sales.length === 0) {
           paymentSales.sales.push({
             "title": sale.inventory.book.title,
@@ -863,6 +867,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
               "name": sale.inventory.bookstore.name,
               "quantity": sale.quantity,
               "price": sale.inventory.price,
+              "isComissions": sale.inventory.bookstore.comissions,
+              "deal_percentage": sale.inventory.bookstore.deal_percentage,
               "comissions": sale.inventory.bookstore.comissions 
                 ? user.category.management_min
                 : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
@@ -911,6 +917,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
                 "name": sale.inventory.bookstore.name,
                 "quantity": sale.quantity,
                 "price": sale.inventory.price,
+                "isComissions": sale.inventory.bookstore.comissions,
+                "deal_percentage": sale.inventory.bookstore.deal_percentage,
                 "comissions": sale.inventory.bookstore.comissions 
                   ? user.category.management_min
                   : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
@@ -927,13 +935,6 @@ router.get('/monthlySalesByPayments', async (req, res) => {
                   (sale.inventory.price - sale.inventory.price 
                     * (sale.inventory.bookstore.deal_percentage / 100))
             }
-
-            // paymentSales.totalQuantity += sale.quantity
-            // paymentSales.totalValue += sale.inventory.bookstore.comissions
-            //   ? sale.quantity * (sale.inventory.price - user.category.management_min)
-            //   : sale.quantity * 
-            //     (sale.inventory.price - sale.inventory.price 
-            //       * (sale.inventory.bookstore.deal_percentage / 100))
           
             existingBook = true;
           }
@@ -946,6 +947,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
               "name": sale.inventory.bookstore.name,
               "quantity": sale.quantity,
               "price": sale.inventory.price,
+              "isComissions": sale.inventory.bookstore.comissions,
+              "deal_percentage": sale.inventory.bookstore.deal_percentage,
               "comissions": sale.inventory.bookstore.comissions 
                 ? user.category.management_min
                 : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
@@ -961,30 +964,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
                 (sale.inventory.price - sale.inventory.price 
                   * (sale.inventory.bookstore.deal_percentage / 100))
           })
-
-          // paymentSales.totalQuantity += sale.quantity
-          // paymentSales.totalValue += sale.inventory.bookstore.comissions
-          //   ? sale.quantity * (sale.inventory.price - user.category.management_min)
-          //   : sale.quantity * 
-          //     (sale.inventory.price - sale.inventory.price 
-          //       * (sale.inventory.bookstore.deal_percentage / 100))
         }
-
-        // paymentSales.sales.push({
-        //   "title": sale.inventory.book.title,
-        //   "bookstores": [{
-        //     "name": sale.inventory.bookstore.name,
-        //     "quantity": sale.quantity,
-        //     "price": sale.inventory.price,
-        //     "comissions": sale.inventory.bookstore.comissions 
-        //       ? user.category.management_min
-        //       : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-        //     "ganancia": sale.inventory.bookstore.comissions
-        //       ? sale.inventory.price - user.category.management_min
-        //       : sale.inventory.price - sale.inventory.price 
-        //         * (sale.inventory.bookstore.deal_percentage / 100)
-        //   }]
-        // })
 
         paymentSales.totalQuantity += sale.quantity
         paymentSales.totalValue += sale.inventory.bookstore.comissions
@@ -996,6 +976,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
 
       monthlySales.push(paymentSales);
     }
+    // console.log("monthlySales", monthlySales);
     // console.log("monthlySales.length", monthlySales.length);
     if (monthlySales.length < 13) {
       const now = new Date()
@@ -1020,7 +1001,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
       }  
 
       for (let i = 0; i < 13; i++) {
-        if (monthlySales[i].forMonth !== currentMonth) {
+        if (!monthlySales[i] || monthlySales[i].forMonth !== currentMonth) {
           monthlySales.splice(i, 0, {"forMonth": currentMonth, "sales": []});
           decrementMonth()
         } else {

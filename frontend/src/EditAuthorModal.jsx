@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
+import checkForErrors from "./customHooks/checkForErrors";
+import ErrorsList from "./ErrorsList";
 
 function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -11,6 +13,11 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [country, setCountry] = useState(clickedRow.country);
   const [referido, setReferido] = useState(clickedRow.referido || "");
   const [email, setEmail] = useState(clickedRow.email || "");
+  const [phone, setPhone] = useState(clickedRow.phone || '');
+  const [birthday, setBirthday] = useState(clickedRow.birthday || '');
+  const [day, setDay] = useState(clickedRow.birthday ? clickedRow.birthday.substring(0,2) : '');
+  const [month, setMonth] = useState(clickedRow.birthday ? clickedRow.birthday.substring(2,4) : '');
+  const [year, setYear] = useState(clickedRow.birthday ? clickedRow.birthday.substring(4,8) : '');
   const [category, setCategory] = useState(clickedRow.category.type || 0);
   const [countries, setCountries] = useState([
     "México", "Estados Unidos",
@@ -36,9 +43,23 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     "Yemen",
     "Zambia", "Zimbabue"
   ]);
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const countryRef = useRef();
+  const referidoRef = useRef();
+  const emailRef = useRef();
+  const phoneRef = useRef();
+  const dayRef = useRef();
+  const monthRef = useRef();
+  const yearRef = useRef();
+  const categoryRef = useRef();
   const [errors, setErrors] = useState([]);
   const [categories, setCategories] = useState([]);
   const [displayedCategories, setDisplayedCategories] = useState([]);
+
+  useEffect(() => { 
+    setBirthday(day.padStart(2, "0") + month.padStart(2, "0") + year)
+  }, [day, month, year])
 
   useEffect(() => {
     for (let i = 0; i < countries.length; i++) {
@@ -63,7 +84,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     setDisplayedCategories(displayedCategories);
   }, [clickedRow, categories])
 
-  async function editAuthor(e) {
+  async function editAuthor() {
     let fullCategory = {};
     categories.map((cat) => {
       if (cat.type === category) {
@@ -72,7 +93,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       }
     });
 
-    e.preventDefault();
     try {
       const response = await fetch(`${baseURL}/admin/user`, {
         method: "PATCH",
@@ -87,13 +107,24 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           country: country,
           referido: referido,
           email: email,
+          phone: phone,
+          birthday: birthday,
           categoryId: fullCategory.id
         })
       });
 
-      if (response.ok === true) {
-        const alertMessage = (`Actualizado ${firstName} ${lastName} con exito`);
+      if (response.ok) {
+        const alertMessage = (`${firstName} ${lastName} ha estado actualizado con exito`);
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+      } else {
+        const error = await response.json();
+        console.log(error);
+        if (error.message) {
+          checkForServerErrors(error.message);
+          return;
+        }
+        const alertMessage = 'No se pudó editar el autor.';
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch(error) {
@@ -126,7 +157,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     };
   }
 
-  function checkForErrors(serverError) {
+  function checkForServerErrors(serverError) {
     function addErrorClass(input_name) {
       if (!input_name.classList.contains("error-inputs")) {
         input_name.classList.add("error-inputs");
@@ -136,88 +167,198 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     let errorList = [];
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
-    const inputCountry = document.getElementById('country-select');
-    const inputReferido = document.getElementById('adding-author-referido');
     const inputEmail = document.getElementById('adding-author-email');
-    const inputCategory = document.getElementById('category-select');
-    const inputsList = [inputFirstName, inputLastName, inputCountry,
-      inputReferido, inputEmail, inputCategory];
-
-    inputsList.forEach((input) => {
-      if (input.classList.contains("error-inputs")) {
-        input.classList.remove("error-inputs");
-      }
-    })
-
-    if (firstName === '') {
-      errorList.push(11);
-      addErrorClass(inputFirstName);
-    };
-
-    if (firstName.length > 50) {
-      errorList.push(12);
-      addErrorClass(inputFirstName);
-    };
-
-    if (lastName.length > 50) {
-      errorList.push(22);
-      addErrorClass(inputLastName);
-    };
-
-    if (serverError === "Un autor con el mismo nombre completo ya existe") {
-      errorList.push(121);
+    if (serverError === "Un autor con el mismo nombre completo ya existe" 
+      || serverError === "Este usuario ya existe"
+    ) {
+      errorList.push(serverError);
       addErrorClass(inputFirstName);
       addErrorClass(inputLastName);
     }
-
-    if (country === null) {
-      errorList.push(31);
-      addErrorClass(inputCountry);
-    };
-
-    if (!countries.includes(country)) {
-      errorList.push(32);
-      addErrorClass(inputCountry);
-    };
-
-    if (referido.length > 100) {
-      errorList.push(41);
-      addErrorClass(inputReferido);
-    };
-
-    if (email === '') {
-      errorList.push(51);
-      addErrorClass(inputEmail);
-    };
-
-    if (email.length > 50) {
-      errorList.push(52);
-      addErrorClass(inputEmail);
-    };
 
     if (serverError === "El correo ya está usado") {
-      errorList.push(53);
+      errorList.push(serverError);
       addErrorClass(inputEmail);
     }
-
-    if (category === null) {
-      errorList.push(61);
-      addErrorClass(inputCategory);
-    };
-
-    const categories_types = [];
-    categories.map((cat) => {
-      categories_types.push(cat.type)
-    });
-    console.log("categories", categories);
-    console.log("category", category);
-    if (!categories_types.includes(category)) {
-      errorList.push(62);
-      addErrorClass(inputCategory);
-    };
 
     setErrors(errorList);
     return errorList;
+  }
+
+  // function checkForErrors(serverError) {
+  //   function addErrorClass(input_name) {
+  //     if (!input_name.classList.contains("error-inputs")) {
+  //       input_name.classList.add("error-inputs");
+  //     };
+  //   }
+
+  //   let errorList = [];
+  //   const inputFirstName = document.getElementById('adding-author-first-name');
+  //   const inputLastName = document.getElementById('adding-author-last-name');
+  //   const inputCountry = document.getElementById('country-select');
+  //   const inputReferido = document.getElementById('adding-author-referido');
+  //   const inputEmail = document.getElementById('adding-author-email');
+  //   const inputCategory = document.getElementById('category-select');
+  //   const inputsList = [inputFirstName, inputLastName, inputCountry,
+  //     inputReferido, inputEmail, inputCategory];
+
+  //   inputsList.forEach((input) => {
+  //     if (input.classList.contains("error-inputs")) {
+  //       input.classList.remove("error-inputs");
+  //     }
+  //   })
+
+  //   if (firstName === '') {
+  //     errorList.push(11);
+  //     addErrorClass(inputFirstName);
+  //   };
+
+  //   if (firstName.length > 50) {
+  //     errorList.push(12);
+  //     addErrorClass(inputFirstName);
+  //   };
+
+  //   if (lastName.length > 50) {
+  //     errorList.push(22);
+  //     addErrorClass(inputLastName);
+  //   };
+
+  //   if (serverError === "Un autor con el mismo nombre completo ya existe") {
+  //     errorList.push(121);
+  //     addErrorClass(inputFirstName);
+  //     addErrorClass(inputLastName);
+  //   }
+
+  //   if (country === null) {
+  //     errorList.push(31);
+  //     addErrorClass(inputCountry);
+  //   };
+
+  //   if (!countries.includes(country)) {
+  //     errorList.push(32);
+  //     addErrorClass(inputCountry);
+  //   };
+
+  //   if (referido.length > 100) {
+  //     errorList.push(41);
+  //     addErrorClass(inputReferido);
+  //   };
+
+  //   if (email === '') {
+  //     errorList.push(51);
+  //     addErrorClass(inputEmail);
+  //   };
+
+  //   if (email.length > 50) {
+  //     errorList.push(52);
+  //     addErrorClass(inputEmail);
+  //   };
+
+  //   if (serverError === "El correo ya está usado") {
+  //     errorList.push(53);
+  //     addErrorClass(inputEmail);
+  //   }
+
+  //   if (category === null) {
+  //     errorList.push(61);
+  //     addErrorClass(inputCategory);
+  //   };
+
+  //   const categories_types = [];
+  //   categories.map((cat) => {
+  //     categories_types.push(cat.type)
+  //   });
+  //   console.log("categories", categories);
+  //   console.log("category", category);
+  //   if (!categories_types.includes(category)) {
+  //     errorList.push(62);
+  //     addErrorClass(inputCategory);
+  //   };
+
+  //   setErrors(errorList);
+  //   return errorList;
+  // }
+
+  function checkInputs() {
+    let errorsList = []
+    const firstNameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    }
+    const lastNameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    }
+    const countryExpectations = {
+      type: "string",
+      presence: "not empty",
+      value: countries
+    }
+    const emailExpectations = {
+      type: "string",
+      validity: "email valid"
+    }
+    const referidoExpectations = {
+      type: "string"
+    }
+    const birthdayDayExpectations = {
+      type: "number",
+      minimum: 1,
+      maximum: 31
+    }
+    const birthdayMonthExpectations = {
+      type: "number",
+      minimum: 1,
+      maximum: 12
+    }
+    const birthdayYearExpectations = {
+      type: "number",
+      maximum: new Date().getFullYear(),
+      minimum: (new Date().getFullYear() - 120)
+    }
+    const phoneExpectations = {
+      type: "number",
+      validity: "phone valid"
+    }
+    const categoryExpectations = {
+      type: "string",
+      presence: "not empty",
+      value: categories.map(cat => cat.type)
+    };
+
+    const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
+    const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
+    const errorsCountry = checkForErrors("El país", country, countryExpectations, countryRef, "o")
+    const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
+    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
+    const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
+    const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
+    const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
+    const errorsCategory = checkForErrors("La categoría", category, categoryExpectations, categoryRef, "a")
+    const errorInputs = [
+      errorsFirstName,
+      errorsLastName,
+      errorsCountry,
+      errorsEmail, 
+      errorsPhone,
+      errorsReferido,
+      errorsBirthdayDay,
+      errorsBirthdayMonth,
+      errorsBirthdayYear,
+      errorsCategory
+    ]
+
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
+    }
+
+    return errorsList
   }
 
   async function fetchCategoryTypes() {
@@ -248,11 +389,19 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   }, [])
 
   async function handleSubmit(e) {
-    const errorList = checkForErrors();
-    if (errorList.length > 0) {
+    e.preventDefault();
+    setErrors([]);
+
+    // const errorList = checkForErrors();
+    // if (errorList.length > 0) {
+    //   return;
+    // }
+    const res = checkInputs();
+    if (res.length > 0) {
       return;
     }
-    editAuthor(e)
+
+    editAuthor()
   }
 
   return (
@@ -269,18 +418,21 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             <label className="modal-form-label">Nombre *</label>
             <input type="text" value={`${firstName}`}
               className="global-input" id='adding-author-first-name'
+              ref={firstNameRef}
               onChange={(e)=>setFirstName(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
             <label className="modal-form-label">Apellido *</label>
             <input type="text" value={`${lastName}`} placeholder="Apellido"
               className="global-input" id="adding-author-last-name"
+              ref={lastNameRef}
               onChange={(e)=>setLastName(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
             <label className="modal-form-label">País *</label>
             <select className="select-global"
               id="country-select"
+              ref={countryRef}
               onChange={(e) => dropDownChange(e, "Country")} >
               {countries.map((country, index) => (
                 <option key={index} value={country} placeholder="Pais">{country}</option>
@@ -290,18 +442,45 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <div className="modal-form-line">
             <label className="modal-form-label">Referido</label>
             <input type="text" value={`${referido || ""}`}
+              ref={referidoRef}
               className="global-input" id="adding-author-referido"
               onChange={(e)=>setReferido(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
             <label className="modal-form-label">Correo</label>
             <input type="text" value={`${email || ""}`}
+              ref={emailRef}
               className="global-input" id="adding-author-email"
               onChange={(e)=>setEmail(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
+            <label className="modal-form-label">Teléfono</label>
+            <input type='text'
+              className="global-input" id="adding-author-teléfono"
+              ref={phoneRef}
+              onChange={(e) => setPhone(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Fecha de nacimiento</label>
+            <div className="modal-birthday">
+              <input type="text" placeholder="Día" 
+                className="global-input birthday-day" maxLength="2"
+                ref={dayRef}
+                onChange={(e) => setDay(e.target.value)}></input>
+              <input type="text" placeholder="Mes" 
+                className="global-input birthday-month" maxLength="2"
+                ref={monthRef}
+                onChange={(e) => setMonth(e.target.value)}></input>
+              <input type="text" placeholder="Año" 
+                className="global-input birthday-year" maxLength="4"
+                ref={yearRef}
+                onChange={(e) => setYear(e.target.value)}></input>
+            </div>
+          </div>
+          <div className="modal-form-line">
             <label className="modal-form-label">Categoría</label>
             <select className="select-global" id="category-select"
+              ref={categoryRef}
               onChange={(e) => dropDownChange(e, "Category")}>
               {/* <option value={category} placeholder="Categoria">{category ? category : "Categoria"}</option> */}
               {displayedCategories && displayedCategories.map((cat, index) => (
@@ -310,7 +489,8 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             </select>
           </div>
         </form>
-        <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
+        {/* <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/> */}
+        <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="modal-actions">
           <button className='blue-button modal-button'
               onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

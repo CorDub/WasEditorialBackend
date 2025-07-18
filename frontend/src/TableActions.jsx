@@ -245,7 +245,7 @@ function TableActions ({
                 onMouseEnter={() => setSendTooltipOpen(!isSendTooltipOpen)}
                 onMouseLeave={() => setSendTooltipOpen(!isSendTooltipOpen)}/>
               {isSendTooltipOpen && (
-                <div className="ta-tooltip">Añadir entrega a librería</div>)}
+                <div className="ta-tooltip">Entrega a librería</div>)}
               {row.original.country === "México" && (
                 <>
                 <FontAwesomeIcon icon={faPersonArrowUpFromLine}
@@ -255,7 +255,7 @@ function TableActions ({
                   onMouseEnter={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}
                   onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
                 {isGivenToAuthorTooltipOpen && (
-                  <div className="ta-tooltip">Añadir entrega a autor</div>)}
+                  <div className="ta-tooltip">Entrega a autor</div>)}
                 <FontAwesomeIcon icon={faPersonArrowDownToLine}
                   className='ta-button ta-receivedFromAuthor'
                   id={`ta-transfer-${row.index}`}
@@ -263,7 +263,7 @@ function TableActions ({
                   onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
                   onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
                 {isReceivedFromAuthorTooltipOpen && (
-                  <div className="ta-tooltip">Añadir entrega de autor</div>)}
+                  <div className="ta-tooltip">Entrega del autor</div>)}
                 </>
               )}
             </>
@@ -276,7 +276,7 @@ function TableActions ({
                 onMouseEnter={() => setReturnTooltipOpen(!isReturnTooltipOpen)}
                 onMouseLeave={() => setReturnTooltipOpen(!isReturnTooltipOpen)}/>
               {isReturnTooltipOpen && (
-                <div className="ta-tooltip">Añadir devolución</div>)}
+                <div className="ta-tooltip">Registrar devolución</div>)}
             </>
           }
           </>

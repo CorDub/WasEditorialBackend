@@ -69,6 +69,13 @@ function AuthorsList() {
 
     },
     {
+      header: "Fecha de nacimiento",
+      accessorKey: "birthday",
+      Cell: ({ row }) => row.original.birthday != null 
+        ? `${row.original.birthday.substring(0,2)}/${row.original.birthday.substring(2,4)}/${row.original.birthday.substring(4,8)}`
+        : ""
+    },
+    {
       header: "CLABE",
       accessorKey: "clabe"
     }, 

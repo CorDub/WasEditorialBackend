@@ -9,6 +9,7 @@ function TableBookstoresRowDetails({monthlySalesData}) {
           <div className="tbr-first tbr-title tbrd-name">{bookstore.name}</div>
           <div className="tbr-name">{bookstore.quantity}</div>
           <div className="tbr-name">{formatNumber(bookstore.price)}</div>
+          <div className="tbr-name">{!bookstore.isComissions ? bookstore.deal_percentage+"%" : "-"}</div>
           <div className="tbr-name">{formatNumber(bookstore.comissions)}</div>
           <div className="tbr-name">{formatNumber(bookstore.ganancia)}</div>
           <div className="tbr-name">{formatNumber(bookstore.quantity * bookstore.ganancia)}</div>

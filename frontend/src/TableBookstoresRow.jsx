@@ -11,7 +11,7 @@ function TableBookstoresRow({monthlySalesData}) {
       setDetailsOpen(true);
     }, [monthlySalesData])
 
-    console.log(monthlySalesData);
+    // console.log(monthlySalesData);
 
   return(
     <div className={isDetailsOpen 
@@ -21,6 +21,7 @@ function TableBookstoresRow({monthlySalesData}) {
         onClick={() => setDetailsOpen(!isDetailsOpen)}>
         <div className="tbr-first tbr-title ">{monthlySalesData.title}</div>
         <div className="tbr-name">{monthlySalesData.totalTitleQuantity}</div>
+        <div className="tbr-name"></div>
         <div className="tbr-name"></div>
         <div className="tbr-name"></div>
         <div className="tbr-name"></div>

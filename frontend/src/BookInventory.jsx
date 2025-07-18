@@ -114,7 +114,7 @@ function BookInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => {
-        return (<div>{row.original.totalSales} / {row.original.initial}</div>)
+        return (<div>{row.original.totalSales}</div>)
       },
       // muiTableHeadCellProps: {
       //   sx: {
@@ -134,7 +134,7 @@ function BookInventory({
     {
       header: "Devueltos",
       Cell: ({row}) => (
-        <div>{row.original.returns} / {row.original.initial}</div>
+        <div>{row.original.returns}</div>
       ),
       // muiTableHeadCellProps: {
       //   sx: {
@@ -154,7 +154,7 @@ function BookInventory({
     {
       header: "Entregados al autor",
       Cell: ({row}) => (
-        <div>{row.original.givenToAuthor} / {row.original.initial}</div>
+        <div>{row.original.givenToAuthor}</div>
       ),
       // muiTableHeadCellProps: {
       //   sx: {
@@ -174,7 +174,7 @@ function BookInventory({
     {
       header: "Disponibles",
       Cell: ({row}) => (
-        <div>{row.original.current} / {row.original.initial}</div>
+        <div>{row.original.current}</div>
       ),
       // muiTableHeadCellProps: {
       //   sx: {

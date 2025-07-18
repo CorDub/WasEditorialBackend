@@ -24,6 +24,7 @@ router.get('/users', async (req, res) => {
         referido: true,
         email: true,
         phone: true,
+        birthday: true,
         clabe: true,
         name_bank_account: true,
         bank: true,
@@ -149,6 +150,8 @@ router.patch('/user', async (req, res) => {
       country,
       referido,
       email,
+      phone,
+      birthday,
       categoryId } = req.body;
 
     await prisma.$transaction(async (tx) => {
@@ -169,6 +172,8 @@ router.patch('/user', async (req, res) => {
           country: country,
           referido: referido,
           email: email,
+          phone: phone,
+          birthday: birthday,
           category: {
             connect: {
               id: parseInt(categoryId)
@@ -247,9 +252,7 @@ router.patch('/user', async (req, res) => {
             sale.price,
             authorBeforeUpdate.category.management_min,
             authorBeforeUpdate.category.percentage_management_stores,
-            authorBeforeUpdate.category.percentage_royalties,
             sale.quantity,
-            sale.numberOfAuthors
           )
 
           const newSaleValue = calculateAuthorRevenue(
@@ -257,9 +260,7 @@ router.patch('/user', async (req, res) => {
             sale.price,
             sale.management_min,
             sale.percentage_management_stores,
-            sale.percentage_royalties,
             sale.quantity,
-            sale.numberOfAuthors
           )
 
           const quantityUpdate = newSaleValue - previousSaleValue
@@ -794,9 +795,7 @@ router.patch('/book', async (req, res) => {
                   inventory.price,
                   author.category.management_min,
                   author.category.percentage_management_stores,
-                  author.category.percentage_royalties,
                   sale.quantity,
-                  previousNumberOfAuthors
                 );
 
                 const newSaleValue = calculateAuthorRevenue(
@@ -804,9 +803,7 @@ router.patch('/book', async (req, res) => {
                   inventory.price,
                   author.category.management_min,
                   author.category.percentage_management_stores,
-                  author.category.percentage_royalties,
                   sale.quantity,
-                  authorsIds.length
                 );
 
                 const quantityUpdate = newSaleValue - previousSaleValue
@@ -848,12 +845,74 @@ router.patch('/book/:id/prices', async (req, res) => {
   try {
     await prisma.$transaction(async (tx) => {
       for (const price of prices) {
+        const previousInventory = await tx.inventory.findUnique({
+          where: {
+            id: price.inventoryId
+          },
+          include: {
+            bookstore: true
+          }
+        });
+
         const updatedInventory = await tx.inventory.update({
           where: {id: parseInt(price.inventoryId)},
-          data: {price: parseFloat(price.price)}
+          data: {price: parseFloat(price.price)},
+          include: {
+            bookstore: true
+          }
         })
-      }
 
+        const concernedSalesWithPayments = await tx.sale.findMany({
+          where: {
+            inventoryId: updatedInventory.id,
+            isDeleted: false
+          },
+          include: {
+            payments: true
+          }
+        });
+
+        for (const sale of concernedSalesWithPayments) {
+          for (const payment of sale.payments) {
+            if (payment.isDeleted === false) {
+              const userWithCategory = await tx.user.findUnique({
+                where: {
+                  id: payment.userId
+                },
+                include: {
+                  category: true
+                }
+              })
+
+              const previousSaleValue = calculateAuthorRevenue(
+                previousInventory.bookstore.comissions,
+                previousInventory.price,
+                userWithCategory.category.management_min,
+                previousInventory.bookstore.deal_percentage,
+                sale.quantity
+              )
+
+              const newSaleValue = calculateAuthorRevenue(
+                updatedInventory.bookstore.comissions,
+                updatedInventory.price,
+                userWithCategory.category.management_min,
+                updatedInventory.bookstore.deal_percentage,
+                sale.quantity
+              )
+
+              const updatedPayment = await tx.payment.update({
+                where: {
+                  id: payment.id
+                },
+                data: {
+                  amount: payment.amount - previousSaleValue + newSaleValue
+                }
+              })
+            }
+          }
+        }
+
+      }
       res.status(200).json({message: "Successfully updated the book prices"});
     })
   } catch (error) {
@@ -1472,13 +1531,24 @@ router.post('/sale', async (req, res) => {
         where: {
           id: book
         },
-        include: users
+        include: {
+          users: true
+        }
       })
 
       const authorListIds = bookWithUsers.users.map(user => user.id);
       const saleForMonth = getForMonth(new Date())
-
+      let paymentIds = []
       for (const authorId of authorListIds) {
+        const userWithCategory = await tx.user.findUnique({
+          where: {
+            id: authorId
+          },
+          include: {
+            category: true
+          }
+        });
+
         const existingPayment = await tx.payment.findUnique({
           where: {
             userId_forMonth: {
@@ -1488,17 +1558,7 @@ router.post('/sale', async (req, res) => {
           }
         })
 
-        let createdSale;
         if (!existingPayment) {
-          const userWithCategory = await tx.user.findUnique({
-            where: {
-              id: authorId
-            },
-            include: {
-              category: true
-            }
-          });
-
           const createdPayment = await tx.payment.create({
             data: {
               userId: authorId,
@@ -1513,25 +1573,11 @@ router.post('/sale', async (req, res) => {
             }
           });
 
-          createdSale = await tx.sale.create({
-            data: {
-              inventoryId: selectedInventory.id,
-              quantity: quantity,
-              paymentId: createdPayment.id
-            }
-          })
+          paymentIds.push({"id": createdPayment.id})
         } else {
-          createdSale = await tx.sale.create({
-            data: {
-              inventoryId: selectedInventory.id,
-              quantity: quantity,
-              paymentId: existingPayment.id
-            }
-          })
-
           const updatedPayment = await tx.payment.update({
             where: {
-              paymentId: existingPayment.id
+              id: existingPayment.id
             },
             data: {
               amount: existingPayment.amount + calculateAuthorRevenue(
@@ -1543,19 +1589,30 @@ router.post('/sale', async (req, res) => {
               )
             }
           });
-        }
-
-        if (createdSale) {
-          const updatedInventory = await tx.inventory.update({
-            where: {id: selectedInventory.id},
-            data: {
-              current: selectedInventory.current-quantity
-            }
-          });
+          paymentIds.push({"id": updatedPayment.id})
         }
       }
 
-    res.status(201).json(createdSale);
+      const createdSale = await tx.sale.create({
+            data: {
+              inventoryId: selectedInventory.id,
+              quantity: quantity,
+              payments: {
+                connect: paymentIds
+              }
+            }
+          })
+
+      if (createdSale) {
+        const updatedInventory = await tx.inventory.update({
+          where: {id: selectedInventory.id},
+          data: {
+            current: selectedInventory.current-quantity
+          }
+        });
+      }
+
+      res.status(201).json(createdSale);
     })
    
   } catch (error) {
@@ -1588,6 +1645,7 @@ router.patch('/sale', async (req, res) => {
       }
 
       const previousSale = await tx.sale.findUnique({where: {id: id}});
+
       let quantityUpdate = previousSale.quantity - quantity;
 
       if ((selectedInventory.current + quantityUpdate) < 0) {
@@ -1669,15 +1727,21 @@ router.patch('/sale', async (req, res) => {
               }
             })
 
+            const previousSaleAmount = calculateAuthorRevenue(
+              updatedSale.inventory.bookstore.comissions,
+              updatedSale.inventory.price,
+              userCategory.category.management_min,
+              userCategory.category.percentage_management_stores,
+              previousSale.quantity,
+            )
+
             const saleAmount = calculateAuthorRevenue(
-                updatedSale.inventory.bookstore.comissions,
-                updatedSale.inventory.price,
-                userCategory.category.management_min,
-                userCategory.category.percentage_management_stores,
-                userCategory.category.percentage_royalties,
-                quantityUpdate,
-                userIds.length
-              )
+              updatedSale.inventory.bookstore.comissions,
+              updatedSale.inventory.price,
+              userCategory.category.management_min,
+              userCategory.category.percentage_management_stores,
+              quantityUpdate,
+            )
 
             if (!relatedPayment) {
               const createdPayment = await tx.payment.create({
@@ -1693,7 +1757,7 @@ router.patch('/sale', async (req, res) => {
                   id: relatedPayment.id
                 },
                 data: {
-                  amount: relatedPayment.amount + saleAmount
+                  amount: relatedPayment.amount - previousSaleAmount + saleAmount
                 }
               })
             }
@@ -1798,9 +1862,7 @@ router.delete('/sale/:id', async (req, res) => {
               deletedSale.inventory.price,
               userCategory.category.management_min,
               userCategory.category.percentage_management_stores,
-              userCategory.category.percentage_royalties,
               quantity,
-              userIds.length
             )
 
             const updatedRelatedPayment = await tx.payment.update({
@@ -2586,9 +2648,7 @@ async function softDeleteSalesOnCascade(IdsList, tx) {
           sale.inventory.price,
           userCategory.category.management_min,
           userCategory.category.percentage_management_stores,
-          userCategory.category.percentage_royalties,
           sale.quantity,
-          userIds.length
         )
         if (newPaymentAmount < 0.01) {
           newPaymentAmount = 0
@@ -2696,18 +2756,14 @@ async function updatePaymentsOnCascade(category, previousCategory, tx) {
       sale.price,
       previousCategory.management_min,
       previousCategory.percentage_management_stores,
-      previousCategory.percentage_royalties,
       sale.quantity,
-      sale.numberOfAuthors
     );
     const newSaleValue = calculateAuthorRevenue(
       sale.comissions,
       sale.price,
       category.management_min,
       category.percentage_management_stores,
-      category.percentage_royalties,
       sale.quantity,
-      sale.numberOfAuthors
     )
 
     const previousPayment = await tx.payment.findUnique({
@@ -2747,7 +2803,9 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
       isDeleted: false
     },
     include: {
-      bookstore: true
+      bookstore: true,
+      book: true,
+      sales: true
     }
   });
 
@@ -2807,18 +2865,14 @@ async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
       sale.price,
       sale.management_min,
       sale.percentage_management_stores,
-      sale.percentage_royalties,
       sale.quantity,
-      sale.numberOfAuthors
     );
     const newSaleValue = calculateAuthorRevenue(
       sale.comissions,
       sale.price,
       sale.management_min,
       sale.percentage_management_stores,
-      sale.percentage_royalties,
       sale.quantity,
-      sale.numberOfAuthors
     )
     const previousPayment = await tx.payment.findUnique({
       where: {
@@ -2913,18 +2967,13 @@ async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice, tx
       previousPrice,
       sale.management_min,
       sale.percentage_management_stores,
-      sale.percentage_royalties,
       sale.quantity,
-      sale.numberOfAuthors
     );
     const newSaleValue = calculateAuthorRevenue(
       sale.comissions,
       sale.price,
       sale.management_min,
       sale.percentage_management_stores,
-      sale.percentage_royalties,
-      sale.quantity,
-      sale.numberOfAuthors
     )
     const previousPayment = await tx.payment.findUnique({
       where: {

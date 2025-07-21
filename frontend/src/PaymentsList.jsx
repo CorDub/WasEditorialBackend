@@ -8,6 +8,7 @@ import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
 import Modal from "./Modal";
 import "./PaymentsList.scss";
+import formatNumber from "./customHooks/formatNumber";
 
 function PaymentsList() {
   useCheckAdmin();
@@ -52,7 +53,7 @@ function PaymentsList() {
       Cell: ({row}) => {
         return (
           <div>
-            {"$ " + row.original.amount.toFixed(2)}
+            {formatNumber(row.original.amount)}
           </div>
         )
       }

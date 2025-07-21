@@ -481,13 +481,13 @@ async function main() {
             }
           })
 
-          const saleAmount = calculateAuthorRevenue(
-            inventory.bookstore.comissions,
-            inventory.price,
-            userWithCategory.category.management_min,
-            inventory.bookstore.deal_percentage,
-            randQuantToSell
-          )
+          // const saleAmount = calculateAuthorRevenue(
+          //   inventory.bookstore.comissions,
+          //   inventory.price,
+          //   userWithCategory.category.management_min,
+          //   inventory.bookstore.deal_percentage,
+          //   randQuantToSell
+          // )
 
           const existingPayment = await prisma.payment.findUnique({
             where: {
@@ -504,7 +504,7 @@ async function main() {
                 userId: author,
                 forMonth: saleForMonth,
                 createdAt: saleDate,
-                amount: saleAmount
+                // amount: saleAmount
               }
             });
 
@@ -512,14 +512,14 @@ async function main() {
             continue;
           }
 
-          const updatedPayment = await prisma.payment.update({
-            where: {
-              id: existingPayment.id
-            },
-            data: {
-              amount: existingPayment.amount + saleAmount
-            }
-          })
+          // const updatedPayment = await prisma.payment.update({
+          //   where: {
+          //     id: existingPayment.id
+          //   },
+          //   data: {
+          //     amount: existingPayment.amount + saleAmount
+          //   }
+          // })
 
           paymentsIds.push({"id": existingPayment.id})
         }
@@ -551,130 +551,134 @@ async function main() {
     }
 
     /// Create more fake sales specifically for the test author in the last month
-    const now = new Date();
-    const lastThirtyDays = new Date(now.setDate(now.getDate()-30));
-    console.log("LAST THRIRTY DAYS", lastThirtyDays);
+    // const now = new Date();
+    // const lastThirtyDays = new Date(now.setDate(now.getDate()-30));
+    // console.log("LAST THRIRTY DAYS", lastThirtyDays);
 
-    const testAuthor = await prisma.user.findUnique({
-      where: {
-        id: 148
-      },
-      include: {
-        category: true
-      }
-    })
+    // const testAuthor = await prisma.user.findUnique({
+    //   where: {
+    //     id: 148
+    //   },
+    //   include: {
+    //     category: true
+    //   }
+    // })
 
-    const testAuthorInventories = await prisma.inventory.findMany({
-      where: {
-        book: {
-          users: {
-            some: {
-              id: 148
-            }
-          }
-        }
-      }
-    });
+    // const testAuthorInventories = await prisma.inventory.findMany({
+    //   where: {
+    //     book: {
+    //       users: {
+    //         some: {
+    //           id: 148
+    //         }
+    //       }
+    //     }
+    //   }
+    // });
 
-    console.log(" TEST AUTHOR INVENTORIES LENGTH", testAuthorInventories.length);
+    // console.log(" TEST AUTHOR INVENTORIES LENGTH", testAuthorInventories.length);
 
-    let counter = 0;
-    for (const inventory of testAuthorInventories) {
-      let current = inventory.current;
+    // let counter = 0;
+    // for (const inventory of testAuthorInventories) {
+    //   let current = inventory.current;
 
-      for (let i = 0; i < 5; i++) {
-        const randQuant = Math.floor(Math.random() * 20);
-        const saleDate = new Date(lastThirtyDays);
+    //   for (let i = 0; i < 5; i++) {
+    //     const randQuant = Math.floor(Math.random() * 20);
+    //     const saleDate = new Date(lastThirtyDays);
 
-        const randDate = Math.floor(Math.random() * 30)
-        saleDate.setDate(saleDate.getDate() + randDate);
-        const saleForMonth = getForMonth(saleDate)
+    //     const randDate = Math.floor(Math.random() * 30)
+    //     saleDate.setDate(saleDate.getDate() + randDate);
+    //     const saleForMonth = getForMonth(saleDate)
 
-        if (inventory === testAuthorInventories[0]) {
-          console.log("SALE DATE", saleDate);
-          console.log("CURRENT", current);
-          console.log("INVENTORY ID", inventory.id);
-        };
+    //     if (inventory === testAuthorInventories[0]) {
+    //       console.log("SALE DATE", saleDate);
+    //       console.log("CURRENT", current);
+    //       console.log("INVENTORY ID", inventory.id);
+    //     };
 
-        if (randQuant > 0 && current > randQuant) {
-          const saleAmount = calculateAuthorRevenue(
-            inventory.comissions,
-            inventory.price,
-            testAuthor.category.management_min,
-            testAuthor.category.percentage_management_stores,
-            randQuant
-          )
+    //     if (randQuant > 0 && current > randQuant) {
+    //       const saleAmount = calculateAuthorRevenue(
+    //         inventory.comissions,
+    //         inventory.price,
+    //         testAuthor.category.management_min,
+    //         testAuthor.category.percentage_management_stores,
+    //         randQuant
+    //       )
 
-          const existingPayment = await prisma.payment.findUnique({
-            where: {
-              userId_forMonth: {
-                userId: 152,
-                forMonth: saleForMonth
-              },
-            }
-          });
+    //       const existingPayment = await prisma.payment.findUnique({
+    //         where: {
+    //           userId_forMonth: {
+    //             userId: 152,
+    //             forMonth: saleForMonth
+    //           },
+    //         }
+    //       });
 
-          let createdSale;
-          if (existingPayment) {
-            createdSale = await prisma.sale.create({
-              data: {
-                inventoryId: inventory.id,
-                paymentId: existingPayment.id,
-                quantity: randQuant,
-                createdAt: saleDate,
-              }
-            })
+    //       let createdSale;
+    //       if (existingPayment) {
+    //         createdSale = await prisma.sale.create({
+    //           data: {
+    //             inventoryId: inventory.id,
+    //             paymentId: existingPayment.id,
+    //             quantity: randQuant,
+    //             createdAt: saleDate,
+    //           }
+    //         })
 
-            const updatedPayment = await prisma.payment.update({
-              where: {
-                id: existingPayment.id
-              },
-              data: {
-                amount: existingPayment.amount + saleAmount
-              }
-            })
-          } else {
-            const createdPayment = await prisma.payment.create({
-              data: {
-                userId: testAuthor.id,
-                amount: saleAmount,
-                forMonth: saleForMonth,
-                createdAt: saleDate
-              }
-            });
+    //         const updatedPayment = await prisma.payment.update({
+    //           where: {
+    //             id: existingPayment.id
+    //           },
+    //           data: {
+    //             amount: existingPayment.amount + saleAmount
+    //           }
+    //         })
+    //       } else {
+    //         const createdPayment = await prisma.payment.create({
+    //           data: {
+    //             userId: testAuthor.id,
+    //             amount: saleAmount,
+    //             forMonth: saleForMonth,
+    //             createdAt: saleDate
+    //           }
+    //         });
 
-            createdSale = await prisma.sale.create({
-              data: {
-                inventoryId: inventory.id,
-                paymentId: createdPayment.id,
-                quantity: randQuant,
-                createdAt: saleDate,
-              }
-            })
-          }
+    //         createdSale = await prisma.sale.create({
+    //           data: {
+    //             inventoryId: inventory.id,
+    //             paymentId: createdPayment.id,
+    //             quantity: randQuant,
+    //             createdAt: saleDate,
+    //           }
+    //         })
+    //       }
           
-          counter += 1;
-          current -= randQuant;
+    //       counter += 1;
+    //       current -= randQuant;
 
-          if (createdSale) {
-            const updtInv = await prisma.inventory.update({
-              where: {
-                id: inventory.id
-              },
-              data: {
-                current: current
-              }
-            })
-            if (inventory === testAuthorInventories[0]) {
-              console.log('UPDT INV CURRENT', updtInv.current);
-              console.log("------------------------------");
-            };
-          }
-        }
-      }
-    }
-    console.log(`${counter} SALES CREATED IN THE LAST THIRTY DAYS`);
+    //       if (createdSale) {
+    //         const updtInv = await prisma.inventory.update({
+    //           where: {
+    //             id: inventory.id
+    //           },
+    //           data: {
+    //             current: current
+    //           }
+    //         })
+    //         if (inventory === testAuthorInventories[0]) {
+    //           console.log('UPDT INV CURRENT', updtInv.current);
+    //           console.log("------------------------------");
+    //         };
+    //       }
+    //     }
+    //   }
+    // }
+    // console.log(`${counter} SALES CREATED IN THE LAST THIRTY DAYS`);
 
+
+
+
+    
     // Create fake payments
 
     // let monthlySalesByAuthor = [];

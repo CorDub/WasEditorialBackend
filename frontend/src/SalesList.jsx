@@ -89,8 +89,14 @@ function SalesList () {
         <button 
           onClick={() => openModal("adding", null)} 
           className="blue-button"
-          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)` }}>
             Añadir nueva venta</button>
+        {/* <button
+          onClick={() => openModal("addingMultiple", null)}
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)` }}>
+            Añadir multiples ventas
+          </button> */}
       </div>
     ),
     initialState: {

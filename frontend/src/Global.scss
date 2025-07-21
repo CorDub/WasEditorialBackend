@@ -333,6 +333,14 @@ a {
   margin-left: -0.4rem;
 }
 
+.table-clickable-row {
+  color: #4E6CB3;
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 /// Alerts
 
 .alert-proper {

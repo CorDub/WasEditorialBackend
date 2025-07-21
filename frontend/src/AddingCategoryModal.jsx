@@ -7,8 +7,8 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
   const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [tipo, setTipo] = useState('');
-  const [regalias, setRegalias] = useState('');
-  const [gestionTiendas, setGestionTiendas] = useState('');
+  // const [regalias, setRegalias] = useState('');
+  // const [gestionTiendas, setGestionTiendas] = useState('');
   const [gestionMinima, setGestionMinima] = useState('');
   const [errorList, setErrorList] = useState([]);
 
@@ -22,9 +22,10 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
         credentials: "include",
         body: JSON.stringify({
           tipo: tipo,
-          regalias: regalias,
-          gestionTiendas: gestionTiendas,
           gestionMinima: gestionMinima,
+          // regalias: regalias,
+          // gestionTiendas: gestionTiendas,
+          
         }),
       });
 
@@ -57,10 +58,10 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
   function checkForErrors(serverError) {
     let newErrorList = [];
     const inputTipo = document.getElementById("adding-category-type");
-    const inputRegalias = document.getElementById("adding-category-regalias");
-    const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
+    // const inputRegalias = document.getElementById("adding-category-regalias");
+    // const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
     const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
-    let inputList = [inputTipo, inputRegalias, inputGestionTiendas, inputGestionMinima];
+    let inputList = [inputTipo, inputGestionMinima];
 
     inputList.forEach((input) => {
       if (input.classList.contains("error-inputs")) {
@@ -83,35 +84,35 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
       addErrorClass(inputTipo);
     }
 
-    if (isNaN(parseFloat(regalias))) {
-      newErrorList.push(21);
-      addErrorClass(inputRegalias);
-    };
+    // if (isNaN(parseFloat(regalias))) {
+    //   newErrorList.push(21);
+    //   addErrorClass(inputRegalias);
+    // };
 
-    if (regalias === "") {
-      newErrorList.push(22);
-      addErrorClass(inputRegalias);
-    };
+    // if (regalias === "") {
+    //   newErrorList.push(22);
+    //   addErrorClass(inputRegalias);
+    // };
 
-    if (parseFloat(regalias) > 100) {
-      newErrorList.push(23);
-      addErrorClass(inputRegalias);
-    }
+    // if (parseFloat(regalias) > 100) {
+    //   newErrorList.push(23);
+    //   addErrorClass(inputRegalias);
+    // }
 
-    if (isNaN(parseFloat(gestionTiendas))) {
-      newErrorList.push(31);
-      addErrorClass(inputGestionTiendas);
-    };
+    // if (isNaN(parseFloat(gestionTiendas))) {
+    //   newErrorList.push(31);
+    //   addErrorClass(inputGestionTiendas);
+    // };
 
-    if (gestionTiendas === "") {
-      newErrorList.push(32);
-      addErrorClass(inputGestionTiendas);
-    };
+    // if (gestionTiendas === "") {
+    //   newErrorList.push(32);
+    //   addErrorClass(inputGestionTiendas);
+    // };
 
-    if (parseFloat(gestionTiendas) > 100) {
-      newErrorList.push(33);
-      addErrorClass(inputGestionTiendas);
-    }
+    // if (parseFloat(gestionTiendas) > 100) {
+    //   newErrorList.push(33);
+    //   addErrorClass(inputGestionTiendas);
+    // }
 
     if (isNaN(parseFloat(gestionMinima))) {
       newErrorList.push(41);
@@ -150,12 +151,12 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
         <input type='text' placeholder="Tipo*"
           className="global-input" id="adding-category-type"
           onChange={(e) => setTipo(e.target.value)}></input>
-        <input type='text' placeholder="% Regalias de venta*"
+        {/* <input type='text' placeholder="% Regalias de venta*"
           className="global-input" id="adding-category-regalias"
           onChange={(e) => setRegalias(e.target.value)}></input>
         <input type='text' placeholder="% Gestion tiendas*"
           className="global-input" id="adding-category-gestionTiendas"
-          onChange={(e) => setGestionTiendas(e.target.value)}></input>
+          onChange={(e) => setGestionTiendas(e.target.value)}></input> */}
         <input type='text' placeholder="Gestion minima*"
           className="global-input" id="adding-category-gestionMinima"
           onChange={(e) => setGestionMinima(e.target.value)}></input>

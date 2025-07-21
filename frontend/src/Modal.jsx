@@ -5,6 +5,7 @@ import AddingInventoryModal from './AddingInventoryModal';
 import EditInventoryModal from './EditInventoryModal';
 import DeleteInventoryModal from './DeleteInventoryModal';
 import AddingSaleModal from './AddingSaleModal';
+import AddingMultipleSalesModal from './AddingMultipleSalesModal';
 import EditSaleModal from "./EditSaleModal";
 import DeleteSaleModal from './DeleteSaleModal';
 import AddingImpressionModal from './AddingImpressionModal';
@@ -56,6 +57,7 @@ function Modal({
     },
     sale: {
       adding: AddingSaleModal,
+      addingMultiple: AddingMultipleSalesModal,
       edit: EditSaleModal,
       delete: DeleteSaleModal
     },

@@ -6,8 +6,8 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [tipo, setTipo] = useState(clickedRow.type);
-  const [regalias, setRegalias] = useState(clickedRow.percentage_royalties);
-  const [gestionTiendas, setGestionTiendas] = useState(clickedRow.percentage_management_stores);
+  // const [regalias, setRegalias] = useState(clickedRow.percentage_royalties);
+  // const [gestionTiendas, setGestionTiendas] = useState(clickedRow.percentage_management_stores);
   const [gestionMinima, setGestionMinima] = useState(clickedRow.management_min);
   const [errorList, setErrorList] = useState([]);
 
@@ -22,8 +22,8 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         body: JSON.stringify({
           id: clickedRow.id,
           tipo: tipo,
-          regalias: regalias,
-          gestionTiendas: gestionTiendas,
+          // regalias: regalias,
+          // gestionTiendas: gestionTiendas,
           gestionMinima: gestionMinima,
         })
       });
@@ -57,10 +57,10 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   function checkForErrors(serverError) {
     let newErrorList = [];
     const inputTipo = document.getElementById("adding-category-type");
-    const inputRegalias = document.getElementById("adding-category-regalias");
-    const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
+    // const inputRegalias = document.getElementById("adding-category-regalias");
+    // const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
     const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
-    let inputList = [inputTipo, inputRegalias, inputGestionTiendas, inputGestionMinima];
+    let inputList = [inputTipo, inputGestionMinima];
 
     inputList.forEach((input) => {
       if (input.classList.contains("error-inputs")) {
@@ -83,35 +83,35 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       addErrorClass(inputTipo);
     }
 
-    if (isNaN(parseFloat(regalias))) {
-      newErrorList.push(21);
-      addErrorClass(inputRegalias);
-    };
+    // if (isNaN(parseFloat(regalias))) {
+    //   newErrorList.push(21);
+    //   addErrorClass(inputRegalias);
+    // };
 
-    if (regalias === "") {
-      newErrorList.push(22);
-      addErrorClass(inputRegalias);
-    };
+    // if (regalias === "") {
+    //   newErrorList.push(22);
+    //   addErrorClass(inputRegalias);
+    // };
 
-    if (parseFloat(regalias) > 100) {
-      newErrorList.push(23);
-      addErrorClass(inputRegalias);
-    }
+    // if (parseFloat(regalias) > 100) {
+    //   newErrorList.push(23);
+    //   addErrorClass(inputRegalias);
+    // }
 
-    if (isNaN(parseFloat(gestionTiendas))) {
-      newErrorList.push(31);
-      addErrorClass(inputGestionTiendas);
-    };
+    // if (isNaN(parseFloat(gestionTiendas))) {
+    //   newErrorList.push(31);
+    //   addErrorClass(inputGestionTiendas);
+    // };
 
-    if (gestionTiendas === "") {
-      newErrorList.push(32);
-      addErrorClass(inputGestionTiendas);
-    };
+    // if (gestionTiendas === "") {
+    //   newErrorList.push(32);
+    //   addErrorClass(inputGestionTiendas);
+    // };
 
-    if (parseFloat(gestionTiendas) > 100) {
-      newErrorList.push(33);
-      addErrorClass(inputGestionTiendas);
-    }
+    // if (parseFloat(gestionTiendas) > 100) {
+    //   newErrorList.push(33);
+    //   addErrorClass(inputGestionTiendas);
+    // }
 
     if (isNaN(parseFloat(gestionMinima))) {
       newErrorList.push(41);
@@ -154,7 +154,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
             className="global-input" id="adding-category-type"
             onChange={(e) => setTipo(e.target.value)}></input>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Regalias de venta (%) *</label>
           <input type='text' placeholder="% Regalias de venta" value={regalias}
             className="global-input" id="adding-category-regalias"
@@ -165,7 +165,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           <input type='text' placeholder="% Gestion tiendas" value={gestionTiendas}
             className="global-input" id="adding-category-gestionTiendas"
             onChange={(e) => setGestionTiendas(e.target.value)}></input>
-        </div>
+        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Gestión minima ($) *</label>
           <input type='text' placeholder="Gestion minima" value={gestionMinima}

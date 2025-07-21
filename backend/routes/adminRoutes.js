@@ -155,14 +155,14 @@ router.patch('/user', async (req, res) => {
       categoryId } = req.body;
 
     await prisma.$transaction(async (tx) => {
-      const authorBeforeUpdate = await tx.user.findUnique({
-        where: {
-          id: id
-        },
-        include: {
-          category: true
-        }
-      });
+      // const authorBeforeUpdate = await tx.user.findUnique({
+      //   where: {
+      //     id: id
+      //   },
+      //   include: {
+      //     category: true
+      //   }
+      // });
 
       const updatedAuthor = await tx.user.update({
         where: {id: parseInt(id)},
@@ -185,98 +185,98 @@ router.patch('/user', async (req, res) => {
         }
       });
 
-      if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
-        let impactedSales = [];
-        const impactedBooks = await tx.book.findMany({
-          where: {
-            isDeleted: false,
-            users: {
-              some: {
-                id: updatedAuthor.id
-              }
-            }
-          },
-          include: {
-            users: true
-          }
-        });
+      // if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
+      //   let impactedSales = [];
+      //   const impactedBooks = await tx.book.findMany({
+      //     where: {
+      //       isDeleted: false,
+      //       users: {
+      //         some: {
+      //           id: updatedAuthor.id
+      //         }
+      //       }
+      //     },
+      //     include: {
+      //       users: true
+      //     }
+      //   });
 
-        for (const book of impactedBooks) {
-          const numberOfAuthors = book.users.length
-          const impactedInventories = await tx.inventory.findMany({
-            where: {
-              isDeleted: false,
-              bookId: book.id
-            },
-            include: {
-              bookstore: true
-            }
-          });
+      //   for (const book of impactedBooks) {
+      //     const numberOfAuthors = book.users.length
+      //     const impactedInventories = await tx.inventory.findMany({
+      //       where: {
+      //         isDeleted: false,
+      //         bookId: book.id
+      //       },
+      //       include: {
+      //         bookstore: true
+      //       }
+      //     });
 
-          for (const inventory of impactedInventories) {
-            const impactedSalesForInventory = await tx.sale.findMany({
-              where: {
-                isDeleted: false,
-                inventoryId: inventory.id
-              }
-            });
+      //     for (const inventory of impactedInventories) {
+      //       const impactedSalesForInventory = await tx.sale.findMany({
+      //         where: {
+      //           isDeleted: false,
+      //           inventoryId: inventory.id
+      //         }
+      //       });
 
-            for (const sale of impactedSalesForInventory) {
-              impactedSales.push({
-                ...sale,
-                "userId": updatedAuthor.id,
-                "comissions": inventory.bookstore.comissions,
-                "price": inventory.price,
-                "management_min": updatedAuthor.category.management_min,
-                "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
-                "percentage_royalties": updatedAuthor.category.percentage_royalties,
-                "numberOfAuthors": numberOfAuthors
-              })
-            }
-          }
-        }
+      //       for (const sale of impactedSalesForInventory) {
+      //         impactedSales.push({
+      //           ...sale,
+      //           "userId": updatedAuthor.id,
+      //           "comissions": inventory.bookstore.comissions,
+      //           "price": inventory.price,
+      //           "management_min": updatedAuthor.category.management_min,
+      //           "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
+      //           "percentage_royalties": updatedAuthor.category.percentage_royalties,
+      //           "numberOfAuthors": numberOfAuthors
+      //         })
+      //       }
+      //     }
+      //   }
 
-        for (const sale of impactedSales) {
-          const saleForMonth = getForMonth(sale.createdAt)
-          const previousPayment = await tx.payment.findUnique({
-            where: {
-              userId_forMonth: {
-                userId: sale.userId,
-                forMonth: saleForMonth
-              }
-            }
-          })
+      //   for (const sale of impactedSales) {
+      //     const saleForMonth = getForMonth(sale.createdAt)
+      //     const previousPayment = await tx.payment.findUnique({
+      //       where: {
+      //         userId_forMonth: {
+      //           userId: sale.userId,
+      //           forMonth: saleForMonth
+      //         }
+      //       }
+      //     })
 
-          const previousSaleValue = calculateAuthorRevenue(
-            sale.comissions,
-            sale.price,
-            authorBeforeUpdate.category.management_min,
-            authorBeforeUpdate.category.percentage_management_stores,
-            sale.quantity,
-          )
+      //     const previousSaleValue = calculateAuthorRevenue(
+      //       sale.comissions,
+      //       sale.price,
+      //       authorBeforeUpdate.category.management_min,
+      //       authorBeforeUpdate.category.percentage_management_stores,
+      //       sale.quantity,
+      //     )
 
-          const newSaleValue = calculateAuthorRevenue(
-            sale.comissions,
-            sale.price,
-            sale.management_min,
-            sale.percentage_management_stores,
-            sale.quantity,
-          )
+      //     const newSaleValue = calculateAuthorRevenue(
+      //       sale.comissions,
+      //       sale.price,
+      //       sale.management_min,
+      //       sale.percentage_management_stores,
+      //       sale.quantity,
+      //     )
 
-          const quantityUpdate = newSaleValue - previousSaleValue
+      //     const quantityUpdate = newSaleValue - previousSaleValue
 
-          if (previousPayment && previousPayment.status !== "paid") {
-            const updatedPayment = await tx.payment.update({
-              where: {
-                id: previousPayment.id
-              },
-              data: {
-                amount: previousPayment.amount + quantityUpdate
-              }
-            })
-          }
-        }
-      }
+      //     if (previousPayment && previousPayment.status !== "paid") {
+      //       const updatedPayment = await tx.payment.update({
+      //         where: {
+      //           id: previousPayment.id
+      //         },
+      //         data: {
+      //           amount: previousPayment.amount + quantityUpdate
+      //         }
+      //       })
+      //     }
+      //   }
+      // }
 
       if (updatedAuthor) {
         res.status(200).json({message: "Successfully updated user"});
@@ -501,7 +501,7 @@ router.patch('/category', async (req, res) => {
         }
       });
 
-      await updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
+      // await updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
 
       if (updatedCategory) {
         res.status(200).json({message: "Successfully updated category"});
@@ -716,10 +716,10 @@ router.patch('/book', async (req, res) => {
         }
       });
 
-      let previousNumberOfAuthors = 0
-      if (previousBook) {
-        previousNumberOfAuthors = previousBook.users.length;
-      }
+      // let previousNumberOfAuthors = 0
+      // if (previousBook) {
+      //   previousNumberOfAuthors = previousBook.users.length;
+      // }
 
       const updatedBook = await tx.book.update({
         where: {id: id},
@@ -733,94 +733,94 @@ router.patch('/book', async (req, res) => {
         }
       });
 
-      if (previousNumberOfAuthors !== authorsIds.length) {
-        const impactedInventories = await tx.inventory.findMany({
-          where: {
-            bookId: id,
-            isDeleted: false
-          },
-          select: {
-            sales: {
-              select: {
-                id: true,
-                createdAt: true,
-                quantity: true
-              }
-            },
-            bookstore: {
-              select: {
-                comissions: true
-              }
-            },
-            price: true
-          }
-        });
+      // if (previousNumberOfAuthors !== authorsIds.length) {
+      //   const impactedInventories = await tx.inventory.findMany({
+      //     where: {
+      //       bookId: id,
+      //       isDeleted: false
+      //     },
+      //     select: {
+      //       sales: {
+      //         select: {
+      //           id: true,
+      //           createdAt: true,
+      //           quantity: true
+      //         }
+      //       },
+      //       bookstore: {
+      //         select: {
+      //           comissions: true
+      //         }
+      //       },
+      //       price: true
+      //     }
+      //   });
 
-        for (const inventory of impactedInventories) {
-          for (const sale of inventory.sales) {
-            const date = new Date(sale.createdAt);
-            const year = String(date.getFullYear());
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const saleForMonth = year + "-" + month
+      //   for (const inventory of impactedInventories) {
+      //     for (const sale of inventory.sales) {
+      //       const date = new Date(sale.createdAt);
+      //       const year = String(date.getFullYear());
+      //       const month = String(date.getMonth() + 1).padStart(2, '0');
+      //       const saleForMonth = year + "-" + month
 
-            for (const authorId of authorsIds) {
-              const author = await tx.user.findUnique({
-                where: {
-                  id: authorId.id
-                },
-                select: {
-                  category: {
-                    select: {
-                      percentage_management_stores: true,
-                      percentage_royalties: true,
-                      management_min: true
-                    }
-                  },
-                  first_name: true
-                }
-              });
+      //       for (const authorId of authorsIds) {
+      //         const author = await tx.user.findUnique({
+      //           where: {
+      //             id: authorId.id
+      //           },
+      //           select: {
+      //             category: {
+      //               select: {
+      //                 percentage_management_stores: true,
+      //                 percentage_royalties: true,
+      //                 management_min: true
+      //               }
+      //             },
+      //             first_name: true
+      //           }
+      //         });
 
-              const previousPayment = await tx.payment.findUnique({
-                where: {
-                  userId_forMonth: {
-                    userId: authorId.id,
-                    forMonth: saleForMonth
-                  }
-                }
-              });
+      //         const previousPayment = await tx.payment.findUnique({
+      //           where: {
+      //             userId_forMonth: {
+      //               userId: authorId.id,
+      //               forMonth: saleForMonth
+      //             }
+      //           }
+      //         });
 
-              if (previousPayment && previousPayment.status !== "paid") {
-                const previousSaleValue = calculateAuthorRevenue(
-                  inventory.bookstore.comissions,
-                  inventory.price,
-                  author.category.management_min,
-                  author.category.percentage_management_stores,
-                  sale.quantity,
-                );
+      //         if (previousPayment && previousPayment.status !== "paid") {
+      //           const previousSaleValue = calculateAuthorRevenue(
+      //             inventory.bookstore.comissions,
+      //             inventory.price,
+      //             author.category.management_min,
+      //             author.category.percentage_management_stores,
+      //             sale.quantity,
+      //           );
 
-                const newSaleValue = calculateAuthorRevenue(
-                  inventory.bookstore.comissions,
-                  inventory.price,
-                  author.category.management_min,
-                  author.category.percentage_management_stores,
-                  sale.quantity,
-                );
+      //           const newSaleValue = calculateAuthorRevenue(
+      //             inventory.bookstore.comissions,
+      //             inventory.price,
+      //             author.category.management_min,
+      //             author.category.percentage_management_stores,
+      //             sale.quantity,
+      //           );
 
-                const quantityUpdate = newSaleValue - previousSaleValue
+      //           const quantityUpdate = newSaleValue - previousSaleValue
 
-                const updatedPayment = await tx.payment.update({
-                  where: {
-                    id: previousPayment.id
-                  },
-                  data: {
-                    amount: previousPayment.amount + quantityUpdate
-                  }
-                })
-              }
-            }
-          }
-        }
-      }
+      //           const updatedPayment = await tx.payment.update({
+      //             where: {
+      //               id: previousPayment.id
+      //             },
+      //             data: {
+      //               amount: previousPayment.amount + quantityUpdate
+      //             }
+      //           })
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
       if (updatedBook) {
         res.status(200).json({message: "Successfully updated book"});
@@ -845,14 +845,14 @@ router.patch('/book/:id/prices', async (req, res) => {
   try {
     await prisma.$transaction(async (tx) => {
       for (const price of prices) {
-        const previousInventory = await tx.inventory.findUnique({
-          where: {
-            id: price.inventoryId
-          },
-          include: {
-            bookstore: true
-          }
-        });
+        // const previousInventory = await tx.inventory.findUnique({
+        //   where: {
+        //     id: price.inventoryId
+        //   },
+        //   include: {
+        //     bookstore: true
+        //   }
+        // });
 
         const updatedInventory = await tx.inventory.update({
           where: {id: parseInt(price.inventoryId)},
@@ -862,55 +862,55 @@ router.patch('/book/:id/prices', async (req, res) => {
           }
         })
 
-        const concernedSalesWithPayments = await tx.sale.findMany({
-          where: {
-            inventoryId: updatedInventory.id,
-            isDeleted: false
-          },
-          include: {
-            payments: true
-          }
-        });
+        // const concernedSalesWithPayments = await tx.sale.findMany({
+        //   where: {
+        //     inventoryId: updatedInventory.id,
+        //     isDeleted: false
+        //   },
+        //   include: {
+        //     payments: true
+        //   }
+        // });
 
-        for (const sale of concernedSalesWithPayments) {
-          for (const payment of sale.payments) {
-            if (payment.isDeleted === false) {
-              const userWithCategory = await tx.user.findUnique({
-                where: {
-                  id: payment.userId
-                },
-                include: {
-                  category: true
-                }
-              })
+        // for (const sale of concernedSalesWithPayments) {
+        //   for (const payment of sale.payments) {
+        //     if (payment.isDeleted === false) {
+        //       const userWithCategory = await tx.user.findUnique({
+        //         where: {
+        //           id: payment.userId
+        //         },
+        //         include: {
+        //           category: true
+        //         }
+        //       })
 
-              const previousSaleValue = calculateAuthorRevenue(
-                previousInventory.bookstore.comissions,
-                previousInventory.price,
-                userWithCategory.category.management_min,
-                previousInventory.bookstore.deal_percentage,
-                sale.quantity
-              )
+        //       const previousSaleValue = calculateAuthorRevenue(
+        //         previousInventory.bookstore.comissions,
+        //         previousInventory.price,
+        //         userWithCategory.category.management_min,
+        //         previousInventory.bookstore.deal_percentage,
+        //         sale.quantity
+        //       )
 
-              const newSaleValue = calculateAuthorRevenue(
-                updatedInventory.bookstore.comissions,
-                updatedInventory.price,
-                userWithCategory.category.management_min,
-                updatedInventory.bookstore.deal_percentage,
-                sale.quantity
-              )
+        //       const newSaleValue = calculateAuthorRevenue(
+        //         updatedInventory.bookstore.comissions,
+        //         updatedInventory.price,
+        //         userWithCategory.category.management_min,
+        //         updatedInventory.bookstore.deal_percentage,
+        //         sale.quantity
+        //       )
 
-              const updatedPayment = await tx.payment.update({
-                where: {
-                  id: payment.id
-                },
-                data: {
-                  amount: payment.amount - previousSaleValue + newSaleValue
-                }
-              })
-            }
-          }
-        }
+        //       const updatedPayment = await tx.payment.update({
+        //         where: {
+        //           id: payment.id
+        //         },
+        //         data: {
+        //           amount: payment.amount - previousSaleValue + newSaleValue
+        //         }
+        //       })
+        //     }
+        //   }
+        // }
 
       }
       res.status(200).json({message: "Successfully updated the book prices"});
@@ -1002,7 +1002,7 @@ router.patch('/bookstore', async (req, res) => {
         }
       });
 
-      await updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
+      // await updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
 
       res.status(200).json({message: "Successfully updated bookstore"});
     })
@@ -1396,7 +1396,7 @@ router.patch('/inventory', async (req, res) => {
         })
       }
 
-      await updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
+      // await updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
 
       if (updatedInventory) {
         res.status(200).json({message: "Successfully updated inventory"});
@@ -1500,6 +1500,7 @@ router.post('/sale', async (req, res) => {
       quantity
     } = req.body;
 
+    let createdSale;
     await prisma.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({
         where : {
@@ -1540,14 +1541,14 @@ router.post('/sale', async (req, res) => {
       const saleForMonth = getForMonth(new Date())
       let paymentIds = []
       for (const authorId of authorListIds) {
-        const userWithCategory = await tx.user.findUnique({
-          where: {
-            id: authorId
-          },
-          include: {
-            category: true
-          }
-        });
+        // const userWithCategory = await tx.user.findUnique({
+        //   where: {
+        //     id: authorId
+        //   },
+        //   include: {
+        //     category: true
+        //   }
+        // });
 
         const existingPayment = await tx.payment.findUnique({
           where: {
@@ -1563,45 +1564,47 @@ router.post('/sale', async (req, res) => {
             data: {
               userId: authorId,
               forMonth: saleForMonth,
-              amount: calculateAuthorRevenue(
-                selectedInventory.bookstore.comissions,
-                selectedInventory.price,
-                userWithCategory.category.management_min,
-                selectedInventory.bookstore.deal_percentage,
-                quantity
-              )
+              // amount: calculateAuthorRevenue(
+              //   selectedInventory.bookstore.comissions,
+              //   selectedInventory.price,
+              //   userWithCategory.category.management_min,
+              //   selectedInventory.bookstore.deal_percentage,
+              //   quantity
+              // )
             }
           });
 
           paymentIds.push({"id": createdPayment.id})
-        } else {
-          const updatedPayment = await tx.payment.update({
-            where: {
-              id: existingPayment.id
-            },
-            data: {
-              amount: existingPayment.amount + calculateAuthorRevenue(
-                selectedInventory.bookstore.comissions,
-                selectedInventory.price,
-                userWithCategory.category.management_min,
-                selectedInventory.bookstore.deal_percentage,
-                quantity
-              )
-            }
-          });
-          paymentIds.push({"id": updatedPayment.id})
         }
+        //   } else {
+        //     const updatedPayment = await tx.payment.update({
+        //       where: {
+        //         id: existingPayment.id
+        //       },
+        //       data: {
+        //         amount: existingPayment.amount + calculateAuthorRevenue(
+        //           selectedInventory.bookstore.comissions,
+        //           selectedInventory.price,
+        //           userWithCategory.category.management_min,
+        //           selectedInventory.bookstore.deal_percentage,
+        //           quantity
+        //         )
+        //       }
+        //     });
+        //     paymentIds.push({"id": updatedPayment.id})
+        //   }
+        // }
       }
 
-      const createdSale = await tx.sale.create({
-            data: {
-              inventoryId: selectedInventory.id,
-              quantity: quantity,
-              payments: {
-                connect: paymentIds
-              }
-            }
-          })
+      createdSale = await tx.sale.create({
+        data: {
+          inventoryId: selectedInventory.id,
+          quantity: quantity,
+          payments: {
+            connect: paymentIds
+          }
+        }
+      })
 
       if (createdSale) {
         const updatedInventory = await tx.inventory.update({
@@ -1611,9 +1614,9 @@ router.post('/sale', async (req, res) => {
           }
         });
       }
-
-      res.status(201).json(createdSale);
     })
+    
+    res.status(201).json(createdSale);
    
   } catch (error) {
     console.error(error);
@@ -1676,93 +1679,94 @@ router.patch('/sale', async (req, res) => {
             current: selectedInventory.current + quantityUpdate
           }
         });
+      
 
-        // update all potential authors payments sums as well
-        const date = new Date(updatedSale.createdAt);
-        const year = String(date.getFullYear());
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const currentForMonth = year + "-" + month
+        // // update all potential authors payments sums as well
+        // const date = new Date(updatedSale.createdAt);
+        // const year = String(date.getFullYear());
+        // const month = String(date.getMonth() + 1).padStart(2, '0');
+        // const currentForMonth = year + "-" + month
 
-        const bookOfSale = await tx.book.findUnique({
-          where: {
-            id: updatedInventory.bookId
-          },
-          select: {
-            users: {
-              select: {
-                id: true
-              }
-            }
-          }
-        })
-        const userIds = bookOfSale.users.map(user => user.id);
+        // const bookOfSale = await tx.book.findUnique({
+        //   where: {
+        //     id: updatedInventory.bookId
+        //   },
+        //   select: {
+        //     users: {
+        //       select: {
+        //         id: true
+        //       }
+        //     }
+        //   }
+        // })
+        // const userIds = bookOfSale.users.map(user => user.id);
 
-        // update the payment for each author of the book
-        if (userIds.length > 0) {
-          for (const id of userIds) {
-            // using findMany instead of findUnique here to avoid the error if not found.
-            const relatedPayment = await tx.payment.findUnique({
-              where: {
-                userId_forMonth: {
-                  userId: id,
-                  forMonth: currentForMonth,
-                },
-                isDeleted: false
-              }
-            })
+        // // update the payment for each author of the book
+        // if (userIds.length > 0) {
+        //   for (const id of userIds) {
+        //     // using findMany instead of findUnique here to avoid the error if not found.
+        //     const relatedPayment = await tx.payment.findUnique({
+        //       where: {
+        //         userId_forMonth: {
+        //           userId: id,
+        //           forMonth: currentForMonth,
+        //         },
+        //         isDeleted: false
+        //       }
+        //     })
 
-            const userCategory = await tx.user.findUnique({
-              where: {
-                id: id,
-                isDeleted: false
-              },
-              select: {
-                category: {
-                  select: {
-                    percentage_royalties: true,
-                    percentage_management_stores: true,
-                    management_min: true
-                  }
-                }
-              }
-            })
+        //     const userCategory = await tx.user.findUnique({
+        //       where: {
+        //         id: id,
+        //         isDeleted: false
+        //       },
+        //       select: {
+        //         category: {
+        //           select: {
+        //             percentage_royalties: true,
+        //             percentage_management_stores: true,
+        //             management_min: true
+        //           }
+        //         }
+        //       }
+        //     })
 
-            const previousSaleAmount = calculateAuthorRevenue(
-              updatedSale.inventory.bookstore.comissions,
-              updatedSale.inventory.price,
-              userCategory.category.management_min,
-              userCategory.category.percentage_management_stores,
-              previousSale.quantity,
-            )
+        //     const previousSaleAmount = calculateAuthorRevenue(
+        //       updatedSale.inventory.bookstore.comissions,
+        //       updatedSale.inventory.price,
+        //       userCategory.category.management_min,
+        //       userCategory.category.percentage_management_stores,
+        //       previousSale.quantity,
+        //     )
 
-            const saleAmount = calculateAuthorRevenue(
-              updatedSale.inventory.bookstore.comissions,
-              updatedSale.inventory.price,
-              userCategory.category.management_min,
-              userCategory.category.percentage_management_stores,
-              quantityUpdate,
-            )
+        //     const saleAmount = calculateAuthorRevenue(
+        //       updatedSale.inventory.bookstore.comissions,
+        //       updatedSale.inventory.price,
+        //       userCategory.category.management_min,
+        //       userCategory.category.percentage_management_stores,
+        //       quantityUpdate,
+        //     )
 
-            if (!relatedPayment) {
-              const createdPayment = await tx.payment.create({
-                data: {
-                  userId: id,
-                  amount: paymentAmount,
-                  forMonth: currentForMonth
-                }
-              })
-            } else {
-              const updatedRelatedPayment = await tx.payment.update({
-                where: {
-                  id: relatedPayment.id
-                },
-                data: {
-                  amount: relatedPayment.amount - previousSaleAmount + saleAmount
-                }
-              })
-            }
-          }
-        }
+        //     if (!relatedPayment) {
+        //       const createdPayment = await tx.payment.create({
+        //         data: {
+        //           userId: id,
+        //           amount: paymentAmount,
+        //           forMonth: currentForMonth
+        //         }
+        //       })
+        //     } else {
+        //       const updatedRelatedPayment = await tx.payment.update({
+        //         where: {
+        //           id: relatedPayment.id
+        //         },
+        //         data: {
+        //           amount: relatedPayment.amount - previousSaleAmount + saleAmount
+        //         }
+        //       })
+        //     }
+        //   }
+        // }
 
         res.status(200).json({message: "Successfully updated sale"});
       } else {
@@ -1809,72 +1813,72 @@ router.delete('/sale/:id', async (req, res) => {
           }
         });
 
-        // update all potential authors payments sums as well
-        const date = new Date(deletedSale.createdAt);
-        const year = String(date.getFullYear());
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const currentForMonth = year + "-" + month
+        // // update all potential authors payments sums as well
+        // const date = new Date(deletedSale.createdAt);
+        // const year = String(date.getFullYear());
+        // const month = String(date.getMonth() + 1).padStart(2, '0');
+        // const currentForMonth = year + "-" + month
 
-        const bookOfSale = await tx.book.findUnique({
-          where: {
-            id: updatedInventory.bookId
-          },
-          select: {
-            users: {
-              select: {
-                id: true
-              }
-            }
-          }
-        })
-        const userIds = bookOfSale.users.map(user => user.id);
+        // const bookOfSale = await tx.book.findUnique({
+        //   where: {
+        //     id: updatedInventory.bookId
+        //   },
+        //   select: {
+        //     users: {
+        //       select: {
+        //         id: true
+        //       }
+        //     }
+        //   }
+        // })
+        // const userIds = bookOfSale.users.map(user => user.id);
 
-        // update the payment for each author of the book
-        if (userIds.length > 0) {
-          for (const id of userIds) {
-            // using findMany instead of findUnique here to avoid the error if not found.
-            const relatedPayment = await tx.payment.findMany({
-              where: {
-                userId: id,
-                forMonth: currentForMonth,
-                isDeleted: false
-              }
-            })
+        // // update the payment for each author of the book
+        // if (userIds.length > 0) {
+        //   for (const id of userIds) {
+        //     // using findMany instead of findUnique here to avoid the error if not found.
+        //     const relatedPayment = await tx.payment.findMany({
+        //       where: {
+        //         userId: id,
+        //         forMonth: currentForMonth,
+        //         isDeleted: false
+        //       }
+        //     })
 
-            const userCategory = await tx.user.findUnique({
-              where: {
-                id: id,
-                isDeleted: false
-              },
-              select: {
-                category: {
-                  select: {
-                    percentage_royalties: true,
-                    percentage_management_stores: true,
-                    management_min: true
-                  }
-                }
-              }
-            })
+        //     const userCategory = await tx.user.findUnique({
+        //       where: {
+        //         id: id,
+        //         isDeleted: false
+        //       },
+        //       select: {
+        //         category: {
+        //           select: {
+        //             percentage_royalties: true,
+        //             percentage_management_stores: true,
+        //             management_min: true
+        //           }
+        //         }
+        //       }
+        //     })
 
-            const saleValue = calculateAuthorRevenue(
-              deletedSale.inventory.bookstore.comissions,
-              deletedSale.inventory.price,
-              userCategory.category.management_min,
-              userCategory.category.percentage_management_stores,
-              quantity,
-            )
+        //     const saleValue = calculateAuthorRevenue(
+        //       deletedSale.inventory.bookstore.comissions,
+        //       deletedSale.inventory.price,
+        //       userCategory.category.management_min,
+        //       userCategory.category.percentage_management_stores,
+        //       quantity,
+        //     )
 
-            const updatedRelatedPayment = await tx.payment.update({
-              where: {
-                id: relatedPayment[0].id
-              },
-              data: {
-                amount: relatedPayment[0].amount - saleValue
-              }
-            })
-          }
-        }
+        //     const updatedRelatedPayment = await tx.payment.update({
+        //       where: {
+        //         id: relatedPayment[0].id
+        //       },
+        //       data: {
+        //         amount: relatedPayment[0].amount - saleValue
+        //       }
+        //     })
+        //   }
+        // }
       }
     })
     
@@ -2220,6 +2224,7 @@ router.get('/payments', async (req, res) => {
       },
       select: {
         id: true,
+        userId: true,
         user: {
           select: {
             first_name: true,
@@ -2227,13 +2232,74 @@ router.get('/payments', async (req, res) => {
             id: true
           }
         },
-        amount: true,
-        forMonth: true
+        forMonth: true,
+        sales: {
+          select: {
+            id: true,
+            quantity: true,
+            isDeleted: true,
+            inventory: {
+              select: {
+                id: true,
+                price: true,
+                bookstore: {
+                  select: {
+                    id: true,
+                    comissions: true,
+                    deal_percentage: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        costs: {
+          select: {
+            id: true,
+            amount: true,
+            isDeleted: true
+          }
+        }
       },
       orderBy: {
         createdAt: 'asc'
       }
     });
+
+    for (const payment of selectedPayments) {
+      payment.amount = 0;
+
+      const userWithCategory = await prisma.user.findUnique({
+        where: {
+          id : payment.userId
+        },
+        include: {
+          category: true
+        }
+      })
+
+      if (payment.sales.length > 0) {
+        for (const sale of payment.sales) {
+          if (sale.isDeleted === false) {
+            payment.amount += calculateAuthorRevenue(
+              sale.inventory.bookstore.comissions,
+              sale.inventory.price,
+              userWithCategory.category.management_min,
+              sale.inventory.bookstore.deal_percentage,
+              sale.quantity
+            )
+          }
+        }
+      };
+
+      if (payment.costs.length > 0) {
+        for (const cost of payment.costs) {
+          if (cost.isDeleted === false) {
+            payment.amount -= cost.amount
+          }
+        }
+      }
+    }
 
     res.status(200).json(selectedPayments);
 
@@ -2326,23 +2392,23 @@ router.post('/cost', async (req, res) => {
       });
 
       if (createdCost) {
-        const previousPayment = await tx.payment.findUnique({
-          where: {
-            id: paymentId
-          },
-          select: {
-            amount: true
-          }
-        });
+        // const previousPayment = await tx.payment.findUnique({
+        //   where: {
+        //     id: paymentId
+        //   },
+        //   select: {
+        //     amount: true
+        //   }
+        // });
 
-        const updatedPayment = await tx.payment.update({
-          where: {
-            id: paymentId
-          },
-          data: {
-            amount: previousPayment.amount - createdCost.amount
-          }
-        })
+        // const updatedPayment = await tx.payment.update({
+        //   where: {
+        //     id: paymentId
+        //   },
+        //   data: {
+        //     amount: previousPayment.amount - createdCost.amount
+        //   }
+        // })
         res.status(200).json({message: "Cost created sucessfully"});
       } else {
         res.status(500).json({error:"a server error occurred while creating the cost"})
@@ -2364,11 +2430,11 @@ router.patch("/cost/:id", async (req, res) => {
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
-      const previousCost = await tx.cost.findUnique({
-        where: {
-          id: costId
-        }
-      })
+      // const previousCost = await tx.cost.findUnique({
+      //   where: {
+      //     id: costId
+      //   }
+      // })
       
       const updatedCost = await tx.cost.update({
         where: {
@@ -2380,24 +2446,24 @@ router.patch("/cost/:id", async (req, res) => {
         }
       })
 
-      if (updatedCost) {
-        const previousPayment = await tx.payment.findUnique({
-          where: {
-            id: updatedCost.paymentId
-          }
-        });
+      // if (updatedCost) {
+      //   const previousPayment = await tx.payment.findUnique({
+      //     where: {
+      //       id: updatedCost.paymentId
+      //     }
+      //   });
 
-        if (previousPayment) {
-          const updatedPayment = await tx.payment.update({
-            where: {
-              id: updatedCost.paymentId
-            },
-            data: {
-              amount: previousPayment.amount + previousCost.amount - updatedCost.amount
-            }
-          })
-        }
-      }
+      //   if (previousPayment) {
+      //     const updatedPayment = await tx.payment.update({
+      //       where: {
+      //         id: updatedCost.paymentId
+      //       },
+      //       data: {
+      //         amount: previousPayment.amount + previousCost.amount - updatedCost.amount
+      //       }
+      //     })
+      //   }
+      // }
     })
 
     res.status(200).json({message: "The cost was updated successfully"});
@@ -2421,24 +2487,24 @@ router.delete('/cost/:id', async (req, res) => {
         }
       });
 
-      if (markedAsDeletedCost) {
-        const previousPayment = await tx.payment.findUnique({
-          where: {
-            id: markedAsDeletedCost.paymentId
-          }
-        });
+      // if (markedAsDeletedCost) {
+      //   const previousPayment = await tx.payment.findUnique({
+      //     where: {
+      //       id: markedAsDeletedCost.paymentId
+      //     }
+      //   });
 
-        if (previousPayment) {
-          const updatedPayment = await tx.payment.update({
-            where: {
-              id: markedAsDeletedCost.paymentId
-            },
-            data: {
-              amount: previousPayment.amount + markedAsDeletedCost.amount
-            }
-          })
-        }
-      }
+      //   if (previousPayment) {
+      //     const updatedPayment = await tx.payment.update({
+      //       where: {
+      //         id: markedAsDeletedCost.paymentId
+      //       },
+      //       data: {
+      //         amount: previousPayment.amount + markedAsDeletedCost.amount
+      //       }
+      //     })
+      //   }
+      // }
     })
 
     res.status(200).json({message: "The cost was deleted successfully"});
@@ -2594,76 +2660,76 @@ async function softDeleteSalesOnCascade(IdsList, tx) {
     })
   );
 
-  for (const sale of salesToDelete) {
-    // update all potential authors payments sums as well
-    const date = new Date(sale.createdAt);
-    const year = String(date.getFullYear());
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const saleForMonth = year + "-" + month
+  // for (const sale of salesToDelete) {
+  //   // update all potential authors payments sums as well
+  //   const date = new Date(sale.createdAt);
+  //   const year = String(date.getFullYear());
+  //   const month = String(date.getMonth() + 1).padStart(2, '0');
+  //   const saleForMonth = year + "-" + month
 
-    const bookOfSale = await tx.book.findUnique({
-      where: {
-        id: sale.inventory.bookId
-      },
-      select: {
-        users: {
-          select: {
-            id: true
-          }
-        }
-      }
-    })
-    const userIds = bookOfSale.users.map(user => user.id);
+  //   const bookOfSale = await tx.book.findUnique({
+  //     where: {
+  //       id: sale.inventory.bookId
+  //     },
+  //     select: {
+  //       users: {
+  //         select: {
+  //           id: true
+  //         }
+  //       }
+  //     }
+  //   })
+  //   const userIds = bookOfSale.users.map(user => user.id);
 
-    // update the payment for each author of the book
-    if (userIds.length > 0) {
-      for (const id of userIds) {
-        // using findMany instead of findUnique here to avoid the error if not found.
-        const relatedPayment = await tx.payment.findMany({
-          where: {
-            userId: id,
-            forMonth: saleForMonth,
-            isDeleted: false
-          }
-        })
+  //   // update the payment for each author of the book
+  //   if (userIds.length > 0) {
+  //     for (const id of userIds) {
+  //       // using findMany instead of findUnique here to avoid the error if not found.
+  //       const relatedPayment = await tx.payment.findMany({
+  //         where: {
+  //           userId: id,
+  //           forMonth: saleForMonth,
+  //           isDeleted: false
+  //         }
+  //       })
 
-        const userCategory = await tx.user.findUnique({
-          where: {
-            id: id,
-            isDeleted: false
-          },
-          select: {
-            category: {
-              select: {
-                percentage_royalties: true,
-                percentage_management_stores: true,
-                management_min: true
-              }
-            }
-          }
-        })
+  //       const userCategory = await tx.user.findUnique({
+  //         where: {
+  //           id: id,
+  //           isDeleted: false
+  //         },
+  //         select: {
+  //           category: {
+  //             select: {
+  //               percentage_royalties: true,
+  //               percentage_management_stores: true,
+  //               management_min: true
+  //             }
+  //           }
+  //         }
+  //       })
 
-        let newPaymentAmount = relatedPayment[0].amount - calculateAuthorRevenue(
-          sale.inventory.bookstore.comissions,
-          sale.inventory.price,
-          userCategory.category.management_min,
-          userCategory.category.percentage_management_stores,
-          sale.quantity,
-        )
-        if (newPaymentAmount < 0.01) {
-          newPaymentAmount = 0
-        }
-        const updatedRelatedPayment = await tx.payment.update({
-          where: {
-            id: relatedPayment[0].id
-          },
-          data: {
-            amount: newPaymentAmount
-          }
-        })
-      }
-    }
-  }
+  //       let newPaymentAmount = relatedPayment[0].amount - calculateAuthorRevenue(
+  //         sale.inventory.bookstore.comissions,
+  //         sale.inventory.price,
+  //         userCategory.category.management_min,
+  //         userCategory.category.percentage_management_stores,
+  //         sale.quantity,
+  //       )
+  //       if (newPaymentAmount < 0.01) {
+  //         newPaymentAmount = 0
+  //       }
+  //       const updatedRelatedPayment = await tx.payment.update({
+  //         where: {
+  //           id: relatedPayment[0].id
+  //         },
+  //         data: {
+  //           amount: newPaymentAmount
+  //         }
+  //       })
+  //     }
+  //   }
+  // }
 }
 
 async function softDeleteCostsOnCascade(deletedPaymentId, tx) {
@@ -2688,320 +2754,320 @@ async function softDeleteCostsOnCascade(deletedPaymentId, tx) {
 
 // updateOnCascade routes
 
-async function updatePaymentsOnCascade(category, previousCategory, tx) {
-  const impactedUsers = await tx.user.findMany({
-    where: {
-      categoryId: category.id,
-      isDeleted: false
-    }
-  });
+// async function updatePaymentsOnCascade(category, previousCategory, tx) {
+//   const impactedUsers = await tx.user.findMany({
+//     where: {
+//       categoryId: category.id,
+//       isDeleted: false
+//     }
+//   });
 
-  if (impactedUsers.length === 0) {
-    return;
-  }
+//   if (impactedUsers.length === 0) {
+//     return;
+//   }
 
-  let impactedSales = [];
-  for (const user of impactedUsers) {
-    const impactedBooks = await tx.book.findMany({
-      where: {
-        users: {
-          some: {
-            id: user.id
-          }
-        },
-        isDeleted: false
-      },
-      include: {
-        users: true
-      }
-    })
+//   let impactedSales = [];
+//   for (const user of impactedUsers) {
+//     const impactedBooks = await tx.book.findMany({
+//       where: {
+//         users: {
+//           some: {
+//             id: user.id
+//           }
+//         },
+//         isDeleted: false
+//       },
+//       include: {
+//         users: true
+//       }
+//     })
 
-    for (const book of impactedBooks) {
-      const numberOfAuthors = book.users.length
-      const impactedInventories = await tx.inventory.findMany({
-        where: {
-          bookId: book.id,
-          isDeleted: false
-        },
-        include: {
-          bookstore: true
-        }
-      })
+//     for (const book of impactedBooks) {
+//       const numberOfAuthors = book.users.length
+//       const impactedInventories = await tx.inventory.findMany({
+//         where: {
+//           bookId: book.id,
+//           isDeleted: false
+//         },
+//         include: {
+//           bookstore: true
+//         }
+//       })
 
-      for (const inventory of impactedInventories) {
-        const impactedSalesForInventory = await tx.sale.findMany({
-          where: {
-            inventoryId: inventory.id,
-            isDeleted: false
-          }
-        });
+//       for (const inventory of impactedInventories) {
+//         const impactedSalesForInventory = await tx.sale.findMany({
+//           where: {
+//             inventoryId: inventory.id,
+//             isDeleted: false
+//           }
+//         });
   
-        for (const sale of impactedSalesForInventory) {
-          impactedSales.push(
-            {...sale, 
-            "userId": user.id,
-            "price": inventory.price,
-            "comissions": inventory.bookstore.comissions,
-            "numberOfAuthors": numberOfAuthors}
-          )
-        };
-      }
-    }
-  }
+//         for (const sale of impactedSalesForInventory) {
+//           impactedSales.push(
+//             {...sale, 
+//             "userId": user.id,
+//             "price": inventory.price,
+//             "comissions": inventory.bookstore.comissions,
+//             "numberOfAuthors": numberOfAuthors}
+//           )
+//         };
+//       }
+//     }
+//   }
 
-  for (const sale of impactedSales) {
-    const paymentForMonth = getForMonth(sale.createdAt);
-    const previousSaleValue = calculateAuthorRevenue(
-      sale.comissions,
-      sale.price,
-      previousCategory.management_min,
-      previousCategory.percentage_management_stores,
-      sale.quantity,
-    );
-    const newSaleValue = calculateAuthorRevenue(
-      sale.comissions,
-      sale.price,
-      category.management_min,
-      category.percentage_management_stores,
-      sale.quantity,
-    )
+//   for (const sale of impactedSales) {
+//     const paymentForMonth = getForMonth(sale.createdAt);
+//     const previousSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       previousCategory.management_min,
+//       previousCategory.percentage_management_stores,
+//       sale.quantity,
+//     );
+//     const newSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       category.management_min,
+//       category.percentage_management_stores,
+//       sale.quantity,
+//     )
 
-    const previousPayment = await tx.payment.findUnique({
-      where: {
-        userId_forMonth: {
-          userId: sale.userId,
-          forMonth: paymentForMonth,
-        },
-        isDeleted: false
-      }
-    });
+//     const previousPayment = await tx.payment.findUnique({
+//       where: {
+//         userId_forMonth: {
+//           userId: sale.userId,
+//           forMonth: paymentForMonth,
+//         },
+//         isDeleted: false
+//       }
+//     });
 
-    const quantityUpdate = newSaleValue - previousSaleValue
+//     const quantityUpdate = newSaleValue - previousSaleValue
 
-    if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await tx.payment.update({
-        where: {
-          userId_forMonth: {
-            userId: sale.userId,
-            forMonth: paymentForMonth,
-          },
-          isDeleted: false
-        },
-        data: {
-          amount: previousPayment.amount + quantityUpdate
-        }
-      })
-    }
-  }
-}
+//     if (previousPayment && previousPayment.status !== "paid") {
+//       const updatedPayment = await tx.payment.update({
+//         where: {
+//           userId_forMonth: {
+//             userId: sale.userId,
+//             forMonth: paymentForMonth,
+//           },
+//           isDeleted: false
+//         },
+//         data: {
+//           amount: previousPayment.amount + quantityUpdate
+//         }
+//       })
+//     }
+//   }
+// }
 
-async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
-  let impactedSales = [];
-  const impactedInventories = await tx.inventory.findMany({
-    where: {
-      bookstoreId: bookstore.id,
-      isDeleted: false
-    },
-    include: {
-      bookstore: true,
-      book: true,
-      sales: true
-    }
-  });
+// async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
+//   let impactedSales = [];
+//   const impactedInventories = await tx.inventory.findMany({
+//     where: {
+//       bookstoreId: bookstore.id,
+//       isDeleted: false
+//     },
+//     include: {
+//       bookstore: true,
+//       book: true,
+//       sales: true
+//     }
+//   });
 
-  for (const inventory of impactedInventories) {
-    const impactedBook = await tx.book.findFirst({
-      where: {
-        id: inventory.bookId,
-        isDeleted: false
-      },
-      select: {
-        users: {
-          select: {
-            id: true,
-            category: {
-              select: {
-                percentage_management_stores: true,
-                percentage_royalties: true,
-                management_min: true
-              }
-            }
-          }
-        }
-      }
-    });
+//   for (const inventory of impactedInventories) {
+//     const impactedBook = await tx.book.findFirst({
+//       where: {
+//         id: inventory.bookId,
+//         isDeleted: false
+//       },
+//       select: {
+//         users: {
+//           select: {
+//             id: true,
+//             category: {
+//               select: {
+//                 percentage_management_stores: true,
+//                 percentage_royalties: true,
+//                 management_min: true
+//               }
+//             }
+//           }
+//         }
+//       }
+//     });
 
-    const impactedUsers = impactedBook.users;
+//     const impactedUsers = impactedBook.users;
 
-    const impactedSalesForInventory = await tx.sale.findMany({
-      where: {
-        inventoryId: inventory.id,
-        isDeleted: false
-      }
-    });
+//     const impactedSalesForInventory = await tx.sale.findMany({
+//       where: {
+//         inventoryId: inventory.id,
+//         isDeleted: false
+//       }
+//     });
 
-    for (const sale of impactedSalesForInventory) {
-      for (const user of impactedUsers) {
-        impactedSales.push(
-          {...sale,
-            "userId": user.id,
-            "price": inventory.price,
-            'management_min': user.category.management_min,
-            "percentage_management_stores": user.category.percentage_management_stores,
-            "percentage_royalties": user.category.percentage_royalties,
-            "comissions": inventory.bookstore.comissions,
-            "numberOfAuthors": impactedUsers.length
-          }
-        )
-      }
-    };
-  }
+//     for (const sale of impactedSalesForInventory) {
+//       for (const user of impactedUsers) {
+//         impactedSales.push(
+//           {...sale,
+//             "userId": user.id,
+//             "price": inventory.price,
+//             'management_min': user.category.management_min,
+//             "percentage_management_stores": user.category.percentage_management_stores,
+//             "percentage_royalties": user.category.percentage_royalties,
+//             "comissions": inventory.bookstore.comissions,
+//             "numberOfAuthors": impactedUsers.length
+//           }
+//         )
+//       }
+//     };
+//   }
 
-  let count = 0;
-  for (const sale of impactedSales) {
-    const paymentForMonth = getForMonth(sale.createdAt);
-    const previousSaleValue = calculateAuthorRevenue(
-      !sale.comissions,
-      sale.price,
-      sale.management_min,
-      sale.percentage_management_stores,
-      sale.quantity,
-    );
-    const newSaleValue = calculateAuthorRevenue(
-      sale.comissions,
-      sale.price,
-      sale.management_min,
-      sale.percentage_management_stores,
-      sale.quantity,
-    )
-    const previousPayment = await tx.payment.findUnique({
-      where: {
-        userId_forMonth: {
-          userId: sale.userId,
-          forMonth: paymentForMonth,
-        },
-        isDeleted: false
-      }
-    });
+//   let count = 0;
+//   for (const sale of impactedSales) {
+//     const paymentForMonth = getForMonth(sale.createdAt);
+//     const previousSaleValue = calculateAuthorRevenue(
+//       !sale.comissions,
+//       sale.price,
+//       sale.management_min,
+//       sale.percentage_management_stores,
+//       sale.quantity,
+//     );
+//     const newSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       sale.management_min,
+//       sale.percentage_management_stores,
+//       sale.quantity,
+//     )
+//     const previousPayment = await tx.payment.findUnique({
+//       where: {
+//         userId_forMonth: {
+//           userId: sale.userId,
+//           forMonth: paymentForMonth,
+//         },
+//         isDeleted: false
+//       }
+//     });
 
-    const quantityUpdate = newSaleValue - previousSaleValue
+//     const quantityUpdate = newSaleValue - previousSaleValue
 
-    if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await tx.payment.update({
-        where: {
-          userId_forMonth: {
-            userId: sale.userId,
-            forMonth: paymentForMonth,
-          },
-          isDeleted: false
-        },
-        data: {
-          amount: previousPayment.amount + quantityUpdate
-        }
-      });
-    }
-  }
-}
+//     if (previousPayment && previousPayment.status !== "paid") {
+//       const updatedPayment = await tx.payment.update({
+//         where: {
+//           userId_forMonth: {
+//             userId: sale.userId,
+//             forMonth: paymentForMonth,
+//           },
+//           isDeleted: false
+//         },
+//         data: {
+//           amount: previousPayment.amount + quantityUpdate
+//         }
+//       });
+//     }
+//   }
+// }
 
-async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice, tx) {
-  let impactedSales = [];
-  const impactedBook = await tx.book.findFirst({
-    where: {
-      id: inventory.bookId,
-      isDeleted: false
-    },
-    select: {
-      users: {
-        select: {
-          id: true,
-          category: {
-            select: {
-              percentage_management_stores: true,
-              percentage_royalties: true,
-              management_min: true
-            }
-          }
-        }
-      }
-    }
-  });
+// async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice, tx) {
+//   let impactedSales = [];
+//   const impactedBook = await tx.book.findFirst({
+//     where: {
+//       id: inventory.bookId,
+//       isDeleted: false
+//     },
+//     select: {
+//       users: {
+//         select: {
+//           id: true,
+//           category: {
+//             select: {
+//               percentage_management_stores: true,
+//               percentage_royalties: true,
+//               management_min: true
+//             }
+//           }
+//         }
+//       }
+//     }
+//   });
 
-  const impactedUsers = impactedBook.users;
-  const relatedBookstore = await tx.bookstore.findFirst({
-    where: {
-      id: inventory.bookstoreId,
-      isDeleted: false
-    },
-    select: {
-      comissions: true
-    }
-  })
+//   const impactedUsers = impactedBook.users;
+//   const relatedBookstore = await tx.bookstore.findFirst({
+//     where: {
+//       id: inventory.bookstoreId,
+//       isDeleted: false
+//     },
+//     select: {
+//       comissions: true
+//     }
+//   })
 
-  const impactedSalesForInventory = await tx.sale.findMany({
-    where: {
-      inventoryId: inventory.id,
-      isDeleted: false
-    }
-  });
+//   const impactedSalesForInventory = await tx.sale.findMany({
+//     where: {
+//       inventoryId: inventory.id,
+//       isDeleted: false
+//     }
+//   });
 
-  for (const sale of impactedSalesForInventory) {
-    for (const user of impactedUsers) {
-      impactedSales.push(
-        {...sale,
-          "userId": user.id,
-          "price": inventory.price,
-          'management_min': user.category.management_min,
-          "percentage_management_stores": user.category.percentage_management_stores,
-          "percentage_royalties": user.category.percentage_royalties,
-          "comissions": relatedBookstore.comissions,
-          "numberOfAuthors": impactedUsers.length
-        }
-      )
-    }
-  };
+//   for (const sale of impactedSalesForInventory) {
+//     for (const user of impactedUsers) {
+//       impactedSales.push(
+//         {...sale,
+//           "userId": user.id,
+//           "price": inventory.price,
+//           'management_min': user.category.management_min,
+//           "percentage_management_stores": user.category.percentage_management_stores,
+//           "percentage_royalties": user.category.percentage_royalties,
+//           "comissions": relatedBookstore.comissions,
+//           "numberOfAuthors": impactedUsers.length
+//         }
+//       )
+//     }
+//   };
 
-  for (const sale of impactedSales) {
-    const paymentForMonth = getForMonth(sale.createdAt);
-    const previousSaleValue = calculateAuthorRevenue(
-      sale.comissions,
-      previousPrice,
-      sale.management_min,
-      sale.percentage_management_stores,
-      sale.quantity,
-    );
-    const newSaleValue = calculateAuthorRevenue(
-      sale.comissions,
-      sale.price,
-      sale.management_min,
-      sale.percentage_management_stores,
-    )
-    const previousPayment = await tx.payment.findUnique({
-      where: {
-        userId_forMonth: {
-          userId: sale.userId,
-          forMonth: paymentForMonth,
-        },
-        isDeleted: false
-      }
-    });
+//   for (const sale of impactedSales) {
+//     const paymentForMonth = getForMonth(sale.createdAt);
+//     const previousSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       previousPrice,
+//       sale.management_min,
+//       sale.percentage_management_stores,
+//       sale.quantity,
+//     );
+//     const newSaleValue = calculateAuthorRevenue(
+//       sale.comissions,
+//       sale.price,
+//       sale.management_min,
+//       sale.percentage_management_stores,
+//     )
+//     const previousPayment = await tx.payment.findUnique({
+//       where: {
+//         userId_forMonth: {
+//           userId: sale.userId,
+//           forMonth: paymentForMonth,
+//         },
+//         isDeleted: false
+//       }
+//     });
 
-    const quantityUpdate = newSaleValue - previousSaleValue
+//     const quantityUpdate = newSaleValue - previousSaleValue
 
-    if (previousPayment && previousPayment.status !== "paid") {
-      const updatedPayment = await tx.payment.update({
-        where: {
-          userId_forMonth: {
-            userId: sale.userId,
-            forMonth: paymentForMonth,
-          },
-          isDeleted: false
-        },
-        data: {
-          amount: previousPayment.amount + quantityUpdate
-        }
-      });
-    }
-  }
-}
+//     if (previousPayment && previousPayment.status !== "paid") {
+//       const updatedPayment = await tx.payment.update({
+//         where: {
+//           userId_forMonth: {
+//             userId: sale.userId,
+//             forMonth: paymentForMonth,
+//           },
+//           isDeleted: false
+//         },
+//         data: {
+//           amount: previousPayment.amount + quantityUpdate
+//         }
+//       });
+//     }
+//   }
+// }
 
 export default router;

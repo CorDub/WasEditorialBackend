@@ -165,7 +165,6 @@ model Payment {
   userId    Int
   costs     Cost[]
   sales     Sale[]
-  amount    Float         @default(0)
   forMonth  String
   status    PaymentStatus @default(created)
   isDeleted Boolean       @default(false)

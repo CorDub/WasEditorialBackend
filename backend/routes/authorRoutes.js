@@ -495,7 +495,7 @@ router.get('/sales', async (req, res) => {
         created_at: sale.createdAt,
         title: sale.inventory.book.title,
         bookstore_name: sale.inventory.bookstore.name,
-        price: sale.inventory.price || 199.99,
+        price: sale.inventory.price,
         value: calculateAuthorRevenue(
           sale.inventory.bookstore.comissions,
           sale.inventory.price,
@@ -1013,7 +1013,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
 
     res.status(200).json(monthlySales);
   } catch (error) {
-    console.log('eror fetching monthly sales by payments', error) 
+    console.log('error fetching monthly sales by payments', error) 
     res.status(500).json({error: 'Internal server error'});
   }
 })
@@ -1446,16 +1446,28 @@ router.get("/payments", async (req, res) => {
           gt: ltm
         }
       },
-      select: {
-        id: true,
-        amount: true,
-        forMonth: true,
-        status: true
+      // select: {
+      //   id: true,
+      //   forMonth: true,
+      //   status: true,
+      // },
+      include: {
+        sales: true,
+        costs: true
       },
       orderBy: {
         createdAt: "desc"
       }
     });
+
+    const userWithCategory = await prisma.user.findUnique({
+      where: {
+        id: req.session.user_id
+      },
+      include: {
+        category: true
+      }
+    })
 
     // Fill in empty months with 0s if necessary
     if (allPayments.length < 13) {
@@ -1502,12 +1514,42 @@ router.get("/payments", async (req, res) => {
 
         if (!existing) {
           allPayments.splice(i, 0, {
-            amount: 0,
             forMonth: ltmStrings[i],
             status: "created"
           });
         }
       };
+    }
+
+    //Calculate and add the total amount of each payment
+    for (const payment of allPayments) {
+      payment.amount = 0;
+      if (payment.sales.length > 0) {
+        for (const sale of payment.sales) {
+          const saleInventory = await prisma.inventory.findUnique({
+            where:{
+              id: sale.inventoryId
+            },
+            include: {
+              bookstore: true
+            }
+          })
+
+          payment.amount += calculateAuthorRevenue(
+            saleInventory.bookstore.comissions,
+            saleInventory.price,
+            userWithCategory.category.management_min,
+            saleInventory.bookstore.deal_percentage,
+            sale.quantity
+          )
+        }
+      }
+
+      if (payment.costs.length === 0) {
+        for (const cost of payment.costs) {
+          payment.amount -= cost.amount
+        }
+      }
     }
 
     res.status(200).json(allPayments);

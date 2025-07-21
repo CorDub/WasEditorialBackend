@@ -43,12 +43,13 @@ function AuthorCommissions() {
         return;
       } 
     }
-    if (dataByMonths && activeMonth != null) {
+
+    if (salesByPayments.length > 0 && Number.isInteger(activeMonth)) {
       const now = new Date();
       const year = String(now.getFullYear());
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const currentActiveMonth = year + "-" + month
-      if (currentActiveMonth === dataByMonths[activeMonth][0]) {
+      if (currentActiveMonth === salesByPayments[activeMonth].forMonth) {
         setDemandPaymentPossible("currentMonth");
         return;
       }
@@ -58,41 +59,41 @@ function AuthorCommissions() {
       }
       setDemandPaymentPossible("available");
     }
-  }, [dataByMonths, activeMonth, paymentInfo, forceRender])
+  }, [salesByPayments, activeMonth, paymentInfo, forceRender])
 
-  async function fetchAuthorBookSales() {
-    try {
-      // check cache first
-      const cachedAuthorMonthlySales = sessionStorage.getItem("authorMonthlySales");
-      if (cachedAuthorMonthlySales && JSON.parse(cachedAuthorMonthlySales).length > 0) {
-        console.log("cache hit");
-        setDataByMonths(JSON.parse(cachedAuthorMonthlySales));
-        return
-      }
+  // async function fetchAuthorBookSales() {
+  //   try {
+  //     // check cache first
+  //     const cachedAuthorMonthlySales = sessionStorage.getItem("authorMonthlySales");
+  //     if (cachedAuthorMonthlySales && JSON.parse(cachedAuthorMonthlySales).length > 0) {
+  //       console.log("cache hit");
+  //       setDataByMonths(JSON.parse(cachedAuthorMonthlySales));
+  //       return
+  //     }
 
-      const response = await fetch(`${baseURL}/author/monthlySales`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include"
-      });
+  //     const response = await fetch(`${baseURL}/author/monthlySales`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include"
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
-        sessionStorage.setItem("authorMonthlySales", JSON.stringify(data));
-        console.log("cache storage");
-        setDataByMonths(data);
-      }
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       sessionStorage.setItem("authorMonthlySales", JSON.stringify(data));
+  //       console.log("cache storage");
+  //       setDataByMonths(data);
+  //     }
 
-    } catch(error) {
-      console.log("Error when fetching the data", error);
-    }
-  }
+  //   } catch(error) {
+  //     console.log("Error when fetching the data", error);
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchAuthorBookSales();
-  }, [])
+  // useEffect(() => {
+  //   fetchAuthorBookSales();
+  // }, [])
 
   async function fetchPayments() {
     try {
@@ -127,7 +128,7 @@ function AuthorCommissions() {
     }
   }
 
-  console.log("payments", payments)
+  // console.log("payments", payments)
   // console.log(dataByMonths)
 
   useEffect(() => {

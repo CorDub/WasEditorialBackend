@@ -1380,6 +1380,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
+    let name = thatBookstoreInventories[0].bookstore.name
     for (const inventory of thatBookstoreInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1397,6 +1398,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     const payload = {
+      name,
       sortedRelevantInventories,
       currentTotal,
       initialTotal,

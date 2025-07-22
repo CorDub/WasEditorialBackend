@@ -26,7 +26,8 @@ function InventoryTotal({
     setModalType,
     openModal,
     setRetreat,
-    preferredFontSize}) {
+    preferredFontSize,
+    setSpecificBookstoreOpen}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
@@ -55,7 +56,7 @@ function InventoryTotal({
       setBookInventoryOpen(false);
       setRetreat(false);
     } else {
-      setBookstoreInventoryOpen(false);
+      setSpecificBookstoreOpen(false);
     }
   }
 
@@ -99,10 +100,10 @@ function InventoryTotal({
             </div>
           </div>}
 
-        <div className="inventory-total-details">Vendidos: {soldTotal} / {initialTotal}</div>
-        <div className="inventory-total-details">Devueltos: {returnsTotal} / {initialTotal}</div>
-        <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
-        <div className="inventory-total-details">Disponibles: {currentTotal} / {initialTotal}</div>
+        <div className="inventory-total-details">Vendidos: {soldTotal}</div>
+        <div className="inventory-total-details">Devueltos: {returnsTotal}</div>
+        <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+        <div className="inventory-total-details">Disponibles: {currentTotal}</div>
         <div className="bookstore-progress-return">
           <ProgressBar
             current={currentTotal}

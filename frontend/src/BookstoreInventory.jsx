@@ -9,17 +9,19 @@ import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({
-    selectedBookstore,
     selectedBookstoreNoSpaces,
     selectedBookstoreId,
     selectedLogo,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
-    preferredFontSize}) {
+    preferredFontSize,
+    specificBookstore,
+    setSpecificBookstoreOpen}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
+  const [selectedBookstore, setSelectedBookstore] = useState("");
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
@@ -164,42 +166,42 @@ function BookstoreInventory({
         }
       }
     },
-    {
-      header: "País",
-      accessorKey: "country",
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
-    },
-    {
-      header: "Progreso",
-      Cell: ({row}) => (
-        <ProgressBar
-          current={row.original.current}
-          initial={row.original.initial}
-          returns={row.original.returns}
-          sold={row.original.totalSales}
-          given={row.original.givenToAuthor} />
-      ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '10%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '10%',
-        }
-      }
-    }
+    // {
+    //   header: "País",
+    //   accessorKey: "country",
+    //   muiTableHeadCellProps: {
+    //     sx: {
+    //       width: '3%'
+    //     }
+    //   },
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       width: '3%',
+    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+    //     }
+    //   }
+    // },
+    // {
+    //   header: "Progreso",
+    //   Cell: ({row}) => (
+    //     <ProgressBar
+    //       current={row.original.current}
+    //       initial={row.original.initial}
+    //       returns={row.original.returns}
+    //       sold={row.original.totalSales}
+    //       given={row.original.givenToAuthor} />
+    //   ),
+    //   muiTableHeadCellProps: {
+    //     sx: {
+    //       width: '10%'
+    //     }
+    //   },
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       width: '10%',
+    //     }
+    //   }
+    // }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
@@ -278,6 +280,19 @@ function BookstoreInventory({
     }
   }, [modalType, isModalOpen])
 
+  useEffect(() => {
+    if (specificBookstore) {
+      console.log(specificBookstore)
+      setData(specificBookstore.sortedRelevantInventories)
+      setSelectedBookstore(specificBookstore.name)
+      setCurrentTotal(specificBookstore.currentTotal)
+      setInitialTotal(specificBookstore.initialTotal)
+      setSoldTotal(specificBookstore.soldTotal)
+      setGivenToAuthorTotal(specificBookstore.givenToAuthorTotal)
+      setReturnsTotal(specificBookstore.returnsTotal)
+    }
+  }, [specificBookstore])
+
   async function getBookstoreInventories() {
     try {
       const response = await fetch(`${baseURL}/admin/inventoriesByBookstore`, {
@@ -291,6 +306,7 @@ function BookstoreInventory({
       if (response.ok) {
         const data = await response.json();
         setData(data.sortedRelevantInventories);
+        setSelectedBookstore(data.name)
         setCurrentTotal(data.currentTotal);
         setInitialTotal(data.initialTotal);
         setSoldTotal(data.soldTotal);
@@ -303,9 +319,9 @@ function BookstoreInventory({
     }
   }
 
-  useEffect(() => {
-    getBookstoreInventories();
-  }, []);
+  // useEffect(() => {
+  //   getBookstoreInventories();
+  // }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -363,7 +379,8 @@ function BookstoreInventory({
         soldTotal={soldTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
-        preferredFontSize={preferredFontSize}/>
+        preferredFontSize={preferredFontSize}
+        setSpecificBookstoreOpen={setSpecificBookstoreOpen}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

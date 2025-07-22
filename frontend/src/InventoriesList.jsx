@@ -7,6 +7,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import UserContext from './UserContext';
 import TableActions from "./TableActions";
+import BookstoreInventory from './BookstoreInventory';
 
 function InventoriesList() {
   useCheckAdmin();
@@ -167,7 +168,6 @@ function InventoriesList() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setSpecificBookstore(data);
         setSpecificBookstoreOpen(true)
       }
@@ -188,7 +188,6 @@ function InventoriesList() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setData(data);
       }
     } catch (error) {
@@ -249,7 +248,15 @@ function InventoriesList() {
           pageIndex={pagination.pageIndex}
           globalFilter={globalFilter} />}
       {isLoading && <LoadingWheel />}
-      {data && !isLoading && <MaterialReactTable table={table} />}
+      {data
+        && !isLoading 
+        && !isSpecificBookstoreOpen 
+        && <MaterialReactTable table={table} />}
+      {specificBookstore 
+        && isSpecificBookstoreOpen 
+        && <BookstoreInventory 
+          specificBookstore={specificBookstore}
+          setSpecificBookstoreOpen={setSpecificBookstoreOpen}/> }
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </div>

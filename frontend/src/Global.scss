@@ -56,6 +56,17 @@ a {
   cursor: pointer;
 }
 
+.blue-button-inactive {
+  border: none;
+  color: $second-color;
+  text-decoration: underline;
+  font-size: clamp(0.8rem, 1rem, 1.2rem);
+}
+
+.blue-button-inactive:hover {
+  cursor: pointer;
+}
+
 .grey-button {
   border-radius: 15px;
   border: none;

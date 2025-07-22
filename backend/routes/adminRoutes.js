@@ -1156,6 +1156,97 @@ router.get('/inventoryNames', async (req, res) => {
   }
 })
 
+router.get('/inventoriesByBook', async (req, res) => {
+  try {
+    const inventories = await prisma.inventory.findMany({
+      where: {
+        isDeleted: false
+      },
+      select: {
+        id: true,
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true,
+        bookstore: {
+          select: {
+            name: true,
+          }
+        },
+        bookstoreId: true,
+        price: true,
+        country: true,
+        initial: true,
+        current: true,
+        returns: true,
+        givenToAuthor: true,
+        sales: {
+          select: {
+            quantity: true,
+            isDeleted: true
+          }
+        }
+      }
+    });
+
+    let inventoriesByBook = []
+    for (const inventory of inventories) {
+      let sold = 0;
+      for (const sale of inventory.sales) {
+        if (sale.isDeleted === false) {
+          sold += sale.quantity
+        }
+      }
+
+      if (inventoriesByBook.length === 0) {
+        inventoriesByBook.push({
+          "id": inventory.bookId,
+          "type": "book",
+          "name": inventory.book.title,
+          "initial": inventory.initial,
+          "sold": sold,
+          "current": inventory.current,
+          "returns": inventory.returns,
+          "givenToAuthor": inventory.givenToAuthor
+        })
+      };
+
+      let existingBook = false
+      for (const bookInventory of inventoriesByBook) {
+        if (bookInventory.name === inventory.book.title) {
+          bookInventory.initial += inventory.initial
+          bookInventory.sold += sold
+          bookInventory.current += inventory.current
+          bookInventory.returns += inventory.returns
+          bookInventory.givenToAuthor += inventory.givenToAuthor
+          existingBook = true
+        }
+      }
+
+      if (!existingBook) {
+        inventoriesByBook.push({
+          "id": inventory.bookId,
+          "type": "book",
+          "name": inventory.book.title,
+          "initial": inventory.initial,
+          "sold": sold,
+          "current": inventory.current,
+          "returns": inventory.returns,
+          "givenToAuthor": inventory.givenToAuthor
+        })
+      }
+    }
+
+    res.status(200).json(inventoriesByBook);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error fetching inventories route"});
+  }
+})
+
 router.get('/inventoriesByBook/:id', async (req, res) => {
   try {
     const queryBookId = parseInt(req.params.id);
@@ -1213,6 +1304,7 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
+    let name = thatBookInventories[0].book.title
     for (const inventory of thatBookInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1231,6 +1323,7 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     const payload = {
       sortedRelevantInventories,
+      name,
       currentTotal,
       initialTotal,
       returnsTotal,
@@ -1294,6 +1387,7 @@ router.get('/inventoriesByBookstore', async (req, res) => {
       if (inventoriesByBookstore.length === 0) {
         inventoriesByBookstore.push({
           "id": inventory.bookstoreId,
+          "type": "bookstore",
           "name": inventory.bookstore.name,
           "initial": inventory.initial,
           "sold": sold,
@@ -1318,6 +1412,7 @@ router.get('/inventoriesByBookstore', async (req, res) => {
       if (!existingBookstore) {
         inventoriesByBookstore.push({
           "id": inventory.bookstoreId,
+          "type": "bookstore",
           "name": inventory.bookstore.name,
           "initial": inventory.initial,
           "sold": sold,

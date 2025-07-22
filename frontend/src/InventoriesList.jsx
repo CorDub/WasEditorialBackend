@@ -8,6 +8,7 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import UserContext from './UserContext';
 import TableActions from "./TableActions";
 import BookstoreInventory from './BookstoreInventory';
+import BookInventory from './BookInventory';
 
 function InventoriesList() {
   useCheckAdmin();
@@ -29,35 +30,38 @@ function InventoriesList() {
   })
   const [isLoading, setLoading] = useState(false);
   const [specificBookstore, setSpecificBookstore] = useState({});
+  const [specificBook, setSpecificBook] = useState({});
   const [isSpecificBookstoreOpen, setSpecificBookstoreOpen] = useState(false);
+  const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
+  const [isInventoryTypeBook, setInventoryType] = useState(false)
 
   const columns = useMemo(() => [
+    // {
+    //   header: "Acciones",
+    //   Cell: ({row}) => (
+    //     <div style={{position:"relative", overflow:"visible !important"}}>
+    //       <TableActions
+    //         key={isTableActionsOpen}
+    //         openModal={openModal}
+    //         row={row}
+    //         isTableActionsOpen={isTableActionsOpen}
+    //         setTableActionsOpen={setTableActionsOpen}
+    //         setModalType={setModalType}
+    //         type={"inventory"}/>
+    //     </div>
+    //   ),
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       overflow: "visible"
+    //     }
+    //   }
+    // },
     {
-      header: "Acciones",
-      Cell: ({row}) => (
-        <div style={{position:"relative", overflow:"visible !important"}}>
-          <TableActions
-            key={isTableActionsOpen}
-            openModal={openModal}
-            row={row}
-            isTableActionsOpen={isTableActionsOpen}
-            setTableActionsOpen={setTableActionsOpen}
-            setModalType={setModalType}
-            type={"inventory"}/>
-        </div>
-      ),
-      muiTableBodyCellProps: {
-        sx: {
-          overflow: "visible"
-        }
-      }
-    },
-    {
-      header: "Nombre de la librería",
+      header: "Nombre",
       accessorKey: "name",
       Cell: ({row}) => (
         <div
-          onClick={() => openSpecificBookstore(row.original.id)}
+          onClick={() => openSpecifics(row.original.type, row.original.id)}
           className="table-clickable-row">
           {row.original.name}
         </div>
@@ -93,14 +97,16 @@ function InventoriesList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button
-          className="blue-button"
-          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
-            Inventarios por librería</button>
-        <button
-          className="blue-button"
-          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
-            Inventarios por libro</button>
+        <div
+          className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button"}
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+          onClick={() => toggleInventoriesType()}>
+            Inventarios por librería</div>
+        <div
+          className={isInventoryTypeBook ? "blue-button" : "blue-button-inactive"}
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+          onClick={() => toggleInventoriesType()}>
+            Inventarios por libro</div>
       </div>
     ),
     initialState: {
@@ -156,21 +162,38 @@ function InventoriesList() {
     }
   });
 
-  async function openSpecificBookstore(id) {
+  async function openSpecifics(type, id) {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoriesByBookstore/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
-      });
+      if (type === "bookstore") {
+        const response = await fetch(`${baseURL}/admin/inventoriesByBookstore/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        setSpecificBookstore(data);
-        setSpecificBookstoreOpen(true)
+        if (response.ok) {
+          const data = await response.json();
+          setSpecificBookstore(data);
+          setSpecificBookstoreOpen(true);
+        }
+      } else if (type === "book") {
+        const response = await fetch(`${baseURL}/admin/inventoriesByBook/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSpecificBook(data);
+          setSpecificBookOpen(true);
+        }
       }
+      
     } catch (error) {
       console.log(error)
     }
@@ -204,49 +227,83 @@ function InventoriesList() {
   //   fetchBookstores();
   // }, [isModalOpen])
 
-  function openModal(type, clickedRow) {
-    setClickedRow(clickedRow);
-    switch (type) {
-      case 'adding':
-        setModalAction("adding");
-        break;
-      case 'edit':
-        setModalAction("edit");
-        break;
-      case 'delete':
-        setModalAction("delete");
-        break;
-      default:
-        console.log("Unknown error")
-        return;
+  async function getBookInventories() {
+    try {
+      const response = await fetch(`${baseURL}/admin/inventoriesByBook`, {
+        method: "GET",
+        header: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setData(data);
+      }
+
+    } catch (error) {
+      console.log(error)
     }
-    setModalOpen(true);
   }
 
-  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setModalOpen(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
+  function toggleInventoriesType() {
+    const newType = !isInventoryTypeBook;
+    setInventoryType(newType);
+    if (newType) {
+      getBookInventories();
+    } else {
+      getBookstoreInventories();
     }
   }
+
+  useEffect(() => {
+    console.log(isInventoryTypeBook)
+  }, [isInventoryTypeBook])
+
+  // function openModal(type, clickedRow) {
+  //   setClickedRow(clickedRow);
+  //   switch (type) {
+  //     case 'adding':
+  //       setModalAction("adding");
+  //       break;
+  //     case 'edit':
+  //       setModalAction("edit");
+  //       break;
+  //     case 'delete':
+  //       setModalAction("delete");
+  //       break;
+  //     default:
+  //       console.log("Unknown error")
+  //       return;
+  //   }
+  //   setModalOpen(true);
+  // }
+
+  // function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  //   setModalOpen(false);
+  //   globalFilter && setGlobalFilter(globalFilter);
+  //   pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
+  //   if (reload === true) {
+  //     setForceRender(!forceRender);
+  //   }
+  //   if (alertMessage) {
+  //     setAlertMessage(alertMessage);
+  //     setAlertType(alertType);
+  //   }
+  // }
 
   return(
     <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"inventories-list"}/>
-      {isModalOpen &&
+      {/* {isModalOpen &&
         <Modal
           modalType={modalType}
           modalAction={modalAction}
           clickedRow={clickedRow}
           closeModal={closeModal}
           pageIndex={pagination.pageIndex}
-          globalFilter={globalFilter} />}
+          globalFilter={globalFilter} />} */}
       {isLoading && <LoadingWheel />}
       {data
         && !isLoading 
@@ -257,6 +314,11 @@ function InventoriesList() {
         && <BookstoreInventory 
           specificBookstore={specificBookstore}
           setSpecificBookstoreOpen={setSpecificBookstoreOpen}/> }
+      {specificBook 
+        && isSpecificBookOpen 
+        && <BookInventory 
+          specificBook={specificBook}
+          setSpecificBookOpen={setSpecificBookOpen}/> }
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </div>

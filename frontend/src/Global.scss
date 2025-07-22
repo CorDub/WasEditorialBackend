@@ -56,6 +56,10 @@ a {
   cursor: pointer;
 }
 
+.non-clickable:hover {
+  cursor: text !important;
+}
+
 .blue-button-inactive {
   border: none;
   color: $second-color;

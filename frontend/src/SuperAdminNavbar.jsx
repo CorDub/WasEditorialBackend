@@ -53,8 +53,9 @@ function SuperAdminNavbar({
       return;
     };
 
-    if (active === "inventories") {
-      searchBarRef.current.focus();
+    if (active === "inventories-list") {
+      // searchBarRef.current.focus();
+      buttons[5].classList.add("active-button");
       return;
     }
 
@@ -73,9 +74,9 @@ function SuperAdminNavbar({
       return;
     }
 
-    if (active === "inventories-list") {
-      buttons[9].classList.add("active-button");
-    }
+    // if (active === "inventories-list") {
+    //   buttons[9].classList.add("active-button");
+    // }
   }
 
   useEffect(() => {
@@ -144,7 +145,7 @@ function SuperAdminNavbar({
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
-      {active === "inventories" ?
+      {/* {active === "inventories" ?
         <>
           <input
             type="text"
@@ -170,13 +171,14 @@ function SuperAdminNavbar({
               setSearchTerms={setSearchTerms}/> :
             null
           }
-        </>:
-        <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
+        </>: }
+        <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link> */
       }
+      <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
       <Link to='/admin/payments' className="navbar-button">Pagos</Link>
       <Link to='/admin/costs' className="navbar-button">Costos</Link>
-      <Link to='/admin/inventories-list' className="navbar-button">InventoriesList</Link>
+      {/* <Link to='/admin/inventories-list' className="navbar-button">InventoriesList</Link> */}
     </div>
   )
 }

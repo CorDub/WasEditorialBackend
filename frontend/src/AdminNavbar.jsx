@@ -50,8 +50,9 @@ function AdminNavbar({
       return;
     };
 
-    if (active === "inventories") {
-      searchBarRef.current.focus();
+    if (active === "inventories-list") {
+      // searchBarRef.current.focus();
+      buttons[4].classList.add("active-button");
       return;
     }
 
@@ -159,7 +160,7 @@ function AdminNavbar({
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
-      {active === "inventories" ?
+      {/* {active === "inventories" ?
         <>
           <input
             type="text"
@@ -186,7 +187,8 @@ function AdminNavbar({
           }
         </>:
         <Link to='/admin/inventories' className="navbar-button">Inventarios</Link>
-      }
+      } */}
+      <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
       <Link to='/admin/payments' className="navbar-button">Pagos</Link>
       <Link to='/admin/costs' className="navbar-button">Costos</Link>

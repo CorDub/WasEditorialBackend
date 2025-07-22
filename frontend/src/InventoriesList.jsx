@@ -98,14 +98,14 @@ function InventoriesList() {
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
         <div
-          className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button"}
+          className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button non-clickable"}
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
-          onClick={() => toggleInventoriesType()}>
+          onClick={() => isInventoryTypeBook && toggleInventoriesType()}>
             Inventarios por librería</div>
         <div
-          className={isInventoryTypeBook ? "blue-button" : "blue-button-inactive"}
+          className={isInventoryTypeBook ? "blue-button non-clickable" : "blue-button-inactive"}
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
-          onClick={() => toggleInventoriesType()}>
+          onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
             Inventarios por libro</div>
       </div>
     ),

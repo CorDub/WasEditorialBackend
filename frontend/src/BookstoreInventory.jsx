@@ -83,21 +83,21 @@ function BookstoreInventory({
         }
       }
     },
-    {
-      header: "Precio",
-      accessorKey:"price",
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
-    },
+    // {
+    //   header: "Precio",
+    //   accessorKey:"price",
+    //   muiTableHeadCellProps: {
+    //     sx: {
+    //       width: '3%'
+    //     }
+    //   },
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       width: '3%',
+    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+    //     }
+    //   }
+    // },
     {
       header: "Vendidos",
       Cell: ({row}) => {

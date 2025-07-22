@@ -8,14 +8,16 @@ import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
 
 function BookInventory({
-    selectedBook,
     selectedBookId,
     isBookInventoryOpen,
     setBookInventoryOpen,
     setRetreat,
-    preferredFontSize}) {
+    preferredFontSize,
+    specificBook,
+    setSpecificBookOpen}) {
   useCheckAdmin()
   const baseURL = import.meta.env.VITE_API_URL || '';
+  const [selectedBook, setSelectedBook] = useState("");
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
@@ -99,18 +101,18 @@ function BookInventory({
         }
       }
     },
-    {
-      header: "Precio",
-      accessorKey: "price",
-      muiTableBodyCellProps: {
-        sx: {
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
-        }
-      }
-    },
+    // {
+    //   header: "Precio",
+    //   accessorKey: "price",
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+    //       whiteSpace: "nowrap",
+    //       overflow: "hidden",
+    //       textOverflow: "ellipsis"
+    //     }
+    //   }
+    // },
     {
       header: "Vendidos",
       Cell: ({row}) => {
@@ -191,35 +193,35 @@ function BookInventory({
         }
       }
     },
-    {
-      header: "País",
-      accessorKey: "country",
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
-      muiTableBodyCellProps: {
-        sx: {
-          // width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
-        }
-      }
-    },
-    {
-      header: "Progreso",
-      Cell: ({row}) => (
-        <ProgressBar
-          current={row.original.current}
-          initial={row.original.initial}
-          returns={row.original.returns}
-          sold={row.original.totalSales}
-          given={row.original.givenToAuthor}/>
-      )
-    }
+    // {
+    //   header: "País",
+    //   accessorKey: "country",
+    //   // muiTableHeadCellProps: {
+    //   //   sx: {
+    //   //     width: '3%'
+    //   //   }
+    //   // },
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       // width: '3%',
+    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+    //       whiteSpace: "nowrap",
+    //       overflow: "hidden",
+    //       textOverflow: "ellipsis"
+    //     }
+    //   }
+    // },
+    // {
+    //   header: "Progreso",
+    //   Cell: ({row}) => (
+    //     <ProgressBar
+    //       current={row.original.current}
+    //       initial={row.original.initial}
+    //       returns={row.original.returns}
+    //       sold={row.original.totalSales}
+    //       given={row.original.givenToAuthor}/>
+    //   )
+    // }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
@@ -276,6 +278,19 @@ function BookInventory({
     }
   });
 
+  useEffect(() => {
+    if (specificBook) {
+      console.log(specificBook)
+      setData(specificBook.sortedRelevantInventories)
+      setSelectedBook(specificBook.name)
+      setCurrentTotal(specificBook.currentTotal)
+      setInitialTotal(specificBook.initialTotal)
+      setSoldTotal(specificBook.soldTotal)
+      setGivenToAuthorTotal(specificBook.givenToAuthorTotal)
+      setReturnsTotal(specificBook.returnsTotal)
+    }
+  }, [specificBook])
+
   async function getBookInventories() {
     try {
       const response = await fetch(`${baseURL}/admin/inventoriesByBook/${selectedBookId}`, {
@@ -302,9 +317,9 @@ function BookInventory({
     }
   }
 
-  useEffect(() => {
-    getBookInventories();
-  }, []);
+  // useEffect(() => {
+  //   getBookInventories();
+  // }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -363,7 +378,8 @@ function BookInventory({
         setModalType={setModalType}
         openModal={openModal}
         setRetreat={setRetreat}
-        preferredFontSize={preferredFontSize}/>
+        preferredFontSize={preferredFontSize}
+        setSpecificBookOpen={setSpecificBookOpen}/>
       {isModalOpen &&
         <Modal
           modalType={modalType}

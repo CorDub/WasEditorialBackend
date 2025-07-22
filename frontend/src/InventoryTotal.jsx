@@ -27,13 +27,15 @@ function InventoryTotal({
     openModal,
     setRetreat,
     preferredFontSize,
-    setSpecificBookstoreOpen}) {
+    setSpecificBookstoreOpen,
+    setSpecificBookOpen}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [isImpressionsOpen, setImpressionsOpen] = useState(false);
   const [book, setBook] = useState(null);
 
+  console.log(selectedBook);
   // import only the logo you need based on the name
   useEffect(() => {
     import (`./assets/${selectedBookstoreNoSpaces}.png`)
@@ -53,8 +55,9 @@ function InventoryTotal({
 
   function returnToInventoriesAreaDashboard() {
     if (type === "book") {
-      setBookInventoryOpen(false);
-      setRetreat(false);
+      // setBookInventoryOpen(false);
+      // setRetreat(false);
+      setSpecificBookOpen(false);
     } else {
       setSpecificBookstoreOpen(false);
     }

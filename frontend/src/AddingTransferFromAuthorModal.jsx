@@ -10,6 +10,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState('');
   const quantityRef = useRef();
 
   async function handleSubmit(e) {
@@ -63,7 +64,8 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         body: JSON.stringify({
           quantity: quantity,
           id: clickedRow.bookId,
-          note: "- Entrega del autor - " + note
+          note: "- Entrega del autor - " + note,
+          deliveryDate: deliveryDate
         }),
       });
 
@@ -102,6 +104,11 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}>
         </input>
+        <input
+          type="date"
+          placeholder="Fecha"
+          className="global-input transfer-quantity"
+          onChange={(e) => setDeliveryDate(e.target.value)}/>
         <input
           type="text"
           placeholder="Comentario (opcional)"

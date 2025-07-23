@@ -104,7 +104,7 @@ model Inventory {
   bookId        Int
   bookstore     Bookstore  @relation(fields: [bookstoreId], references: [id])
   bookstoreId   Int
-  country       String
+  country       String?
   price         Float?     @default(499.99)
   initial       Int
   current       Int
@@ -117,7 +117,7 @@ model Inventory {
   transfersFrom Transfer[] @relation("TransfersFrom")
   transfersTo   Transfer[] @relation("TransfersTo")
 
-  @@unique([bookId, bookstoreId, country])
+  @@unique([bookId, bookstoreId])
 }
 
 model Sale {

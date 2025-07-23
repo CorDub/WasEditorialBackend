@@ -277,6 +277,13 @@ a {
   margin-top: 1rem;
 }
 
+.centered-entrega {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
 /// Inputs
 
 .global-input {

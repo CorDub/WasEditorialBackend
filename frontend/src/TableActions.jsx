@@ -255,7 +255,7 @@ function TableActions ({
                   onMouseEnter={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}
                   onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
                 {isGivenToAuthorTooltipOpen && (
-                  <div className="ta-tooltip">Entrega a autor</div>)}
+                  <div className="ta-tooltip">Entrega al autor</div>)}
                 <FontAwesomeIcon icon={faPersonArrowDownToLine}
                   className='ta-button ta-receivedFromAuthor'
                   id={`ta-transfer-${row.index}`}

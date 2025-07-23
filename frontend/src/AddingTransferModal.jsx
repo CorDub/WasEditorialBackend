@@ -18,30 +18,30 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
+  // const countries = [
+  //   "México", "Estados Unidos",
+  //   "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+  //   "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
+  //   "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+  //   "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
+  //   "Filipinas", "Finlandia", "Fiyi", "Francia",
+  //   "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
+  //   "Haití", "Honduras", "Hungría",
+  //   "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+  //   "Jamaica", "Japón", "Jordania",
+  //   "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+  //   "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+  //   "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+  //   "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+  //   "Omán",
+  //   "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
+  //   "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+  //   "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+  //   "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+  //   "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+  //   "Yemen",
+  //   "Zambia", "Zimbabue"
+  // ];
 
   useEffect(() => {
     if (clickedRow.bookstoreId === 3) {
@@ -157,10 +157,20 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     if (transferType === "return") {
       soFar[input_index]["name"] = 'Plataforma Was';
       soFar[input_index]["bookstoreId"] = 3;
-      soFar[input_index]["country"] = "México";
+      // soFar[input_index]["country"] = "México";
+      soFar[input_index]["fecha"] = new Date()
     };
 
     setBookstoresToTransfer(soFar);
+  }
+
+  function updateFecha(e, input_index) {
+    let soFar = [...bookstoresToTransfer];
+    if (!soFar[input_index]) {
+      soFar[input_index] = {};
+    }
+
+    soFar[input_index]["fecha"] = e.target.value;
   }
 
   async function handleSubmit(e) {
@@ -208,11 +218,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive",
       maximum: clickedRow.current
     }
-    const expectationsCountry = {
-      type: "string",
-      presence: "not empty",
-      value: countries
-    }
+    // const expectationsCountry = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   value: countries
+    // }
 
     let totalQuantities = 0;
     const quantityElements = document.querySelectorAll('.transfer-quantity');
@@ -235,17 +245,17 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           errorsList.push(errorsBookstore);
         };
 
-        const countryRef = document.getElementById(`country-select-${i}`);
-        const errorsCountry = checkForErrors(
-          "El país",
-          bookstoresToTransfer[i].country,
-          expectationsCountry,
-          countryRef,
-          "o"
-        )
-        if (errorsCountry.length > 0) {
-          errorsList.push(errorsCountry);
-        }
+        // const countryRef = document.getElementById(`country-select-${i}`);
+        // const errorsCountry = checkForErrors(
+        //   "El país",
+        //   bookstoresToTransfer[i].country,
+        //   expectationsCountry,
+        //   countryRef,
+        //   "o"
+        // )
+        // if (errorsCountry.length > 0) {
+        //   errorsList.push(errorsCountry);
+        // }
       };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
@@ -293,7 +303,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             inventoryFromId: clickedRow.id,
             bookId: clickedRow.bookId,
             type: transferType,
-            country: bookstoresToTransfer[i].country
+            deliveryDate: bookstoresToTransfer[i].fecha
+            // country: bookstoresToTransfer[i].country
           }),
         });
 
@@ -315,6 +326,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    console.log(bookstoresToTransfer)
+  }, [bookstoresToTransfer])
 
   return(
     <div className="modal-proper">
@@ -351,7 +366,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                   </option>
                   ))};
               </select>
-              <select
+              {/* <select
                 className="select-transfer"
                 id={`country-select-${index}`}
                 onChange={(e) => dropDownChange(e, index, 'country')}>
@@ -367,7 +382,13 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                       {country}
                     </option>
                 ))}
-              </select>
+              </select> */}
+              <input 
+                type="date" 
+                className="global-input"
+                id={`fecha-${index}`}
+                onChange={(e) => updateFecha(e, index)}>
+              </input>
               <input
                 type='text'
                 placeholder="Cantidad*"

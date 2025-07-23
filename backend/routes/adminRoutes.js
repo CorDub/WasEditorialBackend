@@ -2171,10 +2171,9 @@ router.post('/impression', async (req, res) => {
 
       const wasInventory = await tx.inventory.findUnique({
         where: {
-          bookId_bookstoreId_country: {
+          bookId_bookstoreId: {
             bookId: id,
             bookstoreId: 3,
-            country: "México"
           }
         }
       });
@@ -2304,7 +2303,7 @@ router.post('/transfer', async (req, res) => {
       deliveryDate,
       place,
       person,
-      country
+      // country
     } = req.body;
 
     const dateInDateTime = new Date(deliveryDate);
@@ -2321,10 +2320,10 @@ router.post('/transfer', async (req, res) => {
       // Route 1 : delivered to Author
       if (type === "send" && !bookstoreToId) {
 
-        if (country !== "México") {
-          res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
-          return;
-        }
+        // if (country !== "México") {
+        //   res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
+        //   return;
+        // }
 
         const newTransferToAuthor = await tx.transfer.create({
           data: {
@@ -2355,10 +2354,9 @@ router.post('/transfer', async (req, res) => {
       // Get the inventoryTo if it exists
       let currentInventoryTo = await tx.inventory.findUnique({
         where: {
-          bookId_bookstoreId_country: {
+          bookId_bookstoreId: {
             bookId: parseInt(bookId),
-            bookstoreId: parseInt(bookstoreToId),
-            country: country
+            bookstoreId: parseInt(bookstoreToId)
           },
           isDeleted: false
         }
@@ -2371,10 +2369,9 @@ router.post('/transfer', async (req, res) => {
       if (!currentInventoryTo) {
         const deletedInventoryMaybe = await tx.inventory.findUnique({
           where: {
-            bookId_bookstoreId_country: {
+            bookId_bookstoreId: {
               bookId: parseInt(bookId),
               bookstoreId: parseInt(bookstoreToId),
-              country: country
             },
             isDeleted: true
           }
@@ -2386,7 +2383,6 @@ router.post('/transfer', async (req, res) => {
             data: {
               bookId: parseInt(bookId),
               bookstoreId: parseInt(bookstoreToId),
-              country: country,
               initial: parseInt(quantity),
               current: parseInt(quantity)
             }

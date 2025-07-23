@@ -229,6 +229,19 @@ a {
   }
 }
 
+.campos-obligatorios-new-impressions {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  p {
+    margin: 0;
+    font-style: italic;
+    color: grey
+  }
+  padding: 0 0.5rem 0 0.5rem;
+}
+
 .harddel-checkbox {
   display: flex;
   flex-direction: column;

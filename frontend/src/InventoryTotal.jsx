@@ -32,10 +32,12 @@ function InventoryTotal({
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
+  const [extraImpressions, setExtraImpressions] = useState(0);
   const [isImpressionsOpen, setImpressionsOpen] = useState(false);
   const [book, setBook] = useState(null);
+  const [isAddingImpressionTooltipHovered, setAddingImpressionTooltipHovered] = useState(false);
 
-  console.log(selectedBook);
+  // console.log(impressions);
   // import only the logo you need based on the name
   useEffect(() => {
     import (`./assets/${selectedBookstoreNoSpaces}.png`)
@@ -47,6 +49,14 @@ function InventoryTotal({
     if (selectedBook) {
       setName(selectedBook);
       setType("book");
+      if (impressions && impressions.length > 1) {
+        const extraImpressions = impressions.slice(1);
+        let totalExtraImpressions = 0;
+        for (const impression of extraImpressions) {
+          totalExtraImpressions += impression.quantity
+        }
+        setExtraImpressions(totalExtraImpressions);
+      }
     } else {
       setName(selectedBookstore)
       setType("bookstore");
@@ -94,26 +104,36 @@ function InventoryTotal({
             <div className="adding-impression">
               <FontAwesomeIcon
                 icon={faCirclePlus}
-                onClick={openAddingModal}/>
+                onClick={openAddingModal}
+                onMouseEnter={() => setAddingImpressionTooltipHovered(true)}
+                onMouseLeave={() => setAddingImpressionTooltipHovered(false)}/>
+              {isAddingImpressionTooltipHovered 
+                && (
+                  <div className="tooltip-adding-impression">
+                    Añadir impresión
+                  </div>
+                )}
             </div>
             <div
               className="bookstore-inventory-impressions-info"
               onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
-              Impressiones: {impressions.length}
+              Impresiónes: {impressions.length}
             </div>
           </div>}
-
+        <div className="inventory-total-details">Inicial: {initialTotal}</div>
+        {extraImpressions && extraImpressions > 0 && 
+          (<div className="inventory-total-details">Impresiónes: {extraImpressions}</div>)}
         <div className="inventory-total-details">Vendidos: {soldTotal}</div>
         <div className="inventory-total-details">Devueltos: {returnsTotal}</div>
         <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
         <div className="inventory-total-details">Disponibles: {currentTotal}</div>
-        <div className="bookstore-progress-return">
-          <ProgressBar
+        <div className="bookstore-progress-return">  
+          {/* <ProgressBar
             current={currentTotal}
             initial={initialTotal}
             returns={returnsTotal}
             sold={soldTotal}
-            given={givenToAuthorTotal}/>
+            given={givenToAuthorTotal}/> */}
           <FontAwesomeIcon
             icon={faCircleXmark}
             className="inventory-back-button"

@@ -34,6 +34,9 @@ function InventoriesList() {
   const [isSpecificBookstoreOpen, setSpecificBookstoreOpen] = useState(false);
   const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
   const [isInventoryTypeBook, setInventoryType] = useState(false)
+  const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false});
+
+  console.log(data)
 
   const columns = useMemo(() => [
     // {
@@ -70,6 +73,10 @@ function InventoriesList() {
     {
       header: "Initial",
       accessorKey: "initial",
+    },
+    {
+      header: "Impresiónes",
+      accessorKey: "extraImpressions",
     },
     {
       header: "Vendidos",
@@ -114,7 +121,8 @@ function InventoriesList() {
     },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { pagination, globalFilter },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { pagination, globalFilter, columnVisibility },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -252,8 +260,10 @@ function InventoriesList() {
     setInventoryType(newType);
     if (newType) {
       getBookInventories();
+      setColumnVisibility((prev) => ({...prev, extraImpressions: true}))
     } else {
       getBookstoreInventories();
+      setColumnVisibility((prev) => ({...prev, extraImpressions: false}))
     }
   }
 

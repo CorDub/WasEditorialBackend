@@ -1492,7 +1492,14 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
         id: true,
         book: {
           select: {
-            title: true
+            title: true,
+            impressions: {
+              select: {
+                id: true,
+                quantity: true,
+                isDeleted: true
+              }
+            }
           }
         },
         bookId: true,
@@ -1524,6 +1531,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
     let name = thatBookstoreInventories[0].bookstore.name;
+    let extraImpressionsTotal = 0;
     let id = queryBookstoreId;
     for (const inventory of thatBookstoreInventories) {
       let thisInventorySalesTotal = 0
@@ -1537,7 +1545,25 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
           thisInventorySalesTotal += sale.quantity
         }
       }
-      const inventoryPlusSales = {...inventory, totalSales: thisInventorySalesTotal}
+
+      //Impressions for Plataforma Was inventory
+      let extraImpressions = 0;
+      if (queryBookstoreId === 3) {
+      if (inventory.book.impressions.length > 1) {
+        let extraImpressions = inventory.book.impressions.slice(1)
+          for (const impression of extraImpressions) {
+            if (impression.isDeleted === false) {
+              extraImpressions += impression.quantity
+              extraImpressionsTotal += impression.quantity
+            }
+          }
+        }
+      }
+      const inventoryPlusSales = {
+        ...inventory, 
+        totalSales: thisInventorySalesTotal,
+        extraImpressions: extraImpressions
+      }
       relevantInventories.push(inventoryPlusSales);
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
@@ -1550,6 +1576,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
       returnsTotal,
       givenToAuthorTotal,
       soldTotal,
+      extraImpressionsTotal
     }
 
     res.status(200).json(payload);

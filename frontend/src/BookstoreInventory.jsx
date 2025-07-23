@@ -22,6 +22,7 @@ function BookstoreInventory({
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [impressions, setImpressions] = useState(0);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
@@ -36,12 +37,11 @@ function BookstoreInventory({
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
+  const [columnVisibility, setColumnVisibility] = useState({"impressions": false});
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
   })
-
-  console.log(data)
 
   const columns = useMemo(() => [
     {
@@ -114,6 +114,27 @@ function BookstoreInventory({
         sx: {
           width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+        }
+      }
+    },
+    {
+      id: "impressions",
+      header: "Impresiónes",
+      Cell: ({row}) => {
+        return (<div>{row.original.extraImpressions}</div>)
+      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
+      muiTableBodyCellProps: {
+        sx: {
+          // width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }
       }
     },
@@ -242,7 +263,8 @@ function BookstoreInventory({
     },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { pagination, globalFilter },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { pagination, globalFilter, columnVisibility },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -309,6 +331,11 @@ function BookstoreInventory({
       setSoldTotal(specificBookstore.soldTotal)
       setGivenToAuthorTotal(specificBookstore.givenToAuthorTotal)
       setReturnsTotal(specificBookstore.returnsTotal)
+      setImpressions(specificBookstore.extraImpressionsTotal)
+
+      if (specificBookstore.id === 3) {
+        setColumnVisibility(true)
+      }
     }
   }, [specificBookstore])
 
@@ -331,6 +358,7 @@ function BookstoreInventory({
         setSoldTotal(data.soldTotal);
         setGivenToAuthorTotal(data.givenToAuthorTotal);
         setReturnsTotal(data.returnsTotal);
+        setImpressions(data.extraImpressionsTotal)
       }
 
     } catch (error) {
@@ -399,7 +427,8 @@ function BookstoreInventory({
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
         preferredFontSize={preferredFontSize}
-        setSpecificBookstoreOpen={setSpecificBookstoreOpen}/>
+        setSpecificBookstoreOpen={setSpecificBookstoreOpen}
+        impressions={impressions}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

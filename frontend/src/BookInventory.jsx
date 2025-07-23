@@ -8,7 +8,6 @@ import Modal from "./Modal";
 import ProgressBar from "./ProgressBar";
 
 function BookInventory({
-    selectedBookId,
     isBookInventoryOpen,
     setBookInventoryOpen,
     setRetreat,
@@ -18,6 +17,7 @@ function BookInventory({
   useCheckAdmin()
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [selectedBook, setSelectedBook] = useState("");
+  const [selectedBookId, setSelectedBookId] = useState("");
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
@@ -106,6 +106,46 @@ function BookInventory({
     //   accessorKey: "price",
     //   muiTableBodyCellProps: {
     //     sx: {
+    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+    //       whiteSpace: "nowrap",
+    //       overflow: "hidden",
+    //       textOverflow: "ellipsis"
+    //     }
+    //   }
+    // },
+    {
+      header: "Inicial",
+      Cell: ({row}) => {
+        return (<div>{row.original.initial}</div>)
+      },
+      // muiTableHeadCellProps: {
+      //   sx: {
+      //     width: '3%'
+      //   }
+      // },
+      muiTableBodyCellProps: {
+        sx: {
+          // width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      }
+    },
+    // {
+    //   header: "Impresiónes",
+    //   Cell: ({row}) => {
+    //     return (<div>{row.original.totalSales}</div>)
+    //   },
+    //   // muiTableHeadCellProps: {
+    //   //   sx: {
+    //   //     width: '3%'
+    //   //   }
+    //   // },
+    //   muiTableBodyCellProps: {
+    //     sx: {
+    //       // width: '3%',
     //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
     //       whiteSpace: "nowrap",
     //       overflow: "hidden",
@@ -280,14 +320,16 @@ function BookInventory({
 
   useEffect(() => {
     if (specificBook) {
-      console.log(specificBook)
+      console.log("specificBook", specificBook)
       setData(specificBook.sortedRelevantInventories)
       setSelectedBook(specificBook.name)
+      setSelectedBookId(specificBook.id)
       setCurrentTotal(specificBook.currentTotal)
       setInitialTotal(specificBook.initialTotal)
       setSoldTotal(specificBook.soldTotal)
       setGivenToAuthorTotal(specificBook.givenToAuthorTotal)
       setReturnsTotal(specificBook.returnsTotal)
+      setImpressions(specificBook.thatBookImpressions)
     }
   }, [specificBook])
 
@@ -304,6 +346,8 @@ function BookInventory({
       if (response.ok) {
         const data = await response.json();
         setData(data.sortedRelevantInventories);
+        setSelectedBook(data.name)
+        setSelectedBookId(data.id)
         setCurrentTotal(data.currentTotal);
         setInitialTotal(data.initialTotal);
         setSoldTotal(data.soldTotal);

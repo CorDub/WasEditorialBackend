@@ -1166,7 +1166,14 @@ router.get('/inventoriesByBook', async (req, res) => {
         id: true,
         book: {
           select: {
-            title: true
+            title: true,
+            impressions: {
+              select: {
+                id: true,
+                quantity: true,
+                isDeleted: true
+              }
+            }
           }
         },
         bookId: true,
@@ -1192,8 +1199,38 @@ router.get('/inventoriesByBook', async (req, res) => {
     });
 
     let inventoriesByBook = []
+    let extraImpressionsByBook = [];
     for (const inventory of inventories) {
       let sold = 0;
+
+      //Prepping extraImpressions data
+      function determineExtraImpressions(extraImpressionsByBook) {
+        let extraImpressionsTotal = 0;
+        let extraImpressions = inventory.book.impressions.slice(1)
+        if (extraImpressions.length > 0) {
+          for (const impression of extraImpressions) {
+            extraImpressionsTotal += impression.quantity
+          }
+        }
+
+        extraImpressionsByBook.push({
+          "name": inventory.book.title,
+          "extraImpressions": extraImpressionsTotal
+        })
+      }
+
+      if (extraImpressionsByBook.length === 0) {
+        determineExtraImpressions(extraImpressionsByBook)
+      }
+
+      for (const entry of extraImpressionsByBook) {
+        if (entry.name === inventory.book.title) {
+          continue;
+        }
+      } 
+
+      determineExtraImpressions(extraImpressionsByBook);
+      
       for (const sale of inventory.sales) {
         if (sale.isDeleted === false) {
           sold += sale.quantity
@@ -1236,6 +1273,15 @@ router.get('/inventoriesByBook', async (req, res) => {
           "returns": inventory.returns,
           "givenToAuthor": inventory.givenToAuthor
         })
+      }
+    }
+
+    //Adding the extraImpression data for each book 
+    for (const impression of extraImpressionsByBook) {
+      for (const book of inventoriesByBook) {
+        if (impression.name === book.name) {
+          book.extraImpressions = impression.extraImpressions
+        }
       }
     }
 
@@ -1305,6 +1351,7 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
     let name = thatBookInventories[0].book.title
+    let id = queryBookId;
     for (const inventory of thatBookInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1324,6 +1371,7 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
     const payload = {
       sortedRelevantInventories,
       name,
+      id,
       currentTotal,
       initialTotal,
       returnsTotal,
@@ -1475,7 +1523,8 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
-    let name = thatBookstoreInventories[0].bookstore.name
+    let name = thatBookstoreInventories[0].bookstore.name;
+    let id = queryBookstoreId;
     for (const inventory of thatBookstoreInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1494,6 +1543,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     const payload = {
       name,
+      id,
       sortedRelevantInventories,
       currentTotal,
       initialTotal,

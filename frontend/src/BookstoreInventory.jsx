@@ -41,6 +41,8 @@ function BookstoreInventory({
     pageSize: 30
   })
 
+  console.log(data)
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -98,6 +100,23 @@ function BookstoreInventory({
     //     }
     //   }
     // },
+    {
+      header: "Inicial",
+      Cell: ({row}) => {
+        return (<div>{row.original.initial}</div>)
+      },
+      muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+        }
+      }
+    },
     {
       header: "Vendidos",
       Cell: ({row}) => {

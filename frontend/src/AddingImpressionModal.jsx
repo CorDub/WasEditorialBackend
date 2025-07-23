@@ -86,6 +86,10 @@ function AddingImpressionModal({
       <div className="form-title">
         <p>Nueva impression</p>
       </div>
+      <div className="campos-obligatorios-new-impressions">
+        <p>Nuevas impresiónes se suman a los libros disponibles 
+          en el inventario de la Plataforma Was.</p>
+      </div>
       <form className="global-form">
         <input
           type="text"

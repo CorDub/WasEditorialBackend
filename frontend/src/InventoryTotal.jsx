@@ -37,7 +37,6 @@ function InventoryTotal({
   const [book, setBook] = useState(null);
   const [isAddingImpressionTooltipHovered, setAddingImpressionTooltipHovered] = useState(false);
 
-  // console.log(impressions);
   // import only the logo you need based on the name
   useEffect(() => {
     import (`./assets/${selectedBookstoreNoSpaces}.png`)
@@ -60,6 +59,9 @@ function InventoryTotal({
     } else {
       setName(selectedBookstore)
       setType("bookstore");
+      if (impressions && impressions > 0) {
+        setExtraImpressions(impressions);
+      }
     }
   }, [selectedBookstore, selectedBook])
 
@@ -82,6 +84,8 @@ function InventoryTotal({
     openModal("adding", book);
   };
 
+  console.log(extraImpressions)
+
   return(
     <div className="total-and-impressions"
       style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
@@ -99,8 +103,8 @@ function InventoryTotal({
           </div>
         }
 
-        {impressions &&
-          <div className="bookstore-inventory-total-impressions">
+        {impressions != null && type === "book" &&
+          (<div className="bookstore-inventory-total-impressions">
             <div className="adding-impression">
               <FontAwesomeIcon
                 icon={faCirclePlus}
@@ -119,10 +123,10 @@ function InventoryTotal({
               onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
               Impresiónes: {impressions.length}
             </div>
-          </div>}
+          </div>)}
         <div className="inventory-total-details">Inicial: {initialTotal}</div>
-        {extraImpressions && extraImpressions > 0 && 
-          (<div className="inventory-total-details">Impresiónes: {extraImpressions}</div>)}
+        {extraImpressions > 0 && 
+          <div className="inventory-total-details">Impresiónes: {extraImpressions}</div>}
         <div className="inventory-total-details">Vendidos: {soldTotal}</div>
         <div className="inventory-total-details">Devueltos: {returnsTotal}</div>
         <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>

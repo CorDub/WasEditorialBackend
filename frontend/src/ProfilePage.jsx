@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import ErrorsList from "./ErrorsList";
 import ProfilePageSlider from "./ProfilePageSlider";
 import ProfilePageBankDetails from "./ProfilePageBankDetails";
+import ProfilePageBirthday from "./ProfilePageBirthday";
 
 function ProfilePage() {
   useCheckUser();
@@ -53,7 +54,7 @@ function ProfilePage() {
 
   async function getExtraInfo() {
     try {
-      const response = await fetch(`${baseURL}/api/${user.id}`, {
+      const response = await fetch(`${baseURL}/api/user_extra/${user.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -119,9 +120,17 @@ function ProfilePage() {
             setForceRender={setForceRender}
             setErrors={setErrors}
             preferredFontSize={user.font_size}/>
+          <ProfilePageBirthday
+            value={extraInfo && extraInfo.birthday}
+            preferredFontSize={user.font_size}
+            setAlertMessage={setAlertMessage}
+            setAlertType={setAlertType}
+            forceRender={forceRender}
+            setForceRender={setForceRender}
+            setErrors={setErrors}/>
           <ProfilePageSlider
             icon={faFont}
-            title={"Letras"}
+            title={"Tamaño de las letras"}
             value={user.font_size}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}

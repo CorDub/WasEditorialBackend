@@ -1,10 +1,8 @@
 import dotenv from "dotenv";
 import express from 'express';
-// import redis from 'redis';
 import cors from 'cors';
 import session from 'express-session';
 import userRoutes from './routes/userRoutes.js';
-// import { PrismaClient } from "@prisma/client";
 import { prisma } from "./prisma/client.js"
 import adminRoutes from "./routes/adminRoutes.js";
 import authorRoutes from "./routes/authorRoutes.js";
@@ -14,12 +12,6 @@ import { fileURLToPath } from 'url';
 
 dotenv.config();
 const app = express();
-// export const prisma = new PrismaClient({
-//   log: ['error'],
-// });
-// export const redisClient = redis.createClient();
-// redisClient.on("error", (err) => console.error("Redis Error:", err));
-// redisClient.connect().then(() => console.log("Connected to Redis"));
 
 // Middleware
 

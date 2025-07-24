@@ -184,16 +184,20 @@ function TableActions ({
           </>
         }
 
-        {type && type === "payment" &&
+        {type && type === "payment" && 
             <>
-            <FontAwesomeIcon icon={faCircleCheck}
-              className='ta-button ta-sale'
-              id={`ta-payment-${row.index}`}
-              onClick={markAsPaid}
-              onMouseEnter={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}
-              onMouseLeave={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}/>
-            {isPaymentsTooltipOpen && (
-              <div className="ta-tooltip">Marcar pagado</div>)}
+            {status === "solicited" && (
+              <>
+              <FontAwesomeIcon icon={faCircleCheck}
+                className='ta-button ta-sale'
+                id={`ta-payment-${row.index}`}
+                onClick={markAsPaid}
+                onMouseEnter={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}
+                onMouseLeave={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}/>
+              {isPaymentsTooltipOpen && (
+                <div className="ta-tooltip">Marcar pagado</div>)}
+              </>
+            )}
             {status === "created" && (
               <>
               <FontAwesomeIcon icon={faDollarSign}
@@ -219,7 +223,7 @@ function TableActions ({
             onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
           {isEditTooltipOpen && (
             <div className="ta-tooltip">Editar</div>)}
-          <FontAwesomeIcon
+          {/* <FontAwesomeIcon
             icon={faCircleXmark}
             className="ta-button ta-delete"
             id={`ta-delete-${row.index}`}
@@ -227,15 +231,15 @@ function TableActions ({
             onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
             onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
           {isDeleteTooltipOpen && (
-            <div className="ta-tooltip">Eliminar</div>)}
-          <FontAwesomeIcon icon={faDollarSign}
+            <div className="ta-tooltip">Eliminar</div>)} */}
+          {/* <FontAwesomeIcon icon={faDollarSign}
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
             onClick={addSale}
             onMouseEnter={() => setSaleTooltipOpen(!isSaleTooltipOpen)}
             onMouseLeave={() => setSaleTooltipOpen(!isSaleTooltipOpen)}/>
           {isSaleTooltipOpen && (
-            <div className="ta-tooltip">Añadir venta</div>)}
+            <div className="ta-tooltip">Añadir venta</div>)} */}
           {transferType === "send" ?
             <>
               <FontAwesomeIcon icon={faArrowUp}
@@ -276,7 +280,7 @@ function TableActions ({
                 onMouseEnter={() => setReturnTooltipOpen(!isReturnTooltipOpen)}
                 onMouseLeave={() => setReturnTooltipOpen(!isReturnTooltipOpen)}/>
               {isReturnTooltipOpen && (
-                <div className="ta-tooltip">Registrar devolución</div>)}
+                <div className="ta-tooltip">Devolución</div>)}
             </>
           }
           </>

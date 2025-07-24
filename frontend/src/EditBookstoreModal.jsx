@@ -27,9 +27,9 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     let siono = [];
     for (const poss of possibleComissions) {
       if (poss === true) {
-        siono.push("Sí")
+        siono.push("Comisiónes")
       } else if (poss === false) {
-        siono.push("No")
+        siono.push("Regalias")
       }
     }
 
@@ -141,7 +141,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               onChange={(e) => setDealPercentage(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Comisiones *</label>
+          <label className="modal-form-label">Comisiones o regalias *</label>
           <select className="select-global"
             id="adding-bookstore-comissions"
             onChange={(e) => convertComissionsValue(e)}>

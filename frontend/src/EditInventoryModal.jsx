@@ -13,48 +13,48 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [bookId, setBookId] = useState(clickedRow.bookId);
   const [bookstore, setBookstore] = useState(clickedRow.bookstore.name);
   const [bookstoreId, setBookstoreId] = useState(clickedRow.bookstoreId);
-  const [country, setCountry] = useState(clickedRow.country);
+  // const [country, setCountry] = useState(clickedRow.country);
   const [price, setPrice] = useState(clickedRow.price);
   const [inicial, setInicial] = useState(clickedRow.initial);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  const countryRef = useRef();
+  // const countryRef = useRef();
   const inicialRef = useRef();
   const priceRef = useRef();
-  const [countries, setCountries] = useState([
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ]);
+  // const [countries, setCountries] = useState([
+  //   "México", "Estados Unidos",
+  //   "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+  //   "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
+  //   "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+  //   "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
+  //   "Filipinas", "Finlandia", "Fiyi", "Francia",
+  //   "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
+  //   "Haití", "Honduras", "Hungría",
+  //   "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+  //   "Jamaica", "Japón", "Jordania",
+  //   "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+  //   "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+  //   "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+  //   "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+  //   "Omán",
+  //   "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
+  //   "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+  //   "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+  //   "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+  //   "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+  //   "Yemen",
+  //   "Zambia", "Zimbabue"
+  // ]);
 
-  useEffect(() => {
-    for (let i = 0; i < countries.length; i++) {
-      if (countries[i] === clickedRow.country) {
-        countries.splice(i, 1);
-      } 
-    }
-    countries.splice(0, 0, clickedRow.country);
-    setCountries(countries);
-  }, [clickedRow])
+  // useEffect(() => {
+  //   for (let i = 0; i < countries.length; i++) {
+  //     if (countries[i] === clickedRow.country) {
+  //       countries.splice(i, 1);
+  //     } 
+  //   }
+  //   countries.splice(0, 0, clickedRow.country);
+  //   setCountries(countries);
+  // }, [clickedRow])
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -149,10 +149,10 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         "function": setBookstore,
         "element": bookstoreRef
       },
-      "Country": {
-        "function": setCountry,
-        "element": countryRef
-      }
+      // "Country": {
+      //   "function": setCountry,
+      //   "element": countryRef
+      // }
     }
 
     if (input_index !== undefined) {
@@ -198,12 +198,12 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
       length: 50,
       value: bookstoreNamesList
     };
-    const expectationsPais = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: countries
-    };
+    // const expectationsPais = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   length: 50,
+    //   value: countries
+    // };
     const expectationsInicial = {
       type: "number",
       presence: "not empty",
@@ -217,11 +217,11 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
     // const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, 'a');
-    const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
+    // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsInicial = checkForErrors("La cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef, "a");
     // const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
     const errorsPrice = checkForErrors("El precio", price, expectationsPrice, priceRef, "o");
-    const errorInputs = [errorsBookstore, errorsPais, errorsInicial, errorsPrice];
+    const errorInputs = [errorsBookstore, errorsInicial, errorsPrice];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -256,7 +256,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
           id: clickedRow.id,
           book: bookId,
           bookstore: bookstoreId,
-          country: country,
+          // country: country,
           inicial: parseInt(inicial),
           price: parseFloat(price)
         }),
@@ -285,7 +285,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar inventario</p>
-        <p className="form-subtitle">{clickedRow.book.title} de {clickedRow.bookstore.name} en {clickedRow.country}</p>
+        <p className="form-subtitle">{clickedRow.book.title} de {clickedRow.bookstore.name}</p>
       </div>
       <div className="campos-obligatorios">
         <p>*Campos obligatorios</p>
@@ -300,7 +300,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
             ))}
           </select>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">País *</label>
           <select onChange={(e) => dropDownChange(e, "Country")}
             className="select-global" ref={countryRef}>
@@ -308,9 +308,9 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
               <option key={index} value={country}>{country}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="modal-form-line">
-          <label className="modal-form-label">Total del inventario *</label>
+          <label className="modal-form-label">Inventario inicial *</label>
           <input type="text" placeholder="Cantidad inicial de libros"
             className="global-input" value={inicial}
             ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>

@@ -6,11 +6,10 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
-import ProgressBar from "./ProgressBar";
+// import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({
     selectedBookstoreNoSpaces,
-    selectedBookstoreId,
     selectedLogo,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
@@ -22,6 +21,7 @@ function BookstoreInventory({
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreId, setSelectedBookstoreId] = useState(0);
   const [impressions, setImpressions] = useState(0);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
@@ -37,7 +37,9 @@ function BookstoreInventory({
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
-  const [columnVisibility, setColumnVisibility] = useState({"impressions": false});
+  const [columnVisibility, setColumnVisibility] = useState({
+    "impressions": false, 
+    "entregasAlAutor": false});
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
@@ -119,7 +121,7 @@ function BookstoreInventory({
     },
     {
       id: "impressions",
-      header: "Impresiónes",
+      header: "Nuevas impresiónes",
       Cell: ({row}) => {
         return (<div>{row.original.extraImpressions}</div>)
       },
@@ -135,23 +137,6 @@ function BookstoreInventory({
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis"
-        }
-      }
-    },
-    {
-      header: "Vendidos",
-      Cell: ({row}) => {
-        return (<div>{row.original.totalSales}</div>)
-      },
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
         }
       }
     },
@@ -173,6 +158,24 @@ function BookstoreInventory({
       }
     },
     {
+      header: "Vendidos",
+      Cell: ({row}) => {
+        return (<div>{row.original.totalSales}</div>)
+      },
+      muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          width: '3%',
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+        }
+      }
+    },
+    {
+      id: "entregasAlAutor",
       header: "Entregados al autor",
       Cell: ({row}) => (
         <div>{row.original.givenToAuthor}</div>
@@ -325,6 +328,7 @@ function BookstoreInventory({
     if (specificBookstore) {
       console.log(specificBookstore)
       setData(specificBookstore.sortedRelevantInventories)
+      setSelectedBookstoreId(specificBookstore.id)
       setSelectedBookstore(specificBookstore.name)
       setCurrentTotal(specificBookstore.currentTotal)
       setInitialTotal(specificBookstore.initialTotal)
@@ -334,14 +338,25 @@ function BookstoreInventory({
       setImpressions(specificBookstore.extraImpressionsTotal)
 
       if (specificBookstore.id === 3) {
-        setColumnVisibility(true)
+        setColumnVisibility(
+          {
+            'impressions': true,
+            'entregasAlAutor': true
+          })
+      } else {
+        setColumnVisibility(
+          {
+            'impressions': false,
+            'entregasAlAutor': false
+          }
+        )
       }
     }
   }, [specificBookstore])
 
   async function getBookstoreInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoriesByBookstore`, {
+      const response = await fetch(`${baseURL}/admin/inventoriesByBookstore/${selectedBookstoreId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -352,6 +367,7 @@ function BookstoreInventory({
       if (response.ok) {
         const data = await response.json();
         setData(data.sortedRelevantInventories);
+        setSelectedBookstoreId(data.id)
         setSelectedBookstore(data.name)
         setCurrentTotal(data.currentTotal);
         setInitialTotal(data.initialTotal);
@@ -401,6 +417,7 @@ function BookstoreInventory({
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
+      console.log("reload demand went through")
       getBookstoreInventories();
       setForceRender(!forceRender);
     }
@@ -409,6 +426,10 @@ function BookstoreInventory({
       setAlertType(alertType);
     }
   }
+
+  useEffect(() => {
+    console.log(data)
+  }, [data])
 
   return (
     <div

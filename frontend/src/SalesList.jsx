@@ -45,17 +45,17 @@ function SalesList () {
       header: "Cantidad",
       accessorKey: "quantity"
     },
-    {
-      header: "Ingresos",
-      Cell: ({row}) => {
-        const number = row.original.quantity * row.original.inventory.price
-        return (
-          <div>
-            {"$ " + number.toLocaleString()}
-          </div>
-        )
-      }
-    },
+    // {
+    //   header: "Ingresos",
+    //   Cell: ({row}) => {
+    //     const number = row.original.quantity * row.original.inventory.price
+    //     return (
+    //       <div>
+    //         {"$ " + number.toLocaleString()}
+    //       </div>
+    //     )
+    //   }
+    // },
     // {
     //   header: "Ganancia de Was",
     //   Cell: ({row}) => {

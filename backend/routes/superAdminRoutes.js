@@ -82,7 +82,12 @@ router.patch('/admin', async (req, res) => {
       lastName,
       email,
       role} = req.body;
-    const admin = await prisma.user.findUnique({where: {email: email}})
+    const admin = await prisma.user.findUnique({where: {
+      first_name_last_name: {
+        first_name: firstName,
+        last_name: lastName
+      }
+    }})
     const updatedAdmin = await prisma.user.update({
       where: {id: admin.id},
       data: {

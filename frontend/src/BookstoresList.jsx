@@ -46,12 +46,12 @@ function BookstoresList() {
       accessorKey: "name"
     },
     {
-      header: "Acuerdo",
+      header: "% Comisión de la librería",
       accessorKey: "deal_percentage",
       Cell: ({ row }) => row.original.deal_percentage != null ? `${row.original.deal_percentage}%` : ""
     },
     {
-      header: "Comisiones",
+      header: "Comisiones o regalias",
       accessorKey: "comissions",
       Cell: ({row}) => row.original.comissions ? "Comisiones" : "Regalías"
     },

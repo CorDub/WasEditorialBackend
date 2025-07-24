@@ -12,36 +12,36 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const [errors, setErrors] = useState([]);
   const [book, setBook] = useState("");
   const [bookstore, setBookstore] = useState("");
-  const [country, setCountry] = useState("");
+  // const [country, setCountry] = useState("");
   const [quantity, setQuantity] = useState(0);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  const countryRef = useRef();
+  // const countryRef = useRef();
   const quantityRef = useRef();
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
+  // const countries = [
+  //   "México", "Estados Unidos",
+  //   "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+  //   "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
+  //   "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+  //   "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
+  //   "Filipinas", "Finlandia", "Fiyi", "Francia",
+  //   "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
+  //   "Haití", "Honduras", "Hungría",
+  //   "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+  //   "Jamaica", "Japón", "Jordania",
+  //   "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+  //   "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+  //   "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+  //   "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+  //   "Omán",
+  //   "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
+  //   "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+  //   "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+  //   "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+  //   "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+  //   "Yemen",
+  //   "Zambia", "Zimbabue"
+  // ];
 
   async function fetchInventories() {
     try {
@@ -123,10 +123,10 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         "function": setBookstore,
         "element": bookstoreRef
       },
-      "Country": {
-        "function": setCountry,
-        "element": countryRef
-      }
+      // "Country": {
+      //   "function": setCountry,
+      //   "element": countryRef
+      // }
     }
 
     if (input_index !== undefined) {
@@ -180,12 +180,12 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       // length: 50,
       value: existingBookstoreIds
     };
-    const expectationsPais = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: countries
-    };
+    // const expectationsPais = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   length: 50,
+    //   value: countries
+    // };
     const expectationsCantidad = {
       type: "number",
       presence: "not empty",
@@ -194,7 +194,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
     let errorsBook;
     let errorsBookstore;
-    let errorsPais;
+    // let errorsPais;
     let errorsQuantity;
     let errorInputs;
 
@@ -204,9 +204,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     } else {
       errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
       errorsBookstore = checkForErrors("La librería", parseInt(bookstore) , expectationsBookstore, bookstoreRef, "a");
-      errorsPais = checkForErrors("El país", country, expectationsPais, countryRef, "o");
+      // errorsPais = checkForErrors("El país", country, expectationsPais, countryRef, "o");
       errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-      errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
+      errorInputs = [errorsBook, errorsBookstore, errorsQuantity];
     }
 
     console.log("errorInputs", errorInputs);
@@ -245,7 +245,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         body: JSON.stringify({
           book: parseInt(book),
           bookstore: parseInt(bookstore),
-          country: country,
+          // country: country,
           quantity: quantity
         }),
       });
@@ -273,7 +273,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     if (clickedRow) {
       setBook(clickedRow.bookId);
       setBookstore(clickedRow.bookstoreId);
-      setCountry(clickedRow.country);
+      // setCountry(clickedRow.country);
     }
   }, [clickedRow])
 
@@ -303,13 +303,13 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                <option key={index} value={bookstore.id}>{bookstore.name}</option>
              ))}
            </select>
-           <select onChange={(e) => dropDownChange(e, "Country")}
+           {/* <select onChange={(e) => dropDownChange(e, "Country")}
              className="select-global" ref={countryRef}>
              <option value="null">Selecciona pais*</option>
              {countries && countries.map((country, index) => (
                <option key={index} value={country}>{country}</option>
              ))}
-           </select>
+           </select> */}
          </>
         }
         <input type="text" placeholder="Cantidad vendida*" className="global-input"

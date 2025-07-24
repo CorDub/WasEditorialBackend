@@ -338,7 +338,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               })}
             </select>
             <div className="additional-authors-buttons">
-              <Tooltip message={tooltipMessage} x={x} y={y}/>
+              {/* <Tooltip message={tooltipMessage} x={x} y={y}/> */}
               <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
                 id={`plus-icon-${index}`}
                 onMouseEnter={() => toggleTooltip(
@@ -350,10 +350,10 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
                 className="button-icon"/>
               {authors.length > 1 &&
                 <>
-                  <Tooltip
+                  {/* <Tooltip
                     message={tooltipMessage}
                     x={x}
-                    y={y}/>
+                    y={y}/> */}
                   <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
                     id={`cross-icon-${index}`}
                     onMouseEnter={() => toggleTooltip(

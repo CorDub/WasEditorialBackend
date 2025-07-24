@@ -3,12 +3,12 @@ import formatNumber from "./customHooks/formatNumber";
 import { useEffect, useState } from "react";
 import TableCostsDetails from "./TableCostsDetails";
 
-function TableCosts({costs}) {
-    const [totalCosts, setTotalCosts] = useState(0);
+function TableCosts({costs, totalCosts, setTotalCosts}) {
     const [isTotalCostsDetailsOpen, setTotalCostsDetailsOpen] = useState(false);
     
     useEffect(() => {
         let totalCosts = 0;
+        console.log("costs", costs);
         costs.map(cost => totalCosts += cost.amount);
         setTotalCosts(totalCosts);
     }, [costs])

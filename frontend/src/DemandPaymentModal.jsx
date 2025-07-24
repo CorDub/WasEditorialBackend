@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useState, useContext, useRef } from "react";
 import "./DemandPaymentModal.scss";
+import UserContext from "./UserContext";
+import { useEffect } from "react";
+import checkForErrors from "./customHooks/checkForErrors";
+import ErrorsList from "./ErrorsList";
 
 function DemandPaymentModal({closeModal, paymentInfo}) {
   const [uso, setUso] = useState("");
@@ -38,7 +42,17 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   const [errorFactura, setErrorFactura] = useState("");
   const [errorConstancia, setErrorConstancia] = useState("");
   const [errorUso, setErrorUso] = useState("");
+  const [correo, setCorreo] = useState("");
   const baseURL = import.meta.env.VITE_API_URL || '';
+  const { user } = useContext(UserContext)
+  const emailRef = useRef();
+  const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    if (user.email) {
+      setCorreo(user.email)
+    }
+  }, [user])
 
   function checkFile(e, type) {
     const file = e.target.files[0];
@@ -82,6 +96,11 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   }
 
   async function sendInvoice() {
+    const errors = checkEmailInput();
+    if (errors.length > 0) {
+      return;
+    } 
+
     if (!factura || !constancia || !uso) {
       if (!factura) {
         setErrorFactura("Factura faltante");
@@ -92,7 +111,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       if (!uso) {
         setErrorUso("Uso de CFDI faltante");
       }
-      return
+      return;
     }
 
     try {
@@ -103,6 +122,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("monthOriginal", paymentInfo.monthOriginal);
       formData.append("amount", paymentInfo.amount);
       formData.append("uso", uso);
+      formData.append("correo", correo);
 
       const response = await fetch(`${baseURL}/author/sendInvoice`, {
         method: "POST",
@@ -117,6 +137,56 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
         const alertMessage = 'No se pudó mandar la factura.';
         closeModal(false, alertMessage, "error");
       }
+
+    } catch(error) {
+      console.log(error)
+    }
+
+    try {
+      if (correo !== user.email) {
+        updateEmail()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function checkEmailInput() {
+    const errorsList = [];
+    const expectationsEmail = {
+      type: "string",
+      presence: "not empty",
+      validity: "email valid"
+    }
+
+    const errorsEmail = checkForErrors(
+      "El correo", 
+      correo, 
+      expectationsEmail,
+      emailRef,
+      "o");
+    
+    if (errorsEmail.length > 0) {
+      errorsList.push(errorsEmail);
+      setErrors(errorsList);
+      return
+    } 
+
+    return errorsEmail;
+  }
+
+  async function updateEmail() {
+    try {
+      const response = await fetch(`${baseURL}/api/user`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          "email": correo
+        })
+      });
 
     } catch(error) {
       console.log(error)
@@ -153,7 +223,17 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
           </select>
           <div className="modal-form-error">{errorUso}</div>
         </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Confirme su correo</label>
+          <input className="global-input dempay-title"
+            value={correo}
+            ref = {emailRef}
+            onChange={(e) => setCorreo(e.target.value)}>
+          </input>
+          <div className="modal-form-error">{errorUso}</div>
+        </div>
       </div>
+      <ErrorsList errors={errors} setErrors={setErrors}/>
       <div className="modal-actions">
         <button className='blue-button modal-button'
           onClick={() => closeModal(false)}>Cancelar</button>

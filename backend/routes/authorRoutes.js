@@ -1574,9 +1574,9 @@ router.post("/sendInvoice", upload.fields([
     });
     const factura = req.files.factura[0];
     const constancia = req.files.constancia[0]
-    const { month, monthOriginal, amount, uso } = req.body;
+    const { month, monthOriginal, amount, uso, correo } = req.body;
     const name = user.first_name + " " + user.last_name;
-    sendEmailWithInvoice(name, month, amount, uso, factura, constancia);
+    sendEmailWithInvoice(name, month, amount, uso, factura, constancia, correo);
 
     const updatedPayment = await prisma.payment.update({
       where: {

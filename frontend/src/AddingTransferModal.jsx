@@ -346,11 +346,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         {transferType === "send" ? (
           <>
           {bookstoresToTransfer.map((bookstore, index) => (
-            <div
+            <div 
               key={index}
-              className="transfer-dropdown">
+              className="centered-entrega">
               <select
-                className="select-transfer"
+                className="global-input"
                 id={`bookstore-select-${index}`}
                 onChange={(e) => dropDownChange(e, index, 'bookstore')}>
                 <option
@@ -396,7 +396,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 id={`quantity-select-${index}`}
                 onChange={(e) => updateQuantity(e, index)}>
               </input>
-              <div className="additional-transfer-buttons">
+              {/* <div className="additional-transfer-buttons">
               <Tooltip message={tooltipMessage} x={x} y={y}/>
               <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
                 id={`plus-icon-${index}`}
@@ -423,7 +423,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                       `cross-icon-${index}`)}
                     className="button-icon transfer"/>
                 </>}
-              </div>
+              </div> */}
             </div>
           ))}</>)
           :

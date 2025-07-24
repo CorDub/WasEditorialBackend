@@ -1515,7 +1515,9 @@ router.get("/payments", async (req, res) => {
         if (!existing) {
           allPayments.splice(i, 0, {
             forMonth: ltmStrings[i],
-            status: "created"
+            status: "created",
+            sales: [],
+            costs: []
           });
         }
       };
@@ -1545,7 +1547,7 @@ router.get("/payments", async (req, res) => {
         }
       }
 
-      if (payment.costs.length === 0) {
+      if (payment.costs.length > 0) {
         for (const cost of payment.costs) {
           payment.amount -= cost.amount
         }

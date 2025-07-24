@@ -78,13 +78,14 @@ router.get('/user_extra/:id', async (req, res) => {
       res.status(204).json("No user found");
     } else {
       const user_send = {
-        email: user.email,
-        phone: user.phone,
-        font_size: user.font_size,
-        clabe: user.clabe,
-        name_bank_account: user.name_bank_account,
-        bank: user.bank,
-        swift: user.swift
+        "email": user.email,
+        "phone": user.phone,
+        "birthday": user.birthday,
+        "font_size": user.font_size,
+        "clabe": user.clabe,
+        "name_bank_account": user.name_bank_account,
+        "bank": user.bank,
+        "swift": user.swift
       }
       res.status(200).json(user_send);
     }

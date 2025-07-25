@@ -103,7 +103,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           <button
             type='button'
             onClick={handleSubmit}
-            className="blue-button">Añadir</button>
+            className="blue-button">Editar</button>
         </div>
       </form>
       </div>

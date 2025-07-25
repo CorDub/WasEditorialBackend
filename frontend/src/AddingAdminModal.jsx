@@ -58,16 +58,19 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     const Expectations = {
       type: "string",
       presence: "not empty",
-      length: 50
     };
     const roleExpectations = {
       presence: "not empty",
       value: ["superadmin", "admin", "author"]
     }
+    const emailExpectations = {
+      type: "string",
+      validity: "email valid"
+    }
 
     const errorsFirstName = checkForErrors("El nombre", firstName, Expectations, firstNameRef, "o");
     const errorsLastName = checkForErrors("El apellido", lastName, Expectations, lastNameRef, "o");
-    const errorsEmail = checkForErrors("El correo", email, Expectations, emailRef, "o");
+    const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o");
     const errorsRole = checkForErrors("El rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
@@ -156,7 +159,6 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <option value="null">Selecciona rol*</option>
           <option value="superadmin">Superadmin</option>
           <option value="admin">Admin</option>
-          <option value="author">Usuario</option>
         </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

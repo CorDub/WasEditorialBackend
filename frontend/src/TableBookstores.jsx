@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import TableBookstoresRow from "./TableBookstoresRow";
 import formatNumber from "./customHooks/formatNumber";
 import "./TableBookstores.scss";
+import TableCosts from "./TableCosts";
 
 function TableBookstores({salesByPayments, activeMonth}) {
   const [monthlySalesData, setMonthlySalesData] = useState([])
+  const [costs, setCosts] = useState([])
+  const [totalCosts, setTotalCosts] = useState(0)
 
   useEffect(() => {
     if (salesByPayments.length > 0 && Number.isInteger(activeMonth)) {
       setMonthlySalesData(salesByPayments[activeMonth].sales)
+      setCosts(salesByPayments[activeMonth].costs)
     }
   }, [salesByPayments, activeMonth])
 
@@ -37,6 +41,11 @@ function TableBookstores({salesByPayments, activeMonth}) {
           key={index} 
           monthlySalesData={monthlySalesData} />
       ))}
+      {costs && costs.length > 0 &&
+        <TableCosts 
+          costs={costs} 
+          totalCosts={totalCosts}
+          setTotalCosts={setTotalCosts}/>}
       {monthlySalesData && monthlySalesData.length > 0 && (
         <div className="table-total">
           <div className="tbr-first tbr-title">Total</div>
@@ -52,7 +61,7 @@ function TableBookstores({salesByPayments, activeMonth}) {
           <div className="tbr-name">
             {salesByPayments.length > 0 
             && Number.isInteger(activeMonth) 
-            && formatNumber(salesByPayments[activeMonth].totalValue)}
+            && formatNumber(salesByPayments[activeMonth].totalValue - totalCosts)}
           </div>
         </div>
       )}

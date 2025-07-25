@@ -67,7 +67,7 @@ function PaymentsList() {
       accessorKey: "user.first_name"
     },
     {
-      header: "Periodo",
+      header: "Mes",
       accessorKey: "forMonth"
     }
   ], [chosenPaymentStatus]);
@@ -199,7 +199,7 @@ function PaymentsList() {
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"payments"}/>
       <div className="payment-type-choice">
-        <label className="payment-type-label">Pagos seleccionados</label>
+        {/* <label className="payment-type-label">Pagos seleccionados</label> */}
         <select className="select-global select-payments"
           onChange={(e) => setChosenPaymentStatus(e.target.value)}>
           <option value="solicited">

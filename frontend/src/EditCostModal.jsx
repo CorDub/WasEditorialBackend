@@ -109,7 +109,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                     <button type="button" 
                         className='blue-button'
                         onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
-                    <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
+                    <button type='button' onClick={handleSubmit} className="blue-button">Editar</button>
                 </div>
             </form>
         </div>

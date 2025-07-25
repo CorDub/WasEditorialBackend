@@ -92,7 +92,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       } else {
         const data = await response.json();
         const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña se ha sido enviado por correo.`;
+        Su contraseña se le ha sido enviado por correo.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -185,6 +185,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     }
     const emailExpectations = {
       type: "string",
+      presence: "not empty",
       validity: "email valid"
     }
     const referidoExpectations = {
@@ -207,6 +208,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     }
     const phoneExpectations = {
       type: "number",
+      presence: "not empty",
       validity: "phone valid"
     }
     const categoryExpectations = {
@@ -305,11 +307,11 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           className="global-input" id="adding-author-referido"
           ref={referidoRef}
           onChange={(e) => setReferido(e.target.value)}></input>
-        <input type='text' placeholder="Correo"
+        <input type='text' placeholder="Correo*"
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>
-        <input type='text' placeholder="Teléfono"
+        <input type='text' placeholder="Teléfono*"
           className="global-input" id="adding-author-teléfono"
           ref={phoneRef}
           onChange={(e) => setPhone(e.target.value)}></input>

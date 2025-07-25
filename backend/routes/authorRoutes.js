@@ -839,6 +839,14 @@ router.get('/monthlySalesByPayments', async (req, res) => {
               }
             }
           }
+        },
+        costs: {
+          select: {
+            id: true,
+            amount: true,
+            note: true,
+            isDeleted: true
+          }
         }
       },
       orderBy: {
@@ -852,7 +860,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
         "forMonth": payment.forMonth, 
         "sales": [], 
         "totalQuantity": 0, 
-        "totalValue": 0
+        "totalValue": 0,
+        "costs": []
       }
 
       for (const sale of payment.sales) {
@@ -974,6 +983,13 @@ router.get('/monthlySalesByPayments', async (req, res) => {
               * (sale.inventory.bookstore.deal_percentage / 100))
       }
 
+      //Now we're adding the costs 
+      for (const cost of payment.costs) {
+        if (cost.isDeleted === false) {
+          paymentSales.costs.push({"amount": cost.amount, "note": cost.note})
+        }
+      }
+
       monthlySales.push(paymentSales);
     }
     // console.log("monthlySales", monthlySales);
@@ -1002,7 +1018,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
 
       for (let i = 0; i < 13; i++) {
         if (!monthlySales[i] || monthlySales[i].forMonth !== currentMonth) {
-          monthlySales.splice(i, 0, {"forMonth": currentMonth, "sales": []});
+          monthlySales.splice(i, 0, {"forMonth": currentMonth, "sales": [], "costs": []});
           decrementMonth()
         } else {
           decrementMonth()

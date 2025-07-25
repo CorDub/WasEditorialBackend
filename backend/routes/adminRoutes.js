@@ -1627,7 +1627,7 @@ router.patch('/inventory', async (req, res) => {
       id,
       book,
       bookstore,
-      country,
+      // country,
       inicial,
       price
     } = req.body;
@@ -1642,7 +1642,7 @@ router.patch('/inventory', async (req, res) => {
         data: {
           bookId: book,
           bookstoreId: bookstore,
-          country: country,
+          // country: country,
           initial: inicial,
           price: price
         }
@@ -1664,7 +1664,7 @@ router.patch('/inventory', async (req, res) => {
       if (updatedInventory) {
         res.status(200).json({message: "Successfully updated inventory"});
       } else {
-        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`)"))) {
           res.status(500).json({message: "Este inventario ya existe"})
           return;
         }
@@ -1742,7 +1742,7 @@ router.get('/sales', async (req, res) => {
     });
 
     sales.map((sale) => {
-      sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name + ", " + sale.inventory.country
+      sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name
       sale.createdAt = sale.createdAt.toLocaleString();
       sale.updatedAt = sale.updatedAt.toLocaleString();
     })
@@ -1759,7 +1759,7 @@ router.post('/sale', async (req, res) => {
     const {
       book,
       bookstore,
-      country,
+      // country,
       quantity
     } = req.body;
 
@@ -1767,10 +1767,10 @@ router.post('/sale', async (req, res) => {
     await prisma.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({
         where : {
-          bookId_bookstoreId_country: {
+          bookId_bookstoreId: {
             bookId : book,
             bookstoreId: bookstore,
-            country: country
+            // country: country
           }
         },
         include: {
@@ -1893,16 +1893,16 @@ router.patch('/sale', async (req, res) => {
       id,
       book,
       bookstore,
-      country,
+      // country,
       quantity
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({where : {
-        bookId_bookstoreId_country: {
+        bookId_bookstoreId: {
           bookId : book,
           bookstoreId: bookstore,
-          country: country
+          // country: country
         }}});
 
       if (!selectedInventory) {
@@ -2033,7 +2033,7 @@ router.patch('/sale', async (req, res) => {
 
         res.status(200).json({message: "Successfully updated sale"});
       } else {
-        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`,`country`)"))) {
+        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`)"))) {
           res.status(500).json({message: "Este inventario ya existe"})
           return;
         }
@@ -2213,10 +2213,9 @@ router.delete('/impression/:id', async (req, res) => {
 
       const wasInventory = await tx.inventory.findUnique({
         where: {
-          bookId_bookstoreId_country: {
+          bookId_bookstoreId: {
             bookId: book_id,
-            bookstoreId: 3,
-            country: "México"
+            bookstoreId: 3
           }
         }
       });
@@ -2260,10 +2259,9 @@ router.patch('/impression', async (req, res) => {
 
       const wasInventory = await tx.inventory.findUnique({
         where: {
-          bookId_bookstoreId_country: {
+          bookId_bookstoreId: {
             bookId: book_id,
-            bookstoreId: 3,
-            country: "México"
+            bookstoreId: 3
           }
         }
       });

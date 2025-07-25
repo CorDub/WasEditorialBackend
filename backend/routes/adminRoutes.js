@@ -1493,13 +1493,6 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
         book: {
           select: {
             title: true,
-            impressions: {
-              select: {
-                id: true,
-                quantity: true,
-                isDeleted: true
-              }
-            }
           }
         },
         bookId: true,
@@ -1547,23 +1540,39 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
       }
 
       //Impressions for Plataforma Was inventory
-      let extraImpressions = 0;
+      let extraImpressionsOutside = 0;
       if (queryBookstoreId === 3) {
-      if (inventory.book.impressions.length > 1) {
-        let extraImpressions = inventory.book.impressions.slice(1)
+        const thatBookImpressions = await prisma.impression.findMany({
+          where: {
+            bookId: inventory.bookId,
+            isDeleted: false
+          },
+          select: {
+            id: true,
+            quantity: true
+          },
+          orderBy: {
+            createdAt: "asc"
+          }
+        })
+
+        if (thatBookImpressions.length > 1) {
+          let extraImpressions = thatBookImpressions.slice(1)
           for (const impression of extraImpressions) {
-            if (impression.isDeleted === false) {
-              extraImpressions += impression.quantity
-              extraImpressionsTotal += impression.quantity
-            }
+            extraImpressionsOutside += impression.quantity
+            extraImpressionsTotal += impression.quantity
           }
         }
       }
+      console.log("");
+      console.log("extraImpressionsOutside", extraImpressionsOutside)
+      console.log("extraImpressionsTotal", extraImpressionsTotal)
       const inventoryPlusSales = {
         ...inventory, 
         totalSales: thisInventorySalesTotal,
-        extraImpressions: extraImpressions
+        extraImpressions: extraImpressionsOutside
       }
+      console.log("inventoryPlusSales", inventoryPlusSales)
       relevantInventories.push(inventoryPlusSales);
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
@@ -2183,7 +2192,7 @@ router.post('/impression', async (req, res) => {
           where: {id: wasInventory.id},
           data: {
             current: wasInventory.current + quantity,
-            initial: wasInventory.initial + quantity
+            // initial: wasInventory.initial + quantity
           }
         })
       };

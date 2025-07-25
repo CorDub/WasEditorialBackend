@@ -125,18 +125,15 @@ function BookstoreInventory({
       Cell: ({row}) => {
         return (<div>{row.original.extraImpressions}</div>)
       },
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
+       muiTableHeadCellProps: {
+        sx: {
+          width: '3%'
+        }
+      },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
+          width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
         }
       }
     },

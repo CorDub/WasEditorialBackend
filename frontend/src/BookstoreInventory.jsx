@@ -192,7 +192,9 @@ function BookstoreInventory({
     {
       header: "Disponibles",
       Cell: ({row}) => (
-        <div>{row.original.current - row.original.returns}</div>
+        <div>{selectedBookstoreId === 3 
+          ? row.original.current + row.original.returns
+          : row.original.current - row.original.returns}</div>
       ),
       muiTableHeadCellProps: {
         sx: {
@@ -414,7 +416,6 @@ function BookstoreInventory({
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      console.log("reload demand went through")
       getBookstoreInventories();
       setForceRender(!forceRender);
     }

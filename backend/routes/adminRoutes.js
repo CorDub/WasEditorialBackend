@@ -2463,7 +2463,7 @@ router.post('/transfer', async (req, res) => {
               where: {id: currentInventoryTo.id},
               data: {
                 current: currentInventoryTo.current + parseInt(quantity),
-                initial: currentInventoryTo.initial + parseInt(quantity),
+                returns: currentInventoryTo.returns + parseInt(quantity),
               }
             });
           }

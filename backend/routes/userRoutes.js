@@ -66,9 +66,9 @@ router.get('/user', async (req, res) => {
   }
 })
 
-router.get('/user_extra/:id', async (req, res) => {
+router.get('/user_extra', async (req, res) => {
   try {
-    const user_id = parseInt(req.params.id);
+    const user_id = req.session.user_id;
     const user = await prisma.user.findUnique({where: {
       id: user_id,
       isDeleted: false

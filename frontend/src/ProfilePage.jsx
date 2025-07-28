@@ -54,7 +54,7 @@ function ProfilePage() {
 
   async function getExtraInfo() {
     try {
-      const response = await fetch(`${baseURL}/api/user_extra/${user.id}`, {
+      const response = await fetch(`${baseURL}/api/user_extra`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -64,7 +64,6 @@ function ProfilePage() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setExtraInfo(data);
       }
     } catch(error) {

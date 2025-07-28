@@ -128,9 +128,6 @@ function AuthorCommissions() {
     }
   }
 
-  // console.log("payments", payments)
-  // console.log(dataByMonths)
-
   useEffect(() => {
     fetchPayments();
   }, [forceRender])
@@ -144,13 +141,19 @@ function AuthorCommissions() {
         status: "solicited"
         }));
       // console.log("solicited");
-      setForceRender(true);
+      // setForceRender(true);
+      setDemandPaymentPossible("solicited")
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
       setAlertType(alertType);
     }
   }
+
+  useEffect(() => {
+    console.log(forceRender)
+    console.log(isDemandPaymentPossible)
+  }, [forceRender])
 
   async function fetchSalesByPayments() {
     try {

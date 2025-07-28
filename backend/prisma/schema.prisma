@@ -160,16 +160,17 @@ model Transfer {
 }
 
 model Payment {
-  id        Int           @id @default(autoincrement())
-  user      User          @relation(fields: [userId], references: [id])
-  userId    Int
-  costs     Cost[]
-  sales     Sale[]
-  forMonth  String
-  status    PaymentStatus @default(created)
-  isDeleted Boolean       @default(false)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id               Int           @id @default(autoincrement())
+  user             User          @relation(fields: [userId], references: [id])
+  userId           Int
+  costs            Cost[]
+  sales            Sale[]
+  forMonth         String
+  dateMarkedAsPaid DateTime?
+  status           PaymentStatus @default(created)
+  isDeleted        Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   @@unique([userId, forMonth])
 }

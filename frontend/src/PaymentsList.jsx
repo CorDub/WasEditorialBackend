@@ -29,6 +29,9 @@ function PaymentsList() {
     pageIndex: 0,
     pageSize: 30
   });
+  const [columnVisibility, setColumnVisibility] = useState({
+    "dateMarkedAsPaid": false
+  })
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -69,6 +72,17 @@ function PaymentsList() {
     {
       header: "Mes",
       accessorKey: "forMonth"
+    },
+    {
+      header: "Fecha de pago",
+      accessorKey: "dateMarkedAsPaid",
+      Cell: ({row}) => {
+        return (
+          <div>
+            {row.original.dateMarkedAsPaid && row.original.dateMarkedAsPaid.substring(0,10)}
+          </div>
+        )
+      }
     }
   ], [chosenPaymentStatus]);
   const table = useMaterialReactTable({
@@ -83,7 +97,8 @@ function PaymentsList() {
     },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { pagination, globalFilter },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { pagination, globalFilter, columnVisibility },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -191,8 +206,20 @@ function PaymentsList() {
   }
 
   useEffect(() => {
+    console.log(data)
+  }, [chosenPaymentStatus])
+
+  useEffect(() => {
     getPendingPayments();
   }, [forceRender, chosenPaymentStatus])
+
+  useEffect(() => {
+    if (chosenPaymentStatus === "paid") {
+      setColumnVisibility({"dateMarkedAsPaid": true})
+    } else {
+      setColumnVisibility({"dateMarkedAsPaid": false})
+    }
+  }, [chosenPaymentStatus])
 
   return(
     <div className="payments-list"

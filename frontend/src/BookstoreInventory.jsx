@@ -425,10 +425,6 @@ function BookstoreInventory({
     }
   }
 
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
   return (
     <div
       className="bookstore-inventory"

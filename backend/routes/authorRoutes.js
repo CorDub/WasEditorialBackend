@@ -394,7 +394,7 @@ router.get('/sales', async (req, res) => {
     //       createdAt: 'desc'
     //     }
     //   });
-    
+
     let sales = await prisma.sale.findMany({
       where: {
         payments: {
@@ -427,7 +427,7 @@ router.get('/sales', async (req, res) => {
     let totalSales = 0;
     let totalValue = 0;
     let bookSalesHashMap = {};
-    let numberOfAuthors = {};
+    // let numberOfAuthors = {};
     const author = await prisma.user.findUnique({
       where: {
         id: authorId
@@ -444,17 +444,17 @@ router.get('/sales', async (req, res) => {
     })
 
     for (const sale of sales) {
-      if (!numberOfAuthors[sale.inventory.book.title]) {
-        const authorCount = await prisma.book.findUnique({
-          where: {id: sale.inventory.book.id},
-          select: {
-            _count: {
-              select: {users: true}
-            }
-          }
-        });
-        numberOfAuthors[sale.inventory.book.title] = authorCount._count.users;
-      }
+      // if (!numberOfAuthors[sale.inventory.book.title]) {
+      //   const authorCount = await prisma.book.findUnique({
+      //     where: {id: sale.inventory.book.id},
+      //     select: {
+      //       _count: {
+      //         select: {users: true}
+      //       }
+      //     }
+      //   });
+      //   numberOfAuthors[sale.inventory.book.title] = authorCount._count.users;
+      // }
 
       const saleValue = calculateAuthorRevenue(
         sale.inventory.bookstore.comissions,

@@ -47,6 +47,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   const { user } = useContext(UserContext)
   const emailRef = useRef();
   const [errors, setErrors] = useState([]);
+  const [userExtra, setUserExtra] = useState({});
 
   useEffect(() => {
     if (user.email) {
@@ -101,7 +102,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       return;
     } 
 
-    if (!factura || !constancia || !uso) {
+    if (!factura || !constancia || !uso ) {
       if (!factura) {
         setErrorFactura("Factura faltante");
       }
@@ -142,13 +143,13 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       console.log(error)
     }
 
-    try {
-      if (correo !== user.email) {
-        updateEmail()
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    // try {
+    //   if (correo !== user.email) {
+    //     updateEmail()
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   function checkEmailInput() {
@@ -165,33 +166,62 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       expectationsEmail,
       emailRef,
       "o");
-    
+
+    if (userExtra.email !== correo) {
+      errorsList.push("No hay registro de este correo. Por favor verifique el correo o cambielo en su pagina de perfil.")
+    }
+
     if (errorsEmail.length > 0) {
       errorsList.push(errorsEmail);
       setErrors(errorsList);
       return
     } 
 
-    return errorsEmail;
+    setErrors(errorsList)
+    return errorsList;
   }
 
-  async function updateEmail() {
+  async function getUserExtra() {
     try {
-      const response = await fetch(`${baseURL}/api/user`, {
-        method: "PATCH",
+      const response = await fetch(`${baseURL}/api/user_extra`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
-        credentials: "include",
-        body: JSON.stringify({
-          "email": correo
-        })
+        credentials: "include"
       });
+
+      if (response.ok) {
+        const data = await response.json()
+        setUserExtra(data);
+      };
 
     } catch(error) {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    getUserExtra()
+  }, [])
+
+  // async function updateEmail() {
+  //   try {
+  //     const response = await fetch(`${baseURL}/api/user`, {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify({
+  //         "email": correo
+  //       })
+  //     });
+
+  //   } catch(error) {
+  //     console.log(error)
+  //   }
+  // }
 
   return (
     <div className="modal-proper">
@@ -230,10 +260,11 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
             ref = {emailRef}
             onChange={(e) => setCorreo(e.target.value)}>
           </input>
-          <div className="modal-form-error">{errorUso}</div>
         </div>
       </div>
-      <ErrorsList errors={errors} setErrors={setErrors}/>
+      <div className='centering-errors'>
+        <ErrorsList errors={errors} setErrors={setErrors}/>
+      </div>
       <div className="modal-actions">
         <button className='blue-button modal-button'
           onClick={() => closeModal(false)}>Cancelar</button>

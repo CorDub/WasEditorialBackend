@@ -146,6 +146,8 @@ function AuthorSales() {
     return <div className="sales-container">No hay información de ventas.</div>;
   }
 
+  console.log(salesData)
+
   return (
     <div className="author-sales"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>

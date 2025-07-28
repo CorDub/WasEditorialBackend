@@ -2491,6 +2491,7 @@ router.get('/payments', async (req, res) => {
       select: {
         id: true,
         userId: true,
+        dateMarkedAsPaid: true,
         user: {
           select: {
             first_name: true,
@@ -2578,13 +2579,14 @@ router.get('/payments', async (req, res) => {
 router.patch('/markAsPaid/:id', async (req, res) => {
   try {
     const queryPaymentId = parseInt(req.params.id)
+    const now = new Date()
     const updatedPayment = await prisma.payment.update({
       where: {
-        id: queryPaymentId,
-        isDeleted: false
+        id: queryPaymentId
       },
       data: {
-        status: 'paid'
+        status: 'paid',
+        dateMarkedAsPaid: now
       }
     })
 

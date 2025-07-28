@@ -54,7 +54,14 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   useEffect(() => {
     let list = [];
     for (const bookstore of existingBookstores) {
-      list.push(bookstore.name)
+      if (bookstore.id === 3) {
+        continue;
+      }
+
+      list.push({
+        'name': bookstore.name,
+        'id': bookstore.id
+      })
     }
     setBookstoresNamesList(list)
   }, [existingBookstores])
@@ -190,27 +197,27 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
     // Check if bookstoresToTransfer is null
     if (bookstoresToTransfer[0] === null) {
-      errorsList.push(["Por favor elige una librería, país y cantidad"]);
+      errorsList.push(["Por favor elige una librería y cantidad"]);
       setErrors(errorsList);
       return errorsList;
     }
 
     // Check if we're not making a transfer to the same inventory first
-    for (const transfer of bookstoresToTransfer) {
-      if (parseInt(transfer.bookstoreId) === clickedRow.bookstoreId
-        && transfer.country === clickedRow.country) {
-          errorsList.push(["No se puede transferir al mismo inventario"]);
-          setErrors(errorsList);
-          console.log("blocked");
-          return errorsList;
-      }
-    }
+    // for (const transfer of bookstoresToTransfer) {
+    //   if (parseInt(transfer.bookstoreId) === clickedRow.bookstoreId
+    //     && transfer.country === clickedRow.country) {
+    //       errorsList.push(["No se puede transferir al mismo inventario"]);
+    //       setErrors(errorsList);
+    //       console.log("blocked");
+    //       return errorsList;
+    //   }
+    // }
 
     // Set expectations for each field being tested
     const expectationsBookstore = {
       type: "string",
       presence: "not empty",
-      value: bookstoreNamesList
+      // value: bookstoreNamesList
     }
     const expectationsQuantity = {
       type: "number",
@@ -223,7 +230,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     //   presence: "not empty",
     //   value: countries
     // }
-
     let totalQuantities = 0;
     const quantityElements = document.querySelectorAll('.transfer-quantity');
 
@@ -358,7 +364,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                   value="null">
                   Libreria*
                 </option>
-                {existingBookstores && existingBookstores.map((bookstore, index) => (
+                {bookstoreNamesList && bookstoreNamesList.map((bookstore, index) => (
                   <option
                     key={index}
                     value={`${bookstore.id}`}>

@@ -63,7 +63,7 @@ function InventoryTotal({
         setExtraImpressions(impressions);
       }
     }
-  }, [selectedBookstore, selectedBook])
+  }, [selectedBookstore, selectedBook, impressions])
 
   function returnToInventoriesAreaDashboard() {
     if (type === "book") {
@@ -102,7 +102,8 @@ function InventoryTotal({
         }
 
         {impressions != null && type === "book" &&
-          (<div className="bookstore-inventory-total-impressions">
+          (<div className="bookstore-inventory-total-impressions"
+            onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
             <div className="adding-impression">
               <FontAwesomeIcon
                 icon={faCirclePlus}
@@ -117,8 +118,7 @@ function InventoryTotal({
                 )}
             </div>
             <div
-              className="bookstore-inventory-impressions-info"
-              onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
+              className="bookstore-inventory-impressions-info">
               Impresiónes: {impressions.length}
             </div>
           </div>)}
@@ -128,7 +128,9 @@ function InventoryTotal({
         <div className="inventory-total-details">Vendidos: {soldTotal}</div>
         <div className="inventory-total-details">Devueltos: {returnsTotal}</div>
         <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
-        <div className="inventory-total-details">Disponibles: {currentTotal}</div>
+        <div className="inventory-total-details">Disponibles: {
+          initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
+          }</div>
         <div className="bookstore-progress-return">  
           {/* <ProgressBar
             current={currentTotal}

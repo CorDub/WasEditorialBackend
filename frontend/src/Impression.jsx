@@ -11,10 +11,8 @@ function Impression({impression, setModalType, openModal, book}) {
   const impressionGearRef = useRef();
   const [completeImpression, setCompleteImpression] = useState(null);
 
-  console.log(impression)
-
   useEffect(() =>{
-    const date = new Date(impression.createdAt);
+    const date = new Date(impression.date);
     const formattedDate = date.toLocaleDateString();
     setDate(formattedDate);
   }, [impression])

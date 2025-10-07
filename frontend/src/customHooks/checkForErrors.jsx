@@ -37,6 +37,11 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
             errorList.push(`${fieldName} debe ser un numero.`);
           }
           addErrorClass(fieldRef);
+        } else if (fieldExpectations.type === "datetime") {
+          if (new Date(fieldValue) instanceof Date === false) {
+            errorList.push(`${fieldName} debe ser una fecha al formato "aaaa-mm-dd"`)
+          }
+          addErrorClass(fieldRef);
         } else {
           console.log("A collection type has been passed into the field")
           return;
@@ -75,6 +80,11 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
         if (fieldExpectations.range === "positive") {
           if (fieldValue < 0) {
             errorList.push(`${fieldName} no puede ser negativ${gender}`)
+          };
+          addErrorClass(fieldRef);
+        } else if (fieldExpectations.range === "no future") {
+          if (new Date(fieldValue) > new Date()) {
+            errorList.push(`${fieldName} no puede estar en el futuro`)
           };
           addErrorClass(fieldRef);
         }

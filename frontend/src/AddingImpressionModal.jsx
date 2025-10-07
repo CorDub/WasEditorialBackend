@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
+import { convertISOString } from "../../backend/utils";
 
 function AddingImpressionModal({
     clickedRow,
@@ -11,8 +12,14 @@ function AddingImpressionModal({
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const quantityRef = useRef();
+  const dateRef = useRef();
   const [quantity, setQuantity] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [errors, setErrors] = useState([]);
+
+  // useEffect(() => {
+  //   console.log(date)
+  // }, [date])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,9 +40,16 @@ function AddingImpressionModal({
       presence: "not empty",
       range: "positive"
     }
-
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-    const errorInputs = [errorsQuantity];
+    
+    const expectationsDate = {
+      type: "datetime",
+      presence: "not empty",
+      range: "no future"
+    }
+    const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+    
+    const errorInputs = [errorsQuantity, errorsDate];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -57,7 +71,8 @@ function AddingImpressionModal({
         credentials: "include",
         body: JSON.stringify({
           id: clickedRow.id,
-          quantity: quantity
+          quantity: quantity,
+          date: date
         }),
       });
 
@@ -97,6 +112,13 @@ function AddingImpressionModal({
           className="global-input"
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}></input>
+        <input 
+          type="date"
+          placeholder="Fecha"
+          className="global-input"
+          ref={dateRef}
+          onChange={(e) => setDate(e.target.value)}
+          value={convertISOString(date)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button

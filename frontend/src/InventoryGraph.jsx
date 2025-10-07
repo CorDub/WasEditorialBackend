@@ -96,14 +96,14 @@ function InventoryGraph({
       // making sure we skip the correct unwanted data in case of exclusions
       // first the case for everything but Was
       if (exclusions === "allButWas") {
-        if (inventory.bookstore.id === 3) {
+        if (inventory.bookstore.id === 1) {
           continue;
         }
       }
 
       // second the case of only Was
       if (exclusions === "onlyWas") {
-        if (inventory.bookstore.id !== 3) {
+        if (inventory.bookstore.id !== 1) {
           continue;
         }
       }

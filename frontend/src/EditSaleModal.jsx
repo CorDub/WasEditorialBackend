@@ -2,6 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import { convertISOString } from "../../backend/utils";
 
 function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -13,12 +14,14 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const [bookId, setBookId] = useState(clickedRow.inventory.bookId);
   const [bookstore, setBookstore] = useState(clickedRow.inventory.bookstore.name);
   const [bookstoreId, setBookstoreId] = useState(clickedRow.inventory.bookstoreId);
-  const [country, setCountry] = useState(clickedRow.inventory.country);
+  // const [country, setCountry] = useState(clickedRow.inventory.country);
   const [quantity, setQuantity] = useState(clickedRow.quantity);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  const countryRef = useRef();
+  // const countryRef = useRef();
   const quantityRef = useRef();
+  const dateRef = useRef();
+  const [date, setDate] = useState(new Date(clickedRow.date));
   const [countries, setCountries] = useState([
     "México", "Estados Unidos",
     "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -44,17 +47,15 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Zambia", "Zimbabue"
   ]);
 
-  useEffect(() => {
-    for (let i = 0; i < countries.length; i++) {
-      if (countries[i] === clickedRow.inventory.country) {
-        countries.splice(i, 1);
-      } 
-    }
-    countries.splice(0, 0, clickedRow.inventory.country);
-    setCountries(countries);
-  }, [clickedRow])
-
-  console.log(clickedRow)
+  // useEffect(() => {
+  //   for (let i = 0; i < countries.length; i++) {
+  //     if (countries[i] === clickedRow.inventory.country) {
+  //       countries.splice(i, 1);
+  //     } 
+  //   }
+  //   countries.splice(0, 0, clickedRow.inventory.country);
+  //   setCountries(countries);
+  // }, [clickedRow])
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -157,10 +158,10 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         "function": setBookstore,
         "element": bookstoreRef
       },
-      "Country": {
-        "function": setCountry,
-        "element": countryRef
-      }
+      // "Country": {
+      //   "function": setCountry,
+      //   "element": countryRef
+      // }
     }
 
     if (input_index !== undefined) {
@@ -217,12 +218,18 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       presence: "not empty",
       range: "positive"
     }
+    const expectationsDate = {
+      type: "datetime",
+      presence: "not empty",
+      range: "no future"
+    }
 
     const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
     const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
-    const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
+    // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsQuantity = checkForErrors("La cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
-    const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
+    const errorsDate = checkForErrors("la fecha", date, expectationsDate, dateRef, 'a');
+    const errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDate];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -258,8 +265,9 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           id: clickedRow.id,
           book: bookId,
           bookstore: bookstoreId,
-          country: country,
-          quantity: parseInt(quantity)
+          // country: country,
+          quantity: parseInt(quantity),
+          date: date
         }),
       });
 
@@ -309,7 +317,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             ))}
           </select>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">País *</label>
           <select onChange={(e) => dropDownChange(e, "Country")}
             className="select-global" ref={countryRef}>
@@ -317,12 +325,22 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
               <option key={index} value={country}>{country}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Cantidad *</label>
           <input type="text" placeholder="Cantidad vendida" className="global-input"
             ref={quantityRef} value={quantity}
             onChange={(e) => setQuantity(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Fecha *</label>
+          <input 
+            type="date"
+            placeholder="Fecha"
+            className="global-input"
+            ref={dateRef}
+            onChange={(e) => setDate(e.target.value)}
+            value={convertISOString(date)}></input>
         </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

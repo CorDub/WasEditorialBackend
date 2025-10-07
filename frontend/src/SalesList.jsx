@@ -7,6 +7,8 @@ import Alert from "./Alert";
 import UserContext from "./UserContext";
 import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
+import DateRange from "./DateRange";
+import { twelveMonthsAgo } from "../../backend/utils";
 
 function SalesList () {
   useCheckAdmin();
@@ -26,7 +28,9 @@ function SalesList () {
     pageIndex: 0,
     pageSize: 30
   })
-
+  const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)))
+  const [endDate, setEndDate] = useState(new Date())
+  
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -45,36 +49,13 @@ function SalesList () {
       header: "Cantidad",
       accessorKey: "quantity"
     },
-    // {
-    //   header: "Ingresos",
-    //   Cell: ({row}) => {
-    //     const number = row.original.quantity * row.original.inventory.price
-    //     return (
-    //       <div>
-    //         {"$ " + number.toLocaleString()}
-    //       </div>
-    //     )
-    //   }
-    // },
-    // {
-    //   header: "Ganancia de Was",
-    //   Cell: ({row}) => {
-    //     const ingresos = row.original.quantity * row.original.inventory.price
-    //     const remainings = ingresos * row.original.inventory.bookstore.deal_percentage / 100
-    //     return (
-    //       <div>
-    //         {"$ " + remainings.toLocaleString()}
-    //       </div>
-    //     )
-    //   }
-    // },
     {
       header: "Inventario",
       accessorKey:'completeInventory'
     },
     {
       header: "Fecha",
-      accessorKey: "createdAt"
+      accessorKey: "date"
     },
   ], []);
   const table = useMaterialReactTable({
@@ -91,6 +72,16 @@ function SalesList () {
           className="blue-button"
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)` }}>
             Añadir nueva venta</button>
+        <DateRange 
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}/>
+        <button
+          className="blue-button"
+          onClick={() => sortSales()}>
+          Aplicar parametros 
+        </button>
         {/* <button
           onClick={() => openModal("addingMultiple", null)}
           className="blue-button"
@@ -209,6 +200,10 @@ function SalesList () {
       console.error(error);
     }
   }
+
+  // function sortSales() {
+
+  // }
 
   useEffect(() => {
     fetchSales();

@@ -1,13 +1,16 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import { convertISOString } from "../../backend/utils";
 
 function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckAdmin();
   const quantityRef = useRef();
-  const [quantity, setQuantity] = useState(null);
+  const dateRef = useRef();
+  const [quantity, setQuantity] = useState(clickedRow.quantity);
+  const [date, setDate] = useState(convertISOString(clickedRow.date));
   const [errors, setErrors] = useState([]);
 
   async function handleSubmit(e) {
@@ -29,9 +32,16 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       presence: "not empty",
       range: "positive"
     }
-
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-    const errorInputs = [errorsQuantity];
+    
+    const expectationsDate = {
+      type: "datetime",
+      presence: "not empty",
+      range: "no future"
+    }
+    const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+
+    const errorInputs = [errorsQuantity, errorsDate];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -54,7 +64,8 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         body: JSON.stringify({
           id: clickedRow.id,
           quantity: quantity,
-          book_id: clickedRow.bookId
+          book_id: clickedRow.bookId,
+          date: date
         }),
       });
 
@@ -65,10 +76,10 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó crear una nueva impression.';
+        const alertMessage = 'No se pudó editar la impresión.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        const alertMessage = `Una nueva impresion ha sido creada.`;
+        const alertMessage = `La impresión ha sido actualizada.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -77,9 +88,9 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
-  useEffect(() => {
-    setQuantity(clickedRow.quantity);
-  }, [clickedRow])
+  // useEffect(() => {
+  //   setQuantity(clickedRow.quantity);
+  // }, [clickedRow])
 
   return(
     <div className='modal-proper'>
@@ -94,6 +105,13 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           className="global-input"
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}></input>
+        <input 
+          type="date"
+          placeholder="Fecha"
+          className="global-input"
+          ref={dateRef}
+          onChange={(e) => setDate(e.target.value)}
+          value={convertISOString(date)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button

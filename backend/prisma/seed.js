@@ -101,7 +101,8 @@ async function main() {
           data: {
             bookId: createdBook.id,
             quantity: randQuant,
-            createdAt: twelveMonthsAgo
+            createdAt: twelveMonthsAgo,
+            date: twelveMonthsAgo
           }
         });
       };
@@ -230,6 +231,16 @@ async function main() {
 
     await prisma.bookstore.create({
       data: {
+        name: "Plataforma Was",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#4E5981",
+        comissions: true
+      }
+    })
+
+    await prisma.bookstore.create({
+      data: {
         name: "Gandhi",
         deal_percentage: 50,
         contact_name: "Gerardo Rivera",
@@ -249,16 +260,6 @@ async function main() {
         contact_email: "jlwotton17@mercadolibre.co.mx",
         createdAt: twelveMonthsAgo,
         color: "#ffe600",
-        comissions: true
-      }
-    })
-
-    await prisma.bookstore.create({
-      data: {
-        name: "Plataforma Was",
-        deal_percentage: 30,
-        createdAt: twelveMonthsAgo,
-        color: "#4E5981",
         comissions: true
       }
     })
@@ -531,7 +532,8 @@ async function main() {
             payments: {
               connect: paymentsIds
             },
-            createdAt: saleDate
+            createdAt: saleDate,
+            date: saleDate
           }
         })
 

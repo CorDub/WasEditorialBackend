@@ -44,7 +44,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   // ];
 
   useEffect(() => {
-    if (clickedRow.bookstoreId === 3) {
+    if (clickedRow.bookstoreId === 1) {
       setTransferType('send')
     } else {
       setTransferType('return')
@@ -54,7 +54,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   useEffect(() => {
     let list = [];
     for (const bookstore of existingBookstores) {
-      if (bookstore.id === 3) {
+      if (bookstore.id === 1) {
         continue;
       }
 
@@ -163,7 +163,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
     if (transferType === "return") {
       soFar[input_index]["name"] = 'Plataforma Was';
-      soFar[input_index]["bookstoreId"] = 3;
+      soFar[input_index]["bookstoreId"] = 1;
       // soFar[input_index]["country"] = "México";
       soFar[input_index]["fecha"] = new Date()
     };

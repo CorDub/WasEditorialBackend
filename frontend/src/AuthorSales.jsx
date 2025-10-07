@@ -6,6 +6,8 @@ import Navbar from "./Navbar";
 import BookSelector from './BookSelector';
 import SalesContent from './SalesContent';
 import LoadingWheel from './LoadingWheel';
+import { generateMonthKeysForRange } from '../../backend/utils';
+import Alert from "./Alert";
 
 function AuthorSales() {
   useCheckUser();
@@ -18,9 +20,11 @@ function AuthorSales() {
   const [selectedBook, setSelectedBook] = useState('total');
   // const [dateRange, setDateRange] = useState(null);
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)).toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0]
+    startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)).toLocaleDateString('en-CA'),
+    endDate: new Date().toLocaleDateString('en-CA')
   });
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   // function setDefaultRange() {
   //   const now = new Date();
@@ -37,17 +41,15 @@ function AuthorSales() {
 
   function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
-    if (!sales || sales.length === 0) return;
+    // if (!sales || sales.length === 0) return;
+    if (sales && sales.length > 0 ) {
+      const filteredSales = bookId === 'total'
+        ? sales
+        : sales.filter(sale => sale.book_id === parseInt(bookId));
 
-    // console.log(sales);
-
-    const filteredSales = bookId === 'total'
-      ? sales
-      : sales.filter(sale => sale.book_id === parseInt(bookId));
-
-    filteredSales.forEach(sale => {
-      const date = new Date(sale.created_at);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      filteredSales.forEach(sale => {
+        const date = new Date(sale.created_at);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
       if (!monthlySales[monthKey]) {
         monthlySales[monthKey] = {
@@ -60,11 +62,39 @@ function AuthorSales() {
       monthlySales[monthKey].value += sale.value;
     });
 
-    const sortedData = Object.values(monthlySales).sort((a, b) => a.month.localeCompare(b.month));
-    for (const month of sortedData) {
-      month.value = Number((month.value).toFixed(2));
+      const sortedData = Object.values(monthlySales).sort((a, b) => a.month.localeCompare(b.month));
+      for (const month of sortedData) {
+        month.value = Number((month.value).toFixed(2));
+      }
+
+      const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
+      let counter = 0;
+      for (let i = 0; i < monthKeysInRange.length; i++) {
+        if (monthKeysInRange[i] !== sortedData[counter].month) {
+          const monthToInsert = {
+            "month": monthKeysInRange[i],
+            "quantity": 0,
+            "value": 0
+          }
+          sortedData.splice(i, 0, monthToInsert)
+        } else {
+          counter += 1
+        }
+      }
+      setMonthlyData(sortedData);
+    } else {
+      const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
+      let sortedData = []
+      for (const month of monthKeysInRange) {
+        const monthToPush = {
+          "month": month,
+          "quantity": 0,
+          "value": 0
+        }
+        sortedData.push(monthToPush)
+      };
+      setMonthlyData(sortedData)
     }
-    setMonthlyData(sortedData);
   }
 
   const fetchSales = async (forceFetch) => {
@@ -123,9 +153,25 @@ function AuthorSales() {
 
   const handleDateChange = (event) => {
     const { name, value } = event.target;
+
+    let valueChecked = value;
+    //checking date is not in the future or start date is not after end date
+    if (name === "endDate")  {
+      if (new Date(value) > new Date()) {
+        valueChecked = new Date().toLocaleDateString('en-CA')
+        setAlertMessage("No se puede poner una fecha de fin en el futuro.")
+        setAlertType("error")
+      }
+    } else if (name === "startDate") {
+      if (new Date(value) > new Date() || new Date(value) > new Date(dateRange.endDate)) {
+        valueChecked = new Date().toLocaleDateString('en-CA')
+        setAlertMessage("No se puede poner una fecha de inicio en el futuro o después de la fecha de fin")
+        setAlertType("error")
+      }
+    }
     setDateRange(prev => ({
       ...prev,
-      [name]: value
+      [name]: valueChecked
     }));
   };
 
@@ -146,7 +192,7 @@ function AuthorSales() {
     return <div className="sales-container">No hay información de ventas.</div>;
   }
 
-  console.log(salesData)
+  // console.log(salesData)
 
   return (
     <div className="author-sales"
@@ -194,6 +240,8 @@ function AuthorSales() {
           preferredFontSize={user.font_size}
         />
       </div>
+      <Alert message={alertMessage} type={alertType}
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import formatNumber from "./customHooks/formatNumber";
 import "./CommissionMonthSelectorRow.scss"
 import { useState } from "react";
 import { useEffect } from "react";
+import { changeDateFormat } from "../../backend/utils";
 
 function CommissionMonthSelectorRow({
   index,
@@ -29,25 +30,6 @@ function CommissionMonthSelectorRow({
     }
 
   }, [month])
-
-  function changeDateFormat(date) {
-    const months = {
-      "01": "Ene",
-      "02": "Feb",
-      "03": "Mar",
-      "04": "Abr",
-      "05": "May",
-      "06": "Jun",
-      "07": "Jul",
-      "08": "Ago",
-      "09": "Sep",
-      "10": "Oct",
-      "11": "Nov",
-      "12": "Dic"
-    }
-
-    return months[date.substring(5,7)] + " " + date.substring(0,4);
-  }
 
   function addPaymentInfo() {
     if (month) {

@@ -2,6 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import { convertISOString } from "../../backend/utils";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -18,6 +19,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const bookstoreRef = useRef();
   // const countryRef = useRef();
   const quantityRef = useRef();
+  const dateRef = useRef();
+  const [date, setDate] = useState(new Date());
   // const countries = [
   //   "México", "Estados Unidos",
   //   "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
@@ -192,11 +195,18 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       range: "positive"
     }
 
+    const expectationsDate = {
+      type: "datetime",
+      presence: "not empty",
+      range: "no future"
+    }
+
     let errorsBook;
     let errorsBookstore;
     // let errorsPais;
     let errorsQuantity;
     let errorInputs;
+    let errorsDate;
 
     if (clickedRow) {
       errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
@@ -206,10 +216,11 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       errorsBookstore = checkForErrors("La librería", parseInt(bookstore) , expectationsBookstore, bookstoreRef, "a");
       // errorsPais = checkForErrors("El país", country, expectationsPais, countryRef, "o");
       errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-      errorInputs = [errorsBook, errorsBookstore, errorsQuantity];
+      errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+      errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDate];
     }
 
-    console.log("errorInputs", errorInputs);
+    // console.log("errorInputs", errorInputs);
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -246,7 +257,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           book: parseInt(book),
           bookstore: parseInt(bookstore),
           // country: country,
-          quantity: quantity
+          quantity: quantity,
+          date: date
         }),
       });
 
@@ -314,6 +326,13 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         }
         <input type="text" placeholder="Cantidad vendida*" className="global-input"
           ref={quantityRef} onChange={(e) => setQuantity(parseInt(e.target.value))}></input>
+        <input 
+            type="date"
+            placeholder="Fecha"
+            className="global-input"
+            ref={dateRef}
+            onChange={(e) => setDate(e.target.value)}
+            value={convertISOString(date)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

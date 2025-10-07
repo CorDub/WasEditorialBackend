@@ -37,7 +37,7 @@ function TableActions ({
   const [isEditBookPricesTooltipOpen, setEditBookPricesTooltipOpen] = useState(false);
 
   useEffect(() => {
-    if (row.original.bookstoreId === 3) {
+    if (row.original.bookstoreId === 1) {
       setTransferType('send')
     } else {
       setTransferType('return')
@@ -121,7 +121,7 @@ function TableActions ({
 
   function editBookPrices() {
     openModal("editBookPrices", row.original);
-  }
+  } 
 
   return(
     <div className="table-actions">

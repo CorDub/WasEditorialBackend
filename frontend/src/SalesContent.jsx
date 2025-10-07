@@ -18,8 +18,6 @@ const SalesContent = ({
 
   const selectedBookTitle = salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.title || "";
 
-  // console.log(monthlyData);
-
   return (
     <div id="author-sales-content">
       <div id="author-sales-content-left">
@@ -53,7 +51,7 @@ const SalesContent = ({
       <div id="author-sales-content-right">
         <div id="sales-chart">
           <div className="chart-header">
-            <h3>Ventas mensuales</h3>
+            <h3>Ventas</h3>
           </div>
           {monthlyData && (
             <ResponsiveContainer width="100%" height={400}>

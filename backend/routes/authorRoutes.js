@@ -242,8 +242,8 @@ router.get('/inventories', async (req, res) => {
       let inventoryInWas = 0;
       let inventoryInWasPerCountry = {};
       for (const inventory of book.inventories) {
-        // 3 = Plataforma Was Id
-        if (inventory.bookstoreId === 3) {
+        // 1 = Plataforma Was Id
+        if (inventory.bookstoreId === 1) {
           inventoryInWas = inventory.current
           // create key:value if doesn't exist, add if it does
           if (inventory.country in inventoryInWasPerCountry) {
@@ -1286,8 +1286,8 @@ router.get('/bookstoreInventories/:id', async (req, res) => {
       if (relevantInventoriesByBookstore.hasOwnProperty(inventory.bookstoreId)) {
         relevantInventoriesByBookstore[inventory.bookstoreId].current += inventory.current
       } else {
-        /// 3 = BookstoreId of Plataforma Was that we'll be excluding here.
-        if (inventory.bookstoreId !== 3) {
+        /// 1 = BookstoreId of Plataforma Was that we'll be excluding here.
+        if (inventory.bookstoreId !== 1) {
           relevantInventoriesByBookstore[inventory.bookstoreId] = {
             name: inventory.bookstore.name,
             current: inventory.current,

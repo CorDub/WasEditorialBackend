@@ -273,6 +273,14 @@ function BookInventory({
     enablePagination: true,
     enableFullScreenToggle: false,
     enableRowVirtualization: false,
+    renderTopToolbarCustomActions: () => (
+      <div className="table-add-button">
+        <div
+          className="campos-obligatorios"
+          style={{ fontSize: `clamp(0.8rem, 1.1rem)`}}>
+            Una transferencia de Plataforma Was a otra librería retira la cantidad de la columna "Inicial" de Was.</div>
+      </div>
+    ),
     initialState: {
       density: 'compact',
     },
@@ -320,7 +328,6 @@ function BookInventory({
 
   useEffect(() => {
     if (specificBook) {
-      console.log("specificBook", specificBook)
       setData(specificBook.sortedRelevantInventories)
       setSelectedBook(specificBook.name)
       setSelectedBookId(specificBook.id)
@@ -360,10 +367,6 @@ function BookInventory({
       console.log(error)
     }
   }
-
-  // useEffect(() => {
-  //   getBookInventories();
-  // }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => {

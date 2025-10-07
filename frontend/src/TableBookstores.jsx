@@ -28,7 +28,9 @@ function TableBookstores({salesByPayments, activeMonth}) {
         <div className="table-bookstore-header-name">% de comisión
           <div className="trdh-subtitle">de la librería</div>
         </div>
-        <div className="table-bookstore-header-name">Comisión</div>
+        <div className="table-bookstore-header-name">Comisión
+          <div className="trdh-subtitle">de la librería</div>
+        </div>
         <div className="table-bookstore-header-name">Ganancia 
           <div className="trdh-subtitle">por libro</div>
         </div>

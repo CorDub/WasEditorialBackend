@@ -88,3 +88,68 @@ export function getForMonth(timestamp) {
   const forMonth = year + "-" + month
   return forMonth
 }
+
+export function convertISOString(date) {
+  const JsonParsedDate = JSON.stringify(date);
+  const justDateNoTime = JsonParsedDate.split("T")[0]
+  const cleanedDate = justDateNoTime.split('"')[1]
+  return cleanedDate
+}
+
+export function generateMonthKeysForRange(startDate, endDate) {
+  const startString = convertISOString(startDate);
+  const endString = convertISOString(endDate);
+
+  const start = startString.substring(0,7);
+  const end = endString.substring(0,7);
+  let numMonthsInRange = 0;
+  if (start.substring(0,4) === end.substring(0,4)) {
+    numMonthsInRange = Number(end.substring(5,7)) - Number(start.substring(5,7)) + 1;
+  } else {
+    numMonthsInRange = Number(end.substring(5,7)) 
+      + (Number(end.substring(0,4)) - Number(start.substring(0,4))) * 12
+      - Number(start.substring(5,7))
+  }
+  
+  let monthKeysInRange = []
+  for (let i = 0; i <= numMonthsInRange; i++) {
+    const month = (Number(start.substring(5,7)) + i) - (12 * Math.trunc((Number(start.substring(5,7)) + i -1)/12)) 
+    const year = Number(start.substring(0,4)) + (Math.trunc((Number(start.substring(5,7)) + i - 1) / 12))
+    const monthKey = String(year) + "-" + String(month).padStart(2, "0");
+    monthKeysInRange.push(monthKey)
+  }
+
+  return monthKeysInRange
+}
+
+export function twelveMonthsAgo() {
+  const now = new Date();
+  let remainder = 12 - (now.getMonth());
+  let twelveMonthsAgo;
+  if (remainder > 0) {
+    const minusOneYear = new Date(now.setFullYear(now.getFullYear()-1))
+    twelveMonthsAgo = new Date(minusOneYear.setMonth(12-remainder));
+  } else {
+    twelveMonthsAgo = new Date(now.setMonth(remainder));
+  }
+  return twelveMonthsAgo
+}
+
+export function changeDateFormat(date) {
+  const months = {
+      "01": "Ene",
+      "02": "Feb",
+      "03": "Mar",
+      "04": "Abr",
+      "05": "May",
+      "06": "Jun",
+      "07": "Jul",
+      "08": "Ago",
+      "09": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dic"
+    }
+
+  return months[date.substring(5,7)] + " " + date.substring(0,4);
+}

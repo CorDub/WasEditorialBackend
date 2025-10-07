@@ -36,8 +36,6 @@ function InventoriesList() {
   const [isInventoryTypeBook, setInventoryType] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false});
 
-  console.log(data)
-
   const columns = useMemo(() => [
     // {
     //   header: "Acciones",
@@ -71,7 +69,7 @@ function InventoriesList() {
       )
     },
     {
-      header: "Initial",
+      header: "Inicial",
       accessorKey: "initial",
     },
     {
@@ -84,7 +82,13 @@ function InventoriesList() {
     },
     {
       header: "Devueltos",
-      accessorKey: "returns"
+      // accessorKey: "returns",
+      Cell: ({row}) => (
+        // <div>{row.original.id === 1 
+        //       ? `+ ${row.original.returns}` 
+        //       : `- ${row.original.returns}`}</div>
+        <div>{row.original.returns === 0 ? 0 : row.original.id === 1 ? `+ ${row.original.returns}` : `- ${row.original.returns}`}</div>
+      )
     },
     {
       header: "Entregados al autor",
@@ -93,7 +97,9 @@ function InventoriesList() {
     {
       header: "Disponibles",
       Cell: ({row}) => (
-        <div>{row.original.current - row.original.returns}</div>
+        <div>{row.original.id === 1 ? 
+          row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:
+          row.original.initial - row.original.sold - row.original.returns - row.original.givenToAuthor}</div>
       )
     },
   ], []);
@@ -266,10 +272,6 @@ function InventoriesList() {
       setColumnVisibility((prev) => ({...prev, extraImpressions: false}))
     }
   }
-
-  useEffect(() => {
-    console.log(isInventoryTypeBook)
-  }, [isInventoryTypeBook])
 
   // function openModal(type, clickedRow) {
   //   setClickedRow(clickedRow);

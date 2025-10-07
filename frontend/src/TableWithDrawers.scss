@@ -1,0 +1,13 @@
+.twd {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  height: calc(100vh - 70px);
+  width: calc(100vw - 20px);
+  border-radius: 15px;
+  background-color: white;
+}
+
+.twd-bottom {
+  display: flex;
+}

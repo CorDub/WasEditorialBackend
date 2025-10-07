@@ -2,7 +2,7 @@ import { Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
-import { createRandomPassword, calculateAuthorRevenue, getForMonth } from './../utils.js';
+import { createRandomPassword, calculateAuthorRevenue, getForMonth, twelveMonthsAgo, generateMonthKeysForRange } from './../utils.js';
 import { prisma } from "../prisma/client.js"
 
 const router = express.Router();
@@ -558,7 +558,7 @@ router.get('/book', async (req, res) => {
       book.authorNames = "";
       book.users.map((user) => {
         for (const inv of book.inventories) {
-          if (inv.bookstoreId === 3) {
+          if (inv.bookstoreId === 1) {
             book.price = inv.price
           }
         }
@@ -641,7 +641,7 @@ router.post('/book', async (req, res) => {
         new_inventory = await tx.inventory.create({
           data: {
             bookId: new_book.id,
-            bookstoreId: 3,
+            bookstoreId: 1,
             country: "México",
             price: parseFloat(price),
             initial: quantity,
@@ -1306,7 +1306,8 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
         quantity: true,
         note: true,
         isDeleted: true,
-        createdAt: true
+        createdAt: true,
+        date: true
       }
     })
 
@@ -1552,7 +1553,7 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
             quantity: true
           },
           orderBy: {
-            createdAt: "asc"
+            date: "asc"
           }
         })
 
@@ -1713,10 +1714,17 @@ router.delete('/inventory/:id', async (req, res) => {
 /// Sales routes
 
 router.get('/sales', async (req, res) => {
+  const startDate = new Date(twelveMonthsAgo().setDate(1))
+  const endDate = new Date()
+
   try {
     const sales = await prisma.sale.findMany({
       where: {
         isDeleted: false,
+        date: {
+          gte: startDate,
+          lt: endDate
+        }
       },
       select: {
         id: true,
@@ -1727,6 +1735,13 @@ router.get('/sales', async (req, res) => {
             book: {
               select: {
                 title: true,
+                users: {
+                  select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true
+                  }
+                }
               }
             },
             bookstoreId: true,
@@ -1743,10 +1758,11 @@ router.get('/sales', async (req, res) => {
         },
         quantity: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        date: true
       },
       orderBy: {
-        updatedAt: "desc"
+        date: "desc"
       }
     });
 
@@ -1754,9 +1770,38 @@ router.get('/sales', async (req, res) => {
       sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name
       sale.createdAt = sale.createdAt.toLocaleString();
       sale.updatedAt = sale.updatedAt.toLocaleString();
+      sale.date = sale.date.toLocaleString();
+      sale.authorsString = "";
+      for (let i = 0; i < sale.inventory.book.users.length; i++) {
+        sale.authorsString += sale.inventory.book.users[i].first_name + " "
+          + sale.inventory.book.users[i].last_name
+        if (i < sale.inventory.book.users.length - 1) {
+          sale.authorsString += ", ";
+        }
+      }
     })
 
-    res.json(sales);
+    const monthsRange = generateMonthKeysForRange(startDate, endDate)
+    let salesCompiled = [];
+    for (const month of monthsRange) {
+      salesCompiled.push(
+        {
+          "forMonth" : month,
+          "sales": [],
+          "total": 0
+        }
+      )
+    }
+    for (const sale of sales) {
+      for (const month of salesCompiled) {
+        if (getForMonth(sale.date) === month.forMonth) {
+          month.sales.push(sale);
+          month.total += sale.quantity
+        }
+      }
+    }
+
+    res.json(salesCompiled);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at sales route"});
@@ -1769,7 +1814,8 @@ router.post('/sale', async (req, res) => {
       book,
       bookstore,
       // country,
-      quantity
+      quantity,
+      date
     } = req.body;
 
     let createdSale;
@@ -1779,7 +1825,7 @@ router.post('/sale', async (req, res) => {
           bookId_bookstoreId: {
             bookId : book,
             bookstoreId: bookstore,
-            // country: country
+            // country: country,
           }
         },
         include: {
@@ -1872,6 +1918,7 @@ router.post('/sale', async (req, res) => {
         data: {
           inventoryId: selectedInventory.id,
           quantity: quantity,
+          date: date,
           payments: {
             connect: paymentIds
           }
@@ -1903,7 +1950,8 @@ router.patch('/sale', async (req, res) => {
       book,
       bookstore,
       // country,
-      quantity
+      quantity, 
+      date
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
@@ -1932,7 +1980,8 @@ router.patch('/sale', async (req, res) => {
         where: {id: id},
         data: {
           inventoryId: selectedInventory.id,
-          quantity: quantity
+          quantity: quantity,
+          date: new Date(date)
         },
         include: {
           inventory: {
@@ -2168,13 +2217,15 @@ router.post('/impression', async (req, res) => {
     const quantity = parseInt(req.body.quantity);
     const id = parseInt(req.body.id);
     const note = (req.body.note);
+    const date = new Date(req.body.date);
 
     await prisma.$transaction(async (tx) => {
       const createdImpression = await tx.impression.create({
         data: {
           bookId: id,
           quantity: quantity,
-          note: note
+          note: note,
+          date: date
         }
       })
 
@@ -2252,7 +2303,8 @@ router.patch('/impression', async (req, res) => {
     const {
       id,
       quantity,
-      book_id
+      book_id,
+      date
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
@@ -2262,7 +2314,8 @@ router.patch('/impression', async (req, res) => {
       const updatedImpression = await tx.impression.update({
         where: {id: id},
         data: {
-          quantity: parseInt(quantity)
+          quantity: parseInt(quantity),
+          date: new Date(date)
         }
       });
 

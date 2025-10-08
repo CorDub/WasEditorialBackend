@@ -1714,10 +1714,9 @@ router.delete('/inventory/:id', async (req, res) => {
 /// Sales routes
 
 router.get('/sales', async (req, res) => {
-  const startDate = new Date(twelveMonthsAgo().setDate(1))
-  const endDate = new Date()
-
   try {
+    let startDate = new Date(JSON.parse(req.query.startDate))
+    let endDate = new Date(JSON.parse(req.query.endDate))
     const sales = await prisma.sale.findMany({
       where: {
         isDeleted: false,
@@ -1788,7 +1787,10 @@ router.get('/sales', async (req, res) => {
         {
           "forMonth" : month,
           "sales": [],
-          "total": 0
+          "total": 0,
+          "bookstores": [],
+          "books": [],
+          "authors": []
         }
       )
     }
@@ -1797,6 +1799,23 @@ router.get('/sales', async (req, res) => {
         if (getForMonth(sale.date) === month.forMonth) {
           month.sales.push(sale);
           month.total += sale.quantity
+
+          if (!month.bookstores.includes(sale.inventory.bookstore.name)) {
+            month.bookstores.push(sale.inventory.bookstore.name)
+          }
+          month.bookstores.sort()
+          
+          if (!month.books.includes(sale.inventory.book.title)) {
+            month.books.push(sale.inventory.book.title)
+          }
+          month.books.sort()
+          
+          for (const author of sale.inventory.book.users) {
+            if (!month.authors.includes( (author.first_name + " " + author.last_name) )) {
+              month.authors.push( (author.first_name + " " + author.last_name) )
+            }
+          }
+          month.authors.sort()
         }
       }
     }

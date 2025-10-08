@@ -14,6 +14,20 @@ function TableWithDrawers({
   monthsInRange,
   activeMonth,
   setActiveMonth,
+  bookstoresInMonth,
+  selectedBookstore,
+  setSelectedBookstore,
+  booksInMonth,
+  selectedBook,
+  setSelectedBook,
+  authorsInMonth,
+  selectedAuthor,
+  setSelectedAuthor,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  applyFilters
 }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -80,7 +94,7 @@ function TableWithDrawers({
       density: 'compact',
       sorting: [
         {
-          id: 'createdAt',
+          id: 'date',
           asc: true
         }
       ]
@@ -155,7 +169,22 @@ function TableWithDrawers({
           closeModal={closeModal}
           globalFilter={globalFilter} />}
       <TableWithDrawersHeader 
-        openModal={openModal}/>
+        openModal={openModal}
+        bookstoresInMonth={bookstoresInMonth}
+        selectedBookstore={selectedBookstore}
+        setSelectedBookstore={setSelectedBookstore}
+        booksInMonth={booksInMonth}
+        selectedBook={selectedBook}
+        setSelectedBook={setSelectedBook}
+        authorsInMonth={authorsInMonth}
+        selectedAuthor={selectedAuthor}
+        setSelectedAuthor={setSelectedAuthor}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        applyFilters={applyFilters}
+        />
       <div className="twd-bottom">
         <MonthSelector 
           monthsInRange={monthsInRange}

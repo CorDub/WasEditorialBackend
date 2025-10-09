@@ -61,13 +61,18 @@ function AdminNavbar({
       return;
     };
 
-    if (active === "payments") {
+    if (active === "kindle") {
       buttons[6].classList.add("active-button");
+      return
+    }
+
+    if (active === "payments") {
+      buttons[7].classList.add("active-button");
       return;
     }
 
     if (active === "costs") {
-      buttons[7].classList.add("active-button");
+      buttons[8].classList.add("active-button");
       return;
     }
   }
@@ -190,6 +195,7 @@ function AdminNavbar({
       } */}
       <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
+      <Link to='/admin/kindle' className="navbar-button">Kindle</Link>
       <Link to='/admin/payments' className="navbar-button">Pagos</Link>
       <Link to='/admin/costs' className="navbar-button">Costos</Link>
     </div>

@@ -23,10 +23,6 @@ function KindleSalesListPerMonth() {
   const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)));
   const [endDate, setEndDate] = useState(new Date());
 
-  // console.log("data", data);
-  // console.log("booksInMonth", booksInMonth);
-  // console.log("authorsInMonth", authorsInMonth)
-
   async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
       setLoading(true)
@@ -94,7 +90,7 @@ function KindleSalesListPerMonth() {
 
   useEffect(() => {
     refetchAndFilter()
-  }, [activeMonth])
+  }, [activeMonth, forceRender])
 
   return(
     <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -117,7 +113,9 @@ function KindleSalesListPerMonth() {
           endDate={endDate}
           setEndDate={setEndDate}
           refetchAndFilter={refetchAndFilter}
-          salesType={"kindle"} />}
+          salesType={"kindle"}
+          forceRender={forceRender}
+          setForceRender={setForceRender} />}
     </div>
   )
 }

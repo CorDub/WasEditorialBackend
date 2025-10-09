@@ -2861,6 +2861,10 @@ router.get('/kindlesales', async (req, res) => {
   try {
     let startDate = new Date(JSON.parse(req.query.startDate))
     let endDate = new Date(JSON.parse(req.query.endDate))
+
+    startDate.setUTCHours(0, 0, 0, 0);
+    endDate.setUTCHours(23, 59, 59, 999);
+
     const kindleSales = await prisma.kindleSale.findMany({
       where: {
         isDeleted: false,
@@ -2939,6 +2943,77 @@ router.get('/kindlesales', async (req, res) => {
     res.status(500).json({error: "Server error at sales route"});
   }
 });
+
+router.post("/kindlesales", async (req, res) => {
+  try {
+    let bookIdQuery = parseInt(req.body.book);
+    let quantityEbookQuery = parseInt(req.body.quantityEbook);
+    let quantityPodQuery = parseInt(req.body.quantityPod); 
+    let dateCutQuery = new Date(req.body.dateCut);
+    let datePayQuery = new Date(req.body.datePay);
+    let regaliasQuery = parseFloat(req.body.regalias);
+
+    const createdKindleSaleTransaction = await prisma.$transaction(async (tx) => {
+      const bookSold = await tx.book.findUnique({
+        where: {
+          id: bookIdQuery
+        },
+        include: {
+          users: true
+        }
+      })
+
+      let authorIds = [];
+      for (const user of bookSold.users) {
+        authorIds.push(user.id)
+      }
+
+      let paymentIds = [];
+      for (const author of authorIds) {
+        const payment = await prisma.payment.findUnique({
+          where: {
+            userId_forMonth: {
+              userId: author,
+              forMonth: getForMonth(datePayQuery)
+            }
+          }
+        })
+
+        if (payment) {
+          paymentIds.push({"id": payment.id})
+        } else {
+          const createdPayment = await tx.payment.create({
+            data: {
+              userId: author,
+              forMonth: getForMonth(datePayQuery)
+            }
+          })
+          paymentIds.push({"id": createdPayment.id})
+        }
+      }
+
+      const createdKindleSale = await tx.kindleSale.create({
+        data: {
+          bookId: bookIdQuery,
+          payments: {
+            connect: paymentIds
+          },
+          quantityEbook: quantityEbookQuery,
+          quantityPod: quantityPodQuery,
+          dateCut: dateCutQuery,
+          datePay: datePayQuery,
+          regalias: regaliasQuery
+        }
+      });
+
+      return createdKindleSale
+    });
+    
+    res.status(200).json({message: "kindleSale created successfully"})
+  } catch(error) {
+    console.log("Server error at kindlesales ", error);
+  }
+})
 
 /// soft delete on cascade
 

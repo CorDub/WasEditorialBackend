@@ -29,7 +29,9 @@ function TableWithDrawers({
   endDate,
   setEndDate,
   refetchAndFilter,
-  salesType
+  salesType,
+  forceRender,
+  setForceRender,
 }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -37,9 +39,8 @@ function TableWithDrawers({
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("sale");
+  const [modalType, setModalType] = useState("kindle");
   const [modalAction, setModalAction] = useState("");
-  const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const [isLoading, setLoading] = useState(false);

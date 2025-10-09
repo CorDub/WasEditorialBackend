@@ -69,6 +69,7 @@ model Book {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   impressions Impression[]
+  kindleSales KindleSale[]
 }
 
 model Category {
@@ -129,7 +130,22 @@ model Sale {
   isDeleted   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  date DateTime @default(now())
+  date        DateTime  @default(now())
+}
+
+model KindleSale {
+  id            Int       @id @default(autoincrement())
+  book          Book      @relation(fields: [bookId], references: [id])
+  bookId        Int
+  payments      Payment[]
+  quantityEbook Int
+  quantityPod   Int
+  dateCut       DateTime
+  datePay       DateTime
+  regalias      Float
+  isDeleted     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Impression {
@@ -141,7 +157,7 @@ model Impression {
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  date DateTime @default(now())
+  date      DateTime @default(now())
 }
 
 model Transfer {
@@ -167,6 +183,7 @@ model Payment {
   userId           Int
   costs            Cost[]
   sales            Sale[]
+  kindleSales      KindleSale[]
   forMonth         String
   dateMarkedAsPaid DateTime?
   status           PaymentStatus @default(created)

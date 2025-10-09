@@ -552,6 +552,74 @@ async function main() {
       };
     }
 
+    /// CREATE FAKE KINDLE SALES
+
+    const newAllBooks = await prisma.book.findMany({
+      include: {
+        users: true
+      }
+    });
+
+    for (const book of newAllBooks) {
+      let randQuantToSell = Math.floor(Math.random() * 100);
+      if (randQuantToSell === 0) {
+        randQuantToSell = 1
+      }
+      let randQuantPod = Math.floor(Math.random() * 100);
+
+      if (randQuantToSell > 0) {
+        const monthsAgo = Math.floor(Math.random() * 13);
+        let kindleSaleDate = new Date();
+        kindleSaleDate.setMonth(kindleSaleDate.getMonth() - monthsAgo);
+        let dateCut = new Date(kindleSaleDate.setMonth(kindleSaleDate.getMonth() - 2));
+
+        const saleForMonth = getForMonth(kindleSaleDate);
+
+        const authorIds = book.users.map(user => user.id)
+        let paymentsIds = [];
+        for (const author of authorIds) {
+          const existingPayment = await prisma.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: author,
+                forMonth: saleForMonth
+              }
+            }
+          });
+
+          if (!existingPayment) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: author,
+                forMonth: saleForMonth,
+                createdAt: kindleSaleDate,
+              }
+            });
+
+            paymentsIds.push({"id": createdPayment.id})
+            continue;
+          }
+
+          paymentsIds.push({"id": existingPayment.id})
+        }
+
+        const createdKindleSale = await prisma.kindleSale.create({
+          data: {
+            bookId: book.id,
+            payments: {
+              connect: paymentsIds
+            },
+            quantityEbook: randQuantToSell,
+            quantityPod: randQuantPod,
+            dateCut: dateCut,
+            datePay: kindleSaleDate, 
+            regalias: ((randQuantToSell + randQuantPod) * 399.99),
+            createdAt: kindleSaleDate,
+          }
+        })
+      };
+    }
+
     /// Create more fake sales specifically for the test author in the last month
     // const now = new Date();
     // const lastThirtyDays = new Date(now.setDate(now.getDate()-30));

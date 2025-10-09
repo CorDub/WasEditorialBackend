@@ -2,7 +2,14 @@ import { Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
-import { createRandomPassword, calculateAuthorRevenue, getForMonth, twelveMonthsAgo, generateMonthKeysForRange } from './../utils.js';
+import { 
+  createRandomPassword, 
+  calculateAuthorRevenue, 
+  getForMonth, 
+  twelveMonthsAgo, 
+  generateMonthKeysForRange,
+  getAuthorString 
+} from './../utils.js';
 import { prisma } from "../prisma/client.js"
 
 const router = express.Router();
@@ -1770,14 +1777,7 @@ router.get('/sales', async (req, res) => {
       sale.createdAt = sale.createdAt.toLocaleString();
       sale.updatedAt = sale.updatedAt.toLocaleString();
       sale.date = sale.date.toLocaleString();
-      sale.authorsString = "";
-      for (let i = 0; i < sale.inventory.book.users.length; i++) {
-        sale.authorsString += sale.inventory.book.users[i].first_name + " "
-          + sale.inventory.book.users[i].last_name
-        if (i < sale.inventory.book.users.length - 1) {
-          sale.authorsString += ", ";
-        }
-      }
+      sale.authorsString = getAuthorString(sale.inventory.book.users);
     })
 
     const monthsRange = generateMonthKeysForRange(startDate, endDate)
@@ -2853,6 +2853,92 @@ router.delete('/cost/:id', async (req, res) => {
     res.status(500).json({error:"a server error occurred while deleting the cost"})
   }
 })
+
+
+/// KINDLE SALES ROUTES
+
+router.get('/kindlesales', async (req, res) => {
+  try {
+    let startDate = new Date(JSON.parse(req.query.startDate))
+    let endDate = new Date(JSON.parse(req.query.endDate))
+    const kindleSales = await prisma.kindleSale.findMany({
+      where: {
+        isDeleted: false,
+        datePay: {
+          gte: startDate,
+          lt: endDate
+        }
+      },
+      select: {
+        id: true,
+        bookId: true,
+        book: {
+          select: {
+            title: true,
+            users: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true
+              }
+            }
+          }
+        },
+        quantityEbook: true,
+        quantityPod: true,
+        dateCut: true,
+        datePay: true,
+        regalias: true,
+      },
+      orderBy: {
+        datePay: "desc"
+      }
+    });
+
+    kindleSales.map((kindleSale) => {
+      kindleSale.dateCut = kindleSale.dateCut.toLocaleString();
+      kindleSale.datePay = kindleSale.datePay.toLocaleString();
+      kindleSale.authorsString = getAuthorString(kindleSale.book.users);
+    })
+
+    const monthsRange = generateMonthKeysForRange(startDate, endDate)
+    let kindleSalesCompiled = [];
+    for (const month of monthsRange) {
+      kindleSalesCompiled.push(
+        {
+          "forMonth" : month,
+          "sales": [],
+          "books": [],
+          "authors": []
+        }
+      )
+    }
+    for (const kindleSale of kindleSales) {
+      for (const month of kindleSalesCompiled) {
+        if (getForMonth(kindleSale.datePay) === month.forMonth) {
+          month.sales.push(kindleSale);
+          
+          if (!month.books.includes(kindleSale.book.title)) {
+            month.books.push(kindleSale.book.title)
+          }
+          month.books.sort()
+          
+          for (const author of kindleSale.book.users) {
+            if (!month.authors.includes( (author.first_name + " " + author.last_name) )) {
+              month.authors.push( (author.first_name + " " + author.last_name) )
+            }
+          }
+          month.authors.sort()
+        }
+      }
+    }
+
+    res.json(kindleSalesCompiled);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Server error at sales route"});
+  }
+});
 
 /// soft delete on cascade
 

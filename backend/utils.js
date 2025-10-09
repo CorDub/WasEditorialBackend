@@ -153,3 +153,77 @@ export function changeDateFormat(date) {
 
   return months[date.substring(5,7)] + " " + date.substring(0,4);
 }
+
+export function applyFilters(data, filters, type) {
+  let filteredResults = [];
+  const options = {
+    "sales": {
+      "selectedBook": {
+        "data" : (sale) => sale.inventory.book.title,
+        "filter": filters.selectedBook,
+        "function": (data, filter) => data !== filter
+      },
+      "selectedBookstore": {
+        "data": (sale) => sale.inventory.bookstore.name,
+        "filter": filters.selectedBookstore,
+        "function": (data, filter) => data !== filter
+      },
+      "selectedAuthor": {
+        "data": (sale) => sale.authorsString,
+        "filter": filters.selectedAuthor,
+        "function": (data, filter) => !data.includes(filter)
+      }
+    },
+    "kindle": {
+      "selectedBook": {
+        "data" : (sale) => sale.book.title,
+        "filter": filters.selectedBook,
+        "function": (data, filter) => data !== filter
+      },
+      "selectedAuthor": {
+        "data": (sale) => sale.authorsString,
+        "filter": filters.selectedAuthor,
+        "function": (data, filter) => !data.includes(filter)
+      }
+    }
+  }
+  let activeFilters = [];
+  for (const element of Object.entries(filters)) {
+    if (element[1] !== "") {
+      activeFilters.push(element[0])
+    }
+  }
+
+  for (const sale of data) {
+    if (activeFilters.length === 0) {
+      filteredResults = data
+      break;
+    }
+
+    let retained = true
+    for (const filter of activeFilters) {
+      const data = options[type][filter].data(sale)
+      const filterValue = options[type][filter].filter
+      if (options[type][filter].function(data, filterValue)) {
+        retained = false;
+        break;
+      }
+    }
+    if (retained) {
+      filteredResults.push(sale)
+    }
+  }
+  
+  return filteredResults
+}
+
+export function getAuthorString(userList) {
+  let authorString = "";
+  for (let i = 0; i < userList.length; i++) {
+    authorString += userList[i].first_name + " " + userList[i].last_name
+    if (i < userList.length - 1) {
+      userList.authorsString += ", ";
+    }
+  }
+  return authorString
+}

@@ -1,13 +1,12 @@
 import Navbar from "./Navbar";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
-import { useEffect } from "react";
 import { twelveMonthsAgo, applyFilters } from "../../backend/utils";
 
-function SalesListPerMonths() {
+function KindleSalesListPerMonth() {
   useCheckAdmin();
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
@@ -17,8 +16,6 @@ function SalesListPerMonths() {
   const [activeMonth, setActiveMonth] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [monthsInRange, setMonthsInRange] = useState([]);
-  const [bookstoresInMonth, setBookstoresInMonth] = useState([]);
-  const [selectedBookstore, setSelectedBookstore] = useState("");
   const [booksInMonth, setBooksInMonth] = useState([]);
   const [selectedBook, setSelectedBook] = useState("");
   const [authorsInMonth, setAuthorsInMonth] = useState([]);
@@ -26,16 +23,20 @@ function SalesListPerMonths() {
   const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)));
   const [endDate, setEndDate] = useState(new Date());
 
-  async function fetchSalesPerMonths(startDate, endDate) {
+  // console.log("data", data);
+  // console.log("booksInMonth", booksInMonth);
+  // console.log("authorsInMonth", authorsInMonth)
+
+  async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
-      setLoading(true);
-      const response = await fetch(`${baseURL}/admin/sales?startDate=${JSON.stringify(startDate)}&endDate=${JSON.stringify(endDate)}`, {
+      setLoading(true)
+      const response = await fetch(`${baseURL}/admin/kindlesales?startDate=${JSON.stringify(startDate)}&endDate=${JSON.stringify(endDate)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: 'include'
-      })
+      }) 
 
       if (response.ok) {
         const data = await response.json();
@@ -50,17 +51,16 @@ function SalesListPerMonths() {
           monthsInRange.push(data[data.length-1-i].forMonth)
         }
         setMonthsInRange(monthsInRange)
-        setBookstoresInMonth(data[data.length-1].bookstores)
         setBooksInMonth(data[data.length-1].books)
         setAuthorsInMonth(data[data.length-1].authors)
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   }
-  
+
   useEffect(() => {
-    fetchSalesPerMonths(startDate, endDate);
+    fetchKindleSalesPerMonth(startDate, endDate);
   }, [forceRender])
 
   async function refetchAndFilter() {
@@ -71,14 +71,13 @@ function SalesListPerMonths() {
     if (startDate < new Date(previousStartDate)
       && endDate > new Date(previousEndDate)
     ) {
-      await fetchSalesPerMonths(startDate, endDate)
+      await fetchKindleSalesPerMonth(startDate, endDate)
     }
 
     let monthData = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i].forMonth === activeMonth) {
         monthData = data[i].sales;
-        setBookstoresInMonth(data[i].bookstores);
         setBooksInMonth(data[i].books);
         setAuthorsInMonth(data[i].authors);
       }
@@ -86,11 +85,10 @@ function SalesListPerMonths() {
 
     const filters = {
       "selectedBook": selectedBook,
-      "selectedBookstore": selectedBookstore,
       "selectedAuthor": selectedAuthor
     }
 
-    const filteredData = applyFilters(monthData, filters, "sales");
+    const filteredData = applyFilters(monthData, filters, 'kindle');
     setFilteredData(filteredData)
   }
 
@@ -100,7 +98,7 @@ function SalesListPerMonths() {
 
   return(
     <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
-      <Navbar subNav={user.role} active={"ventas"} />
+      <Navbar subNav={user.role} active={"kindle"} />
       {isLoading && <LoadingWheel />}
       {data && !isLoading && 
         <TableWithDrawers 
@@ -108,9 +106,6 @@ function SalesListPerMonths() {
           monthsInRange={monthsInRange}
           activeMonth={activeMonth}
           setActiveMonth={setActiveMonth}
-          bookstoresInMonth={bookstoresInMonth}
-          selectedBookstore={selectedBookstore}
-          setSelectedBookstore={setSelectedBookstore}
           booksInMonth={booksInMonth}
           selectedBook={selectedBook}
           setSelectedBook={setSelectedBook}
@@ -122,10 +117,9 @@ function SalesListPerMonths() {
           endDate={endDate}
           setEndDate={setEndDate}
           refetchAndFilter={refetchAndFilter}
-          salesType={"normal"}/>}
+          salesType={"kindle"} />}
     </div>
   )
 }
 
-export default SalesListPerMonths;
-
+export default KindleSalesListPerMonth;

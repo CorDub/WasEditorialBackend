@@ -17,7 +17,8 @@ function TableWithDrawersHeader({
   setStartDate,
   endDate,
   setEndDate,
-  applyFilters
+  refetchAndFilter,
+  salesType
 }) {
 
   // const [bookstoreList, setBookstoreList] = useState(bookstoresInMonth)
@@ -41,11 +42,13 @@ function TableWithDrawersHeader({
   //   setAuthorList(prepareOptionsList(authorList, selectedAuthor, "Todos los autores"))
   // }, [selectedBook, selectedBookstore, selectedAuthor])
 
+  // console.log("booksInMonth", booksInMonth);
+
   return(
     <div className="twdh">
       <button className="blue-button"
         onClick={() => {openModal("adding")}}>
-        Añadir nueva venta
+        Añadir nueva venta {salesType && salesType === "kindle" && "Kindle"}
       </button>
       <div className="twdh-filtrar">
         <DateRange 
@@ -53,14 +56,16 @@ function TableWithDrawersHeader({
           setStartDate={setStartDate}
           endDate={endDate}
           setEndDate={setEndDate}/>
-        <select className="twdh-select"
-          value={selectedBookstore}
-          onChange={(e) => setSelectedBookstore(e.target.value)}>
-            <option value="">Todas las librerías</option>
-          {bookstoresInMonth && bookstoresInMonth.map((bookstore, index) => (
-            <option key={index}>{bookstore}</option>
-          ))}
-        </select>
+        {salesType && salesType === "normal" && (
+          <select className="twdh-select"
+            value={selectedBookstore}
+            onChange={(e) => setSelectedBookstore(e.target.value)}>
+              <option value="">Todas las librerías</option>
+            {bookstoresInMonth && bookstoresInMonth.map((bookstore, index) => (
+              <option key={index}>{bookstore}</option>
+            ))}
+          </select>)
+        }
         <select className="twdh-select"
           value={selectedBook}
           onChange={(e) => setSelectedBook(e.target.value)}>
@@ -78,7 +83,7 @@ function TableWithDrawersHeader({
           ))}
         </select>
         <button className="blue-button"
-          onClick={() => applyFilters()}>
+          onClick={() => refetchAndFilter()}>
           Aplicar filtros</button>
       </div>
     </div>

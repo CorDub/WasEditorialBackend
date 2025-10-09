@@ -8,6 +8,7 @@ import UserContext from "./UserContext";
 import Modal from "./Modal";
 import Alert from "./Alert";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import formatNumber from "./customHooks/formatNumber";
 
 function TableWithDrawers({
   data,
@@ -27,7 +28,8 @@ function TableWithDrawers({
   setStartDate,
   endDate,
   setEndDate,
-  applyFilters
+  refetchAndFilter,
+  salesType
 }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -46,42 +48,94 @@ function TableWithDrawers({
     pageSize: 30
   })
 
-  const columns = useMemo(() => [
-    {
-      header: "Acciones",
-      Cell: ({row}) => (
-        <div style={{overflow:"visible"}}>
-          <TableActions openModal={openModal} row={row} />
-        </div>
-      ),
-      muiTableBodyCellProps: {
-        sx: {
-          overflow: "visible"
+  let columns = useMemo(() => {
+    if (salesType === "normal") {
+      return [
+        {
+          header: "Acciones",
+          Cell: ({row}) => (
+            <div style={{overflow:"visible"}}>
+              <TableActions openModal={openModal} row={row} />
+            </div>
+          ),
+          muiTableBodyCellProps: {
+            sx: {
+              overflow: "visible"
+            }
+          }
+        },
+        {
+          header: "Cantidad",
+          accessorKey: "quantity"
+        },
+        {
+          header: "Libro",
+          accessorKey: "inventory.book.title",
+        },
+        {
+          header: "Librería",
+          accessorKey: "inventory.bookstore.name"
+        },
+        {
+          header: "Autor",
+          accessorKey: "authorsString",
+        },
+        {
+          header: "Fecha",
+          accessorKey: "date"
+        },
+      ]
+    } else if (salesType === "kindle") {
+      return [
+        {
+          header: "Acciones",
+          Cell: ({row}) => (
+            <div style={{overflow:"visible"}}>
+              <TableActions openModal={openModal} row={row} />
+            </div>
+          ),
+          muiTableBodyCellProps: {
+            sx: {
+              overflow: "visible",
+              maxWidth: 50
+            }
+          }
+        },
+        {
+          header: "Libro",
+          accessorKey: "book.title"
+        },
+        {
+          header: "Autor(es)",
+          accessorKey: "authorsString"
+        },
+        {
+          header: "Cantidad eBook",
+          accessorKey: "quantityEbook"
+        },
+        {
+          header: "Cantidad Pod",
+          accessorKey: "quantityPod"
+        },
+        {
+          header: "Fecha de corte",
+          accessorKey: "dateCut"
+        },
+        {
+          header: "Fecha de pago",
+          accessorKey: "datePay"
+        },
+        {
+          header: "Regalías",
+          // accessorKey: "regalias"
+          Cell: ({row}) => (
+            <div>{formatNumber(row.original.regalias)}</div>
+          )
         }
-      }
-    },
-    {
-      header: "Cantidad",
-      accessorKey: "quantity"
-    },
-    {
-      header: "Libro",
-      accessorKey: "inventory.book.title",
-    },
-    {
-      header: "Librería",
-      accessorKey: "inventory.bookstore.name"
-    },
-    {
-      header: "Autor",
-      accessorKey: "authorsString",
-    },
-    {
-      header: "Fecha",
-      accessorKey: "date"
-    },
-  ], []);
-
+      ]
+    }
+  }, []);
+  
     const table = useMaterialReactTable({
     columns,
     data,
@@ -183,7 +237,8 @@ function TableWithDrawers({
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
-        applyFilters={applyFilters}
+        refetchAndFilter={refetchAndFilter}
+        salesType={salesType}
         />
       <div className="twd-bottom">
         <MonthSelector 

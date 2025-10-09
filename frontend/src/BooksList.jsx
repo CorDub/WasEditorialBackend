@@ -57,7 +57,7 @@ function BooksList() {
     {
       header: "Autor(es)",
       accessorKey: "authorNames",
-      maxSize: 400,
+      maxWidth: 400,
     },
     {
       header: "Pasta",
@@ -122,7 +122,8 @@ function BooksList() {
         fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
         whiteSpace: "nowrap",
         overflow: "hidden",
-        textOverflow: "ellipsis"
+        textOverflow: "ellipsis",
+        maxWidth: 200
       }
     },
     muiTopToolbarProps: {

@@ -10,7 +10,7 @@ import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
 import AdminsList from "./AdminsList.jsx";
-import SalesList from "./SalesList.jsx"
+// import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
 // import InventoriesProvider from './InventoriesProvider.jsx';
@@ -23,6 +23,7 @@ import PaymentsList from './PaymentsList.jsx';
 import CostsList from "./CostsList.jsx";
 import InventoriesList from "./InventoriesList.jsx";
 import SalesListPerMonths from './SalesListPerMonths.jsx';
+import KindleSalesListPerMonth from './KindleSalesListPerMonth.jsx';
 
 function App() {
   return (
@@ -36,12 +37,13 @@ function App() {
           <Route path="/admin/inventories" element={<InventoriesAreaDashboard />} />
           <Route path="/admin/bookstoreInventory" element={<BookstoreInventory />} />
           <Route path="/admin/bookInventory" element={<BookInventory />} />
-          <Route path="/admin/sales" element={<SalesList />} />
+          <Route path="/admin/sales" element={<SalesListPerMonths />} />
+          <Route path='/admin/kindle' element={<KindleSalesListPerMonth />} />
           <Route path="/admin/books" element={<BooksList />} />
           <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/admin/payments' element={<PaymentsList />} />
           <Route path='/admin/costs' element={<CostsList />} />
-          <Route path='/admin/sales2' element={<SalesListPerMonths />} />
+          {/* <Route path='/admin/sales2' element={<SalesListPerMonths />} /> */}
           <Route path='/admin/inventories-list' element={<InventoriesList/>} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />

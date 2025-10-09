@@ -20,7 +20,10 @@ function formatNumber(total) {
     return "$ " + firstPart + ",00";
   };
 
-  const secondPart = splitTotal[1].substring(0,2);
+  let secondPart = splitTotal[1].substring(0,2);
+  if (secondPart.length === 1) {
+    secondPart += "0"
+  }
   return "$ " + firstPart + "." + secondPart;
 }
 

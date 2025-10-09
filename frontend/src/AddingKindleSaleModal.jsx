@@ -1,0 +1,264 @@
+import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { useState, useRef, useEffect } from "react";
+import checkForErrors from "./customHooks/checkForErrors";
+import ErrorsList from "./ErrorsList";
+import { convertISOString } from "../../backend/utils";
+
+function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+  useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
+  // const [data, setData] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [existingBooks, setExistingBooks] = useState([]);
+  const [book, setBook] = useState("");
+  const [quantityEbook, setQuantityEbook] = useState(0);
+  const [quantityPod, setQuantityPod] = useState(0);
+  const bookRef = useRef();
+  const quantityEbookRef = useRef();
+  const quantityPodRef = useRef();
+  const dateCutRef = useRef();
+  const [dateCut, setDateCut] = useState(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 2);
+    return date;
+  });
+  const [datePay, setDatePay] = useState(new Date());
+  const datePayRef = useRef();
+  const [regalias, setRegalias] = useState(0);
+  const regaliasRef = useRef();
+
+  async function getExistingBooks() {
+    try {
+      const response = await fetch(`${baseURL}/admin/existingBooks`, {
+       method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        setExistingBooks(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      await Promise.all([
+        // fetchInventories(),
+        getExistingBooks()
+      ]);
+    }
+
+    fetchData();
+  }, []);
+
+  function dropDownChange(e, input_name, input_index) {
+
+    const inputs = {
+      "Book": {
+        "function": setBook,
+        "element": bookRef
+      }
+    }
+
+    if (input_index !== undefined) {
+      inputs[input_name]["function"](input_index, e);
+      if (e.target.value === "null") {
+        if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+          inputs[input_name]["element"].current.classList.remove("selected")
+        };
+        return;
+      } else {
+        if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+          inputs[input_name]["element"].current.classList.add("selected")
+        };
+        return;
+      }
+    };
+
+    if (e.target.value === "null") {
+      inputs[input_name]["function"](null);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+        inputs[input_name]["element"].current.classList.remove("selected")
+      };
+    } else {
+      inputs[input_name]["function"](e.target.value);
+      if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+        inputs[input_name]["element"].current.classList.add("selected")
+      };
+    };
+  }
+
+  function checkInputs() {
+    let errorsList = []
+    let existingBookIds = []
+    for (const book of existingBooks) {
+      existingBookIds.push(book.id)
+    }
+    const expectationsBook = {
+      type: "number",
+      presence: "not empty",
+      value: existingBookIds
+    };
+    const expectationsCantidad = {
+      type: "number",
+      presence: "not empty",
+      range: "positive"
+    }
+
+    const expectationsDate = {
+      type: "datetime",
+      presence: "not empty",
+      range: "no future"
+    }
+
+    let errorsBook;
+    let errorsQuantityEbook;
+    let errorsQuantityPod;
+    let errorInputs;
+    let errorsDatePay;
+    let errorsDateCut;
+    let errorsRegalias;
+
+    if (clickedRow) {
+      errorsQuantityEbook = checkForErrors("La cantidad", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
+      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+      errorInputs = [errorsQuantityEbook];
+    } else {
+      errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
+      errorsQuantityEbook = checkForErrors("La cantidad Ebook", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
+      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+      errorsDatePay = checkForErrors("La fecha de pago", datePay, expectationsDate, datePayRef, "a");
+      errorsDateCut = checkForErrors("La fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
+      errorsRegalias = checkForErrors("El número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");
+      errorInputs = [errorsBook, errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
+    }
+
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
+    }
+
+    return errorsList
+  }
+
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setErrors([]);
+
+    const res = checkInputs();
+    if (res.length > 0) {
+      return;
+    }
+
+    sendToServer()
+  }
+
+  async function sendToServer() {
+    try {
+      const response = await fetch(`${baseURL}/admin/kindlesales`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          book: parseInt(book),
+          quantityEbook: quantityEbook,
+          quantityPod: quantityPod,
+          dateCut: dateCut,
+          datePay: datePay,
+          regalias: regalias
+        }),
+      });
+
+      if (response.ok === false) {
+        const error = await response.json();
+        console.log(error);
+        if (error.message) {
+          setErrors(prev => [...prev, error.message]);
+          return;
+        }
+        const alertMessage = 'No se pudó crear una nueva venta.';
+        closeModal(globalFilter, false, alertMessage, "error");
+      } else {
+        const alertMessage = `Una nueva venta ha sido creada.`;
+        closeModal(globalFilter, true, alertMessage, "confirmation");
+      }
+
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if (clickedRow) {
+      setBook(clickedRow.bookId);
+    }
+  }, [clickedRow])
+
+  return (
+    <div className="modal-proper">
+      <div className="form-title">
+        <p>Nueva venta Kindle</p>
+      </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
+      <form className="global-form">
+        {clickedRow ?
+          null :
+           <>
+           <select onChange={(e) => dropDownChange(e, "Book")}
+             className="select-global" ref={bookRef}>
+             <option value="null">Selecciona libro*</option>
+             {existingBooks && existingBooks.map((book, index) => (
+               <option key={index} value={book.id}>{book.title}</option>
+             ))}
+           </select>
+         </>
+        }
+        <input type="text" placeholder="Cantidad eBook vendida*" className="global-input"
+          ref={quantityEbookRef} onChange={(e) => setQuantityEbook(parseInt(e.target.value))}></input>
+        <input type="text" placeholder="Cantidad pod vendida*" className="global-input"
+          ref={quantityPodRef} onChange={(e) => setQuantityPod(parseInt(e.target.value))}></input>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Fecha de corte</label>
+          <input 
+            type="date"
+            className="global-input"
+            ref={dateCutRef}
+            onChange={(e) => setDateCut(e.target.value)}
+            value={convertISOString(dateCut)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Fecha de pago</label>
+          <input 
+            type="date"
+            className="global-input"
+            ref={datePayRef}
+            onChange={(e) => setDatePay(e.target.value)}
+            value={convertISOString(datePay)}></input>
+        </div>
+        <input type="text" placeholder="Regalías*" className="global-input"
+          ref={regaliasRef} onChange={(e) => setRegalias(parseInt(e.target.value))}></input>
+        <ErrorsList errors={errors} setErrors={setErrors}/>
+        <div className="form-actions">
+          <button type="button" className='blue-button'
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
+          <button type='button' onClick={handleSubmit} className="blue-button">Añadir</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default AddingKindleSaleModal;

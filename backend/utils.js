@@ -89,11 +89,15 @@ export function getForMonth(timestamp) {
   return forMonth
 }
 
-export function convertISOString(date) {
+export function convertISOString(date, separator='-') {
   const JsonParsedDate = JSON.stringify(date);
   const justDateNoTime = JsonParsedDate.split("T")[0]
   const cleanedDate = justDateNoTime.split('"')[1]
-  return cleanedDate
+  let finalDate = cleanedDate;
+  if (separator !== '-') {
+    finalDate = cleanedDate.replace(/-/g, "/")
+  }
+  return finalDate
 }
 
 export function generateMonthKeysForRange(startDate, endDate) {
@@ -156,6 +160,7 @@ export function changeDateFormat(date) {
 
 export function applyFilters(data, filters, type) {
   let filteredResults = [];
+  // getting all our paths + functions listed
   const options = {
     "sales": {
       "selectedBook": {
@@ -187,6 +192,8 @@ export function applyFilters(data, filters, type) {
       }
     }
   }
+
+  // getting the list of active filters to not filter by inactive
   let activeFilters = [];
   for (const element of Object.entries(filters)) {
     if (element[1] !== "") {
@@ -194,6 +201,7 @@ export function applyFilters(data, filters, type) {
     }
   }
 
+  // filtering
   for (const sale of data) {
     if (activeFilters.length === 0) {
       filteredResults = data

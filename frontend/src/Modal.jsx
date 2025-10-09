@@ -34,6 +34,8 @@ import AddingCostModal from "./AddingCostModal";
 import EditCostModal from './EditCostModal';
 import DeleteCostModal from './DeleteCostModal';
 import EditBookPricesModal from "./EditBookPricesModal";
+import AddingKindleSaleModal from "./AddingKindleSaleModal";
+import EditKindleSaleModal from './EditKindleSaleModal';
 
 function Modal({
   modalType,
@@ -60,6 +62,11 @@ function Modal({
       addingMultiple: AddingMultipleSalesModal,
       edit: EditSaleModal,
       delete: DeleteSaleModal
+    },
+    kindle: {
+      adding: AddingKindleSaleModal,
+      edit: EditKindleSaleModal,
+      // delete: DeleteKindleSaleModal
     },
     impression: {
       adding: AddingImpressionModal,

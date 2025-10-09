@@ -1,6 +1,5 @@
 import "./TableWithDrawersHeader.scss";
 import DateRange from "./DateRange";
-// import { useEffect, useState } from 'react';
 
 function TableWithDrawersHeader({
   openModal,
@@ -20,29 +19,6 @@ function TableWithDrawersHeader({
   refetchAndFilter,
   salesType
 }) {
-
-  // const [bookstoreList, setBookstoreList] = useState(bookstoresInMonth)
-  // const [bookList, setBookList] = useState(booksInMonth)
-  // const [authorList, setAuthorList] = useState(authorsInMonth);
-
-  // function prepareOptionsList(list, value, base) {
-  //   if (list.includes(value)) {
-  //     const removed = list.filter((element) => element === value)
-  //     removed.splice(0, 0, value, base)
-  //     return removed
-  //   } else {
-  //     list.splice(0, 0, base)
-  //     return list
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   setBookstoreList(prepareOptionsList(bookstoreList, selectedBookstore, "Todas las librerías"))
-  //   setBookList(prepareOptionsList(bookList, selectedBook, "Todos los libros"))
-  //   setAuthorList(prepareOptionsList(authorList, selectedAuthor, "Todos los autores"))
-  // }, [selectedBook, selectedBookstore, selectedAuthor])
-
-  // console.log("booksInMonth", booksInMonth);
 
   return(
     <div className="twdh">

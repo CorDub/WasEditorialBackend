@@ -571,8 +571,9 @@ async function main() {
         const monthsAgo = Math.floor(Math.random() * 13);
         let kindleSaleDate = new Date();
         kindleSaleDate.setMonth(kindleSaleDate.getMonth() - monthsAgo);
-        let dateCut = new Date(kindleSaleDate.setMonth(kindleSaleDate.getMonth() - 2));
-
+        let dateCut = new Date(kindleSaleDate);
+        dateCut.setMonth(dateCut.getMonth()-2);
+        
         const saleForMonth = getForMonth(kindleSaleDate);
 
         const authorIds = book.users.map(user => user.id)

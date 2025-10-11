@@ -48,7 +48,7 @@ function AuthorSales() {
         : sales.filter(sale => sale.book_id === parseInt(bookId));
 
       filteredSales.forEach(sale => {
-        const date = new Date(sale.created_at);
+        const date = new Date(sale.date);
         const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
       if (!monthlySales[monthKey]) {
@@ -137,7 +137,7 @@ function AuthorSales() {
     }
   };
 
-  // console.log(salesData);
+  console.log(salesData);
 
   useEffect(() => {
     if (dateRange !== null) {

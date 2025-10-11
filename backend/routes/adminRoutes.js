@@ -3012,6 +3012,57 @@ router.post("/kindlesales", async (req, res) => {
     res.status(200).json({message: "kindleSale created successfully"})
   } catch(error) {
     console.log("Server error at kindlesales ", error);
+    res.status(500).json({error: "Server error while updating the kindle sale"})
+  }
+})
+
+router.patch("/kindlesales/:id", async (req, res) => {
+  try {
+    const kindleSaleIdQuery = parseInt(req.params.id);
+    const bookIdQuery = parseInt(req.body.book);
+    const quantityEbookQuery = parseInt(req.body.quantityEbook);
+    const quantityPodQuery = parseInt(req.body.quantityPod);
+    const dateCutQuery = new Date(req.body.dateCut);
+    const datePayQuery = new Date(req.body.datePay);
+    const regaliasQuery = parseFloat(req.body.regalias);
+
+    const updateKindleSale = await prisma.kindleSale.update({
+      where: {
+        id: kindleSaleIdQuery
+      },
+      data: {
+        bookId : bookIdQuery,
+        quantityEbook: quantityEbookQuery,
+        quantityPod: quantityPodQuery,
+        dateCut: dateCutQuery,
+        datePay: datePayQuery,
+        regalias: regaliasQuery
+      }
+    })
+
+    res.status(200).json({message: "updated kindle sale successfully"})
+  } catch(error) {
+    console.log("Server error at updating kindlesales ", error);
+    res.status(500).json({error: "Server error while updating the kindle sale"})
+  }
+})
+
+router.delete("/kindlesales/:id", async (req, res) => {
+  try {
+    const kindleSaleIdQuery = parseInt(req.params.id);
+    const deletedKindleSale = await prisma.kindleSale.update({
+      where: {
+        id: kindleSaleIdQuery
+      },
+      data: {
+        isDeleted: true
+      }
+    })
+    
+    res.status(200).json({message: "successfully deleted the kindle sale"})
+  } catch(error) {
+    console.log("error at deleting kindlesales ", error);
+    res.status(500).json({error: "Server error while deleting the kindle sale"})
   }
 })
 

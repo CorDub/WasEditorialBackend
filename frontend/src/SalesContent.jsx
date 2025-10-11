@@ -33,16 +33,22 @@ const SalesContent = ({
                 <li key={book.bookId}
                   className='books-sold-item'
                   style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
-                  title={`${book.title}: ${book.quantity} libros ($ ${formatNumber(book.value)})`}>
-                  {book.title}: {book.quantity} libros <span>({formatNumber(book.value)})</span>
+                  title={`${book.title}: ${book.quantity} libros (${formatNumber(book.value)})`}>
+                    <div>
+                      <div style={{fontWeight: "bold"}}>{book.title}</div>
+                      <div>{book.quantity} libros - <span>{formatNumber(book.value)})</span></div>
+                    </div>
                 </li>
               ))}
             </ul>
             : <ul>
               <li className="books-sold-item"
                 style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
-                title={`${selectedBook}: ${selectedBookSales} libros <span>($ ${selectedBookValue.toFixed(2)})</span>`}>
-                {selectedBookTitle}: {selectedBookSales} libros <span>($ {selectedBookValue.toFixed(2)})</span>
+                title={`${selectedBook}: ${selectedBookSales} libros (${formatNumber(selectedBookValue)})`}>
+                <div>
+                  <div style={{fontWeight: "bold"}}>{selectedBookTitle}</div>
+                  <div>{selectedBookSales} libros - <span>{formatNumber(selectedBookValue)}</span></div>
+                </div>
               </li>
             </ul>
           }
@@ -78,12 +84,6 @@ const SalesContent = ({
                 />
               </YAxis>
               <Tooltip 
-                // formatter={(value, name) => {
-                //   if (name === 'Valor de ventas ($)') {
-                //     return [`${formatNumber(value)}`, name]
-                //   }
-                //   return [value, name];
-                // }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     const quantity = payload.find(p => p.name === 'Libros vendidos')?.value ?? 0;

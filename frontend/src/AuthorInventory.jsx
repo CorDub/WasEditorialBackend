@@ -163,6 +163,7 @@ function AuthorInventory(){
             bookSales={inventories.bookInventories}
             selectedBookId={selectedBookId}/>)}
       </div>
+      <div className="author-inventory-kindle-disclaimer">Este reporte es del inventario físico y no contiene datos de ventas en Kindle*</div>
     </div>
     </div>
   )

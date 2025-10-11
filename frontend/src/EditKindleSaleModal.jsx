@@ -156,16 +156,18 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     sendToServer()
   }
 
+  console.log(clickedRow)
+
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/kindlesales`, {
-        method: "POST",
+      const response = await fetch(`${baseURL}/admin/kindlesales/${clickedRow.id}`, {
+        method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          book: parseInt(book),
+          book: book,
           quantityEbook: quantityEbook,
           quantityPod: quantityPod,
           dateCut: dateCut,
@@ -192,12 +194,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       console.error(error);
     }
   }
-
-  useEffect(() => {
-    if (clickedRow) {
-      setBook(clickedRow.bookId);
-    }
-  }, [clickedRow])
 
   return (
     <div className="modal-proper">

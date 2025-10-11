@@ -364,45 +364,14 @@ router.get('/sales', async (req, res) => {
     const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
 
-    // let sales = await prisma.sale.findMany({
-    //     where: {
-    //       inventory: {
-    //         book: {
-    //           users: {
-    //             some: {
-    //               id: authorId
-    //             }
-    //           }
-    //         }
-    //       },
-    //       createdAt: {
-    //         gte: startDate,
-    //         lte: endDate
-    //       },
-    //       isDeleted: false
-    //     },
-    //     include: {
-    //       inventory: {
-    //         include: {
-    //           book: true,
-    //           bookstore: true
-    //         }
-    //       },
-    //       payments: true
-    //     },
-    //     orderBy: {
-    //       createdAt: 'desc'
-    //     }
-    //   });
-
-    let sales = await prisma.sale.findMany({
+    let allSales = await prisma.sale.findMany({
       where: {
         payments: {
           some: {
             userId: authorId
           }
         },
-        createdAt: {
+        date: {
           gte: startDate,
           lte: endDate
         },
@@ -418,16 +387,14 @@ router.get('/sales', async (req, res) => {
         payments: true
       },
       orderBy: {
-        createdAt: 'desc'
+        date: 'desc'
       }
     });
-
-    // sales = sales.filter(sale => sale.payment.userId === authorId);
 
     let totalSales = 0;
     let totalValue = 0;
     let bookSalesHashMap = {};
-    // let numberOfAuthors = {};
+    let sales = [];
     const author = await prisma.user.findUnique({
       where: {
         id: authorId
@@ -443,19 +410,9 @@ router.get('/sales', async (req, res) => {
       }
     })
 
-    for (const sale of sales) {
-      // if (!numberOfAuthors[sale.inventory.book.title]) {
-      //   const authorCount = await prisma.book.findUnique({
-      //     where: {id: sale.inventory.book.id},
-      //     select: {
-      //       _count: {
-      //         select: {users: true}
-      //       }
-      //     }
-      //   });
-      //   numberOfAuthors[sale.inventory.book.title] = authorCount._count.users;
-      // }
+    
 
+    for (const sale of allSales) {
       const saleValue = calculateAuthorRevenue(
         sale.inventory.bookstore.comissions,
         sale.inventory.price,
@@ -466,6 +423,17 @@ router.get('/sales', async (req, res) => {
 
       totalSales += sale.quantity
       totalValue += saleValue
+      sales.push({
+        id: sale.id,
+        book_id: sale.inventory.book.id,
+        bookstore_id: sale.inventory.bookstore.id,
+        quantity: sale.quantity,
+        date: sale.date,
+        title: sale.inventory.book.title,
+        bookstore_name: sale.inventory.bookstore.name,
+        price: sale.inventory.price,
+        value: saleValue
+      })
 
       if (!bookSalesHashMap[sale.inventory.book.title]) {
         bookSalesHashMap[sale.inventory.book.title] = {
@@ -481,30 +449,62 @@ router.get('/sales', async (req, res) => {
       }
     }
 
+    // NOW ADD KINDLE SALES
+    const authorKindleSales = await prisma.kindleSale.findMany({
+      where: {
+        payments: {
+          some: {
+            userId: authorId
+          }
+        },
+        datePay: {
+          gte: startDate,
+          lte: endDate
+        }, 
+        isDeleted: false
+      }, 
+      include: {
+        payments: true,
+        book: true
+      },
+      orderBy: {
+        datePay: 'desc'
+      }
+    });
+
+    for (const kindleSale of authorKindleSales) {
+      totalSales += kindleSale.quantityEbook + kindleSale.quantityPod;
+      totalValue += kindleSale.regalias
+      sales.push({
+        id: kindleSale.id,
+        book_id: kindleSale.bookId,
+        quantity: (kindleSale.quantityEbook + kindleSale.quantityPod),
+        date: kindleSale.datePay,
+        title: kindleSale.book.title,
+        value: kindleSale.regalias
+      })
+
+      if (!bookSalesHashMap[kindleSale.book.title]) {
+        bookSalesHashMap[kindleSale.book.title] = {
+          "bookId": kindleSale.bookId,
+          "title": kindleSale.book.title,
+          "quantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+          "value": kindleSale.regalias,
+          // "price": 1
+        }
+      } else {
+        bookSalesHashMap[kindleSale.book.title].quantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
+        bookSalesHashMap[kindleSale.book.title].value += kindleSale.regalias
+      }
+    }
+
     const bookSales = Object.values(bookSalesHashMap);
 
-    res.json({
+    res.status(200).json({
       totalSales,
       totalValue,
       bookSales,
-      sales: sales.map(sale => ({
-        id: sale.id,
-        book_id: sale.inventory.book.id,
-        bookstore_id: sale.inventory.bookstore.id,
-        quantity: sale.quantity,
-        created_at: sale.createdAt,
-        title: sale.inventory.book.title,
-        bookstore_name: sale.inventory.bookstore.name,
-        price: sale.inventory.price,
-        value: calculateAuthorRevenue(
-          sale.inventory.bookstore.comissions,
-          sale.inventory.price,
-          author.category.management_min,
-          sale.inventory.bookstore.deal_percentage,
-          sale.quantity,
-        )
-      }))
-    });
+      sales})
   } catch (error) {
     console.error('Error fetching sales:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -840,6 +840,22 @@ router.get('/monthlySalesByPayments', async (req, res) => {
             }
           }
         },
+        kindleSales: {
+          select: {
+            book: {
+              select: {
+                title: true
+              }
+            },
+            isDeleted: true,
+            id: true,
+            quantityEbook: true,
+            quantityPod: true,
+            dateCut: true,
+            datePay: true,
+            regalias: true
+          }
+        },
         costs: {
           select: {
             id: true,
@@ -861,7 +877,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
         "sales": [], 
         "totalQuantity": 0, 
         "totalValue": 0,
-        "costs": []
+        "costs": [],
       }
 
       for (const sale of payment.sales) {
@@ -869,6 +885,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
           continue;
         }
         
+        /// if we have nothing in the array we start it so that we can go through it 
+        /// with a for loop later on
         if (paymentSales.sales.length === 0) {
           paymentSales.sales.push({
             "title": sale.inventory.book.title,
@@ -903,12 +921,16 @@ router.get('/monthlySalesByPayments', async (req, res) => {
           continue;
         }
 
+        /// if the array isn't empty we go through it to find a matching title
         let existingBook = false;
         for (const entry of paymentSales.sales) {
           if (entry.title === sale.inventory.book.title) {
 
+            // if we match we check if the bookstore for this book has already been included
             let existingBookstore = false;
             for (const bookstore of entry.bookstores) {
+
+              /// if it does we update
               if (bookstore.name === sale.inventory.bookstore.name) {
                   bookstore.quantity += sale.quantity;
                   entry.totalTitleQuantity += sale.quantity;
@@ -921,6 +943,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
               }
             }
 
+            /// if not we create it
             if (!existingBookstore) {
               entry.bookstores.push({
                 "name": sale.inventory.bookstore.name,
@@ -937,6 +960,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
                     * (sale.inventory.bookstore.deal_percentage / 100)
               })
 
+              // and we update total quantity and value for the entry
               entry.totalTitleQuantity += sale.quantity;
               entry.totalTitleValue += sale.inventory.bookstore.comissions
                 ? sale.quantity * (sale.inventory.price - user.category.management_min)
@@ -949,6 +973,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
           }
         }
 
+        // if the book isn't found amongst the entries we create it
         if (!existingBook) {
           paymentSales.sales.push({
             "title": sale.inventory.book.title,
@@ -975,6 +1000,7 @@ router.get('/monthlySalesByPayments', async (req, res) => {
           })
         }
 
+        // and update totalQuantity and totalValue
         paymentSales.totalQuantity += sale.quantity
         paymentSales.totalValue += sale.inventory.bookstore.comissions
           ? sale.quantity * (sale.inventory.price - user.category.management_min)
@@ -990,6 +1016,97 @@ router.get('/monthlySalesByPayments', async (req, res) => {
         }
       }
 
+      //Now we're adding the kindle sales 
+      for (const kindleSale of payment.kindleSales) {
+        if (kindleSale.isDeleted === true) {
+          continue;
+        }
+
+        //same steps than sales
+        // if the month is empty we create it
+        if (paymentSales.sales.length === 0) {
+          paymentSales.sales.push({
+            "title": kindleSale.book.title,
+            "bookstores": [{
+              "name": "Kindle",
+              "quantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+              "ganancia": kindleSale.regalias,
+              "quantityEbook": kindleSale.quantityEbook,
+              "quantityPod": kindleSale.quantityPod,
+              "dateCut": kindleSale.dateCut,
+              "datePay": kindleSale.datePay,
+              "regalias": kindleSale.regalias
+            }],
+            "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+            "totalTitleValue": kindleSale.regalias
+          })
+
+          paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
+          paymentSales.totalValue += kindleSale.regalias;
+          continue;
+        }
+
+        /// if the array isn't empty we go through it to find a matching title
+        let existingBook = false;
+        for (const entry of paymentSales.sales) {
+          if (entry.title === kindleSale.book.title) {
+
+            // if we match we check if the bookstore for this book has already been included
+            let existingBookstore = false;
+            for (const bookstore of entry.bookstores) {
+
+              /// if it does we update
+              if (bookstore.name === "Kindle") {
+                  bookstore.quantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+                  entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+                  entry.totalTitleValue += kindleSale.regalias;
+                  existingBookstore = true;
+              }
+            }
+
+            /// if not we create it
+            if (!existingBookstore) {
+              entry.bookstores.push({
+                "name": "Kindle",
+                "quantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+                "ganancia": kindleSale.regalias,
+                "quantityEbook": kindleSale.quantityEbook,
+                "quantityPod": kindleSale.quantityPod,
+                "dateCut": kindleSale.dateCut,
+                "datePay": kindleSale.datePay,
+                "regalias": kindleSale.regalias
+              })
+
+              // and we update total quantity and value for the entry
+              entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+              entry.totalTitleValue += kindleSale.regalias
+            }
+            existingBook = true;
+          }
+        }
+
+        if (!existingBook) {
+          paymentSales.sales.push({
+            "title": kindleSale.book.title,
+            "bookstores": [{
+              "name": "Kindle",
+              "quantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+              "ganancia": kindleSale.regalias,
+              "quantityEbook": kindleSale.quantityEbook,
+              "quantityPod": kindleSale.quantityPod,
+              "dateCut": kindleSale.dateCut,
+              "datePay": kindleSale.datePay,
+              "regalias": kindleSale.regalias
+            }],
+            "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+            "totalTitleValue": kindleSale.regalias
+          })
+        }
+
+        paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
+        paymentSales.totalValue += kindleSale.regalias
+      }
+      
       monthlySales.push(paymentSales);
     }
     // console.log("monthlySales", monthlySales);
@@ -1469,6 +1586,7 @@ router.get("/payments", async (req, res) => {
       // },
       include: {
         sales: true,
+        kindleSales: true,
         costs: true
       },
       orderBy: {
@@ -1533,6 +1651,7 @@ router.get("/payments", async (req, res) => {
             forMonth: ltmStrings[i],
             status: "created",
             sales: [],
+            kindleSales: [],
             costs: []
           });
         }
@@ -1542,6 +1661,7 @@ router.get("/payments", async (req, res) => {
     //Calculate and add the total amount of each payment
     for (const payment of allPayments) {
       payment.amount = 0;
+      // sales
       if (payment.sales.length > 0) {
         for (const sale of payment.sales) {
           const saleInventory = await prisma.inventory.findUnique({
@@ -1563,6 +1683,14 @@ router.get("/payments", async (req, res) => {
         }
       }
 
+      //kindleSales
+      if (payment.kindleSales.length > 0) {
+        for (const sale of payment.kindleSales) {
+          payment.amount += sale.regalias
+        }
+      }
+
+      //costs
       if (payment.costs.length > 0) {
         for (const cost of payment.costs) {
           payment.amount -= cost.amount

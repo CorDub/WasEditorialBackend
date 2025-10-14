@@ -105,7 +105,7 @@ function AuthorInventory(){
       <div id="author-page-content">
         <div id="author-inventory-container">
           <div id="author-inventory-title-container">
-            <h2 id='show-inventory-title'>Reporte de Inventario</h2>
+            <h2 id='show-inventory-title'>Reporte de Inventario Físico</h2>
               {booksInventories && (
                 <BookSelector
                   booksInventories={booksInventories}
@@ -131,7 +131,8 @@ function AuthorInventory(){
           legendDisplays={legendDisplays}
           setLegendDisplays={setLegendDisplays}
           exclusions={exclusions}
-          setExclusions={setExclusions}/>
+          setExclusions={setExclusions}
+          showTotal={showTotal}/>
         </div>
         <div className="author-inventory-rightfield">
           {isTotalInventoryOpen && (
@@ -163,7 +164,6 @@ function AuthorInventory(){
             bookSales={inventories.bookInventories}
             selectedBookId={selectedBookId}/>)}
       </div>
-      <div className="author-inventory-kindle-disclaimer">Este reporte es del inventario físico y no contiene datos de ventas en Kindle*</div>
     </div>
     </div>
   )

@@ -71,6 +71,16 @@ function CostsLists() {
         enablePagination: true,
         enableFullScreenToggle: false,
         enableRowVirtualization: false,
+        renderTopToolbarCustomActions: () => (
+            <div className="table-add-button">
+                <button
+                    onClick={() => openModal("adding", null)}
+                    className="blue-button"
+                    style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+                        Añadir nuevo costo
+                </button>
+            </div>
+        ),
         initialState: {
         density: 'compact',
         },
@@ -127,6 +137,10 @@ function CostsLists() {
     function openModal(type, clickedRow) {
         setClickedRow(clickedRow);
         switch (type) {
+        case 'adding': 
+            setModalAction("adding");
+            setModalType("cost");
+            break;
         case 'edit' : 
             setModalAction("edit");
             setModalType("cost");
@@ -144,7 +158,6 @@ function CostsLists() {
 
     function closeModal(globalFilter, reload, alertMessage, alertType) {
         setModalOpen(false);
-        console.log(globalFilter, reload, alertMessage, alertType);
         globalFilter && setGlobalFilter(globalFilter);
         if (reload === true) {
             setForceRender(!forceRender);

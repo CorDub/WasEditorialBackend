@@ -61,40 +61,6 @@ function AuthorCommissions() {
     }
   }, [salesByPayments, activeMonth, paymentInfo, forceRender])
 
-  // async function fetchAuthorBookSales() {
-  //   try {
-  //     // check cache first
-  //     const cachedAuthorMonthlySales = sessionStorage.getItem("authorMonthlySales");
-  //     if (cachedAuthorMonthlySales && JSON.parse(cachedAuthorMonthlySales).length > 0) {
-  //       console.log("cache hit");
-  //       setDataByMonths(JSON.parse(cachedAuthorMonthlySales));
-  //       return
-  //     }
-
-  //     const response = await fetch(`${baseURL}/author/monthlySales`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       credentials: "include"
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       sessionStorage.setItem("authorMonthlySales", JSON.stringify(data));
-  //       console.log("cache storage");
-  //       setDataByMonths(data);
-  //     }
-
-  //   } catch(error) {
-  //     console.log("Error when fetching the data", error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchAuthorBookSales();
-  // }, [])
-
   async function fetchPayments() {
     try {
       // check cache (but skip if forceRender is true)
@@ -135,12 +101,10 @@ function AuthorCommissions() {
   function closeModal(reload, alertMessage, alertType) {
     setModalOpen(false);
     if (reload === true) {
-      // console.log("forceRender to true");
       setPaymentInfo(prev => ({
         ...prev,
         status: "solicited"
         }));
-      // console.log("solicited");
       // setForceRender(true);
       setDemandPaymentPossible("solicited")
     }
@@ -149,11 +113,6 @@ function AuthorCommissions() {
       setAlertType(alertType);
     }
   }
-
-  useEffect(() => {
-    console.log(forceRender)
-    console.log(isDemandPaymentPossible)
-  }, [forceRender])
 
   async function fetchSalesByPayments() {
     try {
@@ -167,7 +126,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const salesByPayments = await response.json();
-        console.log("salesByPayments", salesByPayments);
+        // console.log("salesByPayments", salesByPayments);
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {

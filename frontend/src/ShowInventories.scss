@@ -52,3 +52,17 @@
   border-radius: 15px;
   color: white
 }
+
+.author-inventory-date {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: grey;
+  margin-left: 0.5rem;
+}
+
+.author-inventory-impressions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}

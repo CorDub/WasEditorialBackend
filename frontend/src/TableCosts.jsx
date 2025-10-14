@@ -8,7 +8,6 @@ function TableCosts({costs, totalCosts, setTotalCosts}) {
     
     useEffect(() => {
         let totalCosts = 0;
-        console.log("costs", costs);
         costs.map(cost => totalCosts += cost.amount);
         setTotalCosts(totalCosts);
     }, [costs])

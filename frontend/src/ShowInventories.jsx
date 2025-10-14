@@ -1,6 +1,7 @@
 import './ShowInventories.scss';
 import { useRef, useEffect, useState } from "react";
 import useCheckUser from './customHooks/useCheckUser';
+import { convertISOString } from '../../backend/utils';
 
 function ShowInventories({
     inventories,
@@ -16,7 +17,9 @@ function ShowInventories({
     setAuthorAvailableInventoryOpen,
     legendDisplays,
     setLegendDisplays,
-    setExclusions}) {
+    setExclusions,
+    showTotal
+  }) {
   useCheckUser();
   const totalRef = useRef();
   const givenRef = useRef();
@@ -118,15 +121,48 @@ function ShowInventories({
   return (
     inventories && (
       <div id='show-inventory-container'>
+        <div className="author-inventory-kindle-disclaimer">Este reporte no contiene datos de ventas en Kindle</div>
         <div className="author-inventory-line"
           ref={totalRef}
           // onClick={() => {
           //   declareActive(totalRef, 'total', setTotalInventoryOpen),
           //   setExclusions("")}}
           >
-          <p className="author-inventory-label">Inventario total inicial</p>
+          <p className="author-inventory-label">Inventario total inicial 
+            {!showTotal && (
+              <span className="author-inventory-date">({convertISOString(inventories.impressions[0].date) || ""})</span>
+            )}
+          </p>
+          {/* {!showTotal && (
+            <p className="author-inventory-date">{convertISOString(inventories.impressions[0].date) || ""}</p>
+          )} */}
           <p className="author-inventory-number">{inventories.summary.initial || 0}</p>
         </div>
+        <div className="author-inventory-line"
+          ref={totalRef}
+          // onClick={() => {
+          //   declareActive(totalRef, 'total', setTotalInventoryOpen),
+          //   setExclusions("")}}
+          >
+          <p className="author-inventory-label">Nuevas impressiones</p>
+          <p className="author-inventory-number">{inventories.summary.impressions || 0}</p>
+        </div>
+        {!showTotal && 
+            inventories.impressions &&
+            inventories.impressions.length > 1 && (
+            <>
+              {inventories.impressions && inventories.impressions.map((impression, index) => {
+                if (index !== 0) {
+                  return (
+                    <div key={index} className="author-inventory-impressions">
+                      <p className="author-inventory-date">({convertISOString(impression.date)})</p>
+                      <p className="author-inventory-date">{impression.quantity}</p>
+                    </div>
+                  )
+                } 
+              })}
+            </>
+          )}
         <div className="author-inventory-line"
           ref={givenRef}
           // onClick={() => {

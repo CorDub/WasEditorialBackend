@@ -1,5 +1,5 @@
 import "./KindleDetails.scss"
-import { convertISOString } from "../../backend/utils";
+import { changeDateFormat } from "../../backend/utils";
 import formatNumber from "./customHooks/formatNumber";
 
 function KindleDetails({bookstore}) {
@@ -11,19 +11,23 @@ function KindleDetails({bookstore}) {
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Cantidad PoD</div>
-        <div className="kindle-details-group-value">{bookstore.quantityEbook}</div>
+        <div className="kindle-details-group-value">{bookstore.quantityPod}</div>
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Fecha de corte</div>
-        <div className="kindle-details-group-value">{bookstore && convertISOString(bookstore.dateCut)}</div>
+        <div className="kindle-details-group-value">{bookstore && 
+          changeDateFormat(bookstore.dateCut, "monthOnly")}
+        </div>
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Fecha de pago</div>
-        <div className="kindle-details-group-value">{bookstore && convertISOString(bookstore.datePay)}</div>
+        <div className="kindle-details-group-value">{bookstore && 
+          changeDateFormat(bookstore.datePay, "monthOnly")}
+        </div>
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Regalias</div>
-        <div className="kindle-details-group-value">{formatNumber(bookstore.regalias)}</div>
+        <div className="kindle-details-group-value">{formatNumber(bookstore.ganancia)}</div>
       </div>
     </div>
   )

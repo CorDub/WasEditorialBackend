@@ -90,7 +90,7 @@ export function getForMonth(timestamp) {
 }
 
 export function convertISOString(date, separator='-') {
-  const JsonParsedDate = JSON.stringify(date);
+  let JsonParsedDate = JSON.stringify(date);
   const justDateNoTime = JsonParsedDate.split("T")[0]
   const cleanedDate = justDateNoTime.split('"')[1]
   let finalDate = cleanedDate;
@@ -139,7 +139,7 @@ export function twelveMonthsAgo() {
   return twelveMonthsAgo
 }
 
-export function changeDateFormat(date) {
+export function changeDateFormat(date, format='normal') {
   const months = {
       "01": "Ene",
       "02": "Feb",
@@ -155,8 +155,13 @@ export function changeDateFormat(date) {
       "12": "Dic"
     }
 
+  if (format === "monthOnly") {
+    return months[date.substring(5,7)];
+  }
+
   return months[date.substring(5,7)] + " " + date.substring(0,4);
 }
+
 
 export function applyFilters(data, filters, type) {
   let filteredResults = [];

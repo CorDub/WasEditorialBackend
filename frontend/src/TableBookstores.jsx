@@ -13,11 +13,20 @@ function TableBookstores({salesByPayments, activeMonth}) {
     if (salesByPayments.length > 0 && Number.isInteger(activeMonth)) {
       setMonthlySalesData(salesByPayments[activeMonth].sales)
       setCosts(salesByPayments[activeMonth].costs)
+      
+      if (salesByPayments[activeMonth].costs.length > 0) {
+        let totalCost = 0;
+        for (const cost of salesByPayments[activeMonth].costs) {
+          totalCost += cost.amount
+        }
+        setTotalCosts(totalCosts);
+      } else {
+        setTotalCosts(0);
+      }
     }
   }, [salesByPayments, activeMonth])
 
-  // console.log(salesByPayments[9].sales);
-  // console.log(monthlySalesData);
+  console.log(salesByPayments)
 
   return(
     <div className="table">

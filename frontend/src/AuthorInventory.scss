@@ -34,7 +34,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 0.5rem 1rem 0.5rem;
-    // gap: 2rem;
 }
 
 #show-inventory-title {
@@ -42,20 +41,22 @@
 }
 
 #author-inventory-container {
-    width: 30%;
-    height: 100%;
-    background-color: #f8f9fa;
-    border-radius: 15px;
-    margin: 1rem;
-    padding: 1rem;
+  width: 30%;
+  height: 100%;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  margin: 1rem;
+  padding: 1rem;
 }
 
 .author-inventory-rightfield {
   width: 70%;
-  // padding: 1rem;
   margin: 1rem;
 }
 
 .author-inventory-kindle-disclaimer {
   text-align: center;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 0.5rem;
 }

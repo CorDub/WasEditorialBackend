@@ -2252,7 +2252,7 @@ router.post('/impression', async (req, res) => {
         where: {
           bookId_bookstoreId: {
             bookId: id,
-            bookstoreId: 3,
+            bookstoreId: 1,
           }
         }
       });
@@ -2294,7 +2294,7 @@ router.delete('/impression/:id', async (req, res) => {
         where: {
           bookId_bookstoreId: {
             bookId: book_id,
-            bookstoreId: 3
+            bookstoreId: 1
           }
         }
       });
@@ -2719,40 +2719,101 @@ router.post('/cost', async (req, res) => {
     const { 
       paymentId,
       amount,
-      note
+      note,
+      book
     } = req.body;
 
     await prisma.$transaction(async (tx) => {
-      const createdCost = await tx.cost.create({
-        data: {
-          paymentId: paymentId,
-          amount: amount,
-          note: note
+    // Make sure we got payment Id or Ids
+      let paymentIds = [];
+      if (!paymentId) {
+        const selectedBook = await tx.book.findFirst({
+          where: {
+            id: parseInt(book),
+            isDeleted: false
+          },
+          select: {
+            users: {
+              select: {
+                id: true
+              }
+            }
+          }
+        })
+
+        for (const user of selectedBook.users) {
+          let userPayment = await tx.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: user.id,
+                forMonth: getForMonth(new Date())
+              },
+            }
+          })
+
+          if (!userPayment.isDeleted && userPayment.status === "created") {
+            paymentIds.push(userPayment.id);
+            continue;
+          }
+
+          if (!userPayment) {
+            const newPayment = await tx.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(new Date())
+              }
+            })
+            paymentIds.push(newPayment.id)
+            continue;
+          }
+
+          if (userPayment.status !== 'created') {
+            const newPaymentNextMonth = await tx.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(new Date(new Date().setMonth(new Date().getMonth() + 1)))
+              }
+            })
+            paymentIds.push(newPaymentNextMonth.id)
+            continue;
+          }
+
+          if (userPayment.isDeleted) {
+            const deletedPayment = await tx.payment.delete({
+              where: {
+                id: userPayment.id
+              }
+            })
+
+            const resetPayment = await tx.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(new Date())
+              }
+            })
+            paymentIds.push(resetPayment.id)
+          }
         }
-      });
-
-      if (createdCost) {
-        // const previousPayment = await tx.payment.findUnique({
-        //   where: {
-        //     id: paymentId
-        //   },
-        //   select: {
-        //     amount: true
-        //   }
-        // });
-
-        // const updatedPayment = await tx.payment.update({
-        //   where: {
-        //     id: paymentId
-        //   },
-        //   data: {
-        //     amount: previousPayment.amount - createdCost.amount
-        //   }
-        // })
-        res.status(200).json({message: "Cost created sucessfully"});
       } else {
-        res.status(500).json({error:"a server error occurred while creating the cost"})
+        paymentIds.push(parseInt(paymentId));
       }
+
+      // get a new cost for each paymentId
+      for (const paymentId of paymentIds) {
+        const createdCost = await tx.cost.create({
+          data: {
+            paymentId: paymentId,
+            amount: parseInt(amount),
+            note: note
+          }
+        });
+      }
+
+      // if (createdCost) {
+      res.status(200).json({message: "Cost created sucessfully"});
+      // } else {
+      //   res.status(500).json({error:"a server error occurred while creating the cost"})
+      // }
     })
     
   } catch (error) {
@@ -2944,7 +3005,7 @@ router.get('/kindlesales', async (req, res) => {
   }
 });
 
-router.post("/kindlesales", async (req, res) => {
+export async function addKindleSale (req, res) {
   try {
     let bookIdQuery = parseInt(req.body.book);
     let quantityEbookQuery = parseInt(req.body.quantityEbook);
@@ -3014,7 +3075,8 @@ router.post("/kindlesales", async (req, res) => {
     console.log("Server error at kindlesales ", error);
     res.status(500).json({error: "Server error while updating the kindle sale"})
   }
-})
+}
+router.post("/kindlesales", addKindleSale);
 
 router.patch("/kindlesales/:id", async (req, res) => {
   try {

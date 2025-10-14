@@ -127,6 +127,13 @@ router.get('/inventories', async (req, res) => {
             current: true,
             bookstoreId: true
           }
+        },
+        impressions: {
+          select: {
+            quantity: true,
+            isDeleted: true,
+            date: true
+          }
         }
       }
     });
@@ -193,12 +200,13 @@ router.get('/inventories', async (req, res) => {
 
     // Calculate overall totals across all books
     let overallInitialTotal = 0;
+    let overallNewImpressions = 0;
     let overallSoldTotal = 0;
     let overallInventoryInBookstores = 0;
     let overallInventoryInWas = 0;
     let overallInventoryInWasPerCountry = {};
     let overallEntregadosAlAutor = 0;
-
+  
     // Calculate sales summary for each book
     const bookInventories = books.map(book => {
       // initial
@@ -206,17 +214,6 @@ router.get('/inventories', async (req, res) => {
 
       // sold
       let soldTotal = 0;
-      // for (const inventory of book.inventories) {
-      //   if (inventory.sales) {
-      //     for (const sale of inventory.sales) {
-      //       if (sale.isDeleted === false) {
-      //         soldTotal += sale.quantity
-      //       }
-      //     }
-      //   }
-      // }
-      // console.log("")
-      // console.log("soldTotal", soldTotal)
 
       // let soldTotalPayments = 0;
       for (const bookSold of soldByBooks) {
@@ -233,7 +230,7 @@ router.get('/inventories', async (req, res) => {
       };
 
       // remaining (disponibles)
-      const remainingTotal = initialTotal - soldTotal - entregadosAlAutor;
+      let remainingTotal = initialTotal - soldTotal - entregadosAlAutor;
 
       // bookstores
       let inventoryInBookstores = 0;
@@ -271,12 +268,26 @@ router.get('/inventories', async (req, res) => {
         }
       }
 
+      // Do the impressions now
+      let newImpressionsTotal = 0;
+      for (let i = 0; i < book.impressions.length; i++) {
+        if (i === 0) {
+          continue;
+        }
+
+        newImpressionsTotal += book.impressions[i].quantity;
+        overallNewImpressions += book.impressions[i].quantity;
+        remainingTotal += book.impressions[i].quantity;
+      }
+
       return {
         bookId: book.id,
         title: book.title,
         author: book.author,
+        impressions: book.impressions,
         summary: {
           initial: initialTotal,
+          impressions: newImpressionsTotal,
           sold: soldTotal,
           total: remainingTotal,
           bookstores: inventoryInBookstores,
@@ -287,11 +298,12 @@ router.get('/inventories', async (req, res) => {
       };
     });
 
-    const overallRemainingTotal = overallInitialTotal - overallSoldTotal - overallEntregadosAlAutor;
+    const overallRemainingTotal = overallInitialTotal + overallNewImpressions - overallSoldTotal - overallEntregadosAlAutor;
 
     res.status(200).json({
       summary: {
         initial: overallInitialTotal,
+        impressions: overallNewImpressions,
         sold: overallSoldTotal,
         total: overallRemainingTotal,
         bookstores: overallInventoryInBookstores,
@@ -455,7 +467,7 @@ router.get('/sales', async (req, res) => {
         payments: {
           some: {
             userId: authorId
-          }
+          },
         },
         datePay: {
           gte: startDate,
@@ -790,7 +802,8 @@ router.get('/monthlySales', async (req, res) => {
   }
 })
 
-router.get('/monthlySalesByPayments', async (req, res) => {
+
+export async function getMonthlySalesBypayments (req, res) {
   // Get the last twelfth month first day as a cutoff date
   const ltm = new Date();
   ltm.setMonth(ltm.getMonth()-12);
@@ -1149,7 +1162,8 @@ router.get('/monthlySalesByPayments', async (req, res) => {
     console.log('error fetching monthly sales by payments', error) 
     res.status(500).json({error: 'Internal server error'});
   }
-})
+}
+router.get('/monthlySalesByPayments', getMonthlySalesBypayments);
 
 router.get('/currentTienda', async (req, res) => {
   try {

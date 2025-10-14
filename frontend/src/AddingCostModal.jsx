@@ -1,17 +1,42 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ErrorsList from './ErrorsList';
 import checkForErrors from './customHooks/checkForErrors';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 
-
 function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     useCheckAdmin();
     const baseURL = import.meta.env.VITE_API_URL || '';
+    const [existingBooks, setExistingBooks] = useState([]);
     const [amount, setAmount] = useState(0);
     const amountRef = useRef();
     const [note, setNote] = useState("");
     const noteRef = useRef();
     const [errors, setErrors] = useState([]);
+    const [selectedBookId, setSelectedBookId] = useState('');
+    const bookRef = useRef();
+
+    async function fetchExistingBooks() {
+        try {
+            const response = await fetch(`${baseURL}/admin/existingBooks`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setExistingBooks(data);
+            }
+        } catch (error) {
+            console.log("Error while fetching existing books:", error);
+        }
+    }
+    
+    useEffect(() => {
+        fetchExistingBooks();
+    }, [])
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -40,7 +65,8 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
         const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
-        const errorInputs = [errorsAmount, errorsNote];
+        const errorsBook = checkForErrors("El libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -61,9 +87,10 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 },
                 credentials: "include",
                 body: JSON.stringify({
-                    paymentId: clickedRow.id,
+                    paymentId: clickedRow ? clickedRow.id : null,
                     amount: amount,
-                    note: note
+                    note: note,
+                    book: selectedBookId
                 })
             });
 
@@ -88,6 +115,14 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 <p>*Campos obligatorios</p>
             </div>
             <form className="global-form">
+                <select className="select-global"
+                    ref={bookRef}
+                    onChange={(e) => setSelectedBookId(e.target.value)}>
+                    <option value="">Selecciona libro*</option>
+                    {existingBooks && existingBooks.map((book, index) => (
+                        <option key={index} value={book.id}>{book.title}</option>
+                    ))}
+                </select>
                 <input type="text"
                     className="global-input"
                     placeholder="Monto*"

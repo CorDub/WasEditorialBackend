@@ -58,9 +58,11 @@ function TableBookstoresRowDetails({monthlySalesData}) {
                 : formatNumber(bookstore.quantity * bookstore.ganancia)}
             </div>
           </div>
-          <div className="tbrd-below">
-            {isKindleDetailsOpen && <KindleDetails bookstore={bookstore}/>}
-          </div>
+          {bookstore.name === "Kindle" && (
+            <div className="tbrd-below">
+              {isKindleDetailsOpen && <KindleDetails bookstore={bookstore}/>}
+            </div>
+          )}
         </div>
       ))}
     </div>

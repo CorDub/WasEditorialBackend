@@ -6,42 +6,11 @@ import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
 function DemandPaymentModal({closeModal, paymentInfo}) {
-  const [uso, setUso] = useState("");
   const [factura, setFactura] = useState(null);
   const [constancia, setConstancia] = useState(null);
   const max_size = 5*1024*1024
-  const usosDeCFDI = [
-    { clave: "G01", descripcion: "Adquisición de mercancías" },
-    { clave: "G02", descripcion: "Devoluciones, descuentos o bonificaciones" },
-    { clave: "G03", descripcion: "Gastos en general" },
-
-    { clave: "I01", descripcion: "Construcciones" },
-    { clave: "I02", descripcion: "Mobiliario y equipo de oficina por inversiones" },
-    { clave: "I03", descripcion: "Equipo de transporte" },
-    { clave: "I04", descripcion: "Equipo de cómputo y accesorios" },
-    { clave: "I05", descripcion: "Dados, troqueles, moldes, matrices y herramental" },
-    { clave: "I06", descripcion: "Comunicaciones telefónicas" },
-    { clave: "I07", descripcion: "Comunicaciones satelitales" },
-    { clave: "I08", descripcion: "Otra maquinaria y equipo" },
-
-    { clave: "D01", descripcion: "Honorarios médicos, dentales y gastos hospitalarios" },
-    { clave: "D02", descripcion: "Gastos médicos por incapacidad o discapacidad" },
-    { clave: "D03", descripcion: "Gastos funerarios" },
-    { clave: "D04", descripcion: "Donativos" },
-    { clave: "D05", descripcion: "Intereses reales efectivamente pagados por créditos hipotecarios" },
-    { clave: "D06", descripcion: "Aportaciones voluntarias al SAR" },
-    { clave: "D07", descripcion: "Primas por seguros de gastos médicos" },
-    { clave: "D08", descripcion: "Gastos de transportación escolar obligatoria" },
-    { clave: "D09", descripcion: "Depósitos en cuentas de ahorro / pensiones" },
-    { clave: "D10", descripcion: "Pagos por servicios educativos (colegiaturas)" },
-
-    { clave: "S01", descripcion: "Sin efectos fiscales" },
-    { clave: "CP01", descripcion: "Pagos" },
-    { clave: "CN01", descripcion: "Nómina" }
-  ]
   const [errorFactura, setErrorFactura] = useState("");
   const [errorConstancia, setErrorConstancia] = useState("");
-  const [errorUso, setErrorUso] = useState("");
   const [correo, setCorreo] = useState("");
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext)
@@ -102,15 +71,12 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       return;
     } 
 
-    if (!factura || !constancia || !uso ) {
+    if (!factura || !constancia ) {
       if (!factura) {
         setErrorFactura("Factura faltante");
       }
       if (!constancia) {
         setErrorConstancia("Constancia faltante");
-      }
-      if (!uso) {
-        setErrorUso("Uso de CFDI faltante");
       }
       return;
     }
@@ -122,7 +88,6 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("month", paymentInfo.month);
       formData.append("monthOriginal", paymentInfo.monthOriginal);
       formData.append("amount", paymentInfo.amount);
-      formData.append("uso", uso);
       formData.append("correo", correo);
 
       const response = await fetch(`${baseURL}/author/sendInvoice`, {
@@ -226,6 +191,11 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   return (
     <div className="modal-proper">
       <div className="modal-stuff-to-add">
+        <div className="dempay-adicional-info">
+          <p>Por favor, usa el uso de CFDI 551015000 y la referencia venta de libros "título de libro".</p>
+          <p>No añade el IVA en la factura.</p>
+          <p>El pago sera hecho por transferencia.</p>
+        </div>
         <div className="modal-form-upload">
           <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>
           <input type="file"
@@ -241,17 +211,6 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
             className="modal-form-file"
             onChange={(e) => checkFile(e, "constancia")}/>
           <div className="modal-form-error">{errorConstancia}</div>
-        </div>
-        <div className="modal-form-line">
-          <label className="modal-form-label">Uso de CFDI</label>
-          <select className="select-global dempay-title"
-            onChange={(e) => setUso(e.target.value)}>
-            <option value=""></option>
-            {usosDeCFDI && usosDeCFDI.map((uso, index) => (
-              <option key={index} value={uso.clave}>{uso.clave} : {uso.descripcion}</option>
-            ))}
-          </select>
-          <div className="modal-form-error">{errorUso}</div>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Confirme su correo</label>

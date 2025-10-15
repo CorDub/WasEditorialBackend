@@ -105,7 +105,7 @@ function PaymentsList() {
         borderRadius: '15px',
         backgroundColor: "#fff",
         position: "fixed",
-        top: "180px",
+        top: "90px",
         left: "10px",
         width: "98.5vw"
       }
@@ -239,7 +239,7 @@ function PaymentsList() {
             Pagados
           </option>
         </select>
-        <div>Añadir un costo addicional solamente se puede hacer con un pago que todavía no esta solicitado</div>
+        {/* <div>Añadir un costo addicional solamente se puede hacer con un pago que todavía no esta solicitado</div> */}
       </div>
       
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}

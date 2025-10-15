@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ErrorsList from './ErrorsList';
 import checkForErrors from './customHooks/checkForErrors';
 import useCheckAdmin from './customHooks/useCheckAdmin';
@@ -11,6 +11,32 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [note, setNote] = useState(clickedRow.note);
     const noteRef = useRef();
     const [errors, setErrors] = useState([]);
+    const [existingBooks, setExistingBooks] = useState([]);
+    const [selectedBookId, setSelectedBookId] = useState(clickedRow.bookId);
+    const bookRef = useRef();
+
+    async function fetchExistingBooks() {
+        try {
+            const response = await fetch(`${baseURL}/admin/existingBooks`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setExistingBooks(data);
+            }
+        } catch (error) {
+            console.log("Error while fetching existing books:", error);
+        }
+    }
+    
+    useEffect(() => {
+        fetchExistingBooks();
+    }, [])
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -39,7 +65,8 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
         const errorsAmount = checkForErrors("El monto", parseFloat(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
-        const errorInputs = [errorsAmount, errorsNote];
+        const errorsBook = checkForErrors("El libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -61,7 +88,8 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 credentials: "include",
                 body: JSON.stringify({
                     amount: parseFloat(amount),
-                    note: note
+                    note: note,
+                    bookId: selectedBookId
                 })
             });
 
@@ -69,7 +97,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 const alertMessage = 'El costo ha estado actualizado con exitó';
                 closeModal(globalFilter, true, alertMessage, "confirmation")
             } else {
-                const alertMessage = 'No se pudó actulizar el costo.';
+                const alertMessage = 'No se pudó actualizar el costo.';
                 closeModal(globalFilter, false, alertMessage, "error")
             }
         } catch (error) {
@@ -86,6 +114,15 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 <p>*Campos obligatorios</p>
             </div>
             <form className="global-form">
+                <select className="select-global"
+                    ref={bookRef}
+                    value={selectedBookId}
+                    onChange={(e) => setSelectedBookId(e.target.value)}>
+                    <option value="">Selecciona libro*</option>
+                    {existingBooks && existingBooks.map((book, index) => (
+                        <option key={index} value={book.id}>{book.title}</option>
+                    ))}
+                </select>
                 <div className="modal-form-line">
                     <label className="modal-form-label">Monto *</label>
                     <input type="text"

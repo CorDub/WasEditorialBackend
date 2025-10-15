@@ -36,7 +36,7 @@ const SalesContent = ({
                   title={`${book.title}: ${book.quantity} libros (${formatNumber(book.value)})`}>
                     <div>
                       <div style={{fontWeight: "bold"}}>{book.title}</div>
-                      <div>{book.quantity} libros - <span>{formatNumber(book.value)})</span></div>
+                      <div>{book.quantity} libros - <span>{formatNumber(book.value)}</span></div>
                     </div>
                 </li>
               ))}

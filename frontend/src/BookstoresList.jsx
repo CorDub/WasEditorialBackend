@@ -30,6 +30,7 @@ function BookstoresList() {
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
         <div style={{overflow:"visible"}}>
           <TableActions openModal={openModal} row={row}/>
@@ -37,7 +38,7 @@ function BookstoresList() {
       ),
       muiTableBodyCellProps: {
         sx: {
-          overflow: "visible"
+          overflow: "visible",
         }
       }
     },
@@ -120,7 +121,8 @@ function BookstoresList() {
         fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
         whiteSpace: "nowrap",
         overflow: "hidden",
-        textOverflow: "ellipsis"
+        textOverflow: "ellipsis",
+        maxWidth: 200
       }
     },
     muiTopToolbarProps: {

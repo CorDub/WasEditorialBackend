@@ -48,6 +48,7 @@ function BookstoreInventory({
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
         <div style={{position:"relative", overflow:"visible !important"}}>
           <TableActions
@@ -74,6 +75,7 @@ function BookstoreInventory({
     },
     {
       header: "Libro",
+      maxSize: 200,
       accessorKey:'book.title',
       muiTableHeadCellProps: {
         sx: {
@@ -104,6 +106,7 @@ function BookstoreInventory({
     // },
     {
       header: "Inicial",
+      size: 50,
       Cell: ({row}) => {
         return (<div>{row.original.initial}</div>)
       },
@@ -122,6 +125,7 @@ function BookstoreInventory({
     {
       id: "impressions",
       header: "Nuevas impresiónes",
+      size: 50,
       Cell: ({row}) => {
         return (<div>{row.original.extraImpressions}</div>)
       },
@@ -139,6 +143,7 @@ function BookstoreInventory({
     },
     {
       header: "Devueltos",
+      size: 50,
       Cell: ({row}) => (
         <div>{row.original.returns}</div>
       ),
@@ -156,6 +161,7 @@ function BookstoreInventory({
     },
     {
       header: "Vendidos",
+      size: 50,
       Cell: ({row}) => {
         return (<div>{row.original.totalSales}</div>)
       },
@@ -173,6 +179,7 @@ function BookstoreInventory({
     },
     {
       id: "entregasAlAutor",
+      size: 50,
       header: "Entregados al autor",
       Cell: ({row}) => (
         <div>{row.original.givenToAuthor}</div>
@@ -191,6 +198,7 @@ function BookstoreInventory({
     },
     {
       header: "Disponibles",
+      size: 50,
       Cell: ({row}) => (
         <div>{selectedBookstoreId === 3 
           ? row.original.current + row.original.returns

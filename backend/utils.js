@@ -240,3 +240,36 @@ export function getAuthorString(userList) {
   }
   return authorString
 }
+
+export function isForMonthNextMonth(forMonth1, forMonth2) {
+  const yearForMonth1 = parseInt(forMonth1.substring(0,4));
+  const yearForMonth2 = parseInt(forMonth2.substring(0,4));
+  const monthForMonth1 = parseInt(forMonth1.substring(5,7));
+  const monthForMonth2 = parseInt(forMonth2.substring(5,7));
+
+  if (monthForMonth2 === 12) {
+    if (monthForMonth1 !== 1) {
+      return false
+    }
+
+    if (yearForMonth1 === yearForMonth2 + 1) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  if (yearForMonth1 !== yearForMonth2) {
+    return false
+  }
+
+  if (monthForMonth1 !== monthForMonth2 + 1) {
+    return false
+  }
+
+  return true;
+}
+
+export function convertDateStringToLocalFormat(dateString) {
+  return dateString.substring(3,5) + "/"  + dateString.substring(0,2) + "/" + dateString.substring(6,10)
+}

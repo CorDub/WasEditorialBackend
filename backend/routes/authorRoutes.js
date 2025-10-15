@@ -1071,6 +1071,7 @@ export async function getMonthlySalesBypayments (req, res) {
               /// if it does we update
               if (bookstore.name === "Kindle") {
                   bookstore.quantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+                  bookstore.regalias += kindleSale.regalias;
                   entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
                   entry.totalTitleValue += kindleSale.regalias;
                   existingBookstore = true;
@@ -1700,7 +1701,9 @@ router.get("/payments", async (req, res) => {
       //kindleSales
       if (payment.kindleSales.length > 0) {
         for (const sale of payment.kindleSales) {
-          payment.amount += sale.regalias
+          if (!sale.isDeleted) {
+            payment.amount += sale.regalias
+          }
         }
       }
 

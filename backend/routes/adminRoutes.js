@@ -11,7 +11,9 @@ import {
   getAuthorString 
 } from './../utils.js';
 import { prisma } from "../prisma/client.js"
+import multer from "multer";
 
+const upload = multer();
 const router = express.Router();
 
 // User routes
@@ -147,6 +149,40 @@ router.post('/user', async (req, res) => {
     res.status(500).json({ error: error });
   }
 });
+
+router.post('/addMultiples',  upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
+  try {
+    const csvfile = req.files.archivo[0];
+    const lines = csvfile.split("\n");
+    const errors = [];
+    for (let i = 0; i < lines.length; i++) {
+      const fields = lines[i].split(",");
+      const addedAuthor = await prisma.user.create({
+        data: {
+          first_name: fields[0],
+          last_name: fields[1],
+          country: fields[2],
+          categoryId: fields[3],
+          email: fields[4],
+          phone: fields[5],
+          birthday: fields[6],
+          clabe: fields[7],
+          name_bank_account: fields[8],
+          bank: fields[9],
+          swift: fields[10],
+          referido: fields[11]
+        }
+      })
+      if (!addedAuthor) {
+        errors.push(i)
+      }
+    }
+
+    res.status(200).json({"message": "added multiple authors"});
+  } catch(error) {
+    res.status(500).json({"error": error});
+  }
+})
 
 router.patch('/user', async (req, res) => {
   try {
@@ -2701,7 +2737,13 @@ router.get('/currentCosts', async (req, res) => {
               }
             }
           }
-        }
+        },
+        book: {
+          select: {
+            title: true
+          }
+        },
+        bookId: true
       }
     })
 
@@ -2716,20 +2758,21 @@ router.get('/currentCosts', async (req, res) => {
 
 router.post('/cost', async (req, res) => {
   try {
-    const { 
-      paymentId,
-      amount,
-      note,
-      book
-    } = req.body;
+    let paymentIdQuery; 
+    if (req.body.paymentId !== null) {
+      paymentIdQuery = parseInt(req.body.paymentId);
+    }
+    const amountQuery = parseFloat(req.body.amount);
+    const noteQuery = req.body.note;
+    const bookIdQuery = parseInt(req.body.book);
 
     await prisma.$transaction(async (tx) => {
     // Make sure we got payment Id or Ids
       let paymentIds = [];
-      if (!paymentId) {
+      if (!paymentIdQuery) {
         const selectedBook = await tx.book.findFirst({
           where: {
-            id: parseInt(book),
+            id: bookIdQuery,
             isDeleted: false
           },
           select: {
@@ -2750,11 +2793,6 @@ router.post('/cost', async (req, res) => {
               },
             }
           })
-
-          if (!userPayment.isDeleted && userPayment.status === "created") {
-            paymentIds.push(userPayment.id);
-            continue;
-          }
 
           if (!userPayment) {
             const newPayment = await tx.payment.create({
@@ -2793,9 +2831,14 @@ router.post('/cost', async (req, res) => {
             })
             paymentIds.push(resetPayment.id)
           }
+
+          if (!userPayment.isDeleted && userPayment.status === "created") {
+            paymentIds.push(userPayment.id);
+            continue;
+          }
         }
       } else {
-        paymentIds.push(parseInt(paymentId));
+        paymentIds.push(paymentIdQuery);
       }
 
       // get a new cost for each paymentId
@@ -2803,17 +2846,14 @@ router.post('/cost', async (req, res) => {
         const createdCost = await tx.cost.create({
           data: {
             paymentId: paymentId,
-            amount: parseInt(amount),
-            note: note
+            amount: amountQuery,
+            bookId: bookIdQuery,
+            note: noteQuery
           }
         });
       }
 
-      // if (createdCost) {
       res.status(200).json({message: "Cost created sucessfully"});
-      // } else {
-      //   res.status(500).json({error:"a server error occurred while creating the cost"})
-      // }
     })
     
   } catch (error) {
@@ -2825,46 +2865,21 @@ router.post('/cost', async (req, res) => {
 router.patch("/cost/:id", async (req, res) => {
   try {
     const costId = parseInt(req.params.id);
-    const {
-      amount,
-      note
-    } = req.body;
+    const amountQuery = parseFloat(req.body.amount);
+    const noteQuery = req.body.note;
+    const bookIdQuery = parseInt(req.body.bookId);
 
     await prisma.$transaction(async (tx) => {
-      // const previousCost = await tx.cost.findUnique({
-      //   where: {
-      //     id: costId
-      //   }
-      // })
-      
       const updatedCost = await tx.cost.update({
         where: {
           id: costId
         },
         data: {
-          amount: amount,
-          note: note
+          amount: amountQuery,
+          note: noteQuery,
+          bookId: bookIdQuery
         }
       })
-
-      // if (updatedCost) {
-      //   const previousPayment = await tx.payment.findUnique({
-      //     where: {
-      //       id: updatedCost.paymentId
-      //     }
-      //   });
-
-      //   if (previousPayment) {
-      //     const updatedPayment = await tx.payment.update({
-      //       where: {
-      //         id: updatedCost.paymentId
-      //       },
-      //       data: {
-      //         amount: previousPayment.amount + previousCost.amount - updatedCost.amount
-      //       }
-      //     })
-      //   }
-      // }
     })
 
     res.status(200).json({message: "The cost was updated successfully"});

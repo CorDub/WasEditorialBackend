@@ -150,35 +150,83 @@ router.post('/user', async (req, res) => {
   }
 });
 
-router.post('/addMultiples',  upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
+router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
   try {
     const csvfile = req.files.archivo[0];
-    const lines = csvfile.split("\n");
+    if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
+      return res.status(400).json({"error": "file is not a .csv"});
+    }
+    const fileContent = csvfile.buffer.toString('utf-8');
+    const lines = fileContent.split("\n");
     const errors = [];
     for (let i = 0; i < lines.length; i++) {
-      const fields = lines[i].split(",");
-      const addedAuthor = await prisma.user.create({
-        data: {
-          first_name: fields[0],
-          last_name: fields[1],
-          country: fields[2],
-          categoryId: fields[3],
-          email: fields[4],
-          phone: fields[5],
-          birthday: fields[6],
-          clabe: fields[7],
-          name_bank_account: fields[8],
-          bank: fields[9],
-          swift: fields[10],
-          referido: fields[11]
+      try {
+        const fields = lines[i].split(",");
+        for (let j = 0; j < fields.length; j++) {
+          if (fields[j] === "") {
+            fields[j] = null
+          }
         }
-      })
-      if (!addedAuthor) {
-        errors.push(i)
+        if (!fields[0] || !fields[1]) {
+          throw new Error("Missing first name or last name");
+        }
+
+        const deletedAuthor = await prisma.user.findFirst({
+          where: {
+            first_name: fields[0],
+            last_name: fields[1],
+            isDeleted: true
+          }
+        })
+
+        if (deletedAuthor) {
+          await prisma.user.delete({
+            where: {
+              first_name_last_name: {
+                first_name: fields[0],
+                last_name: fields[1],
+              }
+            }
+          });
+        }
+
+        const addedAuthor = await prisma.user.create({
+          data: {
+            first_name: fields[0],
+            last_name: fields[1],
+            country: fields[2],
+            categoryId: parseInt(fields[3]),
+            email: fields[4],
+            phone: fields[5],
+            birthday: fields[6],
+            clabe: fields[7],
+            name_bank_account: fields[8],
+            bank: fields[9],
+            swift: fields[10],
+            referido: fields[11]
+          }
+        })
+      } catch (error) {
+        switch (true) {
+          case error.toString().includes("Missing first name or last name"):
+            errors.push({"line": i + 1, "error": "Faltó el nombre o appellido."})
+            break;
+          case error.message.includes("Unique constraint failed on the fields: (`email`)"):
+            errors.push({"line": i + 1, "error": "Este correo ya está tomado."})
+            break;
+          case error.message.includes("Unique constraint failed on the fields: (`clabe`)"):
+            errors.push({"line": i + 1, "error": "Este clabe ya está tomada."})
+            break;
+          case error.message.includes("Unique constraint failed on the fields: (`first_name`,`last_name`)"):
+            errors.push({"line": i + 1, "error": "Este autor ya existe."})
+            break;
+          default:
+            errors.push({"line": i + 1, "error": error})
+        }   
       }
     }
 
-    res.status(200).json({"message": "added multiple authors"});
+    res.status(200).json({"message": "added multiple authors", "failed": errors});
   } catch(error) {
     res.status(500).json({"error": error});
   }
@@ -706,6 +754,146 @@ router.post('/book', async (req, res) => {
     res.status(500).json({ error: 'A server error occured while creating the book'});
   }
 });
+
+router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
+  try {
+    const csvfile = req.files.archivo[0];
+    if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
+      return res.status(400).json({"error": "file is not a .csv"});
+    }
+
+    const fileContent = csvfile.buffer.toString('utf-8');
+    const lines = fileContent.split("\n");
+    const errors = [];
+    for (let i = 0; i < lines.length; i++) {
+      try {
+        const fields = lines[i].split(",");
+        for (let j = 0; j < fields.length; j++) {
+          fields[j] = fields[j].trim();
+          if (fields[j] === "") {
+            fields[j] = null
+          }
+        }
+        if (!fields[0]) {
+          throw new Error("Missing price in WAS");
+        }
+        if (!fields[2]) {
+          throw new Error("Missing title");
+        }
+        if (!fields[3] || !fields[4]) {
+          throw new Error("Missing author");
+        }
+        if (fields[5] !== "Blanda" && fields[5] !== "Dura") {
+          console.log("fields[5]", fields[5]);
+          throw new Error("Invalid pasta");
+        }
+        if (!fields[6]) {
+          throw new Error("Missing quantity");
+        }
+
+        const deletedBook = await prisma.book.findFirst({
+          where: {
+            title: fields[2],
+            isDeleted: true
+          }
+        })
+
+        if (deletedBook) {
+          await prisma.user.delete({
+            where: {
+              title: fields[2]
+            }
+          });
+        }
+
+        const author = await prisma.user.findUnique({
+          where: {
+            first_name_last_name: {
+              first_name: fields[3],
+              last_name: fields[4]
+            }
+          }
+        })
+
+        if (!author) {
+          throw new Error(`Author not found`);
+        }
+
+        try {
+          await prisma.$transaction(async (tx) => {
+            const addedBook = await tx.book.create({
+              data: {
+                title: fields[2],
+                pasta: fields[4],
+                isbn: fields[1],
+                users: {
+                  connect: {
+                    id: author.id
+                  }
+                }
+              }
+            });
+
+            const new_impression = await tx.impression.create({
+              data: {
+                bookId: addedBook.id,
+                quantity: parseInt(fields[6]),
+              }
+            })
+
+            const new_inventory = await tx.inventory.create({
+              data: {
+                bookId: addedBook.id,
+                bookstoreId: 1,
+                country: "México",
+                price: parseFloat(fields[0]),
+                initial: parseInt(fields[6]),
+                current: parseInt(fields[6])
+              }
+            })
+          })
+        } catch(error) {
+          throw error;
+        }
+
+      } catch (error) {
+        switch (true) {
+          case error.toString().includes("Missing price in WAS"):
+            errors.push({"line": i + 1, "error": "Faltó el precio en WAS."})
+            break;
+          case error.toString().includes("Missing title"):
+            errors.push({"line": i + 1, "error": "Faltó el título."})
+            break;
+          case error.toString().includes("Missing author"):
+            errors.push({"line": i + 1, "error": "Faltó el nombre o el appellido del autor."})
+            break;
+          case error.toString().includes("Author not found"):
+            errors.push({"line": i + 1, "error": "Este autor no existe en la base de datos."})
+            break;
+          case error.toString().includes("Invalid pasta"):
+            errors.push({"line": i + 1, "error": "La pasta no era 'Blanda' o 'Dura'"})
+            break;
+          case error.toString().includes("Missing quantity"):
+            errors.push({"line": i + 1, "error": "Faltó la cantidad inicial imprimida."})
+            break;
+          case error.message.includes("Unique constraint failed on the fields: (`title`)"):
+            errors.push({"line": i + 1, "error": "Este título ya existe."})
+            break;
+          case error.message.includes("Unique constraint failed on the fields: (`isbn`)"):
+            errors.push({"line": i + 1, "error": "Este isbn ya existe."})
+            break;
+          default:
+            errors.push({"line": i + 1, "error": "Error non identificada - puede ser con la impresión o el inventario"})
+        }   
+      }
+    }
+
+    res.status(200).json({"message": "added multiple books", "failed": errors});
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({"error": "A server error occured while creating the books"})
+  }
+})
 
 router.delete('/book/:id', async (req, res) => {
   const book_id = parseInt(req.params.id);

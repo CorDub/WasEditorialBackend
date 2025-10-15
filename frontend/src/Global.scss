@@ -386,6 +386,7 @@ a {
   padding: 1rem;
   position: fixed;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -421,6 +422,15 @@ a {
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+.alert-warning-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-alert-warning {
+  margin-top: 1rem;
 }
 
 /// Tooltips

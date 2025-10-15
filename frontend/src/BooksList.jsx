@@ -21,6 +21,7 @@ function BooksList() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+  const [alertExtra, setAlertExtra] = useState();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
@@ -43,14 +44,6 @@ function BooksList() {
       }
     },
     {
-      header: "Precio en Was",
-      accessorKey: "price"
-    },
-    {
-      header: "ISBN",
-      accessorKey: "isbn"
-    },
-    {
       header: "Titulo",
       accessorKey: "title",
       maxSize: 400,
@@ -59,6 +52,14 @@ function BooksList() {
       header: "Autor(es)",
       accessorKey: "authorNames",
       maxWidth: 400,
+    },
+    {
+      header: "Precio en Was",
+      accessorKey: "price"
+    },
+    {
+      header: "ISBN",
+      accessorKey: "isbn"
     },
     {
       header: "Pasta",
@@ -83,6 +84,11 @@ function BooksList() {
           className="blue-button"
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
             Añadir nuevo libro</button>
+        <button 
+          className="blue-button"
+          onClick={() => openModal("addingMultiples", null)}
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir varios libros</button>
       </div>
     ),
     initialState: {
@@ -173,6 +179,9 @@ function BooksList() {
       case 'adding':
         setModalAction("adding");
         break;
+      case "addingMultiples":
+        setModalAction("addingMultiples");
+        break;
       case 'edit':
         setModalAction("edit");
         break;
@@ -189,7 +198,7 @@ function BooksList() {
     setModalOpen(true);
   }
 
-  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType, alertExtra) {
     setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
@@ -199,6 +208,7 @@ function BooksList() {
     if (alertMessage) {
       setAlertMessage(alertMessage);
       setAlertType(alertType);
+      setAlertExtra(alertExtra);
     }
   }
 
@@ -218,8 +228,13 @@ function BooksList() {
       <div className="contain">
         {data && !isLoading && <MaterialReactTable table={table} />}
       </div>
-      <Alert message={alertMessage} type={alertType}
-        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
+      <Alert 
+        message={alertMessage} 
+        type={alertType}
+        alertExtra={alertExtra}
+        setAlertMessage={setAlertMessage} 
+        setAlertType={setAlertType}
+        setAlertExtra={setAlertExtra} />
     </div>
   )
 }

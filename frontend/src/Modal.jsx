@@ -21,6 +21,7 @@ import AddingMultipleAuthorsModal from './AddingMultipleAuthorsModal';
 import EditAuthorModal from './EditAuthorModal';
 import DeleteAuthorModal from './DeleteAuthorModal';
 import AddingBookModal from './AddingBookModal';
+import AddingMultipleBooksModal from './AddingMultipleBooksModal';
 import EditBookModal from "./EditBookModal";
 import DeleteBookModal from "./DeleteBookModal";
 import AddingBookstoreModal from './AddingBookstoreModal';
@@ -94,6 +95,7 @@ function Modal({
     },
     book: {
       adding: AddingBookModal,
+      addingMultiples: AddingMultipleBooksModal,
       edit: EditBookModal,
       editBookPrices: EditBookPricesModal,
       delete: DeleteBookModal

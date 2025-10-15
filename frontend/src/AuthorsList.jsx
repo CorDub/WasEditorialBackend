@@ -23,6 +23,7 @@ function AuthorsList() {
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+  const [alertExtra, setAlertExtra] = useState();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
@@ -131,7 +132,7 @@ function AuthorsList() {
           className="blue-button"
           onClick={() => openModal("addingMultiples", null)}
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
-            Añadir multiples autores</button>
+            Añadir varios autores</button>
       </div>
     ),
     initialState: {
@@ -212,7 +213,7 @@ function AuthorsList() {
     setModalOpen(true);
   }
 
-  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType, alertExtra) {
     setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
@@ -222,6 +223,7 @@ function AuthorsList() {
     if (alertMessage) {
       setAlertMessage(alertMessage);
       setAlertType(alertType);
+      setAlertExtra(alertExtra);
     }
   }
 
@@ -266,8 +268,13 @@ function AuthorsList() {
       <div className="contain">
         {data && !isLoading && <MaterialReactTable table={table}/>}
       </div>
-      <Alert message={alertMessage} type={alertType}
-        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
+      <Alert 
+        message={alertMessage} 
+        type={alertType}
+        alertExtra={alertExtra}
+        setAlertMessage={setAlertMessage} 
+        setAlertType={setAlertType}
+        setAlertExtra={setAlertExtra}/>
     </div>
   )
 }

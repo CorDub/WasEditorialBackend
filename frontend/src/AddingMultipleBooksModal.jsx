@@ -1,7 +1,6 @@
-import './AddingMultipleAuthorsModal.scss';
 import { useState } from "react";
 
-function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
+function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [archivo, setArchivo] = useState(null);
   const [errorFile, setErrorFile] = useState("");
@@ -26,7 +25,7 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
       }
       formData.append("archivo", archivo)
 
-      const response = await fetch(`${baseURL}/admin/author/addMultiples`, {
+      const response = await fetch(`${baseURL}/admin/book/addMultiples`, {
         method: "POST",
         credentials: "include",
         body: formData
@@ -35,10 +34,11 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
       if (response.ok) {
         const responseData = await response.json();
         if (responseData.failed.length > 0) {
-          const alertMessage = `Los siguientes autores no pudieron estar añadidos`;
+          const alertMessage = `Los siguientes libros no pudieron estar añadidos`;
+          console.log(responseData)
           closeModal(pageIndex, globalFilter, false, alertMessage, "warning", responseData.failed)
         } else {
-          const alertMessage = `Los autores han estado añadidos con exito.`;
+          const alertMessage = `Los libros han estado añadidos con exito.`;
           closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
         }
       } else {
@@ -50,28 +50,26 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
     }
   }
 
-  return (
+  return(
     <div className='modal-proper'>
       <div className='global-form'>
         <div className="mulauth-adicional-instruciones">
           <div className="mulauth-top-instrucciones">
-            <p className="mulauth-line">Suba un archivo CSV para añadir varios autores al mismo tiempo.</p>
+            <p className="mulauth-line">Suba un archivo CSV para añadir varios libros al mismo tiempo.</p>
             <p className="mulauth-line">Por favor no incluye el nombre de las columnas en el archivo</p>
+            <p className="mulauth-line">Los autores de los libros deben existir en la base de datos antes de poder añadir sus libros.</p>
+            <p className="mulauth-line">Solamente se puede añadir un autor por libro</p>
+            <p className="mulauth-line">Si el libro tiene mas de un autor, por favor editen el libro después.</p>
             <p className="mulauth-line">Las columnas deben estar en el siguiente orden:</p>
           </div>
           <div className="mulauth-line">
-            <p className="mulauth-line">Nombre*</p>
-            <p className="mulauth-line">Apellido*</p>
-            <p className="mulauth-line">País</p>
-            <p className="mulauth-line">Categoria</p>
-            <p className="mulauth-line">Correo</p>
-            <p className="mulauth-line">Teléfono</p>
-            <p className="mulauth-line">Fecha de nacimiento (ddmmaaaa - no separadores)</p>
-            <p className="mulauth-line">CLABE</p>
-            <p className="mulauth-line">Nombre del titular</p>
-            <p className="mulauth-line">Nombre del banco</p>
-            <p className="mulauth-line">Codigo SWIFT</p>
-            <p className="mulauth-line">Referido</p>
+            <p className="mulauth-line">Precio en WAS*</p>
+            <p className="mulauth-line">ISBN</p>
+            <p className="mulauth-line">Título*</p>
+            <p className="mulauth-line">Nombre del autor</p>
+            <p className="mulauth-line">Appellido del autor</p>
+            <p className="mulauth-line">Pasta - solamente "Blanda" o "Dura", con majuscula</p>
+            <p className="mulauth-line">Cantidad inicial imprimida*</p>
           </div>
           <div className="mulauth-bottom-instrucciones">
             <p className="mulauth-line">*mandatorios</p>
@@ -97,4 +95,4 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
   )
 }
 
-export default AddingMultipleAuthorsModal;
+export default AddingMultipleBooksModal;

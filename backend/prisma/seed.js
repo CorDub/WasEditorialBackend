@@ -84,16 +84,21 @@ async function main() {
         }
       }
 
-      const createdBook = await prisma.book.create({
-        data: {
-          title: book.Title,
-          isbn: checkISBN(book.ISBN),
-          users: {
-            connect: authorsIndexes,
-          },
-          createdAt: twelveMonthsAgo
-        }
-      })
+      let createdBook;
+      try {
+        createdBook = await prisma.book.create({
+          data: {
+            title: book.Title,
+            isbn: checkISBN(book.ISBN),
+            users: {
+              connect: authorsIndexes,
+            },
+            createdAt: twelveMonthsAgo
+          }
+        })
+      } catch(error) {
+        console.log(error)
+      }
 
       if (createdBook) {
         const randQuant = Math.round(Math.random() * 500);

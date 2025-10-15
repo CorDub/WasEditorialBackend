@@ -9,6 +9,7 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import formatNumber from "./customHooks/formatNumber";
+import { convertDateStringToLocalFormat } from "../../backend/utils";
 
 function TableWithDrawers({
   data,
@@ -54,6 +55,7 @@ function TableWithDrawers({
       return [
         {
           header: "Acciones",
+          size: 50,
           Cell: ({row}) => (
             <div style={{overflow:"visible"}}>
               <TableActions openModal={openModal} row={row} />
@@ -67,6 +69,7 @@ function TableWithDrawers({
         },
         {
           header: "Cantidad",
+          size: 50,
           accessorKey: "quantity"
         },
         {
@@ -75,6 +78,7 @@ function TableWithDrawers({
         },
         {
           header: "Librería",
+          size: 50,
           accessorKey: "inventory.bookstore.name"
         },
         {
@@ -83,13 +87,16 @@ function TableWithDrawers({
         },
         {
           header: "Fecha",
-          accessorKey: "date"
+          Cell: ({row}) => (
+            <div>{convertDateStringToLocalFormat(row.original.date)}</div>
+          )
         },
       ]
     } else if (salesType === "kindle") {
       return [
         {
           header: "Acciones",
+          size: 50,
           Cell: ({row}) => (
             <div style={{overflow:"visible"}}>
               <TableActions openModal={openModal} row={row} />
@@ -112,23 +119,30 @@ function TableWithDrawers({
         },
         {
           header: "Cantidad eBook",
+          size: 50,
           accessorKey: "quantityEbook"
         },
         {
           header: "Cantidad Pod",
+          size: 50,
           accessorKey: "quantityPod"
         },
         {
           header: "Fecha de corte",
-          accessorKey: "dateCut"
+          size: 50,
+          Cell: ({row}) => (
+            <div>{convertDateStringToLocalFormat(row.original.dateCut)}</div>
+          )
         },
         {
           header: "Fecha de pago",
-          accessorKey: "datePay"
+          size: 50,
+          Cell: ({row}) => (
+            <div>{convertDateStringToLocalFormat(row.original.datePay)}</div>
+          )
         },
         {
           header: "Regalías",
-          // accessorKey: "regalias"
           Cell: ({row}) => (
             <div>{formatNumber(row.original.regalias)}</div>
           )
@@ -149,7 +163,7 @@ function TableWithDrawers({
       density: 'compact',
       sorting: [
         {
-          id: 'date',
+          id: 'Fecha',
           asc: true
         }
       ]
@@ -162,7 +176,6 @@ function TableWithDrawers({
       sx: {
         margin: 0,
         marginTop: "0.5rem",
-        // width: "auto",
         height: "auto",
         flex: 1
       }

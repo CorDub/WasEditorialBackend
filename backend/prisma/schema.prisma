@@ -39,7 +39,7 @@ model User {
   email               String?   @unique
   phone               String?
   birthday            String?
-  clabe               String?
+  clabe               String?   @unique
   name_bank_account   String?
   bank                String?
   swift               String?
@@ -70,6 +70,7 @@ model Book {
   updatedAt   DateTime     @updatedAt
   impressions Impression[]
   kindleSales KindleSale[]
+  Cost        Cost[]
 }
 
 model Category {
@@ -198,6 +199,8 @@ model Cost {
   id        Int      @id @default(autoincrement())
   payment   Payment  @relation(fields: [paymentId], references: [id])
   paymentId Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
   note      String?
   amount    Float
   isDeleted Boolean  @default(false)

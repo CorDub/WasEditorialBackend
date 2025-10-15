@@ -32,6 +32,7 @@ function AuthorsList() {
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
         <div style={{overflow:"visible"}}>
           <TableActions openModal={openModal} row={row}/>
@@ -45,31 +46,38 @@ function AuthorsList() {
     },
     {
       header: "Nombre",
+      size: 50,
       accessorKey: "first_name"
     },
     {
       header: "Apellido",
+      size: 50,
       accessorKey: "last_name"
     },
     {
       header: "Pais",
+      size: 50,
       accessorKey: "country"
     },
     {
       header: "Categoria",
+      size: 50,
       accessorFn: (row) => row.category?.type || ''
     },
     {
       header: "Correo",
+      size: 50,
       accessorKey: "email"
     },
     {
       header: "Teléfono",
+      size: 50,
       accessorKey: "phone"
 
     },
     {
       header: "Fecha de nacimiento",
+      size: 50,
       accessorKey: "birthday",
       Cell: ({ row }) => row.original.birthday != null 
         ? `${row.original.birthday.substring(0,2)}/${row.original.birthday.substring(2,4)}/${row.original.birthday.substring(4,8)}`
@@ -77,22 +85,27 @@ function AuthorsList() {
     },
     {
       header: "CLABE",
+      size: 50,
       accessorKey: "clabe"
     }, 
     {
       header: "Nombre del titular",
+      size: 50,
       accessorKey: "name_bank_account"
     },
     {
       header: "Banco",
+      size: 50,
       accessorKey: "bank"
     },
     {
       header: "Codigo Swift",
+      size: 50,
       accessorKey: "swift"
     },
     {
       header: "Referido",
+      size: 50,
       accessorKey: "referido"
     },
   ], []);
@@ -114,6 +127,11 @@ function AuthorsList() {
           className="blue-button"
           style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
             Añadir nuevo autor</button>
+        <button 
+          className="blue-button"
+          onClick={() => openModal("addingMultiples", null)}
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir multiples autores</button>
       </div>
     ),
     initialState: {
@@ -177,6 +195,9 @@ function AuthorsList() {
     switch (type) {
       case 'adding':
         setModalAction("adding");
+        break;
+      case 'addingMultiples':
+        setModalAction("addingMultiples");
         break;
       case 'edit':
         setModalAction("edit");

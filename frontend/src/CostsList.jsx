@@ -44,6 +44,10 @@ function CostsLists() {
             },
         },
         {
+            header: "Libro",
+            accessorKey: "book.title"
+        },
+        {
             header: "Autor",
             Cell: ({row}) => (
                 <div>{`${row.original.payment.user.first_name} ${row.original.payment.user.last_name}`}</div>
@@ -167,6 +171,8 @@ function CostsLists() {
             setAlertType(alertType);
         }
     }
+
+    console.log(data)
 
     async function getCurrentCosts() {
         try {

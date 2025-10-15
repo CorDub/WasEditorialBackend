@@ -29,6 +29,7 @@ function AdminsList() {
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
         <div style={{ overflow: "visible" }}>
           <TableActions openModal={openModal} row={row}/>

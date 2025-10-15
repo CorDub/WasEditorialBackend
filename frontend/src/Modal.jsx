@@ -17,6 +17,7 @@ import DeleteTransferModal from './DeleteTransferModal';
 import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
 import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
 import AddingAuthorModal from './AddingAuthorModal';
+import AddingMultipleAuthorsModal from './AddingMultipleAuthorsModal';
 import EditAuthorModal from './EditAuthorModal';
 import DeleteAuthorModal from './DeleteAuthorModal';
 import AddingBookModal from './AddingBookModal';
@@ -87,6 +88,7 @@ function Modal({
     },
     author: {
       adding: AddingAuthorModal,
+      addingMultiples: AddingMultipleAuthorsModal,
       edit: EditAuthorModal,
       delete: DeleteAuthorModal
     },

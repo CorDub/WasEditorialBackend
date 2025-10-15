@@ -60,6 +60,7 @@ function InventoriesList() {
     {
       header: "Nombre",
       accessorKey: "name",
+      maxSize: 200,
       Cell: ({row}) => (
         <div
           onClick={() => openSpecifics(row.original.type, row.original.id)}
@@ -70,18 +71,22 @@ function InventoriesList() {
     },
     {
       header: "Inicial",
+      size: 100,
       accessorKey: "initial",
     },
     {
       header: "Impresiónes",
+      size: 100,
       accessorKey: "extraImpressions",
     },
     {
       header: "Vendidos",
+      size: 100,
       accessorKey: "sold",
     },
     {
       header: "Devueltos",
+      size: 100,
       // accessorKey: "returns",
       Cell: ({row}) => (
         // <div>{row.original.id === 1 
@@ -92,10 +97,12 @@ function InventoriesList() {
     },
     {
       header: "Entregados al autor",
+      size: 100,
       accessorKey: "givenToAuthor"
     },
     {
       header: "Disponibles",
+      size: 100,
       Cell: ({row}) => (
         <div>{row.original.id === 1 ? 
           row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:

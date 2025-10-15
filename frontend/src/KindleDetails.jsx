@@ -27,7 +27,7 @@ function KindleDetails({bookstore}) {
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Regalias</div>
-        <div className="kindle-details-group-value">{formatNumber(bookstore.ganancia)}</div>
+        <div className="kindle-details-group-value">{formatNumber(bookstore.regalias)}</div>
       </div>
     </div>
   )

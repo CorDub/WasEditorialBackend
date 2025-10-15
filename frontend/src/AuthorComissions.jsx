@@ -8,6 +8,7 @@ import "./AuthorCommissions.scss"
 import Modal from "./Modal";
 import Alert from "./Alert";
 import TableBookstores from "./TableBookstores";
+import { isForMonthNextMonth } from "../../backend/utils";
 
 function AuthorCommissions() {
   useCheckUser();
@@ -53,8 +54,8 @@ function AuthorCommissions() {
         setDemandPaymentPossible("currentMonth");
         return;
       }
-      if (now.getDate() >= 25) {
-        setDemandPaymentPossible("tooLateInTheMonth");
+      if ((isForMonthNextMonth(currentActiveMonth, salesByPayments[activeMonth].forMonth)) && now.getDate() < 10) {
+        setDemandPaymentPossible("tooEarlyInTheNextMonth");
         return;
       }
       setDemandPaymentPossible("available");
@@ -176,12 +177,12 @@ function AuthorCommissions() {
           {isDemandPaymentPossible === "noVentas" && (
             null
           )}
-          {isDemandPaymentPossible === "tooLateInTheMonth" && (
+          {isDemandPaymentPossible === "tooEarlyInTheNextMonth" && (
             <div className="author-commissions-solicitar-pago-unavailable"
               onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
               onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
-              {isDemandPaymentTooltipOpen && (
-                <div className="demand-payment-tooltip">Solicitar un pago es solamente posible antes del 25 del mes</div>)}
+              {/* {isDemandPaymentTooltipOpen && (
+                <div className="demand-payment-tooltip">Solicitar un pago es solamente posible después del 10 del mes</div>)} */}
             </div>
           )}
           {isDemandPaymentPossible === "solicited" && (

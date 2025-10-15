@@ -12,3 +12,20 @@
   text-align: center;
   padding-bottom: 1rem;
 }
+
+.dempay-adicional-info {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  border-radius: 15px;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+}
+
+.dempay-adicional-info p {
+  margin: 0;
+  font-size: 14px;
+}

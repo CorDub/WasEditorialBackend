@@ -54,7 +54,7 @@ function TableBookstoresRowDetails({monthlySalesData}) {
             </div>
             <div className="tbr-name">
               {bookstore.name === "Kindle"
-                ? formatNumber(bookstore.ganancia)
+                ? formatNumber(bookstore.regalias)
                 : formatNumber(bookstore.quantity * bookstore.ganancia)}
             </div>
           </div>

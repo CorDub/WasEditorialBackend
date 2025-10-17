@@ -190,6 +190,8 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
           });
         }
 
+        const password = createRandomPassword();
+        const hashedPassword = await bcrypt.hash(password, 10);
         const addedAuthor = await prisma.user.create({
           data: {
             first_name: fields[0],
@@ -203,9 +205,15 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
             name_bank_account: fields[8],
             bank: fields[9],
             swift: fields[10],
+            password: hashedPassword,
             referido: fields[11]
           }
         })
+
+        if (addedAuthor) {
+          console.log("sending email");
+          sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
+        }
       } catch (error) {
         switch (true) {
           case error.toString().includes("Missing first name or last name"):
@@ -677,7 +685,12 @@ router.get('/existingBooks', async (req, res) => {
       },
       select: {
         id: true,
-        title: true
+        title: true,
+        inventories: {
+          select: {
+            bookstoreId: true
+          }
+        }
       },
       orderBy: {
         title: "asc"
@@ -1172,7 +1185,12 @@ router.get('/existingBookstores', async (req, res) => {
       },
       select: {
         id: true,
-        name: true
+        name: true,
+        inventories: {
+          select: {
+            bookId: true
+          }
+        }
       }
     })
     res.status(200).json(existingBookstores);

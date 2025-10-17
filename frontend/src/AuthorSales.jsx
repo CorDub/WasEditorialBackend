@@ -40,6 +40,7 @@ function AuthorSales() {
   // }, []);
 
   function processMonthlyData(sales, bookId = 'total') {
+    console.log("sales in processMonthly data", sales)
     const monthlySales = {};
     // if (!sales || sales.length === 0) return;
     if (sales && sales.length > 0 ) {
@@ -70,7 +71,9 @@ function AuthorSales() {
       const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
       let counter = 0;
       for (let i = 0; i < monthKeysInRange.length; i++) {
-        if (monthKeysInRange[i] !== sortedData[counter].month) {
+        console.log("sortedData[counter]", sortedData[counter]);
+        console.log(sortedData[counter] === undefined);
+        if (sortedData[counter] === undefined || monthKeysInRange[i] !== sortedData[counter].month) {
           const monthToInsert = {
             "month": monthKeysInRange[i],
             "quantity": 0,

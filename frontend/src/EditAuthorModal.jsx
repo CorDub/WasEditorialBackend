@@ -466,14 +466,17 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               <input type="text" placeholder="Día" 
                 className="global-input birthday-day" maxLength="2"
                 ref={dayRef}
+                value={day}
                 onChange={(e) => setDay(e.target.value)}></input>
               <input type="text" placeholder="Mes" 
                 className="global-input birthday-month" maxLength="2"
                 ref={monthRef}
+                value={month}
                 onChange={(e) => setMonth(e.target.value)}></input>
               <input type="text" placeholder="Año" 
                 className="global-input birthday-year" maxLength="4"
                 ref={yearRef}
+                value={year}
                 onChange={(e) => setYear(e.target.value)}></input>
             </div>
           </div>

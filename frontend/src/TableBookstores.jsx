@@ -26,8 +26,6 @@ function TableBookstores({salesByPayments, activeMonth}) {
     }
   }, [salesByPayments, activeMonth])
 
-  console.log(salesByPayments)
-
   return(
     <div className="table">
       <div className="table-header">

@@ -10,6 +10,7 @@ import Alert from "./Alert";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import formatNumber from "./customHooks/formatNumber";
 import { convertDateStringToLocalFormat } from "../../backend/utils";
+import { useEffect } from "react";
 
 function TableWithDrawers({
   data,
@@ -40,7 +41,7 @@ function TableWithDrawers({
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("kindle");
+  const [modalType, setModalType] = useState("sale");
   const [modalAction, setModalAction] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -49,6 +50,14 @@ function TableWithDrawers({
     pageIndex: 0,
     pageSize: 30
   })
+
+  useEffect(() => {
+    if (salesType === "normal") {
+      setModalType("sale")
+    } else if (salesType === "kindle") {
+      setModalType("kindle")
+    }
+  }, [])
 
   let columns = useMemo(() => {
     if (salesType === "normal") {

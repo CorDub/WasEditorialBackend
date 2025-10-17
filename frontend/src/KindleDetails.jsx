@@ -16,13 +16,13 @@ function KindleDetails({bookstore}) {
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Fecha de corte</div>
         <div className="kindle-details-group-value">{bookstore && 
-          changeDateFormat(bookstore.dateCut, "monthOnly")}
+          changeDateFormat(bookstore.dateCut, "fullMonths")}
         </div>
       </div>
       <div className="kindle-details-group">
         <div className="kindle-details-group-title">Fecha de pago</div>
         <div className="kindle-details-group-value">{bookstore && 
-          changeDateFormat(bookstore.datePay, "monthOnly")}
+          changeDateFormat(bookstore.datePay, "fullMonths")}
         </div>
       </div>
       <div className="kindle-details-group">

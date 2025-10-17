@@ -156,8 +156,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     sendToServer()
   }
 
-  console.log(clickedRow)
-
   async function sendToServer() {
     try {
       const response = await fetch(`${baseURL}/admin/kindlesales/${clickedRow.id}`, {

@@ -47,16 +47,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     "Zambia", "Zimbabue"
   ]);
 
-  // useEffect(() => {
-  //   for (let i = 0; i < countries.length; i++) {
-  //     if (countries[i] === clickedRow.inventory.country) {
-  //       countries.splice(i, 1);
-  //     } 
-  //   }
-  //   countries.splice(0, 0, clickedRow.inventory.country);
-  //   setCountries(countries);
-  // }, [clickedRow])
-
   let bookTitlesList = []
   for (const book of existingBooks) {
     bookTitlesList.push(book.title)

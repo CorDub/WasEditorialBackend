@@ -66,12 +66,7 @@ export function calculateAuthorRevenue(
     if (onComission) {
       res = ((price - management) * quantity)
     } else {
-      // console.log("")
-      // console.log("price", price)
-      // console.log("storeCutPercent", storeCutPercent)
-      // console.log("quantity", quantity)
       res = ((price - (price * storeCutPercent / 100)) * quantity)
-      // console.log("res", res)
     }
 
     if (res < 0.001) {
@@ -154,9 +149,26 @@ export function changeDateFormat(date, format='normal') {
       "11": "Nov",
       "12": "Dic"
     }
+  
+    const fullMonths = {
+      "01": "Enero",
+      "02": "Febrero",
+      "03": "Marzo",
+      "04": "Abril",
+      "05": "Mayo",
+      "06": "Junio",
+      "07": "Julio",
+      "08": "Agosto",
+      "09": "Septiembre",
+      "10": "Octubre",
+      "11": "Noviembre",
+      "12": "Diciembre"
+    }
 
   if (format === "monthOnly") {
     return months[date.substring(5,7)];
+  } else if (format === "fullMonths") {
+    return fullMonths[date.substring(5,7)];
   }
 
   return months[date.substring(5,7)] + " " + date.substring(0,4);
@@ -271,5 +283,14 @@ export function isForMonthNextMonth(forMonth1, forMonth2) {
 }
 
 export function convertDateStringToLocalFormat(dateString) {
-  return dateString.substring(3,5) + "/"  + dateString.substring(0,2) + "/" + dateString.substring(6,10)
+  const dateOnly = dateString.split(",");
+  const dateComponents = dateOnly[0].split("/");
+
+  for (let i = 0; i < dateComponents.length; i++) {
+    if (dateComponents[i].length === 1) {
+      dateComponents[i] = "0" + dateComponents[i]
+    }
+  }
+
+  return dateComponents[1] + "/"  + dateComponents[0] + "/" + dateComponents[2]
 }

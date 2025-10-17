@@ -7,7 +7,7 @@ import { convertISOString } from "../../backend/utils";
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -46,24 +46,24 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   //   "Zambia", "Zimbabue"
   // ];
 
-  async function fetchInventories() {
-    try {
-      const response = await fetch(`${baseURL}/admin/inventories`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: 'include'
-      })
+  // async function fetchInventories() {
+  //   try {
+  //     const response = await fetch(`${baseURL}/admin/inventories`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       credentials: 'include'
+  //     })
 
-      if (response.ok) {
-        const data = await response.json();
-        setData(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setData(data);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   async function getExistingBooks() {
     try {
@@ -106,7 +106,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useEffect(() => {
     async function fetchData() {
       await Promise.all([
-        fetchInventories(),
+        // fetchInventories(),
         getExistingBooks(),
         getExistingBookstores()
       ]);
@@ -115,15 +115,65 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     fetchData();
   }, []);
 
+  function changeValueAndFilter(value, type) {
+    if (type === "Book") {
+      setBook(value)
+      let chosenBook;
+      for (const book of existingBooks) {
+        if (book.id === parseInt(value)) {
+          chosenBook = book
+          break;
+        }
+      }
+      let filteredList = [];
+      for (const inventory of chosenBook.inventories) {
+        for (const bookstore of existingBookstores) {
+          if (inventory.bookstoreId === bookstore.id) {
+            filteredList.push(bookstore)
+          }
+        }
+      }
+
+      setExistingBookstores(filteredList);
+      if (!filteredList.includes(bookstore)) {
+        setBookstore("");
+      }
+
+    } else if (type === "Bookstore") {
+      setBookstore(value)
+      let chosenBookstore;
+      for (const bookstore of existingBookstores) {
+        if (bookstore.id === parseInt(value)) {
+          chosenBookstore = bookstore
+          break;
+        }
+      }
+
+      let filteredList = [];
+      for (const inventory of chosenBookstore.inventories) {
+        for (const book of existingBooks) {
+          if (inventory.bookId === book.id) {
+            filteredList.push(book)
+          } 
+        }
+      }
+
+      setExistingBooks(filteredList);
+      if (!filteredList.includes(book)) {
+        setBook("");
+      }
+    }
+  }
+
   function dropDownChange(e, input_name, input_index) {
 
     const inputs = {
       "Book": {
-        "function": setBook,
+        "function": changeValueAndFilter,
         "element": bookRef
       },
       "Bookstore": {
-        "function": setBookstore,
+        "function": changeValueAndFilter,
         "element": bookstoreRef
       },
       // "Country": {
@@ -153,7 +203,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         inputs[input_name]["element"].current.classList.remove("selected")
       };
     } else {
-      inputs[input_name]["function"](e.target.value);
+      inputs[input_name]["function"](e.target.value, input_name);
       if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
         inputs[input_name]["element"].current.classList.add("selected")
       };

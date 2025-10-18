@@ -4,6 +4,7 @@ import express from "express";
 import { createRandomPassword } from "../utils.js";
 import bcrypt from "bcrypt";
 import { sendSetPasswordMail } from "../mailer.js";
+import { validateInput } from "../validations.js";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.get('/admins', async (req, res) => {
   }
 });
 
-router.post('/admin', async (req, res) => {
+export async function addAdmin (req, res) {
   try {
     const {
       firstName,
@@ -41,6 +42,16 @@ router.post('/admin', async (req, res) => {
       email,
       role
     } = req.body;
+
+    /// VALIDATE INPUTS
+    for (const [inputName, inputValue] of Object.entries(req.body)) {
+      const error = validateInput(inputName, inputValue);
+      if (error.length > 0) {
+        throw new Error ("invalid input");
+      }
+    }
+
+    /// NOW START DOING STUFF
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
     const new_admin = await prisma.user.create({
@@ -63,17 +74,18 @@ router.post('/admin', async (req, res) => {
   } catch (error) {
     console.error(error);
     if (String(error).includes(("Unique constraint failed on the fields: (`email`)"))) {
-      res.status(500).json({message: "El correo ya está usado"})
+      res.status(409).json({message: "El correo ya está usado"})
       return;
     }
 
     if (String(error).includes(("Unique constraint failed on the fields: (`first_name`,`last_name`)"))) {
-      res.status(500).json({message: "Un autor con el mismo nombre completo ya existe"})
+      res.status(409).json({message: "Un autor con el mismo nombre completo ya existe"})
       return;
     }
     res.status(500).json({ error: error });
   }
-});
+}
+router.post('/admin', addAdmin);
 
 router.patch('/admin', async (req, res) => {
   try {

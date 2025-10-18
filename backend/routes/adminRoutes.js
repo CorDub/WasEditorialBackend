@@ -10,8 +10,9 @@ import {
   generateMonthKeysForRange,
   getAuthorString 
 } from './../utils.js';
-import { prisma } from "../prisma/client.js"
+import { prisma } from "../prisma/client.js";
 import multer from "multer";
+import { validateInput } from "../validations.js";
 
 const upload = multer();
 const router = express.Router();
@@ -60,7 +61,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-router.post('/user', async (req, res) => {
+export async function addAuthor(req, res) {
   try {
     const {
       firstName,
@@ -71,6 +72,16 @@ router.post('/user', async (req, res) => {
       phone,
       birthday,
       category } = req.body;
+    
+    ///VALIDATE INPUTS
+    for (const [inputName, inputValue] of Object.entries(req.body)) {
+      if (inputName !== "birthday") {
+        const error = validateInput(inputName, inputValue);
+        if (error.length > 0) {
+          throw new Error ("invalid input");
+        }
+      }
+    }
 
     await prisma.$transaction(async (tx) => {
       const existing = await tx.user.findUnique({
@@ -148,7 +159,8 @@ router.post('/user', async (req, res) => {
     }
     res.status(500).json({ error: error });
   }
-});
+}
+router.post('/user', addAuthor);
 
 router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
   try {

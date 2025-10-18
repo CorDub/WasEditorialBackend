@@ -11,7 +11,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [existingBooks, setExistingBooks] = useState([]);
   const [book, setBook] = useState(clickedRow.bookId);
   const [quantityEbook, setQuantityEbook] = useState(clickedRow.quantityEbook);
-  const [quantityPod, setQuantityPod] = useState(0);
+  const [quantityPod, setQuantityPod] = useState(clickedRow.quantityPod);
   const bookRef = useRef();
   const quantityEbookRef = useRef();
   const quantityPodRef = useRef();

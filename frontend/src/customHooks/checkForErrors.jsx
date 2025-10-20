@@ -5,6 +5,7 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
   const validPhoneRegex = /^(?:\+|00)?\d{10,15}$/;
   const validClabeRegex = /^\d{18}$/;
   const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
+  const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
 
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
@@ -66,11 +67,6 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
 
       case "value":
         if (!fieldExpectations.value.includes(fieldValue)) {
-          // let str_possibles = ""
-          // for (const value of fieldExpectations.value) {
-          //   str_possibles += (value + " ")
-          // }
-          // errorList.push(`${fieldName} debe ser uno de los siguientes: ${str_possibles}.`)
           errorList.push(`${fieldName} debe estar en la lista.`)
         };
         addErrorClass(fieldRef);
@@ -126,6 +122,12 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
           const clean = fieldValue.replace(/\s/g, '');
           if (validSwiftRegex.test(clean) === false) {
             errorList.push(`${fieldName} no es un codigo swift valido.`);
+            addErrorClass(fieldRef);
+          }
+        } else if (fieldExpectations.validity === "isbn valid") {
+          const clean = fieldValue.replace(/\s/g, '');
+          if (validISBNRegex.test(clean) === false) {
+            errorList.push(`${fieldName} no es un ISBN valido.`);
             addErrorClass(fieldRef);
           }
         }

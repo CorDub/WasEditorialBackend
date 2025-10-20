@@ -14,6 +14,12 @@ test("validates type number correctly", () => {
   expect(validateInput("category", NaN)).toStrictEqual([[NaN, "type"]])
 })
 
+test("validates type boolean correctly", () => {
+  expect(validateInput("comissions", true)).toStrictEqual([])
+  expect(validateInput("comissions", false)).toStrictEqual([])
+  expect(validateInput("comissions", "true")).toStrictEqual([["true", "type"]])
+})
+
 test("catches empty string", () => {
   expect(validateInput("firstName", "")).toStrictEqual([["", "presence"]])
 })
@@ -26,6 +32,11 @@ test("catches empty input", () => {
 test("validates length correctly", () => {
   expect(validateInput("firstName", "string")).toStrictEqual([])
   expect(validateInput("firstName", "thisstringhasdefinitelymorethanfiftyinlengthIassureyoumygoodsir")).toStrictEqual([["thisstringhasdefinitelymorethanfiftyinlengthIassureyoumygoodsir", "length"]])
+})
+
+test("validates exact length correctly", () => {
+  expect(validateInput("birthday", "22121988")).toStrictEqual([])
+  expect(validateInput("birthday", "2212198")).toStrictEqual([["2212198", "exactLength"]])
 })
 
 test("validates email format correctly", () => {
@@ -41,4 +52,29 @@ test("validates phone format correctly", () => {
 test('validates value correctly', () => {
   expect(validateInput("role", "admin")).toStrictEqual([])
   expect(validateInput("role", "author")).toStrictEqual([["author", "value"]])
+  expect(validateInput("pasta", "Blanda")).toStrictEqual([])
+  expect(validateInput("pasta", "Blandada")).toStrictEqual([["Blandada", "value"]])
+})
+
+test('validates isbn format correctly', () => {
+  expect(validateInput("isbn", 9786075988658)).toStrictEqual([]);
+  expect(validateInput("isbn", 9786075)).toStrictEqual([[9786075, "format"]])
+})
+
+test("validates birthday format correctly", () => {
+  expect(validateInput("birthday", '22121988')).toStrictEqual([]);
+  expect(validateInput("birthday", '32121988')).toStrictEqual([["32121988", "format"]]);
+  expect(validateInput("birthday", '22141988')).toStrictEqual([['22141988', "format"]]);
+  expect(validateInput("birthday", '22122054')).toStrictEqual([['22122054', "format"]]);
+  expect(validateInput("birthday", '22121900')).toStrictEqual([['22121900', "format"]]);
+})
+
+test("validates maximum correctly", () => {
+  expect(validateInput("dealPercentage", 89.6)).toStrictEqual([]);
+  expect(validateInput("dealPercentage", 102)).toStrictEqual([[102, "maximum"]]);
+})
+
+test("validates minimum correctly", () => {
+  expect(validateInput("dealPercentage", 89.6)).toStrictEqual([]);
+  expect(validateInput("dealPercentage", -3)).toStrictEqual([[-3, "minimum"]]);
 })

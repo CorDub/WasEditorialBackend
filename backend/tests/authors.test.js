@@ -22,6 +22,10 @@ describe("adding a valid author", () => {
 
   it("should return status 201 and return json with firstName, lastName and email", async() => {
     await addAuthor(mockReq, mockRes);
+
+    console.log('Status called with:', mockRes.status.mock.calls);
+    console.log('JSON called with:', mockRes.json.mock.calls);
+
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       "firstName": "Yesi Deeba",

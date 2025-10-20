@@ -60,7 +60,57 @@ export function validateInput(inputName, inputValue) {
     ],
     "category": [
       ["type", "number"],
-    ]
+      ['length', 1]
+    ],
+    "isbn": [
+      ["type", "number"],
+      ["format", "isbn"]
+    ],
+    "title": [
+      ["presence", "not empty"],
+      ["type", "string"],
+      ["length", 255],
+    ],
+    "pasta": [
+      ["type", "string"],
+      ["length", 10],
+      ["value", ["Blanda", "Dura"]],
+    ],
+    "price": [
+      ["presence", "not empty"],
+      ["type", "number"],
+    ],
+    "quantity": [
+      ["presence", "not empty"],
+      ["type", "number"],
+      ["length", 5],
+    ],
+    "id": [
+      ["presence", "not empty"],
+      ["type", "number"],
+    ],
+    "birthday": [
+      ["type", "number"],
+      ["exactLength", 8],
+      ["format", "birthday"]
+    ],
+    "name": [
+      ["presence", "not empty"],
+      ["type", "string"],
+      ["length", 50]
+    ],
+    "dealPercentage": [
+      ["type", "number"],
+      ["maximum", 100],
+      ["minimum", 0]
+    ],
+    "comissions": [
+      ["type", "boolean"],
+    ],
+    "contactName": [
+      ["type", "string"],
+      ["length", 255]
+    ],
   }
 
   for (const check of possibleChecks[inputName]) {
@@ -75,6 +125,13 @@ export function validateInput(inputName, inputValue) {
 
         if (check[1] === "number") {
           if (!Number.isFinite(parseInt(inputValue))) {
+            errors.push([inputValue, "type"]);
+            return errors
+          }
+        }
+
+        if (check[1] === "boolean") {
+          if (typeof inputValue !== "boolean") {
             errors.push([inputValue, "type"]);
             return errors
           }
@@ -100,6 +157,13 @@ export function validateInput(inputName, inputValue) {
         }
       break;
 
+      case "exactLength":
+        if (inputValue.length !== check[1]) {
+          errors.push([inputValue, 'exactLength'])
+          return errors
+        }
+      break;
+
       case "format":
         if (check[1] === "email") {
           const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -116,6 +180,31 @@ export function validateInput(inputName, inputValue) {
             return errors
           }
         }
+
+        if (check[1] === "isbn") {
+          const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
+          if (!validISBNRegex.test(inputValue)) {
+            errors.push([inputValue, "format"])
+            return errors
+          }
+        }
+
+        if (check[1] === "birthday") {
+          if (parseInt(inputValue.substring(0,2)) > 31 || parseInt(inputValue.substring(0,2)) < 1) {
+            errors.push([inputValue, "format"])
+            return errors
+          }
+
+          if (parseInt(inputValue.substring(2,4)) > 12 || parseInt(inputValue.substring(2,4)) < 1) {
+            errors.push([inputValue, "format"])
+            return errors
+          }
+
+          if (parseInt(inputValue.substring(4,8)) > (new Date().getFullYear()) || parseInt(inputValue.substring(4,8)) < (new Date().getFullYear()) - 100) {
+            errors.push([inputValue, "format"])
+            return errors
+          }
+        }
       break;
 
       case "value":
@@ -123,6 +212,21 @@ export function validateInput(inputName, inputValue) {
           errors.push([inputValue, "value"])
           return errors
         }
+      break;
+
+      case "maximum":
+        if (inputValue > check[1]) {
+          errors.push([inputValue, "maximum"])
+          return errors
+        }
+      break;
+
+      case "minimum":
+        if (inputValue < check[1]) {
+          errors.push([inputValue, "minimum"])
+          return errors
+        }
+      break;
     }
   }
 

@@ -75,11 +75,9 @@ export async function addAuthor(req, res) {
     
     ///VALIDATE INPUTS
     for (const [inputName, inputValue] of Object.entries(req.body)) {
-      if (inputName !== "birthday") {
-        const error = validateInput(inputName, inputValue);
-        if (error.length > 0) {
-          throw new Error ("invalid input");
-        }
+      const error = validateInput(inputName, inputValue);
+      if (error.length > 0) {
+        throw new Error ("invalid input");
       }
     }
 
@@ -715,7 +713,7 @@ router.get('/existingBooks', async (req, res) => {
   }
 })
 
-router.post('/book', async (req, res) => {
+export async function addBook(req, res) {
   try {
     const {
       title,
@@ -725,9 +723,24 @@ router.post('/book', async (req, res) => {
       quantity,
       authors } = req.body;
 
+    //Validate inputs
+    for (const [inputName, inputValue] of Object.entries(req.body)) {
+      if (inputName !== "authors") {
+        const error = validateInput(inputName, inputValue);
+        if (error.length > 0) {
+          throw new Error (`invalid input, ${error[0]}, ${error[1]}`);
+        }
+      }
+    }
+
+    // validate Ids one at a time, not as a group
     const authorsIds = []
     authors.map((authorId) => {
-      authorsIds.push({"id": authorId});
+      const error = validateInput("id", authorId);
+      if (error.length > 0) {
+        throw new Error (`invalid input, ${error[0]}, ${error[1]}`);
+      }
+      authorsIds.push({"id": parseInt(authorId)});
     })
     
     await prisma.$transaction(async (tx) => {
@@ -747,7 +760,7 @@ router.post('/book', async (req, res) => {
         new_impression = await tx.impression.create({
           data: {
             bookId: new_book.id,
-            quantity: quantity,
+            quantity: parseInt(quantity),
           }
         })
       };
@@ -760,8 +773,8 @@ router.post('/book', async (req, res) => {
             bookstoreId: 1,
             country: "México",
             price: parseFloat(price),
-            initial: quantity,
-            current: quantity
+            initial: parseInt(quantity),
+            current: parseInt(quantity)
           }
         })
       }
@@ -778,7 +791,8 @@ router.post('/book', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the book'});
   }
-});
+}
+router.post('/book', addBook);
 
 router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
   try {

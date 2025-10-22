@@ -54,8 +54,7 @@ export function validateInput(inputName, inputValue) {
       ["length", 100]
     ],
     "phone": [
-      ["type", "number"],
-      ["presence", 'not empty'],
+      ["type", "string"],
       ["format", 'phone']
     ],
     "category": [
@@ -79,18 +78,37 @@ export function validateInput(inputName, inputValue) {
     "price": [
       ["presence", "not empty"],
       ["type", "number"],
+      ["range", "positive"]
     ],
     "quantity": [
       ["presence", "not empty"],
       ["type", "number"],
-      ["length", 5],
+      ["range", "positive"]
+    ],
+    "quantityEbook": [
+      ["presence", "not empty"],
+      ["type", "number"],
+      ["range", "positive"]
+    ],
+    "quantityPod": [
+      ["presence", "not empty"],
+      ["type", "number"],
+      ["range", "positive"]
     ],
     "id": [
       ["presence", "not empty"],
       ["type", "number"],
     ],
-    "birthday": [
+    "bookId": [
+      ["presence", "not empty"],
       ["type", "number"],
+    ],
+    "bookstoreId": [
+      ["presence", "not empty"],
+      ["type", "number"],
+    ],
+    "birthday": [
+      ["type", "string"],
       ["exactLength", 8],
       ["format", "birthday"]
     ],
@@ -111,6 +129,45 @@ export function validateInput(inputName, inputValue) {
       ["type", "string"],
       ["length", 255]
     ],
+    "categoryType": [
+      ['presence', 'not empty'],
+      ['type', 'string']
+    ],
+    "gestionMinima": [
+      ["presence", "not empty"],
+      ["type", "number"]
+    ], 
+    "date": [
+      ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "dateCut": [
+      ['presence', 'not empty'],
+      ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "datePay": [
+      ['presence', 'not empty'],
+      ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "regalias": [
+      ['presence', 'not empty'],
+      ['type', 'number'],
+      ['range', 'positive']
+    ],
+    "paymentId": [
+      ['type', 'number or null'],
+    ], 
+    "amount": [
+      ['presence', 'not empty'],
+      ['type', 'number'],
+      ['range', 'positive'],
+    ],
+    'note': [
+      ['type', 'string'],
+      ['length', 255]
+    ]
   }
 
   for (const check of possibleChecks[inputName]) {
@@ -118,21 +175,42 @@ export function validateInput(inputName, inputValue) {
       case "type":
         if (check[1] === "string") {
           if (typeof inputValue !== "string") {
-            errors.push([inputValue, "type"]);
+            errors.push([inputName, inputValue, "type"]);
             return errors
           }
         }
 
         if (check[1] === "number") {
-          if (!Number.isFinite(parseInt(inputValue))) {
-            errors.push([inputValue, "type"]);
+          if (typeof inputValue !== 'number' || !Number.isFinite(inputValue)) {
+            errors.push([inputName, inputValue, "type"]);
             return errors
+          }
+        }
+
+        if (check[1] === "number or null") {
+          if (inputValue !== null) {
+            if (typeof inputValue !== 'number' || !Number.isFinite(inputValue)) {
+              errors.push([inputName, inputValue, "type"]);
+              return errors
+            }
           }
         }
 
         if (check[1] === "boolean") {
           if (typeof inputValue !== "boolean") {
-            errors.push([inputValue, "type"]);
+            errors.push([inputName, inputValue, "type"]);
+            return errors
+          }
+        }
+
+        if (check[1] === "datetime") {
+          if (!inputValue instanceof Date) {
+            errors.push([inputName, inputValue, "type"]);
+            return errors
+          }
+
+          if (isNaN(inputValue)) {
+            errors.push([inputName, inputValue, "type"]);
             return errors
           }
         }
@@ -144,7 +222,7 @@ export function validateInput(inputName, inputValue) {
             || inputValue === null
             || inputValue === undefined
           ) {
-            errors.push([inputValue, "presence"]);
+            errors.push([inputName, inputValue, "presence"]);
             return errors
           }
         } 
@@ -152,14 +230,14 @@ export function validateInput(inputName, inputValue) {
 
       case "length":
         if (inputValue.length > check[1]) {
-          errors.push([inputValue, "length"])
+          errors.push([inputName, inputValue, "length"])
           return errors
         }
       break;
 
       case "exactLength":
         if (inputValue.length !== check[1]) {
-          errors.push([inputValue, 'exactLength'])
+          errors.push([inputName, inputValue, 'exactLength'])
           return errors
         }
       break;
@@ -168,7 +246,7 @@ export function validateInput(inputName, inputValue) {
         if (check[1] === "email") {
           const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
           if (!validEmailRegex.test(inputValue)) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
         }
@@ -176,7 +254,7 @@ export function validateInput(inputName, inputValue) {
         if (check[1] === "phone") {
           const validPhoneRegex = /^(?:00\d{14,15}|\d{10})$/;
           if (!validPhoneRegex.test(inputValue)) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
         }
@@ -184,24 +262,24 @@ export function validateInput(inputName, inputValue) {
         if (check[1] === "isbn") {
           const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
           if (!validISBNRegex.test(inputValue)) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
         }
 
         if (check[1] === "birthday") {
           if (parseInt(inputValue.substring(0,2)) > 31 || parseInt(inputValue.substring(0,2)) < 1) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
 
           if (parseInt(inputValue.substring(2,4)) > 12 || parseInt(inputValue.substring(2,4)) < 1) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
 
           if (parseInt(inputValue.substring(4,8)) > (new Date().getFullYear()) || parseInt(inputValue.substring(4,8)) < (new Date().getFullYear()) - 100) {
-            errors.push([inputValue, "format"])
+            errors.push([inputName, inputValue, "format"])
             return errors
           }
         }
@@ -209,23 +287,41 @@ export function validateInput(inputName, inputValue) {
 
       case "value":
         if (!check[1].includes(inputValue)) {
-          errors.push([inputValue, "value"])
+          errors.push([inputName, inputValue, "value"])
           return errors
         }
       break;
 
       case "maximum":
         if (inputValue > check[1]) {
-          errors.push([inputValue, "maximum"])
+          errors.push([inputName, inputValue, "maximum"])
           return errors
         }
       break;
 
       case "minimum":
         if (inputValue < check[1]) {
-          errors.push([inputValue, "minimum"])
+          errors.push([inputName, inputValue, "minimum"])
           return errors
         }
+      break;
+
+      case "timerange":
+        if (check[1] === "no future") {
+          if (inputValue > new Date()) {
+            errors.push([inputName, inputValue, "timerange"])
+            return errors
+          }
+        }
+      break;
+
+      case "range":
+        if (check[1] === "positive") {
+          if (inputValue < 0) {
+            errors.push([inputName, inputValue, "range"])
+            return errors
+          }
+        } 
       break;
     }
   }

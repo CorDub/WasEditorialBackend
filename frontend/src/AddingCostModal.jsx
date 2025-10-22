@@ -90,7 +90,7 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                     paymentId: clickedRow ? clickedRow.id : null,
                     amount: amount,
                     note: note,
-                    book: selectedBookId
+                    bookId: selectedBookId
                 })
             });
 

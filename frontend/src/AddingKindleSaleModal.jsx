@@ -137,6 +137,9 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
       errorsDateCut = checkForErrors("La fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
       errorsRegalias = checkForErrors("El número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");
       errorInputs = [errorsBook, errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
+      if (new Date(dateCut) >= new Date(datePay)) {
+        errorInputs.push("La fecha de corte no puede estar después de la fecha de pago")
+      };
     }
 
     for (const errorInput of errorInputs) {

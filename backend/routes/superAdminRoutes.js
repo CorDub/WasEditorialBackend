@@ -1,10 +1,9 @@
 import { Role } from "@prisma/client";
 import { prisma } from "../prisma/client.js"
 import express from "express";
-import { createRandomPassword } from "../utils.js";
+import { createRandomPassword, validateInputs } from "../utils.js";
 import bcrypt from "bcrypt";
 import { sendSetPasswordMail } from "../mailer.js";
-import { validateInput } from "../validations.js";
 
 const router = express.Router();
 
@@ -36,31 +35,24 @@ router.get('/admins', async (req, res) => {
 
 export async function addAdmin (req, res) {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      role
-    } = req.body;
-
-    /// VALIDATE INPUTS
-    for (const [inputName, inputValue] of Object.entries(req.body)) {
-      const error = validateInput(inputName, inputValue);
-      if (error.length > 0) {
-        throw new Error ("invalid input");
-      }
+    const inputs = {
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "email": req.body.email,
+      "role": req.body.role
     }
+    validateInputs(inputs);
 
     /// NOW START DOING STUFF
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
     const new_admin = await prisma.user.create({
       data: {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
+        first_name: inputs.firstName,
+        last_name: inputs.lastName,
+        email: inputs.email,
         password: hashedPassword,
-        role: role
+        role: inputs.role
       }
     })
 
@@ -69,7 +61,7 @@ export async function addAdmin (req, res) {
       lastName: new_admin.last_name,
       email: new_admin.email
     });
-    sendSetPasswordMail(email, firstName, lastName);
+    sendSetPasswordMail(inputs.email, inputs.firstName, inputs.lastName);
 
   } catch (error) {
     console.error(error);

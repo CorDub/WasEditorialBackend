@@ -13,6 +13,7 @@ import {
 import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
+import { validateInputs } from "./../utils.js";
 
 const upload = multer();
 const router = express.Router();
@@ -63,30 +64,25 @@ router.get('/users', async (req, res) => {
 
 export async function addAuthor(req, res) {
   try {
-    const {
-      firstName,
-      lastName,
-      country,
-      referido,
-      email,
-      phone,
-      birthday,
-      category } = req.body;
-    
-    ///VALIDATE INPUTS
-    for (const [inputName, inputValue] of Object.entries(req.body)) {
-      const error = validateInput(inputName, inputValue);
-      if (error.length > 0) {
-        throw new Error ("invalid input");
-      }
+    const inputs = {
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "country": req.body.country,
+      "referido": req.body.referido,
+      "email": req.body.email,
+      "phone": req.body.phone,
+      "birthday": req.body.birthday,
+      "category": parseInt(req.body.category)
     }
+    
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const existing = await tx.user.findUnique({
         where: {
           first_name_last_name: {
-            first_name: firstName,
-            last_name: lastName
+            first_name: inputs.firstName,
+            last_name: inputs.lastName
           }
         }
       });
@@ -103,15 +99,15 @@ export async function addAuthor(req, res) {
         const exhumedUser = await tx.user.update({
           where: {id: existing.id},
           data: {
-            first_name: firstName,
-            last_name: lastName,
-            country: country,
-            referido: referido,
-            email: email,
-            phone: phone,
-            birthday: birthday,
+            first_name: inputs.firstName,
+            last_name: inputs.lastName,
+            country: inputs.country,
+            referido: inputs.referido,
+            email: inputs.email,
+            phone: inputs.phone,
+            birthday: inputs.birthday,
             password: hashedPassword,
-            categoryId: parseInt(category),
+            categoryId: inputs.category,
             isDeleted: false
           }
         });
@@ -125,15 +121,15 @@ export async function addAuthor(req, res) {
 
       const new_author =  await tx.user.create({
         data: {
-          first_name: firstName,
-          last_name: lastName,
-          country: country,
-          referido: referido,
-          email: email,
-          phone: phone,
-          birthday: birthday,
+          first_name: inputs.firstName,
+          last_name: inputs.lastName,
+          country: inputs.country,
+          referido: inputs.referido,
+          email: inputs.email,
+          phone: inputs.phone,
+          birthday: inputs.birthday,
           password: hashedPassword,
-          categoryId: parseInt(category)
+          categoryId: inputs.category
         },
       });
 
@@ -141,7 +137,7 @@ export async function addAuthor(req, res) {
         firstName: new_author.first_name,
         lastName: new_author.last_name,
         email: new_author.email});
-      sendSetPasswordMail(email, firstName, password);
+      sendSetPasswordMail(inputs.email, inputs.firstName, inputs.password);
     })
 
   } catch(error) {
@@ -530,23 +526,24 @@ router.delete('/category/:id', async (req, res) => {
   }
 })
 
-router.post('/category', async (req, res) => {
+export async function addCategory(req, res) {
   try {
-    const {
-      tipo,
-      regalias,
-      gestionTiendas,
-      gestionMinima } = req.body;
+    const inputs = {
+      "categoryType": req.body.tipo,
+      "gestionMinima": parseFloat(req.body.gestionMinima)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const existing = await tx.category.findUnique({
         where: {
-          type: tipo
+          type: inputs.categoryType
         }
       });
 
       if (existing) {
         if (existing.isDeleted === false) {
+          console.log("This category already exists")
           res.status(500).json({message: "Esta categoria ya existe"})
           return;
         }
@@ -554,10 +551,10 @@ router.post('/category', async (req, res) => {
         const exhumedUser = await tx.user.update({
           where: {id: existing.id},
           data: {
-            type: tipo,
-            percentage_royalties: parseFloat(regalias),
-            percentage_management_stores: parseFloat(gestionTiendas),
-            management_min: parseFloat(gestionMinima),
+            type: inputs.categoryType,
+            // percentage_royalties: parseFloat(regalias),
+            // percentage_management_stores: parseFloat(gestionTiendas),
+            management_min: inputs.gestionMinima,
             isDeleted: false
           }
         });
@@ -567,10 +564,10 @@ router.post('/category', async (req, res) => {
 
       const new_category =  await tx.category.create({
         data: {
-          type: tipo,
-          percentage_royalties: parseFloat(regalias),
-          percentage_management_stores: parseFloat(gestionTiendas),
-          management_min: parseFloat(gestionMinima),
+          type: inputs.categoryType,
+          // percentage_royalties: parseFloat(regalias),
+          // percentage_management_stores: parseFloat(gestionTiendas),
+          management_min: inputs.gestionMinima,
         },
       });
 
@@ -578,14 +575,16 @@ router.post('/category', async (req, res) => {
     })
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
+      console.log(error)
       res.status(500).json({message: "Uniqueness error - tipo"})
       return;
     }
 
-    console.error(error);
+    console.log(error);
     res.status(500).json({ error: 'A server error occured while creating the category'});
   }
-});
+}
+router.post('/category', addCategory);
 
 router.patch('/category', async (req, res) => {
   try {
@@ -715,30 +714,21 @@ router.get('/existingBooks', async (req, res) => {
 
 export async function addBook(req, res) {
   try {
-    const {
-      title,
-      pasta,
-      price,
-      isbn,
-      quantity,
-      authors } = req.body;
-
-    //Validate inputs
-    for (const [inputName, inputValue] of Object.entries(req.body)) {
-      if (inputName !== "authors") {
-        const error = validateInput(inputName, inputValue);
-        if (error.length > 0) {
-          throw new Error (`invalid input, ${error[0]}, ${error[1]}`);
-        }
-      }
+    const inputs = {
+      "title": req.body.title,
+      "pasta": req.body.pasta,
+      "price": parseFloat(req.body.price),
+      "isbn": req.body.isbn,
+      "quantity": parseInt(req.body.quantity)
     }
+    validateInputs(inputs)
 
-    // validate Ids one at a time, not as a group
+    // validate author Ids one at a time, not as a group
     const authorsIds = []
-    authors.map((authorId) => {
+    req.body.authors.map((authorId) => {
       const error = validateInput("id", authorId);
       if (error.length > 0) {
-        throw new Error (`invalid input, ${error[0]}, ${error[1]}`);
+        throw new Error (`invalid input, ${error[0]}`);
       }
       authorsIds.push({"id": parseInt(authorId)});
     })
@@ -746,9 +736,9 @@ export async function addBook(req, res) {
     await prisma.$transaction(async (tx) => {
       const new_book = await tx.book.create({
         data: {
-          title: title,
-          pasta: pasta,
-          isbn: isbn,
+          title: inputs.title,
+          pasta: inputs.pasta,
+          isbn: inputs.isbn,
           users: {
             connect: authorsIds,
           },
@@ -760,7 +750,7 @@ export async function addBook(req, res) {
         new_impression = await tx.impression.create({
           data: {
             bookId: new_book.id,
-            quantity: parseInt(quantity),
+            quantity: inputs.quantity,
           }
         })
       };
@@ -772,9 +762,9 @@ export async function addBook(req, res) {
             bookId: new_book.id,
             bookstoreId: 1,
             country: "México",
-            price: parseFloat(price),
-            initial: parseInt(quantity),
-            current: parseInt(quantity)
+            price: inputs.price,
+            initial: inputs.quantity,
+            current: inputs.quantity
           }
         })
       }
@@ -1226,23 +1216,26 @@ router.get('/existingBookstores', async (req, res) => {
   }
 })
 
-router.post('/bookstore', async (req, res) => {
+export async function addBookstore(req, res) {
   try {
-    const {
-      name,
-      dealPercentage,
-      comissions,
-      contactName,
-      contactPhone,
-      contactEmail } = req.body;
+    const inputs = {
+      "name": req.body.name,
+      "dealPercentage": parseFloat(req.body.dealPercentage),
+      "comissions": req.body.comissions === "true" ? true : false,
+      "contactName": req.body.contactName,
+      "phone": req.body.contactPhone,
+      "email": req.body.contactEmail
+    }
+    validateInputs(inputs);
+
     const new_bookstore =  await prisma.bookstore.create({
       data: {
-        name: name,
-        deal_percentage: parseFloat(dealPercentage),
-        comissions: comissions === "true" ? true : false,
-        contact_name: contactName,
-        contact_phone: contactPhone,
-        contact_email: contactEmail,
+        name: inputs.name,
+        deal_percentage: inputs.dealPercentage,
+        comissions: inputs.comissions,
+        contact_name: inputs.contactName,
+        contact_phone: inputs.phone,
+        contact_email: inputs.email,
       },
     });
 
@@ -1251,7 +1244,8 @@ router.post('/bookstore', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the category'});
   }
-})
+}
+router.post('/bookstore', addBookstore);
 
 router.patch('/bookstore', async (req, res) => {
   try {
@@ -2095,23 +2089,23 @@ router.get('/sales', async (req, res) => {
   }
 });
 
-router.post('/sale', async (req, res) => {
+export async function addSale(req, res) {
   try {
-    const {
-      book,
-      bookstore,
-      // country,
-      quantity,
-      date
-    } = req.body;
+    const inputs = {
+      "bookId": parseInt(req.body.bookId),
+      "bookstoreId": parseInt(req.body.bookstoreId),
+      "quantity": parseInt(req.body.quantity),
+      "date": new Date(req.body.date)
+    }
+    validateInputs(inputs);
 
     let createdSale;
     await prisma.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({
         where : {
           bookId_bookstoreId: {
-            bookId : book,
-            bookstoreId: bookstore,
+            bookId : inputs.bookId,
+            bookstoreId: inputs.bookstoreId,
             // country: country,
           }
         },
@@ -2126,7 +2120,7 @@ router.post('/sale', async (req, res) => {
         return;
       }
 
-      if (selectedInventory.current < quantity) {
+      if (selectedInventory.current < inputs.quantity) {
         res.status(400).json(
           { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
         );
@@ -2135,7 +2129,7 @@ router.post('/sale', async (req, res) => {
 
       const bookWithUsers = await tx.book.findUnique({
         where: {
-          id: book
+          id: inputs.bookId
         },
         include: {
           users: true
@@ -2146,15 +2140,6 @@ router.post('/sale', async (req, res) => {
       const saleForMonth = getForMonth(new Date())
       let paymentIds = []
       for (const authorId of authorListIds) {
-        // const userWithCategory = await tx.user.findUnique({
-        //   where: {
-        //     id: authorId
-        //   },
-        //   include: {
-        //     category: true
-        //   }
-        // });
-
         const existingPayment = await tx.payment.findUnique({
           where: {
             userId_forMonth: {
@@ -2169,43 +2154,18 @@ router.post('/sale', async (req, res) => {
             data: {
               userId: authorId,
               forMonth: saleForMonth,
-              // amount: calculateAuthorRevenue(
-              //   selectedInventory.bookstore.comissions,
-              //   selectedInventory.price,
-              //   userWithCategory.category.management_min,
-              //   selectedInventory.bookstore.deal_percentage,
-              //   quantity
-              // )
             }
           });
 
           paymentIds.push({"id": createdPayment.id})
         }
-        //   } else {
-        //     const updatedPayment = await tx.payment.update({
-        //       where: {
-        //         id: existingPayment.id
-        //       },
-        //       data: {
-        //         amount: existingPayment.amount + calculateAuthorRevenue(
-        //           selectedInventory.bookstore.comissions,
-        //           selectedInventory.price,
-        //           userWithCategory.category.management_min,
-        //           selectedInventory.bookstore.deal_percentage,
-        //           quantity
-        //         )
-        //       }
-        //     });
-        //     paymentIds.push({"id": updatedPayment.id})
-        //   }
-        // }
       }
 
       createdSale = await tx.sale.create({
         data: {
           inventoryId: selectedInventory.id,
-          quantity: quantity,
-          date: date,
+          quantity: inputs.quantity,
+          date: inputs.date,
           payments: {
             connect: paymentIds
           }
@@ -2216,7 +2176,7 @@ router.post('/sale', async (req, res) => {
         const updatedInventory = await tx.inventory.update({
           where: {id: selectedInventory.id},
           data: {
-            current: selectedInventory.current-quantity
+            current: selectedInventory.current - inputs.quantity
           }
         });
       }
@@ -2228,7 +2188,8 @@ router.post('/sale', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: error });
   }
-})
+}
+router.post('/sale', addSale)
 
 router.patch('/sale', async (req, res) => {
   try {
@@ -2988,23 +2949,23 @@ router.get('/currentCosts', async (req, res) => {
   }
 })
 
-router.post('/cost', async (req, res) => {
+export async function addCost(req, res) {
   try {
-    let paymentIdQuery; 
-    if (req.body.paymentId !== null) {
-      paymentIdQuery = parseInt(req.body.paymentId);
+    const inputs = {
+      "paymentId": req.body.paymentId !== null ? parseInt(req.body.paymentId) : null,
+      "amount": parseFloat(req.body.amount),
+      "note": req.body.note,
+      "bookId": parseInt(req.body.bookId),
     }
-    const amountQuery = parseFloat(req.body.amount);
-    const noteQuery = req.body.note;
-    const bookIdQuery = parseInt(req.body.book);
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
     // Make sure we got payment Id or Ids
       let paymentIds = [];
-      if (!paymentIdQuery) {
+      if (!inputs.paymentId) {
         const selectedBook = await tx.book.findFirst({
           where: {
-            id: bookIdQuery,
+            id: inputs.bookId,
             isDeleted: false
           },
           select: {
@@ -3070,7 +3031,7 @@ router.post('/cost', async (req, res) => {
           }
         }
       } else {
-        paymentIds.push(paymentIdQuery);
+        paymentIds.push(inputs.paymentId);
       }
 
       // get a new cost for each paymentId
@@ -3078,21 +3039,22 @@ router.post('/cost', async (req, res) => {
         const createdCost = await tx.cost.create({
           data: {
             paymentId: paymentId,
-            amount: amountQuery,
-            bookId: bookIdQuery,
-            note: noteQuery
+            amount: inputs.amount,
+            bookId: inputs.bookId,
+            note: inputs.note
           }
         });
       }
 
-      res.status(200).json({message: "Cost created sucessfully"});
+      res.status(201).json({message: "Cost created successfully"});
     })
     
   } catch (error) {
     console.error("\n ERROR CREATING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while creating the cost"})
   }
-})
+}
+router.post('/cost', addCost)
 
 router.patch("/cost/:id", async (req, res) => {
   try {
@@ -3254,17 +3216,23 @@ router.get('/kindlesales', async (req, res) => {
 
 export async function addKindleSale (req, res) {
   try {
-    let bookIdQuery = parseInt(req.body.book);
-    let quantityEbookQuery = parseInt(req.body.quantityEbook);
-    let quantityPodQuery = parseInt(req.body.quantityPod); 
-    let dateCutQuery = new Date(req.body.dateCut);
-    let datePayQuery = new Date(req.body.datePay);
-    let regaliasQuery = parseFloat(req.body.regalias);
+    const inputs = {
+      "bookId": parseInt(req.body.book),
+      "quantityEbook": parseInt(req.body.quantityEbook),
+      "quantityPod": parseInt(req.body.quantityPod),
+      "dateCut": new Date(req.body.dateCut),
+      "datePay": new Date(req.body.datePay),
+      "regalias": parseFloat(req.body.regalias),
+    }
+    validateInputs(inputs);
+    if (inputs.dateCut >= inputs.datePay) {
+      throw new Error("dateCut later than datePay");
+    }
 
     const createdKindleSaleTransaction = await prisma.$transaction(async (tx) => {
       const bookSold = await tx.book.findUnique({
         where: {
-          id: bookIdQuery
+          id: inputs.bookId
         },
         include: {
           users: true
@@ -3282,7 +3250,7 @@ export async function addKindleSale (req, res) {
           where: {
             userId_forMonth: {
               userId: author,
-              forMonth: getForMonth(datePayQuery)
+              forMonth: getForMonth(inputs.datePay)
             }
           }
         })
@@ -3302,15 +3270,15 @@ export async function addKindleSale (req, res) {
 
       const createdKindleSale = await tx.kindleSale.create({
         data: {
-          bookId: bookIdQuery,
+          bookId: inputs.bookId,
           payments: {
             connect: paymentIds
           },
-          quantityEbook: quantityEbookQuery,
-          quantityPod: quantityPodQuery,
-          dateCut: dateCutQuery,
-          datePay: datePayQuery,
-          regalias: regaliasQuery
+          quantityEbook: inputs.quantityEbook,
+          quantityPod: inputs.quantityPod,
+          dateCut: inputs.dateCut,
+          datePay: inputs.datePay,
+          regalias: inputs.regalias
         }
       });
 

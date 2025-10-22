@@ -304,8 +304,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         },
         credentials: "include",
         body: JSON.stringify({
-          book: parseInt(book),
-          bookstore: parseInt(bookstore),
+          bookId: parseInt(book),
+          bookstoreId: parseInt(bookstore),
           // country: country,
           quantity: quantity,
           date: date

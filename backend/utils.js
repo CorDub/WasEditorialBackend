@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { prisma } from "./prisma/client.js"
+import { validateInput } from './validations.js';
 
 export function createRandomPassword() {
   const pw = crypto.randomBytes(12).toString('hex');
@@ -293,4 +294,13 @@ export function convertDateStringToLocalFormat(dateString) {
   }
 
   return dateComponents[1] + "/"  + dateComponents[0] + "/" + dateComponents[2]
+}
+
+export function validateInputs(inputObject) {
+  for (const [inputName, inputValue] of Object.entries(inputObject)) {
+    const error = validateInput(inputName, inputValue);
+    if (error.length > 0) {
+      throw new Error (`invalid input ${error[0]}`)
+    }
+  }
 }

@@ -11,6 +11,7 @@ test("validates type number correctly", () => {
   expect(validateInput("category", 256)).toStrictEqual([])
   expect(validateInput("category", "string")).toStrictEqual([["category", "string", "type"]])
   expect(validateInput("category", NaN)).toStrictEqual([["category", NaN, "type"]])
+  expect(validateInput("id", parseInt("thisisanid"))).toStrictEqual([["id", parseInt("thisisanid"), "type"]])
 })
 
 test("validates type number or null correctly", () => {

@@ -36,9 +36,11 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     setRoles(orderedRoles);
   }, [clickedRow])
 
+  console.log(clickedRow)
+
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/superadmin/admin`, {
+      const response = await fetch(`${baseURL}/superadmin/admin/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
@@ -147,8 +149,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       };
     };
   }
-
-  console.log(clickedRow);
 
   return (
     <div className="modal-proper">

@@ -79,26 +79,33 @@ export async function addAdmin (req, res) {
 }
 router.post('/admin', addAdmin);
 
-router.patch('/admin', async (req, res) => {
+export async function updateAdmin(req, res) {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      role} = req.body;
-    const admin = await prisma.user.findUnique({where: {
-      first_name_last_name: {
-        first_name: firstName,
-        last_name: lastName
+    const inputs = {
+      "id": req.params.id,
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "email": req.body.email,
+      "role": req.body.role
+    }
+    validateInputs(inputs);
+
+    const admin = await prisma.user.findUnique({
+      where: {
+        id: inputs.id
       }
-    }})
+    })
+    if (admin.isDeleted) {
+      throw new Error("User has been deleted")
+    };
+    
     const updatedAdmin = await prisma.user.update({
       where: {id: admin.id},
       data: {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        role: role
+        first_name: inputs.firstName,
+        last_name: inputs.lastName,
+        email: inputs.email,
+        role: inputs.role
       }
     });
 
@@ -121,14 +128,18 @@ router.patch('/admin', async (req, res) => {
     }
     res.status(500).json({ error: error });
   }
-})
+}
+router.patch('/admin/:id', updateAdmin);
 
-router.delete('/admin/:id', async (req, res) => {
-  const user_id = parseInt(req.params.id);
-
+export async function deleteAdmin(req, res) {
   try {
-    await prisma.user.update({where:
-      {id: user_id},
+    const inputs = {
+      "id": parseInt(req.params.id)
+    }
+    validateInputs(inputs);
+
+    const deletedAdmin = await prisma.user.update({where:
+      {id: inputs.id},
       data: {
         isDeleted: true,
       }
@@ -138,6 +149,7 @@ router.delete('/admin/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the admin'});
   }
-})
+}
+router.delete('/admin/:id', deleteAdmin);
 
 export default router;

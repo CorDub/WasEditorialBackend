@@ -36,7 +36,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     setRoles(orderedRoles);
   }, [clickedRow])
 
-  console.log(clickedRow)
 
   async function sendToServer() {
     try {

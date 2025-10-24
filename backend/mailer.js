@@ -17,14 +17,14 @@ export async function sendSetPasswordMail(email, name, password) {
     const info = await transport.sendMail({
       from: '"Was TEST" <no-reply@wastest.com>',
       to: email,
-      subject: 'Codigo de confirmacion para su cuenta de Was Editorial - Test',
+      subject: 'Codigo de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
-      Su cuenta de Was Editorial ha sido creado. Encontrara la contrasena aqui abajo:
+      Su cuenta de Was Editorial ha sido creada. Encontrará la contraseña aqui:
       ${password}
       \n
-      Le pidemos cambiar su contrasena rapidamente en los parametros de su cuenta para evitar cualquier riesgos.\n
+      Le pidemos cambiar su contraseña rapidamente en los parametros de su cuenta para evitar cualquier riesgos.\n
 
-      No comparte esta contrasena con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.`
+      No comparte esta contraseña con otras personas. Was Editorial y sus empleadores nunca se la pidieran.`
     });
     console.log("Email sent:", info.messageId);
   } catch(error) {
@@ -39,13 +39,13 @@ export async function sendResetPasswordMail(to, name) {
     const info = await transport.sendMail({
       from: '"Was TEST" <no-reply@wastest.com>',
       to,
-      subject: 'Codigo de confirmacion para su cuenta de Was Editorial - Test',
+      subject: 'Codigo de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
-      Por favor ingrese el siguiente codigo de confirmacion en la pagina de Was:\n
+      Por favor ingrese el siguiente codigo de confirmación en la pagina de Was:\n
       ${codigo}
       \n
       No comparte este codigo con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.
-      Ese codigo estara valido 24 horas.`
+      Ese codigo estará valido 24 horas.`
     });
     console.log("Email sent:", info.messageId);
 

@@ -61,7 +61,8 @@ export async function addAdmin (req, res) {
       lastName: new_admin.last_name,
       email: new_admin.email
     });
-    sendSetPasswordMail(inputs.email, inputs.firstName, inputs.lastName);
+    
+    sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
 
   } catch (error) {
     console.error(error);

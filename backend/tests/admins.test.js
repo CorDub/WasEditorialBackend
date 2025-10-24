@@ -52,7 +52,9 @@ describe("adding a valid admin", () => {
   })
 
   it("should send a set password email", async() => {
-    expect(mailer.sendSetPasswordMail).toHaveBeenCalledWith("iama.newadmin@gmail.com", "Iama", "Newadmin")
+    expect(mailer.sendSetPasswordMail).toHaveBeenCalled();
+    expect(mailer.sendSetPasswordMail.mock.calls[0][0]).toBe("iama.newadmin@gmail.com");
+    expect(mailer.sendSetPasswordMail.mock.calls[0][1]).toBe("Iama");
   })
 
   afterAll(async() => {
@@ -313,7 +315,7 @@ describe("updating an admin with invalid parameters", () => {
     }
   });
 
-  it("should return status 500 and not update the admin", async() => {
+  it("should return status 500", async() => {
     await updateAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })

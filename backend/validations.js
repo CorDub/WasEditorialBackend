@@ -59,7 +59,6 @@ export function validateInput(inputName, inputValue) {
     ],
     "category": [
       ["type", "number"],
-      ['length', 1]
     ],
     "isbn": [
       ["type", "number"],
@@ -132,6 +131,10 @@ export function validateInput(inputName, inputValue) {
     "categoryType": [
       ['presence', 'not empty'],
       ['type', 'string']
+    ],
+    "categoryId": [
+      ['presence', 'not empty'],
+      ['type', 'number']
     ],
     "gestionMinima": [
       ["presence", "not empty"],

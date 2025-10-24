@@ -94,14 +94,13 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     });
 
     try {
-      const response = await fetch(`${baseURL}/admin/user`, {
+      const response = await fetch(`${baseURL}/admin/user/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           first_name: firstName,
           last_name: lastName,
           country: country,
@@ -184,100 +183,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     setErrors(errorList);
     return errorList;
   }
-
-  // function checkForErrors(serverError) {
-  //   function addErrorClass(input_name) {
-  //     if (!input_name.classList.contains("error-inputs")) {
-  //       input_name.classList.add("error-inputs");
-  //     };
-  //   }
-
-  //   let errorList = [];
-  //   const inputFirstName = document.getElementById('adding-author-first-name');
-  //   const inputLastName = document.getElementById('adding-author-last-name');
-  //   const inputCountry = document.getElementById('country-select');
-  //   const inputReferido = document.getElementById('adding-author-referido');
-  //   const inputEmail = document.getElementById('adding-author-email');
-  //   const inputCategory = document.getElementById('category-select');
-  //   const inputsList = [inputFirstName, inputLastName, inputCountry,
-  //     inputReferido, inputEmail, inputCategory];
-
-  //   inputsList.forEach((input) => {
-  //     if (input.classList.contains("error-inputs")) {
-  //       input.classList.remove("error-inputs");
-  //     }
-  //   })
-
-  //   if (firstName === '') {
-  //     errorList.push(11);
-  //     addErrorClass(inputFirstName);
-  //   };
-
-  //   if (firstName.length > 50) {
-  //     errorList.push(12);
-  //     addErrorClass(inputFirstName);
-  //   };
-
-  //   if (lastName.length > 50) {
-  //     errorList.push(22);
-  //     addErrorClass(inputLastName);
-  //   };
-
-  //   if (serverError === "Un autor con el mismo nombre completo ya existe") {
-  //     errorList.push(121);
-  //     addErrorClass(inputFirstName);
-  //     addErrorClass(inputLastName);
-  //   }
-
-  //   if (country === null) {
-  //     errorList.push(31);
-  //     addErrorClass(inputCountry);
-  //   };
-
-  //   if (!countries.includes(country)) {
-  //     errorList.push(32);
-  //     addErrorClass(inputCountry);
-  //   };
-
-  //   if (referido.length > 100) {
-  //     errorList.push(41);
-  //     addErrorClass(inputReferido);
-  //   };
-
-  //   if (email === '') {
-  //     errorList.push(51);
-  //     addErrorClass(inputEmail);
-  //   };
-
-  //   if (email.length > 50) {
-  //     errorList.push(52);
-  //     addErrorClass(inputEmail);
-  //   };
-
-  //   if (serverError === "El correo ya está usado") {
-  //     errorList.push(53);
-  //     addErrorClass(inputEmail);
-  //   }
-
-  //   if (category === null) {
-  //     errorList.push(61);
-  //     addErrorClass(inputCategory);
-  //   };
-
-  //   const categories_types = [];
-  //   categories.map((cat) => {
-  //     categories_types.push(cat.type)
-  //   });
-  //   console.log("categories", categories);
-  //   console.log("category", category);
-  //   if (!categories_types.includes(category)) {
-  //     errorList.push(62);
-  //     addErrorClass(inputCategory);
-  //   };
-
-  //   setErrors(errorList);
-  //   return errorList;
-  // }
 
   function checkInputs() {
     let errorsList = []
@@ -374,7 +279,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         if (response.ok === true) {
           const dataCategories = await response.json();
           setCategories(dataCategories);
-          console.log(dataCategories);
         } else {
           console.log("There was an error fetching categories:", response.status);
         };
@@ -392,10 +296,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     e.preventDefault();
     setErrors([]);
 
-    // const errorList = checkForErrors();
-    // if (errorList.length > 0) {
-    //   return;
-    // }
     const res = checkInputs();
     if (res.length > 0) {
       return;

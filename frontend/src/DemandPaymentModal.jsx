@@ -192,9 +192,10 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     <div className="modal-proper">
       <div className="modal-stuff-to-add">
         <div className="dempay-adicional-info">
-          <p>Por favor, usa el uso de CFDI 551015000 y la referencia venta de libros "título de libro".</p>
+          <p>Por favor, usa el uso de CFDI "Gastos Generales"</p>
+          <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p>
           <p>No añade el IVA en la factura.</p>
-          <p>El pago sera hecho por transferencia.</p>
+          <p>El pago sera hecho por transferencia y en una sola exhibición.</p>
         </div>
         <div className="modal-form-upload">
           <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>

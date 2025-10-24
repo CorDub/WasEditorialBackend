@@ -14,6 +14,7 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
+import { PutBucketCorsCommand } from "@aws-sdk/client-s3";
 
 const upload = multer();
 const router = express.Router();
@@ -96,27 +97,29 @@ export async function addAuthor(req, res) {
           return;
         }
 
-        const exhumedUser = await tx.user.update({
-          where: {id: existing.id},
-          data: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName,
-            country: inputs.country,
-            referido: inputs.referido,
-            email: inputs.email,
-            phone: inputs.phone,
-            birthday: inputs.birthday,
-            password: hashedPassword,
-            categoryId: inputs.category,
-            isDeleted: false
-          }
-        });
-        res.status(201).json({
-          firstName: exhumedUser.first_name,
-          lastName: exhumedUser.last_name,
-          email: exhumedUser.email});
-        sendSetPasswordMail(email, firstName, password);
-        return;
+        //User necromancy right here - for later restore.
+
+        // const exhumedUser = await tx.user.update({
+        //   where: {id: existing.id},
+        //   data: {
+        //     first_name: inputs.firstName,
+        //     last_name: inputs.lastName,
+        //     country: inputs.country,
+        //     referido: inputs.referido,
+        //     email: inputs.email,
+        //     phone: inputs.phone,
+        //     birthday: inputs.birthday,
+        //     password: hashedPassword,
+        //     categoryId: inputs.category,
+        //     isDeleted: false
+        //   }
+        // });
+        // res.status(201).json({
+        //   firstName: exhumedUser.first_name,
+        //   lastName: exhumedUser.last_name,
+        //   email: exhumedUser.email});
+        // sendSetPasswordMail(email, firstName, password);
+        // return;
       }
 
       const new_author =  await tx.user.create({
@@ -137,7 +140,7 @@ export async function addAuthor(req, res) {
         firstName: new_author.first_name,
         lastName: new_author.last_name,
         email: new_author.email});
-      sendSetPasswordMail(inputs.email, inputs.firstName, inputs.password);
+      sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
     })
 
   } catch(error) {
@@ -246,42 +249,35 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
   }
 })
 
-router.patch('/user', async (req, res) => {
+export async function updateAuthor(req, res) {
   try {
-    const {
-      id,
-      first_name,
-      last_name,
-      country,
-      referido,
-      email,
-      phone,
-      birthday,
-      categoryId } = req.body;
+    const inputs = {
+      "id": parseInt(req.params.id),
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
+      "country": req.body.country,
+      "referido": req.body.referido,
+      "email": req.body.email,
+      "phone": req.body.phone,
+      "birthday": req.body.birthday,
+      "categoryId": parseInt(req.body.categoryId)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
-      // const authorBeforeUpdate = await tx.user.findUnique({
-      //   where: {
-      //     id: id
-      //   },
-      //   include: {
-      //     category: true
-      //   }
-      // });
-
       const updatedAuthor = await tx.user.update({
-        where: {id: parseInt(id)},
+        where: {id: inputs.id},
         data: {
-          first_name: first_name,
-          last_name: last_name,
-          country: country,
-          referido: referido,
-          email: email,
-          phone: phone,
-          birthday: birthday,
+          first_name: inputs.firstName,
+          last_name: inputs.lastName,
+          country: inputs.country,
+          referido: inputs.referido,
+          email: inputs.email,
+          phone: inputs.phone,
+          birthday: inputs.birthday,
           category: {
             connect: {
-              id: parseInt(categoryId)
+              id: inputs.categoryId
             }
           }
         },
@@ -289,99 +285,6 @@ router.patch('/user', async (req, res) => {
           category: true
         }
       });
-
-      // if (updatedAuthor && authorBeforeUpdate.categoryId !== updatedAuthor.categoryId ) {
-      //   let impactedSales = [];
-      //   const impactedBooks = await tx.book.findMany({
-      //     where: {
-      //       isDeleted: false,
-      //       users: {
-      //         some: {
-      //           id: updatedAuthor.id
-      //         }
-      //       }
-      //     },
-      //     include: {
-      //       users: true
-      //     }
-      //   });
-
-      //   for (const book of impactedBooks) {
-      //     const numberOfAuthors = book.users.length
-      //     const impactedInventories = await tx.inventory.findMany({
-      //       where: {
-      //         isDeleted: false,
-      //         bookId: book.id
-      //       },
-      //       include: {
-      //         bookstore: true
-      //       }
-      //     });
-
-      //     for (const inventory of impactedInventories) {
-      //       const impactedSalesForInventory = await tx.sale.findMany({
-      //         where: {
-      //           isDeleted: false,
-      //           inventoryId: inventory.id
-      //         }
-      //       });
-
-      //       for (const sale of impactedSalesForInventory) {
-      //         impactedSales.push({
-      //           ...sale,
-      //           "userId": updatedAuthor.id,
-      //           "comissions": inventory.bookstore.comissions,
-      //           "price": inventory.price,
-      //           "management_min": updatedAuthor.category.management_min,
-      //           "percentage_management_stores": updatedAuthor.category.percentage_management_stores,
-      //           "percentage_royalties": updatedAuthor.category.percentage_royalties,
-      //           "numberOfAuthors": numberOfAuthors
-      //         })
-      //       }
-      //     }
-      //   }
-
-      //   for (const sale of impactedSales) {
-      //     const saleForMonth = getForMonth(sale.createdAt)
-      //     const previousPayment = await tx.payment.findUnique({
-      //       where: {
-      //         userId_forMonth: {
-      //           userId: sale.userId,
-      //           forMonth: saleForMonth
-      //         }
-      //       }
-      //     })
-
-      //     const previousSaleValue = calculateAuthorRevenue(
-      //       sale.comissions,
-      //       sale.price,
-      //       authorBeforeUpdate.category.management_min,
-      //       authorBeforeUpdate.category.percentage_management_stores,
-      //       sale.quantity,
-      //     )
-
-      //     const newSaleValue = calculateAuthorRevenue(
-      //       sale.comissions,
-      //       sale.price,
-      //       sale.management_min,
-      //       sale.percentage_management_stores,
-      //       sale.quantity,
-      //     )
-
-      //     const quantityUpdate = newSaleValue - previousSaleValue
-
-      //     if (previousPayment && previousPayment.status !== "paid") {
-      //       const updatedPayment = await tx.payment.update({
-      //         where: {
-      //           id: previousPayment.id
-      //         },
-      //         data: {
-      //           amount: previousPayment.amount + quantityUpdate
-      //         }
-      //       })
-      //     }
-      //   }
-      // }
 
       if (updatedAuthor) {
         res.status(200).json({message: "Successfully updated user"});
@@ -394,15 +297,19 @@ router.patch('/user', async (req, res) => {
     console.error("Server error at the update user route:", error);
     res.status(500).json({error: "There was an issue updating the author"});
   } 
-})
+}
+router.patch('/user/:id', updateAuthor);
 
-router.delete('/user/:id', async (req, res) => {
-  const user_id = parseInt(req.params.id);
-
+export async function deleteAuthor(req, res) {
   try {
+    const inputs = {
+      "id": parseInt(req.params.id)
+    };
+    validateInputs(inputs);
+
     await prisma.$transaction(async (tx) => {
       const deletedAuthor = await tx.user.update({
-        where: {id: user_id},
+        where: {id: inputs.id},
         data: {isDeleted: true}
       });
 
@@ -422,7 +329,8 @@ router.delete('/user/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the user'});
   }
-})
+}
+router.delete('/user/:id', deleteAuthor);
 
 //Categories routes
 

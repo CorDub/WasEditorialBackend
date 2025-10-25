@@ -14,7 +14,6 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
-import { PutBucketCorsCommand } from "@aws-sdk/client-s3";
 
 const upload = multer();
 const router = express.Router();
@@ -159,7 +158,7 @@ export async function addAuthor(req, res) {
 }
 router.post('/user', addAuthor);
 
-router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
+export async function addMultipleAuthors(req, res) {
   try {
     const csvfile = req.files.archivo[0];
     if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
@@ -167,6 +166,22 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
     }
     const fileContent = csvfile.buffer.toString('utf-8');
     const lines = fileContent.split("\n");
+    const inputs = {
+      firstName: fields[0],
+      lastName: fields[1],
+      country: fields[2],
+      categoryId: parseInt(fields[3]),
+      email: fields[4],
+      phone: fields[5],
+      birthday: fields[6],
+      clabe: fields[7],
+      name_bank_account: fields[8],
+      bank: fields[9],
+      swift: fields[10],
+      referido: fields[11]
+    }
+    validateInputs(inputs);
+
     const errors = [];
     for (let i = 0; i < lines.length; i++) {
       try {
@@ -176,9 +191,9 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
             fields[j] = null
           }
         }
-        if (!fields[0] || !fields[1]) {
-          throw new Error("Missing first name or last name");
-        }
+        // if (!fields[0] || !fields[1]) {
+        //   throw new Error("Missing first name or last name");
+        // }
 
         const deletedAuthor = await prisma.user.findFirst({
           where: {
@@ -247,7 +262,8 @@ router.post('/author/addMultiples',  upload.fields([{name: "archivo", maxCount: 
   } catch(error) {
     res.status(500).json({"error": error});
   }
-})
+}
+router.post('/author/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleAuthors);
 
 export async function updateAuthor(req, res) {
   try {
@@ -315,12 +331,16 @@ export async function deleteAuthor(req, res) {
 
       if (deletedAuthor) {
         const deletedBooksIds = await softDeleteBooksOnCascade(deletedAuthor, tx);
+        for (const bookId of deletedBooksIds) {
+          await Promise.all([
+            softDeleteImpressionsOnCascade(bookId, tx),
+            softDeleteKindleSalesOnCascade(bookId, tx),
+            softDeleteCostsOnCascade(bookId, tx),
+          ]);
+        }
         const deletedInventoriesIds = await softDeleteInventoriesOnCascade(deletedBooksIds, "books", tx);
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
         const deletedPayments = await softDeletePaymentsOnCascade(deletedAuthor, tx);
-        for (const payment of deletedPayments) {
-          await softDeleteCostsOnCascade(payment, tx);
-        }
       };
     })
 
@@ -3343,7 +3363,7 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
 async function softDeleteImpressionsOnCascade(deletedBook, tx) {
   const impressionsToDelete = await tx.impression.findMany({
     where: {
-      bookId: deletedBook.id,
+      bookId: deletedBook,
       isDeleted: false
     },
   });
@@ -3396,83 +3416,36 @@ async function softDeleteSalesOnCascade(IdsList, tx) {
       })
     })
   );
-
-  // for (const sale of salesToDelete) {
-  //   // update all potential authors payments sums as well
-  //   const date = new Date(sale.createdAt);
-  //   const year = String(date.getFullYear());
-  //   const month = String(date.getMonth() + 1).padStart(2, '0');
-  //   const saleForMonth = year + "-" + month
-
-  //   const bookOfSale = await tx.book.findUnique({
-  //     where: {
-  //       id: sale.inventory.bookId
-  //     },
-  //     select: {
-  //       users: {
-  //         select: {
-  //           id: true
-  //         }
-  //       }
-  //     }
-  //   })
-  //   const userIds = bookOfSale.users.map(user => user.id);
-
-  //   // update the payment for each author of the book
-  //   if (userIds.length > 0) {
-  //     for (const id of userIds) {
-  //       // using findMany instead of findUnique here to avoid the error if not found.
-  //       const relatedPayment = await tx.payment.findMany({
-  //         where: {
-  //           userId: id,
-  //           forMonth: saleForMonth,
-  //           isDeleted: false
-  //         }
-  //       })
-
-  //       const userCategory = await tx.user.findUnique({
-  //         where: {
-  //           id: id,
-  //           isDeleted: false
-  //         },
-  //         select: {
-  //           category: {
-  //             select: {
-  //               percentage_royalties: true,
-  //               percentage_management_stores: true,
-  //               management_min: true
-  //             }
-  //           }
-  //         }
-  //       })
-
-  //       let newPaymentAmount = relatedPayment[0].amount - calculateAuthorRevenue(
-  //         sale.inventory.bookstore.comissions,
-  //         sale.inventory.price,
-  //         userCategory.category.management_min,
-  //         userCategory.category.percentage_management_stores,
-  //         sale.quantity,
-  //       )
-  //       if (newPaymentAmount < 0.01) {
-  //         newPaymentAmount = 0
-  //       }
-  //       const updatedRelatedPayment = await tx.payment.update({
-  //         where: {
-  //           id: relatedPayment[0].id
-  //         },
-  //         data: {
-  //           amount: newPaymentAmount
-  //         }
-  //       })
-  //     }
-  //   }
-  // }
 }
 
-async function softDeleteCostsOnCascade(deletedPaymentId, tx) {
+async function softDeleteKindleSalesOnCascade(deletedBookId, tx) {
+  const kindleSalesToDelete = await tx.kindleSale.findMany({
+    where: {
+      bookId: deletedBookId,
+      isDeleted: false
+    }
+  })
+
+  let deletedKindleSaleIds = [];
+  for (const kindleSale of kindleSalesToDelete) {
+    const deletedKindleSale = await tx.kindleSale.update({
+      where: {
+        id: kindleSale.id
+      },
+      data: {
+        isDeleted: true
+      }
+    })
+    deletedKindleSaleIds.push(deletedKindleSale.id)
+  }
+
+  return deletedKindleSaleIds;
+}
+
+async function softDeleteCostsOnCascade(deletedBookId, tx) {
   const costsToDelete = await tx.cost.findMany({
     where: {
-      paymentId: deletedPaymentId,
+      bookId: deletedBookId,
       isDeleted: false
     }
   });

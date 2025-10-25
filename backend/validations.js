@@ -1,3 +1,5 @@
+import { ServerSideEncryptionRuleFilterSensitiveLog } from "@aws-sdk/client-s3";
+
 export function validateInput(inputName, inputValue) {
   let errors = [];
 
@@ -170,6 +172,22 @@ export function validateInput(inputName, inputValue) {
     'note': [
       ['type', 'string'],
       ['length', 255]
+    ],
+    'clabe': [
+      ['type', 'string'],
+      ['format', 'clabe']
+    ],
+    "nameBankAccount": [
+      ['type', 'string']
+      ['length', 255]
+    ],
+    "bank": [
+      ['type', "string"],
+      ['length', 255]
+    ],
+    "swift": [
+      ['type', 'string'],
+      ['format', 'swift']
     ]
   }
 
@@ -282,6 +300,22 @@ export function validateInput(inputName, inputValue) {
           }
 
           if (parseInt(inputValue.substring(4,8)) > (new Date().getFullYear()) || parseInt(inputValue.substring(4,8)) < (new Date().getFullYear()) - 100) {
+            errors.push([inputName, inputValue, "format"])
+            return errors
+          }
+        }
+
+        if (check[1] === "clabe") {
+          const validClabeRegex = /^\s*\d{3}[-\s]?\d{3}[-\s]?\d{11}[-\s]?\d{1}\s*$/
+          if (!validClabeRegex.test(inputValue)) {
+            errors.push([inputName, inputValue, "format"])
+            return errors
+          }
+        }
+
+        if (check[1] === "swift") {
+          const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/
+          if (!validSwiftRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
             return errors
           }

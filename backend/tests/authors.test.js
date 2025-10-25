@@ -1,5 +1,5 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { addAuthor, updateAuthor, deleteAuthor } from "../routes/adminRoutes.js";
+import { addAuthor, addMultipleAuthors, updateAuthor, deleteAuthor } from "../routes/adminRoutes.js";
 import { prisma } from "../prisma/client.js";
 import * as mailer from "../mailer.js";
 import { 
@@ -15,7 +15,7 @@ import {
   createImpression,
   deleteFromDB 
 } from "../utils.js";
-import { receiveMessageOnPort } from "worker_threads";
+
 vi.mock('../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),
 }));

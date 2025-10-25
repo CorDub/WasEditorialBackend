@@ -101,3 +101,17 @@ test("validates range correctly", () => {
   expect(validateInput("regalias", 100.52)).toStrictEqual([]);
   expect(validateInput("regalias", -2563.21)).toStrictEqual([['regalias', -2563.21, "range"]])
 })
+
+test("validates clabe format correctly", () => {
+  expect(validateInput("clabe", "123456789012345678")).toStrictEqual([]);
+  expect(validateInput("clabe", "12345678901234567")).toStrictEqual([['clabe', "12345678901234567", "format"]]);
+  expect(validateInput("clabe", "1234567890123456789")).toStrictEqual([['clabe', "1234567890123456789", "format"]]);
+  expect(validateInput("clabe", "1234567abc1234567")).toStrictEqual([['clabe', "1234567abc1234567", "format"]]);
+})
+
+test("validates swift format correctly", () => {
+  expect(validateInput("swift", "DEUTDEFF")).toStrictEqual([]);
+  expect(validateInput("swift", "BNMXMXMMXXX")).toStrictEqual([]);
+  expect(validateInput("swift", "DEUTDEFFF500")).toStrictEqual([['swift', "DEUTDEFFF500", "format"]]);
+  expect(validateInput("swift", "1234DEFF")).toStrictEqual([['swift', "1234DEFF", "format"]]);
+})

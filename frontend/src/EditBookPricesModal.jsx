@@ -76,6 +76,7 @@ function EditBookPricesModal({
   }
 
   async function sendToServer() {
+    console.log(prices);
     try {
       const response = await fetch(`${baseURL}/admin/book/${clickedRow.id}/prices`, {
         method: "PATCH",
@@ -84,7 +85,6 @@ function EditBookPricesModal({
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           prices: prices
         })
       })

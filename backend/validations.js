@@ -1,5 +1,3 @@
-import { ServerSideEncryptionRuleFilterSensitiveLog } from "@aws-sdk/client-s3";
-
 export function validateInput(inputName, inputValue) {
   let errors = [];
 
@@ -53,7 +51,7 @@ export function validateInput(inputName, inputValue) {
     ],
     "referido": [
       ["type", "string"],
-      ["length", 100]
+      ["length", 255]
     ],
     "phone": [
       ["type", "string"],
@@ -63,7 +61,7 @@ export function validateInput(inputName, inputValue) {
       ["type", "number"],
     ],
     "isbn": [
-      ["type", "number"],
+      ["type", "string or null"],
       ["format", "isbn"]
     ],
     "title": [
@@ -178,7 +176,7 @@ export function validateInput(inputName, inputValue) {
       ['format', 'clabe']
     ],
     "nameBankAccount": [
-      ['type', 'string']
+      ['type', 'string'],
       ['length', 255]
     ],
     "bank": [
@@ -196,6 +194,13 @@ export function validateInput(inputName, inputValue) {
       case "type":
         if (check[1] === "string") {
           if (typeof inputValue !== "string") {
+            errors.push([inputName, inputValue, "type"]);
+            return errors
+          }
+        }
+
+        if (check[1] === "string or null") {
+          if (typeof inputValue !== 'string' && inputValue !== null) {
             errors.push([inputName, inputValue, "type"]);
             return errors
           }
@@ -265,6 +270,10 @@ export function validateInput(inputName, inputValue) {
 
       case "format":
         if (check[1] === "email") {
+          if (inputValue === "") {
+            continue;
+          }
+
           const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
           if (!validEmailRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
@@ -273,6 +282,10 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "phone") {
+          if (inputValue === "") {
+            continue;
+          }
+
           const validPhoneRegex = /^(?:00\d{14,15}|\d{10})$/;
           if (!validPhoneRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
@@ -281,6 +294,10 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "isbn") {
+          if (inputValue === "" || inputValue === null) {
+            continue;
+          }
+
           const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
           if (!validISBNRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
@@ -289,6 +306,10 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "birthday") {
+          if (inputValue === "") {
+            continue;
+          }
+
           if (parseInt(inputValue.substring(0,2)) > 31 || parseInt(inputValue.substring(0,2)) < 1) {
             errors.push([inputName, inputValue, "format"])
             return errors
@@ -306,6 +327,10 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "clabe") {
+          if (inputValue === "") {
+            continue;
+          }
+
           const validClabeRegex = /^\s*\d{3}[-\s]?\d{3}[-\s]?\d{11}[-\s]?\d{1}\s*$/
           if (!validClabeRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
@@ -314,6 +339,10 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "swift") {
+          if (inputValue === "") {
+            continue;
+          }
+
           const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/
           if (!validSwiftRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])

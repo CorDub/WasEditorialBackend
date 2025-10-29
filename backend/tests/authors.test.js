@@ -1,5 +1,10 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { addAuthor, addMultipleAuthors, updateAuthor, deleteAuthor } from "../routes/adminRoutes.js";
+import { 
+  getAuthors,
+  addAuthor, 
+  addMultipleAuthors, 
+  updateAuthor, 
+  deleteAuthor } from "../routes/adminRoutes.js";
 import { prisma } from "../prisma/client.js";
 import * as mailer from "../mailer.js";
 import { 
@@ -20,6 +25,44 @@ vi.mock('../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),
 }));
 
+// GETTING 
+describe("getting all valid authors", () => {
+  let mockRes, deletedAuthor, jsonResponse;
+
+  beforeAll(async() => {
+    deletedAuthor = await createAuthor(prisma, 
+      "firstName", 
+      "deletedAuthor", 
+      "firstName.deletedAuthor@gmail.com",
+      "author",
+      true
+    )
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
+
+  afterAll(async() => {
+    if (deletedAuthor) {
+      await deleteFromDB(prisma, deletedAuthor, "author")
+    }
+  })
+
+  it("should return a list of all valid authors", async() => {
+    await getAuthors({}, mockRes);
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    console.log("jsonResponse", jsonResponse);
+    expect(Array.isArray(jsonResponse)).toBe(true);
+  })
+
+  it("should not contain deleted authors", async() => {
+    expect(jsonResponse.includes(deletedAuthor)).toBeFalsy()
+  })
+})
+
+// ADDING
 describe("adding a valid author", () => {
   const mockReq = {
     body: {
@@ -219,6 +262,78 @@ describe("adding a duplicate author (already a user)", () => {
     vi.clearAllMocks();
   })
 }) 
+
+//ADDING MULTIPLES
+// describe("adding multiple authors with valid parameters", () => {
+//    const mockReq = {
+//     body: {
+//       "firstName": "Yesi Deeba",
+//       "lastName": "Amanewauthor Ureh",
+//       "country": "México",
+//       "referido": "",
+//       "email": "yesi.amanewauthor@gmail.com",
+//       "phone": "5561356226",
+//       "birthday": "22121988",
+//       "category": "1"
+//     }
+//   }
+
+//   const mockRes= {
+//     json: vi.fn(),
+//     status: vi.fn().mockReturnThis()
+//   }
+
+//   let createdAuthor;
+
+//   it("should return status 201 and return json with firstName, lastName and email", async() => {
+//     await addAuthor(mockReq, mockRes);
+//     expect(mockRes.status).toHaveBeenCalledWith(201);
+//     expect(mockRes.json).toHaveBeenCalledWith({
+//       "firstName": "Yesi Deeba",
+//       "lastName": 'Amanewauthor Ureh',
+//       "email": "yesi.amanewauthor@gmail.com"
+//     })
+//   })
+
+//   it("should create the user in the database with the correct data", async() => {
+//     createdAuthor = await prisma.user.findUnique({
+//       where: {
+//         first_name_last_name: {
+//           first_name: "Yesi Deeba",
+//           last_name: "Amanewauthor Ureh"
+//         }
+//       }
+//     });
+//     expect(createdAuthor).toBeTruthy();
+//     expect(createdAuthor.first_name).toBe("Yesi Deeba");
+//     expect(createdAuthor.last_name).toBe("Amanewauthor Ureh");
+//     expect(createdAuthor.email).toBe("yesi.amanewauthor@gmail.com");
+//     expect(createdAuthor.country).toBe("México");
+//     expect(createdAuthor.referido).toBe("");
+//     expect(createdAuthor.phone).toBe("5561356226");
+//     expect(createdAuthor.birthday).toBe("22121988");
+//     expect(createdAuthor.categoryId).toBe(1);
+//     expect(createdAuthor.role).toBe("author");
+//   })
+
+//   it("should send a set password email", async() => {
+//     expect(mailer.sendSetPasswordMail).toHaveBeenCalled();
+//     expect(mailer.sendSetPasswordMail.mock.calls[0][0]).toBe("yesi.amanewauthor@gmail.com");
+//     expect(mailer.sendSetPasswordMail.mock.calls[0][1]).toBe("Yesi Deeba");
+//   })
+
+//   afterAll(async() => {
+//     if (createdAuthor) {
+//       await prisma.user.delete({
+//         where: {
+//           id: createdAuthor.id
+//         }
+//       })
+//     }
+
+//     vi.clearAllMocks();
+//   })
+// })
 
 ///UPDATING
 describe("updating an author with valid parameters", () => {

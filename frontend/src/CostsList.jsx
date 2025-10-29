@@ -172,8 +172,6 @@ function CostsLists() {
         }
     }
 
-    console.log(data)
-
     async function getCurrentCosts() {
         try {
             const response = await fetch(`${baseURL}/admin/currentCosts`, {

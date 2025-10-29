@@ -305,21 +305,34 @@ export function validateInputs(inputObject) {
   }
 }
 
-export async function createAuthor(prisma, first_name, last_name, email, role) {
+export async function createAuthor(prisma, first_name, last_name, email, role, isDeleted, categoryId) {
   const newAuthor = await prisma.user.create({
     data: {
       first_name: first_name,
       last_name: last_name,
       email: email,
-      role: role
+      role: role,
+      isDeleted: isDeleted,
+      categoryId: categoryId
     }
   });
 
   return newAuthor
 }
 
-export async function createBook(prisma, title, userList) {
-  console.log("userList", userList)
+export async function createCategory(prisma, type, management_min, isDeleted) {
+  const newCategory = await prisma.category.create({
+    data: {
+      type: type,
+      management_min: management_min,
+      isDeleted: isDeleted
+    }
+  });
+
+  return newCategory
+}
+
+export async function createBook(prisma, title, userList, isDeleted) {
   for (const element of userList) {
     if (!element.id || validateInput("id", element.id).length > 0) {
       console.log("incorrect user list - it needs to be a list of {'id': actual_id}")
@@ -332,7 +345,8 @@ export async function createBook(prisma, title, userList) {
       title: title,
       users: {
         connect: userList
-      }
+      },
+      isDeleted: isDeleted
     }
   })
 
@@ -465,12 +479,17 @@ export async function deleteFromDB(prisma, element, type) {
     "sale": (args) => prisma.sale.delete(args),
     "cost": (args) => prisma.cost.delete(args),
     "kindleSale": (args) => prisma.kindleSale.delete(args),
-    "impression": (args) => prisma.impression.delete(args)
+    "impression": (args) => prisma.impression.delete(args),
+    "category": (args) => prisma.category.delete(args)
   }
 
-  const deletedElement = await types[type]({
-    where: {
-      id: element.id
-    }
-  })
+  try {
+    const deletedElement = await types[type]({
+      where: {
+        id: element.id
+      }
+    })
+  } catch(error) {
+    console.error(`Failed to delete ${element}`, error);
+  }
 }

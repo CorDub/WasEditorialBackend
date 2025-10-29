@@ -70,16 +70,14 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   }
 
   async function sendToServer() {
-    console.log("authors", authors);
     try {
-      const response = await fetch(`${baseURL}/admin/book`, {
+      const response = await fetch(`${baseURL}/admin/book/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           title: title,
           pasta: pasta,
           isbn: isbn,
@@ -167,7 +165,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
     };
 
     authors.map((authorTop, index) => {
-      console.log(authors);
       if (authorTop === null) {
         newErrorList.push(41);
         addErrorClass(inputAuthors[index]);

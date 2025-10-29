@@ -70,8 +70,8 @@ test('validates value correctly', () => {
 })
 
 test('validates isbn format correctly', () => {
-  expect(validateInput("isbn", 9786075988658)).toStrictEqual([]);
-  expect(validateInput("isbn", 9786075)).toStrictEqual([['isbn', 9786075, "format"]])
+  expect(validateInput("isbn", '9786075988658')).toStrictEqual([]);
+  expect(validateInput("isbn", '9786075')).toStrictEqual([['isbn', '9786075', "format"]])
 })
 
 test("validates birthday format correctly", () => {
@@ -114,4 +114,10 @@ test("validates swift format correctly", () => {
   expect(validateInput("swift", "BNMXMXMMXXX")).toStrictEqual([]);
   expect(validateInput("swift", "DEUTDEFFF500")).toStrictEqual([['swift', "DEUTDEFFF500", "format"]]);
   expect(validateInput("swift", "1234DEFF")).toStrictEqual([['swift', "1234DEFF", "format"]]);
+})
+
+test("validates type string or null correctly", () => {
+  expect(validateInput("isbn", null)).toStrictEqual([])
+  expect(validateInput("isbn", "9786078974146")).toStrictEqual([])
+  expect(validateInput("isbn", 9786078974146)).toStrictEqual([["isbn", 9786078974146, "type"]])
 })

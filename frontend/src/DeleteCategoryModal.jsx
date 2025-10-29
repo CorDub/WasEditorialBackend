@@ -48,6 +48,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setImpactedUsers(data.numImpactedUsers);
       } 
 

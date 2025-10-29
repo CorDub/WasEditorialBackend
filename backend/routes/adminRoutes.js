@@ -20,7 +20,7 @@ const router = express.Router();
 
 // User routes
 
-router.get('/users', async (req, res) => {
+export async function getAuthors(req, res) {
   try {
     const users = await prisma.user.findMany({
       where: {
@@ -60,7 +60,8 @@ router.get('/users', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error at users route"});
   }
-});
+}
+router.get('/users', getAuthors);
 
 export async function addAuthor(req, res) {
   try {
@@ -166,26 +167,28 @@ export async function addMultipleAuthors(req, res) {
     }
     const fileContent = csvfile.buffer.toString('utf-8');
     const lines = fileContent.split("\n");
-    const inputs = {
-      firstName: fields[0],
-      lastName: fields[1],
-      country: fields[2],
-      categoryId: parseInt(fields[3]),
-      email: fields[4],
-      phone: fields[5],
-      birthday: fields[6],
-      clabe: fields[7],
-      name_bank_account: fields[8],
-      bank: fields[9],
-      swift: fields[10],
-      referido: fields[11]
-    }
-    validateInputs(inputs);
 
     const errors = [];
     for (let i = 0; i < lines.length; i++) {
       try {
         const fields = lines[i].split(",");
+        const inputs = {
+          firstName: fields[0],
+          lastName: fields[1],
+          country: fields[2],
+          categoryId: parseInt(fields[3]),
+          email: fields[4],
+          phone: fields[5],
+          birthday: fields[6],
+          clabe: fields[7],
+          nameBankAccount: fields[8],
+          bank: fields[9],
+          swift: fields[10],
+          referido: fields[11]
+        }
+        console.log("inputs", inputs);
+        validateInputs(inputs);
+
         for (let j = 0; j < fields.length; j++) {
           if (fields[j] === "") {
             fields[j] = null
@@ -239,6 +242,7 @@ export async function addMultipleAuthors(req, res) {
           sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
         }
       } catch (error) {
+        console.log(error)
         switch (true) {
           case error.toString().includes("Missing first name or last name"):
             errors.push({"line": i + 1, "error": "Faltó el nombre o appellido."})
@@ -354,17 +358,18 @@ router.delete('/user/:id', deleteAuthor);
 
 //Categories routes
 
-router.get('/categories', async (req, res) => {
+export async function getCategories(req, res) {
   try {
     const categories = await prisma.category.findMany({where: {isDeleted: false}});
-    res.status(200).json(categories);
+    res.status(201).json(categories);
   } catch(error) {
     console.error("Error in the get categories route:", error);
     res.status(500).json({error: 'A server error occurred while fetching categories'});
   }
-})
+}
+router.get('/categories', getCategories);
 
-router.get('/categories-type', async (req, res) => {
+export async function getCategoryTypes(req, res) {
   try {
     const categories_type = await prisma.category.findMany({
       where: {
@@ -380,71 +385,64 @@ router.get('/categories-type', async (req, res) => {
     console.error("Error in the get categories-type route:", error);
     res.status(500).json({error: "A server error occurred while fetching categories-type"});
   }
-})
+}
+router.get('/categories-type', getCategoryTypes);
 
-router.get('/categoryImpactedUsers/:id', async (req, res) => {
-  const category_id = parseInt(req.params.id);
+export async function getImpactedUsers(req, res) {
   try {
-    const impactedUsers = await prisma.user.findMany({
-        where: {
-          categoryId: category_id
-        }
-      });
+    const inputs = {
+      "id": parseInt(req.params.id)
+    }
+    validateInputs(inputs);
 
-    res.status(200).json({"numImpactedUsers": impactedUsers.length});
-  } catch(error) {
-    console.error("Error while checking impaced users:", error);
-    res.status(500).json({error: "A server error occurred while checking impacted users"});
+    const category = await prisma.category.findUnique({
+      where: {
+        id: inputs.id
+      },
+      select: {
+        users: true
+      }
+    })
+
+    res.status(200).json({numImpactedUsers: category.users.length})
+  } catch (error) {
+    console.error("Error in the get Impacted Users route:", error);
+    res.status(500).json({error: "A server error occurred while fetching number of impacted users"})
   }
-})
+}
+router.get('/categoryImpactedUsers/:id', getImpactedUsers)
 
-router.delete('/category/:id', async (req, res) => {
-  const category_id = parseInt(req.params.id);
-  const selectedCategory = parseInt(req.body.selectedCategory);
-
+export async function deleteCategory(req, res) {
   try {
+    const inputs = {
+      "id": parseInt(req.params.id),
+      "categoryId": parseInt(req.body.selectedCategory)
+    }
+    console.log("inputs", inputs);
+    validateInputs(inputs);
+
     await prisma.$transaction(async (tx) => {
-      if (selectedCategory !== 0) {
+      if (inputs.categoryId !== 0) {
         const impactedUsers = await tx.user.findMany({
           where: {
-            categoryId: category_id
+            categoryId: inputs.id
           }
         });
+        console.log("impactedUsers.length", impactedUsers.length);
 
         for (const user of impactedUsers) {
-          await tx.user.update({
-            where: {
-              id: user.id
-            },
-            data: {
-              categoryId: selectedCategory
-            }
-          })
+          if (!user.isDeleted) {
+            await tx.user.update({where: {id: user.id}, data: {categoryId: inputs.categoryId}})
+          } else {
+            await tx.user.update({where: {id: user.id}, data: {categoryId: null}})
+          }
         };
       };
 
       const deletedCategory = await tx.category.update({
-        where: {id: category_id},
+        where: {id: inputs.id},
         data: {isDeleted: true}
       });
-
-      if (deletedCategory) {
-        const authorsToUpdate = await tx.user.findMany({
-          where: {
-            isDeleted: false,
-            categoryId: category_id,
-          }
-        });
-
-        await Promise.all(
-          authorsToUpdate.map(async (author) => {
-            await tx.user.update({
-              where: {id: author.id},
-              data: {categoryId: null}
-            })
-          })
-        );
-      };
     })
     
     res.status(200).json({message: "La categoria ha sido eliminada con exito."})
@@ -452,7 +450,8 @@ router.delete('/category/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the category'});
   }
-})
+}
+router.delete('/category/:id', deleteCategory)
 
 export async function addCategory(req, res) {
   try {
@@ -514,38 +513,37 @@ export async function addCategory(req, res) {
 }
 router.post('/category', addCategory);
 
-router.patch('/category', async (req, res) => {
+export async function updateCategory(req, res) {
   try {
-    const {
-      id,
-      tipo,
-      regalias,
-      gestionTiendas,
-      gestionMinima } = req.body;
+    const inputs =  {
+      id: parseInt(req.params.id),
+      categoryType: req.body.tipo,
+      gestionMinima: parseFloat(req.body.gestionMinima)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const previousCategory = await tx.category.findUnique({
-        where: {id: id}
+        where: {id: inputs.id}
       });
+
+      if (previousCategory.isDeleted) {
+        throw new Error("this category is deleted")
+      }
+
       const updatedCategory = await tx.category.update({
-        where: {id: id},
+        where: {id: inputs.id},
         data: {
-          type: tipo,
-          percentage_royalties: parseInt(regalias),
-          percentage_management_stores: parseInt(gestionTiendas),
-          management_min: parseInt(gestionMinima),
+          type: inputs.categoryType,
+          // percentage_royalties: parseInt(regalias),
+          // percentage_management_stores: parseInt(gestionTiendas),
+          management_min: inputs.gestionMinima,
         }
       });
-
       // await updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
-
-      if (updatedCategory) {
-        res.status(200).json({message: "Successfully updated category"});
-      } else {
-        res.status(500).json({error: "There was an issue updating the category"});
-      };
     })
 
+    res.status(200)
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
       res.status(500).json({message: "Uniqueness error - tipo"})
@@ -553,12 +551,14 @@ router.patch('/category', async (req, res) => {
     }
 
     console.error("Server error at the update category route:", error);
+    res.status(500).json({error: error})
   }
-});
+}
+router.patch('/category', updateCategory);
 
 // Books routes
 
-router.get('/book', async (req, res) => {
+export async function getBooks(req, res) {
   try {
     const books = await prisma.book.findMany({
       where: {
@@ -612,9 +612,10 @@ router.get('/book', async (req, res) => {
     console.error("Error in the get books route:", error);
     res.status(500).json({error: 'A server error occurred while fetching books'});
   }
-})
+}
+router.get('/book', getBooks);
 
-router.get('/existingBooks', async (req, res) => {
+export async function getExistingBookTitles(req, res) {
   try {
     const existingBooks = await prisma.book.findMany({
       where: {
@@ -638,7 +639,8 @@ router.get('/existingBooks', async (req, res) => {
     console.error("Error while fetching existingBooks in the backend:", error);
     res.status(500).json({error: "A server error occurred while fetching existingBooks"});
   }
-})
+}
+router.get('/existingBooks', getExistingBookTitles);
 
 export async function addBook(req, res) {
   try {
@@ -712,7 +714,7 @@ export async function addBook(req, res) {
 }
 router.post('/book', addBook);
 
-router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), async (req, res) => {
+export async function addMultipleBooks(req, res) {
   try {
     const csvfile = req.files.archivo[0];
     if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
@@ -741,12 +743,22 @@ router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]
           throw new Error("Missing author");
         }
         if (fields[5] !== "Blanda" && fields[5] !== "Dura") {
-          console.log("fields[5]", fields[5]);
           throw new Error("Invalid pasta");
         }
         if (!fields[6]) {
           throw new Error("Missing quantity");
         }
+
+        const inputs = {
+          "price": parseFloat(fields[0]),
+          "isbn": fields[1],
+          "title": fields[2],
+          "firstName": fields[3],
+          "lastName": fields[4],
+          "pasta": fields[5],
+          "quantity": parseInt(fields[6])
+        }
+        validateInputs(inputs);
 
         const deletedBook = await prisma.book.findFirst({
           where: {
@@ -840,6 +852,7 @@ router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]
             errors.push({"line": i + 1, "error": "Este isbn ya existe."})
             break;
           default:
+            console.error(error);
             errors.push({"line": i + 1, "error": "Error non identificada - puede ser con la impresión o el inventario"})
         }   
       }
@@ -850,24 +863,27 @@ router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]
     console.error(error);
     res.status(500).json({"error": "A server error occured while creating the books"})
   }
-})
+}
+router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleBooks);
 
-router.delete('/book/:id', async (req, res) => {
-  const book_id = parseInt(req.params.id);
-
+export async function deleteBook(req, res) {
   try {
+    const inputs = {
+      "id": parseInt(req.params.id)
+    }
+    validateInputs(inputs);
     await prisma.$transaction(async (tx) => {
       const deletedBook = await tx.book.update({where:
-        {id: book_id},
+        {id: inputs.id},
         data: {
           isDeleted: true
         }
       });
 
       if (deletedBook) {
-        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([book_id], "books", tx);
+        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([inputs.id], "books", tx);
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
-        await softDeleteImpressionsOnCascade(deletedBook, tx);
+        await softDeleteImpressionsOnCascade(deletedBook.id, tx);
       }
 
       res.status(200).json({message: "El libro ha sido eliminado con exito."})
@@ -876,25 +892,32 @@ router.delete('/book/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the book'});
   }
-})
+}
+router.delete('/book/:id', deleteBook);
 
-router.patch('/book', async (req, res) => {
+export async function updateBook(req, res) {
   try {
-    const {
-      id,
-      title,
-      pasta,
-      isbn,
-      authors } = req.body;
+    const inputs = {
+      "id": parseInt(req.params.id),
+      "title": req.body.title,
+      "pasta": req.body.pasta,
+      "isbn": req.body.isbn,
+    }
+    validateInputs(inputs);
 
+    const authors = req.body.authors;
     const authorsIds = []
     authors.map((author) => {
+      const error = validateInput('id', author.id);
+      if (error.length > 0) {
+        throw new Error (`invalid input ${error[0]}`)
+      }
       authorsIds.push({"id": author.id});
     })
 
     await prisma.$transaction(async (tx) => {
       const previousBook = await tx.book.findUnique({
-        where: {id: id},
+        where: {id: inputs.id},
         select: {
           users: {
             select: {
@@ -904,210 +927,69 @@ router.patch('/book', async (req, res) => {
         }
       });
 
-      // let previousNumberOfAuthors = 0
-      // if (previousBook) {
-      //   previousNumberOfAuthors = previousBook.users.length;
-      // }
+      if (previousBook.isDeleted) {
+        throw new Error("This book is deleted");
+      }
 
+      console.log("inputs", inputs);
       const updatedBook = await tx.book.update({
-        where: {id: id},
+        where: {id: inputs.id},
         data: {
-          title: title,
-          pasta: pasta,
-          isbn: isbn,
+          title: inputs.title,
+          pasta: inputs.pasta,
+          isbn: inputs.isbn,
           users: {
             set: authorsIds,
           }
         }
       });
 
-      // if (previousNumberOfAuthors !== authorsIds.length) {
-      //   const impactedInventories = await tx.inventory.findMany({
-      //     where: {
-      //       bookId: id,
-      //       isDeleted: false
-      //     },
-      //     select: {
-      //       sales: {
-      //         select: {
-      //           id: true,
-      //           createdAt: true,
-      //           quantity: true
-      //         }
-      //       },
-      //       bookstore: {
-      //         select: {
-      //           comissions: true
-      //         }
-      //       },
-      //       price: true
-      //     }
-      //   });
-
-      //   for (const inventory of impactedInventories) {
-      //     for (const sale of inventory.sales) {
-      //       const date = new Date(sale.createdAt);
-      //       const year = String(date.getFullYear());
-      //       const month = String(date.getMonth() + 1).padStart(2, '0');
-      //       const saleForMonth = year + "-" + month
-
-      //       for (const authorId of authorsIds) {
-      //         const author = await tx.user.findUnique({
-      //           where: {
-      //             id: authorId.id
-      //           },
-      //           select: {
-      //             category: {
-      //               select: {
-      //                 percentage_management_stores: true,
-      //                 percentage_royalties: true,
-      //                 management_min: true
-      //               }
-      //             },
-      //             first_name: true
-      //           }
-      //         });
-
-      //         const previousPayment = await tx.payment.findUnique({
-      //           where: {
-      //             userId_forMonth: {
-      //               userId: authorId.id,
-      //               forMonth: saleForMonth
-      //             }
-      //           }
-      //         });
-
-      //         if (previousPayment && previousPayment.status !== "paid") {
-      //           const previousSaleValue = calculateAuthorRevenue(
-      //             inventory.bookstore.comissions,
-      //             inventory.price,
-      //             author.category.management_min,
-      //             author.category.percentage_management_stores,
-      //             sale.quantity,
-      //           );
-
-      //           const newSaleValue = calculateAuthorRevenue(
-      //             inventory.bookstore.comissions,
-      //             inventory.price,
-      //             author.category.management_min,
-      //             author.category.percentage_management_stores,
-      //             sale.quantity,
-      //           );
-
-      //           const quantityUpdate = newSaleValue - previousSaleValue
-
-      //           const updatedPayment = await tx.payment.update({
-      //             where: {
-      //               id: previousPayment.id
-      //             },
-      //             data: {
-      //               amount: previousPayment.amount + quantityUpdate
-      //             }
-      //           })
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-      if (updatedBook) {
-        res.status(200).json({message: "Successfully updated book"});
-      } else {
-        res.status(500).json({error: "There was an issue updating the book"});
-      };
+      res.status(200).json({message: "Successfully updated book"});
     })
     
-
   } catch(error) {
     console.error("Server error at the update book route:", error);
     res.status(500).json({error: "There was an issue updating the book"});
   }
-});
+}
+router.patch('/book/:id', updateBook);
 
-router.patch('/book/:id/prices', async (req, res) => {
-  const {
-    id,
-    prices
-  } = req.body
-
+export async function updateBookPrices(req, res) {
   try {
+    const inputs = {
+      "id": parseInt(req.params.id),
+    }
+    validateInputs(inputs);
+
+    const bookWithPricesToUpdate = await prisma.book.findUnique({where: {id: inputs.id}});
+    if (bookWithPricesToUpdate.isDeleted) {
+      throw new Error (`this book is deleted`);
+    }
+
+    const prices = req.body.prices;
+    for (const price of prices) {
+      const error = validateInput("price", parseFloat(price.price));
+      if (error.length > 0) {
+        throw new Error (`invalid input ${error[0]}`)
+      }
+    }
+
     await prisma.$transaction(async (tx) => {
       for (const price of prices) {
-        // const previousInventory = await tx.inventory.findUnique({
-        //   where: {
-        //     id: price.inventoryId
-        //   },
-        //   include: {
-        //     bookstore: true
-        //   }
-        // });
-
         const updatedInventory = await tx.inventory.update({
           where: {id: parseInt(price.inventoryId)},
           data: {price: parseFloat(price.price)},
-          include: {
-            bookstore: true
-          }
         })
-
-        // const concernedSalesWithPayments = await tx.sale.findMany({
-        //   where: {
-        //     inventoryId: updatedInventory.id,
-        //     isDeleted: false
-        //   },
-        //   include: {
-        //     payments: true
-        //   }
-        // });
-
-        // for (const sale of concernedSalesWithPayments) {
-        //   for (const payment of sale.payments) {
-        //     if (payment.isDeleted === false) {
-        //       const userWithCategory = await tx.user.findUnique({
-        //         where: {
-        //           id: payment.userId
-        //         },
-        //         include: {
-        //           category: true
-        //         }
-        //       })
-
-        //       const previousSaleValue = calculateAuthorRevenue(
-        //         previousInventory.bookstore.comissions,
-        //         previousInventory.price,
-        //         userWithCategory.category.management_min,
-        //         previousInventory.bookstore.deal_percentage,
-        //         sale.quantity
-        //       )
-
-        //       const newSaleValue = calculateAuthorRevenue(
-        //         updatedInventory.bookstore.comissions,
-        //         updatedInventory.price,
-        //         userWithCategory.category.management_min,
-        //         updatedInventory.bookstore.deal_percentage,
-        //         sale.quantity
-        //       )
-
-        //       const updatedPayment = await tx.payment.update({
-        //         where: {
-        //           id: payment.id
-        //         },
-        //         data: {
-        //           amount: payment.amount - previousSaleValue + newSaleValue
-        //         }
-        //       })
-        //     }
-        //   }
-        // }
-
       }
+
       res.status(200).json({message: "Successfully updated the book prices"});
     })
   } catch (error) {
     console.error("Server error at the update book route:", error);
     res.status(500).json({error: "There was an issue updating the prices"});
   }
-})
+}
+router.patch('/book/:id/prices', updateBookPrices);
 
 // Bookstores routes
 

@@ -206,10 +206,6 @@ function PaymentsList() {
   }
 
   useEffect(() => {
-    console.log(data)
-  }, [chosenPaymentStatus])
-
-  useEffect(() => {
     getPendingPayments();
   }, [forceRender, chosenPaymentStatus])
 

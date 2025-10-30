@@ -15,12 +15,8 @@ import {
   createInventory,
   createPayment,
   createSale,
-  createKindleSale,
-  createCost,
-  createImpression,
   deleteFromDB 
 } from "../utils.js"
-import { json } from "stream/consumers";
 
 // GETTING
 describe("getting all valid bookstores", async() => {

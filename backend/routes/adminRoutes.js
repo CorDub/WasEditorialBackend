@@ -1301,7 +1301,9 @@ export async function getInventoriesByBook(req, res) {
         let extraImpressions = inventory.book.impressions.slice(1)
         if (extraImpressions.length > 0) {
           for (const impression of extraImpressions) {
-            extraImpressionsTotal += impression.quantity
+            if (!impression.isDeleted) {
+              extraImpressionsTotal += impression.quantity
+            }
           }
         }
 
@@ -1388,10 +1390,14 @@ router.get('/inventoriesByBook', getInventoriesByBook);
 
 export async function getBookInventory(req, res) {
   try {
-    const queryBookId = parseInt(req.params.id);
+    const inputs = {
+      'id': parseInt(req.params.id)
+    }
+    validateInputs(inputs);
+
     const thatBookImpressions = await prisma.impression.findMany({
       where: {
-        bookId: queryBookId,
+        bookId: inputs.id,
         isDeleted: false
       },
       select: {
@@ -1406,7 +1412,7 @@ export async function getBookInventory(req, res) {
 
     const thatBookInventories = await prisma.inventory.findMany({
       where: {
-        bookId: queryBookId,
+        bookId: inputs.id,
         isDeleted: false
       },
       select: {
@@ -1445,7 +1451,7 @@ export async function getBookInventory(req, res) {
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
     let name = thatBookInventories[0].book.title
-    let id = queryBookId;
+    let id = inputs.id;
     for (const inventory of thatBookInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1577,11 +1583,13 @@ router.get('/inventoriesByBookstore', getInventoriesByBookstore);
 
 export async function getBookstoreInventory(req, res) {
   try {
-    const queryBookstoreId = parseInt(req.params.id);
+    const inputs = {
+      "id": parseInt(req.params.id),
+    }
 
     const thatBookstoreInventories = await prisma.inventory.findMany({
       where: {
-        bookstoreId: queryBookstoreId,
+        bookstoreId: inputs.id,
         isDeleted: false
       },
       select: {
@@ -1621,7 +1629,7 @@ export async function getBookstoreInventory(req, res) {
     let soldTotal = 0;
     let name = thatBookstoreInventories[0].bookstore.name;
     let extraImpressionsTotal = 0;
-    let id = queryBookstoreId;
+    let id = inputs.id;
     for (const inventory of thatBookstoreInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
@@ -1637,7 +1645,7 @@ export async function getBookstoreInventory(req, res) {
 
       //Impressions for Plataforma Was inventory
       let extraImpressionsOutside = 0;
-      if (queryBookstoreId === 3) {
+      if (inputs.id === 1) {
         const thatBookImpressions = await prisma.impression.findMany({
           where: {
             bookId: inventory.bookId,
@@ -1660,15 +1668,11 @@ export async function getBookstoreInventory(req, res) {
           }
         }
       }
-      console.log("");
-      console.log("extraImpressionsOutside", extraImpressionsOutside)
-      console.log("extraImpressionsTotal", extraImpressionsTotal)
       const inventoryPlusSales = {
         ...inventory, 
         totalSales: thisInventorySalesTotal,
         extraImpressions: extraImpressionsOutside
       }
-      console.log("inventoryPlusSales", inventoryPlusSales)
       relevantInventories.push(inventoryPlusSales);
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);

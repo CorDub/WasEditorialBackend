@@ -364,7 +364,16 @@ export async function createBookstore(prisma, name, isDeleted) {
   return newBookstore;
 }
 
-export async function createInventory(prisma, bookId, bookstoreId, initial, current, isDeleted) {
+export async function createInventory(
+  prisma, 
+  bookId, 
+  bookstoreId,
+  initial, 
+  current,
+  isDeleted,
+  returns,
+  givenToAuthor,
+) {
   const newInventory = await prisma.inventory.create({
     data: {
       bookId: bookId,
@@ -372,6 +381,8 @@ export async function createInventory(prisma, bookId, bookstoreId, initial, curr
       initial: initial,
       current: current,
       isDeleted: isDeleted,
+      returns: returns,
+      givenToAuthor: givenToAuthor
     }
   })
 
@@ -445,12 +456,19 @@ export async function createKindleSale(
   return newKindleSale
 }
 
-export async function createImpression(prisma, bookId, quantity, isDeleted) {
+export async function createImpression(
+  prisma, 
+  bookId, 
+  quantity, 
+  {isDeleted=false, note=null, date=new Date()} = {}
+) {
   const newImpression = await prisma.impression.create({
     data: {
       bookId: bookId,
       quantity: quantity,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      note: note,
+      date: date
     }
   })
 

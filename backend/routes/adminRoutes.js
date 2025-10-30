@@ -882,6 +882,8 @@ export async function deleteBook(req, res) {
 
       if (deletedBook) {
         const deletedInventoriesIds = await softDeleteInventoriesOnCascade([inputs.id], "books", tx);
+        const deletedKindleSales = await softDeleteKindleSalesOnCascade(deletedBook.id, tx);
+        const deletedCosts = await softDeleteCostsOnCascade(deletedBook.id, tx);
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
         await softDeleteImpressionsOnCascade(deletedBook.id, tx);
       }
@@ -993,7 +995,7 @@ router.patch('/book/:id/prices', updateBookPrices);
 
 // Bookstores routes
 
-router.get('/bookstore', async (req, res) => {
+export async function getBookstores(req, res) {
   try {
     const bookstores = await prisma.bookstore.findMany({where: {isDeleted: false}});
     res.status(200).json(bookstores);
@@ -1001,9 +1003,10 @@ router.get('/bookstore', async (req, res) => {
     console.error("Error in the get bookstores route:", error);
     res.status(500).json({error: 'A server error occurred while fetching bookstores'});
   }
-})
+}
+router.get('/bookstore', getBookstores);
 
-router.get('/existingBookstores', async (req, res) => {
+export async function getExistingBookstoreNames(req, res) {
   try {
     const existingBookstores = await prisma.bookstore.findMany({
       where: {
@@ -1024,7 +1027,8 @@ router.get('/existingBookstores', async (req, res) => {
     console.error("Error in the route existingBookstores:", error);
     res.status(500).json({error: 'A server error occurred while fetching existingBookstores'});
   }
-})
+}
+router.get('/existingBookstores', getExistingBookstoreNames);
 
 export async function addBookstore(req, res) {
   try {
@@ -1057,31 +1061,34 @@ export async function addBookstore(req, res) {
 }
 router.post('/bookstore', addBookstore);
 
-router.patch('/bookstore', async (req, res) => {
+export async function updateBookstore(req, res) {
   try {
-    const {
-      id,
-      name,
-      dealPercentage,
-      comissions,
-      contactName,
-      contactPhone,
-      contactEmail } = req.body;
+    const inputs = {
+      "id": parseInt(req.params.id),
+      "name": req.body.name,
+      "dealPercentage": parseFloat(req.body.dealPercentage),
+      "comissions": req.body.comissions === "true" ? true : false,
+      "contactName": req.body.contactName,
+      "phone" : req.body.contactPhone,
+      "email": req.body.contactEmail
+    }
+    validateInputs(inputs);
+
+    const existingBookstore = await prisma.bookstore.findUnique({where: {id: inputs.id}});
+    if (existingBookstore.isDeleted) {throw new Error("this bookstore is deleted")};
 
     await prisma.$transaction(async (tx) => {
       const updatedBookstore = await tx.bookstore.update({
-        where: {id: id},
+        where: {id: inputs.id},
         data: {
-          name: name,
-          comissions: comissions,
-          deal_percentage: parseFloat(dealPercentage),
-          contact_name: contactName,
-          contact_phone: contactPhone,
-          contact_email: contactEmail,
+          name: inputs.name,
+          comissions: inputs.comissions,
+          deal_percentage: inputs.dealPercentage,
+          contact_name: inputs.contactName,
+          contact_phone: inputs.phone,
+          contact_email: inputs.email,
         }
       });
-
-      // await updatePaymentsOnCascadeFromBookstore(updatedBookstore, tx);
 
       res.status(200).json({message: "Successfully updated bookstore"});
     })
@@ -1089,22 +1096,25 @@ router.patch('/bookstore', async (req, res) => {
     console.error("Server error at the update bookstore route:", error);
     res.status(500).json({error: "There was an issue updating the bookstore"});
   }
-});
+}
+router.patch('/bookstore/:id', updateBookstore);
 
-router.delete('/bookstore/:id', async (req, res) => {
-  const bookstore_id = parseInt(req.params.id);
-
+export async function deleteBookstore(req, res) {
   try {
+    const inputs = {
+      "id": parseInt(req.params.id)
+    }
+
     await prisma.$transaction(async (tx) => {
       const deletedBookstore = await tx.bookstore.update({where:
-        {id: bookstore_id},
+        {id: inputs.id},
         data: {
           isDeleted: true
         }
       });
 
       if (deletedBookstore) {
-        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([bookstore_id], "bookstores", tx);
+        const deletedInventoriesIds = await softDeleteInventoriesOnCascade([inputs.id], "bookstores", tx);
         await softDeleteSalesOnCascade(deletedInventoriesIds, tx);
       }
 
@@ -1115,11 +1125,12 @@ router.delete('/bookstore/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the bookstore'});
   }
-})
+}
+router.delete('/bookstore/:id', deleteBookstore);
 
 /// Inventories routes
 
-router.get('/inventories', async (req, res) => {
+export async function getInventories(req, res) {
   try {
     const inventories = await prisma.inventory.findMany({
       where: {
@@ -1180,14 +1191,15 @@ router.get('/inventories', async (req, res) => {
       inventory["totalSales"] = totalSales
     }
 
-    res.json(inventories);
+    res.status(200).json(inventories);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at inventories route"});
   }
-});
+}
+router.get('/inventories', getInventories);
 
-router.get('/inventoryNames', async (req, res) => {
+export async function getInventoryNames(req, res) {
   try {
     const bookInventoryNames = await prisma.book.findMany({
       where: {
@@ -1233,9 +1245,10 @@ router.get('/inventoryNames', async (req, res) => {
     console.log(error);
     res.status(500).json({error: "Server error at inventoryNames route"});
   }
-})
+}
+router.get('/inventoryNames', getInventoryNames);
 
-router.get('/inventoriesByBook', async (req, res) => {
+export async function getInventoriesByBook(req, res) {
   try {
     const inventories = await prisma.inventory.findMany({
       where: {
@@ -1370,9 +1383,10 @@ router.get('/inventoriesByBook', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error fetching inventories route"});
   }
-})
+}
+router.get('/inventoriesByBook', getInventoriesByBook);
 
-router.get('/inventoriesByBook/:id', async (req, res) => {
+export async function getBookInventory(req, res) {
   try {
     const queryBookId = parseInt(req.params.id);
     const thatBookImpressions = await prisma.impression.findMany({
@@ -1466,9 +1480,10 @@ router.get('/inventoriesByBook/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error at inventoriesByBook route"});
   }
-})
+}
+router.get('/inventoriesByBook/:id', getBookInventory);
 
-router.get('/inventoriesByBookstore', async (req, res) => {
+export async function getInventoriesByBookstore(req, res) {
   try {
     const inventories = await prisma.inventory.findMany({
       where: {
@@ -1557,9 +1572,10 @@ router.get('/inventoriesByBookstore', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error fetching inventories route"});
   }
-})
+}
+router.get('/inventoriesByBookstore', getInventoriesByBookstore);
 
-router.get('/inventoriesByBookstore/:id', async (req, res) => {
+export async function getBookstoreInventory(req, res) {
   try {
     const queryBookstoreId = parseInt(req.params.id);
 
@@ -1674,9 +1690,10 @@ router.get('/inventoriesByBookstore/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error at inventoriesByBook route"});
   }
-})
+}
+router.get('/inventoriesByBookstore/:id', getBookstoreInventory)
 
-router.get('/inventoriesCurrentTotals', async (req, res) => {
+export async function getInventoriesCurrentTotals(req, res) {
   try {
     const currentTotals = await prisma.inventory.groupBy({
       by: ['bookstoreId'],
@@ -1708,9 +1725,10 @@ router.get('/inventoriesCurrentTotals', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error at inventoriesCurrentTotals route"});
   }
-})
+}
+router.get('/inventoriesCurrentTotals', getInventoriesCurrentTotals);
 
-router.patch('/inventory', async (req, res) => {
+export async function updateInventory(req, res) {
   try {
     const {
       id,
@@ -1764,9 +1782,10 @@ router.patch('/inventory', async (req, res) => {
     console.error("Server error at the update bookstore route:", error);
     res.status(500).json({error: "There was an issue updating the bookstore"});
   }
-});
+}
+router.patch('/inventory', updateInventory);
 
-router.delete('/inventory/:id', async (req, res) => {
+export async function deleteInventory(req, res) {
   const inventory_id = parseInt(req.params.id);
 
   try {
@@ -1788,7 +1807,8 @@ router.delete('/inventory/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the inventory'});
   }
-})
+}
+router.delete('/inventory/:id', deleteInventory);
 
 /// Sales routes
 

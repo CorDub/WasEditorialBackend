@@ -353,23 +353,25 @@ export async function createBook(prisma, title, userList, isDeleted) {
   return newBook
 }
 
-export async function createBookstore(prisma, name) {
+export async function createBookstore(prisma, name, isDeleted) {
   const newBookstore = await prisma.bookstore.create({
     data: {
       name: name,
+      isDeleted: isDeleted
     }
   })
 
   return newBookstore;
 }
 
-export async function createInventory(prisma, bookId, bookstoreId, initial, current) {
+export async function createInventory(prisma, bookId, bookstoreId, initial, current, isDeleted) {
   const newInventory = await prisma.inventory.create({
     data: {
       bookId: bookId,
       bookstoreId: bookstoreId,
       initial: initial,
-      current: current
+      current: current,
+      isDeleted: isDeleted,
     }
   })
 
@@ -387,7 +389,7 @@ export async function createPayment(prisma, userId, forMonth) {
   return newPayment;
 }
 
-export async function createSale(prisma, inventoryId, paymentsIdList, quantity) {
+export async function createSale(prisma, inventoryId, paymentsIdList, quantity, isDeleted) {
   for (const element of paymentsIdList) {
     if (!element.id || validateInput("id", element.id).length > 0) {
       console.log("incorrect payments id list - it needs to be a list of {'id': actual_id}")
@@ -402,6 +404,7 @@ export async function createSale(prisma, inventoryId, paymentsIdList, quantity) 
         connect: paymentsIdList
       },
       quantity: quantity,
+      isDeleted: isDeleted
     }
   })
 
@@ -442,11 +445,12 @@ export async function createKindleSale(
   return newKindleSale
 }
 
-export async function createImpression(prisma, bookId, quantity) {
+export async function createImpression(prisma, bookId, quantity, isDeleted) {
   const newImpression = await prisma.impression.create({
     data: {
       bookId: bookId,
-      quantity: quantity
+      quantity: quantity,
+      isDeleted: isDeleted
     }
   })
 

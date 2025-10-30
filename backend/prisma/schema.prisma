@@ -87,7 +87,7 @@ model Category {
 
 model Bookstore {
   id              Int         @id @default(autoincrement())
-  name            String
+  name            String      @unique
   deal_percentage Float?
   comissions      Boolean     @default(false)
   contact_name    String?

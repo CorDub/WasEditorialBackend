@@ -38,14 +38,13 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/bookstore`, {
+      const response = await fetch(`${baseURL}/admin/bookstore/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           name: name,
           dealPercentage: dealPercentage,
           comissions: comissions,

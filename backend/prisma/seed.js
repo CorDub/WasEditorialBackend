@@ -101,7 +101,8 @@ async function main() {
       }
 
       if (createdBook) {
-        const randQuant = Math.round(Math.random() * 500);
+        let randQuant = Math.round(Math.random() * 500);
+        if (randQuant === 0) {randQuant +=1};
         const createdImpression = await prisma.impression.create({
           data: {
             bookId: createdBook.id,

@@ -1,4 +1,4 @@
-import { describe, expect, vi, it, beforeAll, afterAll, expectTypeOf } from "vitest";
+import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import { 
   getBooks,
   getExistingBookTitles,
@@ -137,9 +137,17 @@ describe("adding a valid book", () => {
   })
 
   it("should create a new inventory for Bodega Was in the database with the given quantity", async() => {
-    addedInventory = await prisma.inventory.findMany({where: {bookId: addedBook.id}});
+    addedInventory = await prisma.inventory.findMany({
+      where: {
+        bookId: addedBook.id
+      },
+      include: {
+        bookstore: true
+      }
+    });
     expect(addedInventory).toBeTruthy();
     expect(addedInventory.length).toBe(1);
+    expect(addedInventory[0].bookstore.name).toBe("Plataforma Was")
     expect(addedInventory[0].initial).toBe(1000);
     expect(addedInventory[0].current).toBe(1000);
     expect(addedInventory[0].bookstoreId).toBe(1);
@@ -690,12 +698,12 @@ describe("deleting a book with valid parameters", async() => {
   })
 
   it("should mark all tied kindleSales as deleted", async() => {
-    deletedSale = await prisma.kindleSale.findUnique({where: {id: newKindleSale.id}});
+    deletedKindleSale = await prisma.kindleSale.findUnique({where: {id: newKindleSale.id}});
     expect(deletedKindleSale.isDeleted).toBe(true)
   })
 
   it("should mark all tied Costs as deleted", async() => {
-    deletedSale = await prisma.cost.findUnique({where: {id: newCost.id}});
+    deletedCost = await prisma.cost.findUnique({where: {id: newCost.id}});
     expect(deletedCost.isDeleted).toBe(true)
   })
 })

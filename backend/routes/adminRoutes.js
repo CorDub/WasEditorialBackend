@@ -1734,43 +1734,35 @@ router.get('/inventoriesCurrentTotals', getInventoriesCurrentTotals);
 
 export async function updateInventory(req, res) {
   try {
-    const {
-      id,
-      book,
-      bookstore,
-      // country,
-      inicial,
-      price
-    } = req.body;
+    const inputs = {
+      id: parseInt(req.params.id),
+      bookId: parseInt(req.body.book),
+      bookstoreId: parseInt(req.body.bookstore),
+      inicial: parseInt(req.body.initial),
+      price: parseFloat(req.body.price)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const currentInventory = await tx.inventory.findUnique({
-        where: {id: id}
+        where: {id: inputs.id}
       });
-      const difference = inicial - currentInventory.initial
-      let updatedInventory = await tx.inventory.update({
-        where: {id: id},
-        data: {
-          bookId: book,
-          bookstoreId: bookstore,
-          // country: country,
-          initial: inicial,
-          price: price
-        }
-      });
-      if (updatedInventory.current > updatedInventory.initial) {
-        updatedInventory = await tx.inventory.update({
-          where: {id: id},
-          data: {current: updatedInventory.initial}
-        })
-      } else {
-        updatedInventory = await tx.inventory.update({
-          where: {id: id},
-          data: {current: updatedInventory.current + difference}
-        })
+      if (currentInventory.isDeleted) {
+        throw new Error("this inventory is deleted");
       }
 
-      // await updatePaymentsOnCascadeFromInventory(updatedInventory, currentInventory.price, tx);
+      const difference = inputs.inicial - currentInventory.initial
+      let updatedInventory = await tx.inventory.update({
+        where: {id: inputs.id},
+        data: {
+          bookId: inputs.bookId,
+          bookstoreId: inputs.bookstoreId,
+          // country: country,
+          initial: inputs.inicial,
+          current: currentInventory.current + difference,
+          price: inputs.price
+        }
+      });
 
       if (updatedInventory) {
         res.status(200).json({message: "Successfully updated inventory"});
@@ -1787,45 +1779,51 @@ export async function updateInventory(req, res) {
     res.status(500).json({error: "There was an issue updating the bookstore"});
   }
 }
-router.patch('/inventory', updateInventory);
+router.patch('/inventory/:id', updateInventory);
 
-export async function deleteInventory(req, res) {
-  const inventory_id = parseInt(req.params.id);
+// export async function deleteInventory(req, res) {
+//   const inventory_id = parseInt(req.params.id);
 
-  try {
+//   try {
 
-    await prisma.$transaction(async (tx) => {
-      const deletedInventory = await tx.inventory.update({
-        where:{id: inventory_id},
-        data: {isDeleted: true}
-      });
+//     await prisma.$transaction(async (tx) => {
+//       const deletedInventory = await tx.inventory.update({
+//         where:{id: inventory_id},
+//         data: {isDeleted: true}
+//       });
 
-      if (deletedInventory) {
-        await softDeleteSalesOnCascade([inventory_id], tx);
-      }
+//       if (deletedInventory) {
+//         await softDeleteSalesOnCascade([inventory_id], tx);
+//       }
 
-      res.status(200).json({message: "El inventario ha sido eliminado con exito."})
-    })
+//       res.status(200).json({message: "El inventario ha sido eliminado con exito."})
+//     })
     
-  } catch(error) {
-    console.error(error);
-    res.status(500).json({error: 'A server error occurred while deleting the inventory'});
-  }
-}
-router.delete('/inventory/:id', deleteInventory);
+//   } catch(error) {
+//     console.error(error);
+//     res.status(500).json({error: 'A server error occurred while deleting the inventory'});
+//   }
+// }
+// router.delete('/inventory/:id', deleteInventory);
 
 /// Sales routes
 
-router.get('/sales', async (req, res) => {
+export async function getSales(req, res) {
   try {
-    let startDate = new Date(JSON.parse(req.query.startDate))
-    let endDate = new Date(JSON.parse(req.query.endDate))
+    // let startDate = new Date(req.query.startDate)
+    // let endDate = new Date(req.query.endDate)
+    const inputs = {
+      startDate: new Date(req.query.startDate),
+      endDate: new Date(req.query.endDate)
+    };
+    validateInputs(inputs);
+
     const sales = await prisma.sale.findMany({
       where: {
         isDeleted: false,
         date: {
-          gte: startDate,
-          lt: endDate
+          gte: inputs.startDate,
+          lt: inputs.endDate
         }
       },
       select: {
@@ -1876,7 +1874,7 @@ router.get('/sales', async (req, res) => {
       sale.authorsString = getAuthorString(sale.inventory.book.users);
     })
 
-    const monthsRange = generateMonthKeysForRange(startDate, endDate)
+    const monthsRange = generateMonthKeysForRange(inputs.startDate, inputs.endDate)
     let salesCompiled = [];
     for (const month of monthsRange) {
       salesCompiled.push(
@@ -1916,12 +1914,13 @@ router.get('/sales', async (req, res) => {
       }
     }
 
-    res.json(salesCompiled);
+    res.status(200).json(salesCompiled);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at sales route"});
   }
-});
+} 
+router.get('/sales', getSales);
 
 export async function addSale(req, res) {
   try {
@@ -1950,7 +1949,7 @@ export async function addSale(req, res) {
       });
 
       if (!selectedInventory) {
-        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo y librería"});
         return;
       }
 
@@ -1971,7 +1970,7 @@ export async function addSale(req, res) {
       })
 
       const authorListIds = bookWithUsers.users.map(user => user.id);
-      const saleForMonth = getForMonth(new Date())
+      const saleForMonth = getForMonth(inputs.date);
       let paymentIds = []
       for (const authorId of authorListIds) {
         const existingPayment = await tx.payment.findUnique({
@@ -1995,6 +1994,7 @@ export async function addSale(req, res) {
         }
       }
 
+      console.log("inputs.date", inputs.date);
       createdSale = await tx.sale.create({
         data: {
           inventoryId: selectedInventory.id,
@@ -2025,7 +2025,7 @@ export async function addSale(req, res) {
 }
 router.post('/sale', addSale)
 
-router.patch('/sale', async (req, res) => {
+export async function updateSale(req, res) {
   try {
     const {
       id,
@@ -2082,94 +2082,6 @@ router.patch('/sale', async (req, res) => {
             current: selectedInventory.current + quantityUpdate
           }
         });
-      
-
-        // // update all potential authors payments sums as well
-        // const date = new Date(updatedSale.createdAt);
-        // const year = String(date.getFullYear());
-        // const month = String(date.getMonth() + 1).padStart(2, '0');
-        // const currentForMonth = year + "-" + month
-
-        // const bookOfSale = await tx.book.findUnique({
-        //   where: {
-        //     id: updatedInventory.bookId
-        //   },
-        //   select: {
-        //     users: {
-        //       select: {
-        //         id: true
-        //       }
-        //     }
-        //   }
-        // })
-        // const userIds = bookOfSale.users.map(user => user.id);
-
-        // // update the payment for each author of the book
-        // if (userIds.length > 0) {
-        //   for (const id of userIds) {
-        //     // using findMany instead of findUnique here to avoid the error if not found.
-        //     const relatedPayment = await tx.payment.findUnique({
-        //       where: {
-        //         userId_forMonth: {
-        //           userId: id,
-        //           forMonth: currentForMonth,
-        //         },
-        //         isDeleted: false
-        //       }
-        //     })
-
-        //     const userCategory = await tx.user.findUnique({
-        //       where: {
-        //         id: id,
-        //         isDeleted: false
-        //       },
-        //       select: {
-        //         category: {
-        //           select: {
-        //             percentage_royalties: true,
-        //             percentage_management_stores: true,
-        //             management_min: true
-        //           }
-        //         }
-        //       }
-        //     })
-
-        //     const previousSaleAmount = calculateAuthorRevenue(
-        //       updatedSale.inventory.bookstore.comissions,
-        //       updatedSale.inventory.price,
-        //       userCategory.category.management_min,
-        //       userCategory.category.percentage_management_stores,
-        //       previousSale.quantity,
-        //     )
-
-        //     const saleAmount = calculateAuthorRevenue(
-        //       updatedSale.inventory.bookstore.comissions,
-        //       updatedSale.inventory.price,
-        //       userCategory.category.management_min,
-        //       userCategory.category.percentage_management_stores,
-        //       quantityUpdate,
-        //     )
-
-        //     if (!relatedPayment) {
-        //       const createdPayment = await tx.payment.create({
-        //         data: {
-        //           userId: id,
-        //           amount: paymentAmount,
-        //           forMonth: currentForMonth
-        //         }
-        //       })
-        //     } else {
-        //       const updatedRelatedPayment = await tx.payment.update({
-        //         where: {
-        //           id: relatedPayment.id
-        //         },
-        //         data: {
-        //           amount: relatedPayment.amount - previousSaleAmount + saleAmount
-        //         }
-        //       })
-        //     }
-        //   }
-        // }
 
         res.status(200).json({message: "Successfully updated sale"});
       } else {
@@ -2185,9 +2097,10 @@ router.patch('/sale', async (req, res) => {
     console.error("Server error at the update sale route:", error);
     res.status(500).json({error: "There was an issue updating the sale"});
   }
-});
+}
+router.patch('/sale/:id', updateSale);
 
-router.delete('/sale/:id', async (req, res) => {
+export async function deleteSale(req, res) {
   const sale_id = parseInt(req.params.id);
   const inventory_id = parseInt(req.query.inventory_id);
   const quantity = parseInt(req.query.quantity);
@@ -2215,73 +2128,6 @@ router.delete('/sale/:id', async (req, res) => {
             current: selectedInventory.current + quantity
           }
         });
-
-        // // update all potential authors payments sums as well
-        // const date = new Date(deletedSale.createdAt);
-        // const year = String(date.getFullYear());
-        // const month = String(date.getMonth() + 1).padStart(2, '0');
-        // const currentForMonth = year + "-" + month
-
-        // const bookOfSale = await tx.book.findUnique({
-        //   where: {
-        //     id: updatedInventory.bookId
-        //   },
-        //   select: {
-        //     users: {
-        //       select: {
-        //         id: true
-        //       }
-        //     }
-        //   }
-        // })
-        // const userIds = bookOfSale.users.map(user => user.id);
-
-        // // update the payment for each author of the book
-        // if (userIds.length > 0) {
-        //   for (const id of userIds) {
-        //     // using findMany instead of findUnique here to avoid the error if not found.
-        //     const relatedPayment = await tx.payment.findMany({
-        //       where: {
-        //         userId: id,
-        //         forMonth: currentForMonth,
-        //         isDeleted: false
-        //       }
-        //     })
-
-        //     const userCategory = await tx.user.findUnique({
-        //       where: {
-        //         id: id,
-        //         isDeleted: false
-        //       },
-        //       select: {
-        //         category: {
-        //           select: {
-        //             percentage_royalties: true,
-        //             percentage_management_stores: true,
-        //             management_min: true
-        //           }
-        //         }
-        //       }
-        //     })
-
-        //     const saleValue = calculateAuthorRevenue(
-        //       deletedSale.inventory.bookstore.comissions,
-        //       deletedSale.inventory.price,
-        //       userCategory.category.management_min,
-        //       userCategory.category.percentage_management_stores,
-        //       quantity,
-        //     )
-
-        //     const updatedRelatedPayment = await tx.payment.update({
-        //       where: {
-        //         id: relatedPayment[0].id
-        //       },
-        //       data: {
-        //         amount: relatedPayment[0].amount - saleValue
-        //       }
-        //     })
-        //   }
-        // }
       }
     })
     
@@ -2290,7 +2136,8 @@ router.delete('/sale/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the sale'});
   }
-})
+}
+router.delete('/sale/:id', deleteSale)
 
 
 /// Impression routes

@@ -408,9 +408,9 @@ function BookstoreInventory({
       case 'edit':
         setModalAction("edit");
         break;
-      case 'delete':
-        setModalAction("delete");
-        break;
+      // case 'delete':
+      //   setModalAction("delete");
+      //   break;
       default:
         console.log("Unknown error")
         return;

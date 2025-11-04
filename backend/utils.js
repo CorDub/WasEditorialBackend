@@ -400,7 +400,13 @@ export async function createPayment(prisma, userId, forMonth) {
   return newPayment;
 }
 
-export async function createSale(prisma, inventoryId, paymentsIdList, quantity, isDeleted) {
+export async function createSale(
+  prisma, 
+  inventoryId, 
+  paymentsIdList, 
+  quantity, 
+  {isDeleted = false, date = new Date()} = {}
+) {
   for (const element of paymentsIdList) {
     if (!element.id || validateInput("id", element.id).length > 0) {
       console.log("incorrect payments id list - it needs to be a list of {'id': actual_id}")
@@ -415,7 +421,8 @@ export async function createSale(prisma, inventoryId, paymentsIdList, quantity, 
         connect: paymentsIdList
       },
       quantity: quantity,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      date: date
     }
   })
 

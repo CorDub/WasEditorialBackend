@@ -108,7 +108,6 @@ describe("adding a valid bookstore", () => {
 
   it("should create a new bookstore in the database", async() => {
     addedBookstore = await prisma.bookstore.findUnique({where: {name: "New Bookstore"}})
-    console.log("addedBookstore", addedBookstore);
     expect(addedBookstore).toBeTruthy();
   })
 

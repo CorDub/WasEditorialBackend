@@ -186,7 +186,22 @@ export function validateInput(inputName, inputValue) {
     "swift": [
       ['type', 'string'],
       ['format', 'swift']
-    ]
+    ],
+    "inicial": [
+      ["presence", "not empty"],
+      ['type', "number"],
+      ["range", "positive"],
+    ],
+    "startDate": [
+      ['presence', 'not empty'],
+      ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "endDate": [
+      ['presence', 'not empty'],
+      ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
   }
 
   for (const check of possibleChecks[inputName]) {

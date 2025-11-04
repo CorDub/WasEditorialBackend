@@ -245,14 +245,14 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/sale`, {
+      const response = await fetch(`${baseURL}/admin/sale/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
+          // id: clickedRow.id,
           book: bookId,
           bookstore: bookstoreId,
           // country: country,

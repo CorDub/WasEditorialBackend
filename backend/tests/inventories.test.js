@@ -1,4 +1,4 @@
-import { describe, expect, vi, it, beforeAll, afterAll, beforeEach, afterEach } from "vitest";
+import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import {
   getInventories,
   getInventoryNames,
@@ -23,79 +23,6 @@ import {
   deleteFromDB 
 } from "../utils.js"
 
-// beforeEach(async() => {
-//   // let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
-//   // let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
-//   // let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
-//   // let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
-//   // let newSale4, newBook3, newBook4, newBook5, newInventory5, newInventory6, newInventory7;
-//   // let mockRes, mockReq, jsonResponse;
-
-//   newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
-//   newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-//   newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
-//   newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
-//   newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
-//   newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
-//   deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
-//   newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
-//   newImpression2 = await createImpression(prisma, newBook.id, 1000);
-//   newImpression3 = await createImpression(prisma, newBook.id, 1000);
-//   deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
-//   newBookstore = await createBookstore(prisma, "newBookstore");
-//   newBookstore2 = await createBookstore(prisma, "newBookstore2");
-//   newBookstore3 = await createBookstore(prisma, "newBookstore3");
-//   newBookstore4 = await createBookstore(prisma, "newBookstore4");
-//   deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
-//   deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
-//   newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
-//   newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
-//   newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
-//   newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
-//   newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
-//   newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
-//   newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
-//   newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-//   deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
-//   newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-//   newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-//   newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
-//   newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
-// })
-
-// afterEach(async() => {
-//   if (deletedSale) {await deleteFromDB(prisma, deletedSale, "sale")};
-//   if (newSale1) {await deleteFromDB(prisma, newSale1, "sale")};
-//   if (newSale2) {await deleteFromDB(prisma, newSale2, "sale")};
-//   if (newSale3) {await deleteFromDB(prisma, newSale3, "sale")};
-//   if (newSale4) {await deleteFromDB(prisma, newSale4, "sale")};
-//   if (newPayment) {await deleteFromDB(prisma, newPayment, "payment")};
-//   if (newInventory) {await deleteFromDB(prisma, newInventory, "inventory")};
-//   if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
-//   if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
-//   if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
-//   if (newInventory5) {await deleteFromDB(prisma, newInventory5, "inventory")};
-//   if (newInventory6) {await deleteFromDB(prisma, newInventory6, "inventory")};
-//   if (newInventory7) {await deleteFromDB(prisma, newInventory7, "inventory")};
-//   if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
-//   if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
-//   if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
-//   if (newBookstore3) {await deleteFromDB(prisma, newBookstore3, "bookstore")};
-//   if (newBookstore4) {await deleteFromDB(prisma, newBookstore4, "bookstore")};
-//   if (deletedBookstore) {await deleteFromDB(prisma, deletedBookstore, "bookstore")};
-//   if (newImpression) {await deleteFromDB(prisma, newImpression, "impression")};
-//   if (newImpression2) {await deleteFromDB(prisma, newImpression2, "impression")};
-//   if (newImpression3) {await deleteFromDB(prisma, newImpression3, "impression")};
-//   if (deletedImpression) {await deleteFromDB(prisma, deletedImpression, "impression")};
-//   if (newBook) {await deleteFromDB(prisma, newBook, "book")};
-//   if (newBook2) {await deleteFromDB(prisma, newBook2, "book")};
-//   if (newBook3) {await deleteFromDB(prisma, newBook3, "book")};
-//   if (newBook4) {await deleteFromDB(prisma, newBook4, "book")};
-//   if (newBook5) {await deleteFromDB(prisma, newBook5, "book")};
-//   if (deletedBook) {await deleteFromDB(prisma, deletedBook, "book")};
-//   if (newAuthor) {await deleteFromDB(prisma, newAuthor, "author")};
-// })
-
 // GETTING
 describe("getting all valid inventories", () => {
   let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
@@ -112,10 +39,10 @@ describe("getting all valid inventories", () => {
     deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
     newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 1000);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -280,10 +207,10 @@ describe("getting all valid inventory names", async() => {
     deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
     newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 1000);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -375,10 +302,10 @@ describe("getting all valid inventories by book", async() => {
     deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
     newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -480,10 +407,10 @@ describe("getting a specific book inventory with valid parameters", async() => {
     newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
     newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
 
     mockReq = {
@@ -643,10 +570,10 @@ describe("getting a specific inventory with invalid parameters", async() => {
     newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
     newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
 
     mockReq = {
@@ -730,10 +657,10 @@ describe("getting all valid inventories by bookstore", async() => {
     newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
     newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
 
     mockRes = {
@@ -850,10 +777,10 @@ describe("getting a specific bookstore inventory with valid parameters", async()
     newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
     newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
 
     mockRes = {
@@ -997,10 +924,10 @@ describe('getting a specific bookstore with invalid parameters', async() => {
     newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
     newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
     newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, true);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
 
     mockRes = {
@@ -1052,5 +979,452 @@ describe('getting a specific bookstore with invalid parameters', async() => {
     await getBookstoreInventory(mockReq, mockRes)
     jsonResponse = mockRes.json.mock.calls[0][0]
     expect(mockRes.status).toHaveBeenCalledWith(500);
+  })
+})
+
+describe("getting all valid inventories current totals", async() => {
+  let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
+  let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
+  let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
+  let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
+  let newSale4, newBook3, newBook4, newBook5, newInventory5, newInventory6, newInventory7;
+  let mockRes, mockReq, jsonResponse;
+
+  beforeAll(async() => {
+    newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
+    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
+    newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
+    newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
+    newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
+    newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
+    deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
+    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
+    newImpression2 = await createImpression(prisma, newBook.id, 1000);
+    newImpression3 = await createImpression(prisma, newBook.id, 1000);
+    deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
+    newBookstore = await createBookstore(prisma, "newBookstore");
+    newBookstore2 = await createBookstore(prisma, "newBookstore2");
+    newBookstore3 = await createBookstore(prisma, "newBookstore3");
+    newBookstore4 = await createBookstore(prisma, "newBookstore4");
+    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
+    newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
+    newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
+    newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
+    newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    }
+  })
+
+  afterAll(async() => {
+    if (deletedSale) {await deleteFromDB(prisma, deletedSale, "sale")};
+    if (newSale1) {await deleteFromDB(prisma, newSale1, "sale")};
+    if (newSale2) {await deleteFromDB(prisma, newSale2, "sale")};
+    if (newSale3) {await deleteFromDB(prisma, newSale3, "sale")};
+    if (newSale4) {await deleteFromDB(prisma, newSale4, "sale")};
+    if (newPayment) {await deleteFromDB(prisma, newPayment, "payment")};
+    if (newInventory) {await deleteFromDB(prisma, newInventory, "inventory")};
+    if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
+    if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
+    if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
+    if (newInventory5) {await deleteFromDB(prisma, newInventory5, "inventory")};
+    if (newInventory6) {await deleteFromDB(prisma, newInventory6, "inventory")};
+    if (newInventory7) {await deleteFromDB(prisma, newInventory7, "inventory")};
+    if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
+    if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
+    if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
+    if (newBookstore3) {await deleteFromDB(prisma, newBookstore3, "bookstore")};
+    if (newBookstore4) {await deleteFromDB(prisma, newBookstore4, "bookstore")};
+    if (deletedBookstore) {await deleteFromDB(prisma, deletedBookstore, "bookstore")};
+    if (newImpression) {await deleteFromDB(prisma, newImpression, "impression")};
+    if (newImpression2) {await deleteFromDB(prisma, newImpression2, "impression")};
+    if (newImpression3) {await deleteFromDB(prisma, newImpression3, "impression")};
+    if (deletedImpression) {await deleteFromDB(prisma, deletedImpression, "impression")};
+    if (newBook) {await deleteFromDB(prisma, newBook, "book")};
+    if (newBook2) {await deleteFromDB(prisma, newBook2, "book")};
+    if (newBook3) {await deleteFromDB(prisma, newBook3, "book")};
+    if (newBook4) {await deleteFromDB(prisma, newBook4, "book")};
+    if (newBook5) {await deleteFromDB(prisma, newBook5, "book")};
+    if (deletedBook) {await deleteFromDB(prisma, deletedBook, "book")};
+    if (newAuthor) {await deleteFromDB(prisma, newAuthor, "author")};
+  })
+
+  it("should return a 200 status", async() => {
+    await getInventoriesCurrentTotals(mockReq, mockRes)
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+  })
+
+  it("should return an array of valid inventories objects", async() => {
+    expect(Array.isArray(jsonResponse)).toBe(true)
+  })
+
+  it(`should return a valid list of objects with keys _sum, bookstoreName`, async() => {
+      const expected = ['_sum', 'bookstoreId', 'bookstoreName']
+      expect(Object.keys(jsonResponse[0]).sort()).toEqual(expected.sort());
+  })
+
+  it(`should correctly return current totals for all inventories of a specific bookstore
+    and not take deleted inventories into account`, async() => {
+    const newBookstoreCurrentTotals = jsonResponse.find(element => element.bookstoreId === newBookstore.id);
+    expect(newBookstoreCurrentTotals._sum.current).toBe(9000);
+  });
+})
+
+
+describe("updating an inventory with valid parameters", async() => {
+  let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
+  let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
+  let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
+  let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
+  let newSale4, newBook3, newBook4, newBook5, newInventory5, newInventory6, newInventory7;
+  let mockRes, mockReq, jsonResponse;
+
+  beforeAll(async() => {
+    newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
+    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
+    newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
+    newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
+    newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
+    newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
+    deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
+    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
+    newImpression2 = await createImpression(prisma, newBook.id, 1000);
+    newImpression3 = await createImpression(prisma, newBook.id, 1000);
+    deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
+    newBookstore = await createBookstore(prisma, "newBookstore");
+    newBookstore2 = await createBookstore(prisma, "newBookstore2");
+    newBookstore3 = await createBookstore(prisma, "newBookstore3");
+    newBookstore4 = await createBookstore(prisma, "newBookstore4");
+    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
+    newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
+    newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
+    newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
+    newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    }
+
+    mockReq = {
+      params: {
+        id: newInventory.id
+      }, 
+      body: {
+        book: newBook2.id,
+        bookstore: newBookstore2.id,
+        initial: 1200,
+        price: 459.99
+      }
+    }
+  })
+
+  afterAll(async() => {
+    if (deletedSale) {await deleteFromDB(prisma, deletedSale, "sale")};
+    if (newSale1) {await deleteFromDB(prisma, newSale1, "sale")};
+    if (newSale2) {await deleteFromDB(prisma, newSale2, "sale")};
+    if (newSale3) {await deleteFromDB(prisma, newSale3, "sale")};
+    if (newSale4) {await deleteFromDB(prisma, newSale4, "sale")};
+    if (newPayment) {await deleteFromDB(prisma, newPayment, "payment")};
+    if (newInventory) {await deleteFromDB(prisma, newInventory, "inventory")};
+    if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
+    if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
+    if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
+    if (newInventory5) {await deleteFromDB(prisma, newInventory5, "inventory")};
+    if (newInventory6) {await deleteFromDB(prisma, newInventory6, "inventory")};
+    if (newInventory7) {await deleteFromDB(prisma, newInventory7, "inventory")};
+    if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
+    if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
+    if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
+    if (newBookstore3) {await deleteFromDB(prisma, newBookstore3, "bookstore")};
+    if (newBookstore4) {await deleteFromDB(prisma, newBookstore4, "bookstore")};
+    if (deletedBookstore) {await deleteFromDB(prisma, deletedBookstore, "bookstore")};
+    if (newImpression) {await deleteFromDB(prisma, newImpression, "impression")};
+    if (newImpression2) {await deleteFromDB(prisma, newImpression2, "impression")};
+    if (newImpression3) {await deleteFromDB(prisma, newImpression3, "impression")};
+    if (deletedImpression) {await deleteFromDB(prisma, deletedImpression, "impression")};
+    if (newBook) {await deleteFromDB(prisma, newBook, "book")};
+    if (newBook2) {await deleteFromDB(prisma, newBook2, "book")};
+    if (newBook3) {await deleteFromDB(prisma, newBook3, "book")};
+    if (newBook4) {await deleteFromDB(prisma, newBook4, "book")};
+    if (newBook5) {await deleteFromDB(prisma, newBook5, "book")};
+    if (deletedBook) {await deleteFromDB(prisma, deletedBook, "book")};
+    if (newAuthor) {await deleteFromDB(prisma, newAuthor, "author")};
+  })
+
+  it("should return a 200 status", async() => {
+    await updateInventory(mockReq, mockRes)
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+  })
+
+  it("should correctly update the inventory in the database", async() => {
+    const updatedInventory = await prisma.inventory.findUnique({where: {id: newInventory.id}});
+    expect(updatedInventory.bookId).toBe(newBook2.id)
+    expect(updatedInventory.bookstoreId).toBe(newBookstore2.id)
+    expect(updatedInventory.initial).toBe(1200)
+    expect(updatedInventory.price).toBe(459.99)
+  })
+
+  it("should reduce current if current > initial after update", async() => {
+    const updatedInventory = await prisma.inventory.findUnique({where: {id: newInventory.id}});
+    expect(updatedInventory.current).toBe(1200)
+  })
+
+  it("should increase current by the difference if current < initial after update", async() => {
+    const mockReq2 = {
+      params: {
+        id: newInventory2.id
+      },
+      body: {
+        book: newBook2.id,
+        bookstore: newBookstore3.id,
+        initial: 4000,
+        price: 459.99
+      }
+    };
+    const mockRes2 = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    };
+    await updateInventory(mockReq2, mockRes2);
+    const increasedInventory = await prisma.inventory.findUnique({where: {id: newInventory2.id}});
+    expect(increasedInventory.current).toBe(4000);
+  })
+})
+
+describe("updating an inventory with invalid parameters", async() => {
+  let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
+  let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
+  let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
+  let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
+  let newSale4, newBook3, newBook4, newBook5, newInventory5, newInventory6, newInventory7;
+  let mockRes, mockReq, jsonResponse;
+
+  beforeAll(async() => {
+    newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
+    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
+    newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
+    newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
+    newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
+    newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
+    deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
+    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
+    newImpression2 = await createImpression(prisma, newBook.id, 1000);
+    newImpression3 = await createImpression(prisma, newBook.id, 1000);
+    deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
+    newBookstore = await createBookstore(prisma, "newBookstore");
+    newBookstore2 = await createBookstore(prisma, "newBookstore2");
+    newBookstore3 = await createBookstore(prisma, "newBookstore3");
+    newBookstore4 = await createBookstore(prisma, "newBookstore4");
+    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
+    newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
+    newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
+    newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
+    newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    }
+
+    mockReq = {
+      params: {
+        id: newInventory.id
+      }, 
+      body: {
+        book: "yeah this isn't good",
+        bookstore: newBookstore2.id,
+        initial: -1200,
+        price: 0
+      }
+    }
+  })
+
+  afterAll(async() => {
+    if (deletedSale) {await deleteFromDB(prisma, deletedSale, "sale")};
+    if (newSale1) {await deleteFromDB(prisma, newSale1, "sale")};
+    if (newSale2) {await deleteFromDB(prisma, newSale2, "sale")};
+    if (newSale3) {await deleteFromDB(prisma, newSale3, "sale")};
+    if (newSale4) {await deleteFromDB(prisma, newSale4, "sale")};
+    if (newPayment) {await deleteFromDB(prisma, newPayment, "payment")};
+    if (newInventory) {await deleteFromDB(prisma, newInventory, "inventory")};
+    if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
+    if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
+    if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
+    if (newInventory5) {await deleteFromDB(prisma, newInventory5, "inventory")};
+    if (newInventory6) {await deleteFromDB(prisma, newInventory6, "inventory")};
+    if (newInventory7) {await deleteFromDB(prisma, newInventory7, "inventory")};
+    if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
+    if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
+    if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
+    if (newBookstore3) {await deleteFromDB(prisma, newBookstore3, "bookstore")};
+    if (newBookstore4) {await deleteFromDB(prisma, newBookstore4, "bookstore")};
+    if (deletedBookstore) {await deleteFromDB(prisma, deletedBookstore, "bookstore")};
+    if (newImpression) {await deleteFromDB(prisma, newImpression, "impression")};
+    if (newImpression2) {await deleteFromDB(prisma, newImpression2, "impression")};
+    if (newImpression3) {await deleteFromDB(prisma, newImpression3, "impression")};
+    if (deletedImpression) {await deleteFromDB(prisma, deletedImpression, "impression")};
+    if (newBook) {await deleteFromDB(prisma, newBook, "book")};
+    if (newBook2) {await deleteFromDB(prisma, newBook2, "book")};
+    if (newBook3) {await deleteFromDB(prisma, newBook3, "book")};
+    if (newBook4) {await deleteFromDB(prisma, newBook4, "book")};
+    if (newBook5) {await deleteFromDB(prisma, newBook5, "book")};
+    if (deletedBook) {await deleteFromDB(prisma, deletedBook, "book")};
+    if (newAuthor) {await deleteFromDB(prisma, newAuthor, "author")};
+  })
+
+  it("should return a 500 status", async() => {
+    await updateInventory(mockReq, mockRes)
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+  })
+
+  it("should not update the inventory in the database", async() => {
+    const updatedInventory = await prisma.inventory.findUnique({where: {id: newInventory.id}});
+    expect(updatedInventory.bookId).toBe(newBook.id)
+    expect(updatedInventory.bookstoreId).toBe(newBookstore.id)
+    expect(updatedInventory.initial).toBe(3000)
+    expect(updatedInventory.price).toBe(499.99)
+  })
+})
+
+describe("updating a deleted inventory", async() => {
+  let newAuthor, newBook, newImpression, deletedImpression, newBookstore, deletedInventory;
+  let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
+  let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
+  let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
+  let newSale4, newBook3, newBook4, newBook5, newInventory5, newInventory6, newInventory7;
+  let mockRes, mockReq, jsonResponse;
+
+  beforeAll(async() => {
+    newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
+    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
+    newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
+    newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
+    newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
+    newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
+    deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
+    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
+    newImpression2 = await createImpression(prisma, newBook.id, 1000);
+    newImpression3 = await createImpression(prisma, newBook.id, 1000);
+    deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
+    newBookstore = await createBookstore(prisma, "newBookstore");
+    newBookstore2 = await createBookstore(prisma, "newBookstore2");
+    newBookstore3 = await createBookstore(prisma, "newBookstore3");
+    newBookstore4 = await createBookstore(prisma, "newBookstore4");
+    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
+    newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
+    newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
+    newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
+    newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
+    newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
+
+    deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
+    newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
+    newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    }
+
+    mockReq = {
+      params: {
+        id: newInventory4.id
+      }, 
+      body: {
+        book: newBook2.id,
+        bookstore: newBookstore3.id,
+        initial: 4000,
+        price: 459.99
+      }
+    }
+  })
+
+  afterAll(async() => {
+    if (deletedSale) {await deleteFromDB(prisma, deletedSale, "sale")};
+    if (newSale1) {await deleteFromDB(prisma, newSale1, "sale")};
+    if (newSale2) {await deleteFromDB(prisma, newSale2, "sale")};
+    if (newSale3) {await deleteFromDB(prisma, newSale3, "sale")};
+    if (newSale4) {await deleteFromDB(prisma, newSale4, "sale")};
+    if (newPayment) {await deleteFromDB(prisma, newPayment, "payment")};
+    if (newInventory) {await deleteFromDB(prisma, newInventory, "inventory")};
+    if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
+    if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
+    if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
+    if (newInventory5) {await deleteFromDB(prisma, newInventory5, "inventory")};
+    if (newInventory6) {await deleteFromDB(prisma, newInventory6, "inventory")};
+    if (newInventory7) {await deleteFromDB(prisma, newInventory7, "inventory")};
+    if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
+    if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
+    if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
+    if (newBookstore3) {await deleteFromDB(prisma, newBookstore3, "bookstore")};
+    if (newBookstore4) {await deleteFromDB(prisma, newBookstore4, "bookstore")};
+    if (deletedBookstore) {await deleteFromDB(prisma, deletedBookstore, "bookstore")};
+    if (newImpression) {await deleteFromDB(prisma, newImpression, "impression")};
+    if (newImpression2) {await deleteFromDB(prisma, newImpression2, "impression")};
+    if (newImpression3) {await deleteFromDB(prisma, newImpression3, "impression")};
+    if (deletedImpression) {await deleteFromDB(prisma, deletedImpression, "impression")};
+    if (newBook) {await deleteFromDB(prisma, newBook, "book")};
+    if (newBook2) {await deleteFromDB(prisma, newBook2, "book")};
+    if (newBook3) {await deleteFromDB(prisma, newBook3, "book")};
+    if (newBook4) {await deleteFromDB(prisma, newBook4, "book")};
+    if (newBook5) {await deleteFromDB(prisma, newBook5, "book")};
+    if (deletedBook) {await deleteFromDB(prisma, deletedBook, "book")};
+    if (newAuthor) {await deleteFromDB(prisma, newAuthor, "author")};
+  })
+
+  it("should return a 500 status", async() => {
+    await updateInventory(mockReq, mockRes)
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+  })
+
+  it("should not update the inventory in the database", async() => {
+    const updatedInventory = await prisma.inventory.findUnique({where: {id: newInventory4.id}});
+    expect(updatedInventory.bookId).toBe(newBook.id)
+    expect(updatedInventory.bookstoreId).toBe(newBookstore4.id)
+    expect(updatedInventory.initial).toBe(3000)
+    expect(updatedInventory.price).toBe(499.99)
   })
 })

@@ -3,7 +3,7 @@ import EditAdminModal from './EditAdminModal';
 import DeleteAdminModal from './DeleteAdminModal';
 import AddingInventoryModal from './AddingInventoryModal';
 import EditInventoryModal from './EditInventoryModal';
-import DeleteInventoryModal from './DeleteInventoryModal';
+// import DeleteInventoryModal from './DeleteInventoryModal';
 import AddingSaleModal from './AddingSaleModal';
 import AddingMultipleSalesModal from './AddingMultipleSalesModal';
 import EditSaleModal from "./EditSaleModal";
@@ -58,7 +58,7 @@ function Modal({
     inventory: {
       adding: AddingInventoryModal,
       edit: EditInventoryModal,
-      delete: DeleteInventoryModal,
+      // delete: DeleteInventoryModal,
     },
     sale: {
       adding: AddingSaleModal,

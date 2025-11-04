@@ -72,14 +72,8 @@ function BookInventory({
             type={"inventory"}/>
         </div>
       ),
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '7%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '7%',
           overflow: 'visible'
         }
       }
@@ -87,14 +81,8 @@ function BookInventory({
     {
       header: "Librería",
       accessorKey:'bookstore.name',
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -102,31 +90,13 @@ function BookInventory({
         }
       }
     },
-    // {
-    //   header: "Precio",
-    //   accessorKey: "price",
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-    //       whiteSpace: "nowrap",
-    //       overflow: "hidden",
-    //       textOverflow: "ellipsis"
-    //     }
-    //   }
-    // },
     {
       header: "Inicial",
       Cell: ({row}) => {
         return (<div>{row.original.initial}</div>)
       },
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -159,14 +129,8 @@ function BookInventory({
       Cell: ({row}) => {
         return (<div>{row.original.totalSales}</div>)
       },
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -179,14 +143,8 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.returns}</div>
       ),
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -199,14 +157,8 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.givenToAuthor}</div>
       ),
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -219,14 +171,8 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.current}</div>
       ),
-      // muiTableHeadCellProps: {
-      //   sx: {
-      //     width: '3%'
-      //   }
-      // },
       muiTableBodyCellProps: {
         sx: {
-          // width: '3%',
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -384,9 +330,9 @@ function BookInventory({
       case 'edit':
         setModalAction("edit");
         break;
-      case 'delete':
-        setModalAction("delete");
-        break;
+      // case 'delete':
+      //   setModalAction("delete");
+      //   break;
       default:
         console.log("Unknown error")
         return;

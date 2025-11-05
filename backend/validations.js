@@ -98,6 +98,10 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ["type", "number"],
     ],
+    "inventoryId": [
+      ["presence", "not empty"],
+      ["type", "number"],
+    ],
     "bookId": [
       ["presence", "not empty"],
       ["type", "number"],

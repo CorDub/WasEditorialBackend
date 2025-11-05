@@ -389,11 +389,27 @@ export async function createInventory(
   return newInventory;
 }
 
-export async function createPayment(prisma, userId, forMonth) {
+export async function createPayment (
+  prisma, 
+  userId, 
+  forMonth,
+  {
+    dateMarkedAsPaid = null, 
+    status = "created",
+    isDeleted = false,
+    createdAt = new Date(),
+    updatedAt = new Date(),
+  } = {}
+) {
   const newPayment = await prisma.payment.create({
     data: {
       userId: userId,
-      forMonth: forMonth
+      forMonth: forMonth,
+      dateMarkedAsPaid: dateMarkedAsPaid,
+      status: status,
+      isDeleted: isDeleted,
+      createdAt: createdAt,
+      updatedAt: updatedAt
     }
   })
 

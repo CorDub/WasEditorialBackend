@@ -17,10 +17,6 @@ function AddingImpressionModal({
   const [date, setDate] = useState(new Date());
   const [errors, setErrors] = useState([]);
 
-  // useEffect(() => {
-  //   console.log(date)
-  // }, [date])
-
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors([]);

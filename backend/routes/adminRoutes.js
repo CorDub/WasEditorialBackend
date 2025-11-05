@@ -14,6 +14,7 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
+import { rmSync } from "fs";
 
 const upload = multer();
 const router = express.Router();
@@ -1980,7 +1981,17 @@ export async function addSale(req, res) {
               forMonth: saleForMonth
             }
           }
-        })
+        });
+
+        if (existingPayment && existingPayment.isDeleted) {
+          const deletedPayment = await tx.payment.delete({ where: {id: existingPayment.id}})
+          const recreatedPayment = await tx.payment.create({
+            data: {
+              userId: authorId,
+              forMonth: saleForMonth
+            }
+          })
+        };
 
         if (!existingPayment) {
           const createdPayment = await tx.payment.create({
@@ -1994,7 +2005,6 @@ export async function addSale(req, res) {
         }
       }
 
-      console.log("inputs.date", inputs.date);
       createdSale = await tx.sale.create({
         data: {
           inventoryId: selectedInventory.id,
@@ -2003,6 +2013,9 @@ export async function addSale(req, res) {
           payments: {
             connect: paymentIds
           }
+        },
+        include: {
+          payments: true
         }
       })
 
@@ -2027,31 +2040,34 @@ router.post('/sale', addSale)
 
 export async function updateSale(req, res) {
   try {
-    const {
-      id,
-      book,
-      bookstore,
-      // country,
-      quantity, 
-      date
-    } = req.body;
+    const inputs = {
+      id: parseInt(req.params.id),
+      bookId: parseInt(req.body.book),
+      bookstoreId: parseInt(req.body.bookstore),
+      quantity: parseInt(req.body.quantity),
+      date: new Date(req.body.date)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({where : {
         bookId_bookstoreId: {
-          bookId : book,
-          bookstoreId: bookstore,
-          // country: country
+          bookId : inputs.bookId,
+          bookstoreId: inputs.bookstoreId,
         }}});
 
-      if (!selectedInventory) {
-        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo, librería y país"});
+      if (!selectedInventory || selectedInventory.isDeleted) {
+        res.status(400).json({ message: "No existe un inventario con esta combinación de titulo y librería"});
         return;
       }
 
-      const previousSale = await tx.sale.findUnique({where: {id: id}});
+      const previousSale = await tx.sale.findUnique({where: {id: inputs.id}});
+      if (previousSale.isDeleted) {
+        res.status(400).json({message: "Esta venta ha sido eliminada"})
+        return;
+      }
 
-      let quantityUpdate = previousSale.quantity - quantity;
+      let quantityUpdate = previousSale.quantity - inputs.quantity;
 
       if ((selectedInventory.current + quantityUpdate) < 0) {
         res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
@@ -2059,11 +2075,11 @@ export async function updateSale(req, res) {
       }
 
       const updatedSale = await tx.sale.update({
-        where: {id: id},
+        where: {id: inputs.id},
         data: {
           inventoryId: selectedInventory.id,
-          quantity: quantity,
-          date: new Date(date)
+          quantity: inputs.quantity,
+          date: new Date(inputs.date)
         },
         include: {
           inventory: {
@@ -2079,7 +2095,7 @@ export async function updateSale(req, res) {
         const updatedInventory = await tx.inventory.update({
           where: {id: selectedInventory.id},
           data: {
-            current: selectedInventory.current + quantityUpdate
+            current: (selectedInventory.current + previousSale.quantity) - inputs.quantity
           }
         });
 
@@ -2101,13 +2117,21 @@ export async function updateSale(req, res) {
 router.patch('/sale/:id', updateSale);
 
 export async function deleteSale(req, res) {
-  const sale_id = parseInt(req.params.id);
-  const inventory_id = parseInt(req.query.inventory_id);
-  const quantity = parseInt(req.query.quantity);
+  // const sale_id = parseInt(req.params.id);
+  // const inventory_id = parseInt(req.query.inventory_id);
+  // const quantity = parseInt(req.query.quantity);
   try {
+    console.log("req", req)
+    const inputs = {
+      id: parseInt(req.params.id),
+      inventoryId: parseInt(req.query.inventory_id),
+      // quantity: parseInt(req.query.quantity)
+    }
+    validateInputs(inputs);
+
     await prisma.$transaction(async (tx) =>  {
       const deletedSale = await tx.sale.update({where:
-        {id: sale_id},
+        {id: inputs.id},
         data: {
           isDeleted: true
         },
@@ -2121,11 +2145,11 @@ export async function deleteSale(req, res) {
       });
 
       if (deletedSale) {
-        const selectedInventory = await tx.inventory.findUnique({where: {id: inventory_id}});
+        const selectedInventory = await tx.inventory.findUnique({where: {id: inputs.inventoryId}});
         const updatedInventory = await tx.inventory.update({
-          where: {id: inventory_id},
+          where: {id: inputs.inventoryId},
           data: {
-            current: selectedInventory.current + quantity
+            current: selectedInventory.current + deletedSale.quantity
           }
         });
       }
@@ -2141,52 +2165,64 @@ router.delete('/sale/:id', deleteSale)
 
 
 /// Impression routes
-router.post('/impression', async (req, res) => {
+export async function addImpression(req, res) {
   try {
-    const quantity = parseInt(req.body.quantity);
-    const id = parseInt(req.body.id);
-    const note = (req.body.note);
-    const date = new Date(req.body.date);
+    // const quantity = parseInt(req.body.quantity);
+    // const id = parseInt(req.body.id);
+    // const note = (req.body.note);
+    // const date = new Date(req.body.date);
+    const inputs = {
+      quantity: parseInt(req.body.quantity),
+      id: parseInt(req.body.id),
+      note: req.body.note,
+      date: new Date(req.body.date)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const createdImpression = await tx.impression.create({
         data: {
-          bookId: id,
-          quantity: quantity,
-          note: note,
-          date: date
+          bookId: inputs.id,
+          quantity: inputs.quantity,
+          note: inputs.note,
+          date: inputs.date
         }
       })
 
       const wasInventory = await tx.inventory.findUnique({
         where: {
           bookId_bookstoreId: {
-            bookId: id,
+            bookId: inputs.id,
             bookstoreId: 1,
           }
         }
       });
 
-      if (wasInventory && !wasInventory.isDeleted) {
+      if (!wasInventory) {
+        res.status(400).json({message: "Este libro no existe en la bodega Was"})
+        return;
+      }
+
+      if (!wasInventory.isDeleted) {
         const updatedInventory = await tx.inventory.update({
           where: {id: wasInventory.id},
           data: {
-            current: wasInventory.current + quantity,
+            current: wasInventory.current + inputs.quantity,
             // initial: wasInventory.initial + quantity
           }
         })
       };
-
-    res.status(201).json(createdImpression);
+      res.status(201).json(createdImpression);
     })
 
   } catch (error) {
     console.error("\n ERROR CREATING THE IMPRESSION: \n", error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
   }
-})
+}
+router.post('/impression', addImpression)
 
-router.delete('/impression/:id', async (req, res) => {
+export async function deleteImpression(req, res) {
   try {
     const impression_id = parseInt(req.params.id);
     const book_id = parseInt(req.query.book_id);
@@ -2225,9 +2261,10 @@ router.delete('/impression/:id', async (req, res) => {
     console.error('\n ERROR WHILE DELETING THE IMPRESSION: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
   }
-});
+}
+router.delete('/impression/:id', deleteImpression);
 
-router.patch('/impression', async (req, res) => {
+export async function updateImpression(req, res) {
   try {
     const {
       id,
@@ -2274,7 +2311,8 @@ router.patch('/impression', async (req, res) => {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
   }
-})
+}
+router.patch('/impression', updateImpression);
 
 /// Transfer route
 

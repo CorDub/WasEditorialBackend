@@ -9,9 +9,13 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   useCheckAdmin();
   const quantityRef = useRef();
   const dateRef = useRef();
+  const noteRef = useRef();
   const [quantity, setQuantity] = useState(clickedRow.quantity);
   const [date, setDate] = useState(convertISOString(clickedRow.date));
+  const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
+
+  console.log(clickedRow)
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,7 +45,13 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
     const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
 
-    const errorInputs = [errorsQuantity, errorsDate];
+    const expectationsNote = {
+      type: "string",
+      length: 255
+    }
+    const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
+
+    const errorInputs = [errorsQuantity, errorsDate, errorsNote];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -55,16 +65,16 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/impression`, {
+      const response = await fetch(`${baseURL}/admin/impression/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           quantity: quantity,
           book_id: clickedRow.bookId,
+          note: note,
           date: date
         }),
       });
@@ -88,10 +98,6 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
-  // useEffect(() => {
-  //   setQuantity(clickedRow.quantity);
-  // }, [clickedRow])
-
   return(
     <div className='modal-proper'>
       <div className="form-title">
@@ -112,6 +118,12 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           ref={dateRef}
           onChange={(e) => setDate(e.target.value)}
           value={convertISOString(date)}></input>
+        <input
+          type="text"
+          placeholder="Nota para el autor (opcional)"
+          className="global-input"
+          ref={noteRef}
+          onChange={(e) => setNote(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button

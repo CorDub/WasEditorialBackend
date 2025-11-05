@@ -3,7 +3,6 @@ import express from "express";
 import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { 
-  createRandomPassword, 
   calculateAuthorRevenue, 
   getForMonth, 
   twelveMonthsAgo, 
@@ -14,7 +13,7 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
-import { rmSync } from "fs";
+import { createRandomPassword } from "../passwordUtils.js";
 
 const upload = multer();
 const router = express.Router();
@@ -2167,10 +2166,6 @@ router.delete('/sale/:id', deleteSale)
 /// Impression routes
 export async function addImpression(req, res) {
   try {
-    // const quantity = parseInt(req.body.quantity);
-    // const id = parseInt(req.body.id);
-    // const note = (req.body.note);
-    // const date = new Date(req.body.date);
     const inputs = {
       quantity: parseInt(req.body.quantity),
       id: parseInt(req.body.id),
@@ -2224,13 +2219,17 @@ router.post('/impression', addImpression)
 
 export async function deleteImpression(req, res) {
   try {
-    const impression_id = parseInt(req.params.id);
-    const book_id = parseInt(req.query.book_id);
-    const quantity = parseInt(req.query.quantity);
+    // const impression_id = parseInt(req.params.id);
+    // const book_id = parseInt(req.query.book_id);
+    // const quantity = parseInt(req.query.quantity);
+    const inputs = {
+      id: parseInt(req.params.id)
+    }
+    validateInputs(inputs);
 
     await prisma.$transaction(async (tx) => {
       const updatedImpression = await tx.impression.update({
-        where: {id: impression_id},
+        where: {id: inputs.id},
         data: {
           isDeleted: true
         }
@@ -2239,7 +2238,7 @@ export async function deleteImpression(req, res) {
       const wasInventory = await tx.inventory.findUnique({
         where: {
           bookId_bookstoreId: {
-            bookId: book_id,
+            bookId: updatedImpression.bookId,
             bookstoreId: 1
           }
         }
@@ -2249,8 +2248,8 @@ export async function deleteImpression(req, res) {
         const updatedInventory = await tx.inventory.update({
           where: {id: wasInventory.id},
           data: {
-            current: wasInventory.current - quantity,
-            initial: wasInventory.initial - quantity
+            current: wasInventory.current - updatedImpression.quantity,
+            // initial: wasInventory.initial - updatedImpression.quantity
           }
         })
       }
@@ -2266,30 +2265,33 @@ router.delete('/impression/:id', deleteImpression);
 
 export async function updateImpression(req, res) {
   try {
-    const {
-      id,
-      quantity,
-      book_id,
-      date
-    } = req.body;
+    console.log("req", req.body)
+    const inputs = {
+      id: parseInt(req.params.id),
+      quantity: parseInt(req.body.quantity),
+      bookId: parseInt(req.body.book_id),
+      note: req.body.note, 
+      date: new Date(req.body.date),
+    }
 
     await prisma.$transaction(async (tx) => {
-      const currentImpression = await tx.impression.findUnique({ where: {id: id}});
-      const diff = parseInt(quantity) - currentImpression.quantity;
+      const currentImpression = await tx.impression.findUnique({ where: {id: inputs.id}});
+      const diff = inputs.quantity - currentImpression.quantity;
 
       const updatedImpression = await tx.impression.update({
-        where: {id: id},
+        where: {id: inputs.id},
         data: {
-          quantity: parseInt(quantity),
-          date: new Date(date)
+          quantity: inputs.quantity,
+          date: inputs.date,
+          note: inputs.note
         }
       });
 
       const wasInventory = await tx.inventory.findUnique({
         where: {
           bookId_bookstoreId: {
-            bookId: book_id,
-            bookstoreId: 3
+            bookId: inputs.bookId,
+            bookstoreId: 1
           }
         }
       });
@@ -2312,7 +2314,7 @@ export async function updateImpression(req, res) {
     res.status(500).json({error: "A server error occurred while creating the impression"});
   }
 }
-router.patch('/impression', updateImpression);
+router.patch('/impression/:id', updateImpression);
 
 /// Transfer route
 

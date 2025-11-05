@@ -11,7 +11,7 @@ import {
   createCategory,
   deleteFromDB, 
   createAuthor
-} from "../utils.js";
+} from "../testUtils.js";
 
 //GETTING
 describe("getting all valid categories", () => {

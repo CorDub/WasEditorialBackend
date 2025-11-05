@@ -1,7 +1,8 @@
 import { Role } from "@prisma/client";
 import { prisma } from "../prisma/client.js"
 import express from "express";
-import { createRandomPassword, validateInputs } from "../utils.js";
+import { validateInputs } from "../utils.js";
+import { createRandomPassword } from "../passwordUtils.js";
 import bcrypt from "bcrypt";
 import { sendSetPasswordMail } from "../mailer.js";
 

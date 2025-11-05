@@ -60,7 +60,7 @@ function Impression({impression, setModalType, openModal, book}) {
             onClick={openDeleteModal}/>
         </div>}
       <div className="impression-info">
-        {date} - {impression.quantity} copias {impression.note}
+        {date} - {impression.quantity} copias {impression.note && ` - ${impression.note}`}
       </div>
     </div>
   )

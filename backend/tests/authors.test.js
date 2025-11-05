@@ -7,8 +7,8 @@ import {
   deleteAuthor } from "../routes/adminRoutes.js";
 import { prisma } from "../prisma/client.js";
 import * as mailer from "../mailer.js";
-import { 
-  getForMonth,
+import { getForMonth } from "../utils.js";
+import {
   createAuthor,
   createBook,
   createBookstore,
@@ -19,7 +19,7 @@ import {
   createCost,
   createImpression,
   deleteFromDB 
-} from "../utils.js";
+} from "../testUtils.js";
 
 vi.mock('../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),

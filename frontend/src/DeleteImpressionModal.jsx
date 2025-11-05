@@ -6,7 +6,7 @@ function DeleteImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function deleteImpression() {
     try {
-      const response = await fetch(`${baseURL}/admin/impression/${clickedRow.id}?book_id=${clickedRow.bookId}&quantity=${clickedRow.quantity}`, {
+      const response = await fetch(`${baseURL}/admin/impression/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

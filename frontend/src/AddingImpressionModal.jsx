@@ -13,8 +13,10 @@ function AddingImpressionModal({
   const baseURL = import.meta.env.VITE_API_URL || '';
   const quantityRef = useRef();
   const dateRef = useRef();
+  const noteRef = useRef();
   const [quantity, setQuantity] = useState(null);
   const [date, setDate] = useState(new Date());
+  const [note, setNote] = useState("");
   const [errors, setErrors] = useState([]);
 
   async function handleSubmit(e) {
@@ -44,8 +46,14 @@ function AddingImpressionModal({
       range: "no future"
     }
     const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+
+    const expectationsNote = {
+      type: "string",
+      length: 255
+    }
+    const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
     
-    const errorInputs = [errorsQuantity, errorsDate];
+    const errorInputs = [errorsQuantity, errorsDate, errorsNote];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -68,6 +76,7 @@ function AddingImpressionModal({
         body: JSON.stringify({
           id: clickedRow.id,
           quantity: quantity,
+          note: note,
           date: date
         }),
       });
@@ -115,6 +124,12 @@ function AddingImpressionModal({
           ref={dateRef}
           onChange={(e) => setDate(e.target.value)}
           value={convertISOString(date)}></input>
+        <input
+          type="text"
+          placeholder="Nota para el autor (opcional)"
+          className="global-input"
+          ref={noteRef}
+          onChange={(e) => setNote(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button

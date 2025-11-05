@@ -9,8 +9,8 @@ import {
   deleteBook,
 } from "../routes/adminRoutes.js";
 import { prisma } from "../prisma/client.js";
+import { getForMonth } from "../utils.js"
 import {
-  getForMonth,
   createAuthor,
   createBook,
   createBookstore,
@@ -21,7 +21,7 @@ import {
   createCost,
   createImpression,
   deleteFromDB 
-} from "../utils.js"
+} from "../testUtils.js";
 
 //GETTING
 describe("getting all valid books", () => {

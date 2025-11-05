@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { setResetPasswordCode } from './utils.js';
+import { setResetPasswordCode } from './passwordUtils.js';
 import { prisma } from "./prisma/client.js"
 
 var transport = nodemailer.createTransport({

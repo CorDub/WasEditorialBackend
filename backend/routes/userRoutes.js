@@ -1,7 +1,7 @@
 import express from 'express';
-import { matchConfirmationCode } from './../utils.js';
+import { matchConfirmationCode } from './../passwordUtils.js';
 import bcrypt from 'bcrypt';
-import {sendResetPasswordMail } from './../mailer.js';
+import { sendResetPasswordMail } from './../mailer.js';
 import { prisma } from "../prisma/client.js"
 
 const router = express.Router();

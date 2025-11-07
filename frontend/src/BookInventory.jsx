@@ -41,8 +41,6 @@ function BookInventory({
     pageSize: 30
   })
 
-  console.log(data);
-
   // slides down the top of the table
   useEffect(() => {
     if (inventoryTotalRef.current) {

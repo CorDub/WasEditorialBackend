@@ -1,3 +1,5 @@
+import { validateInput } from "validations.js"
+
 export async function createAuthor(prisma, first_name, last_name, email, role, isDeleted, categoryId) {
   const newAuthor = await prisma.user.create({
     data: {
@@ -191,6 +193,37 @@ export async function createImpression(
   return newImpression
 }
 
+export async function createTransfer(
+  prisma,
+  fromInventoryId,
+  quantity,
+  {
+    toInventoryId=null,
+    type="send",
+    note=null,
+    deliveryDate=null,
+    place=null,
+    person=null,
+    isDeleted=false
+  } = {}
+) {
+  const newTransfer = await prisma.transfer.create({
+    data: {
+      fromInventoryId: fromInventoryId,
+      quantity: quantity,
+      toInventoryId: toInventoryId,
+      type: type,
+      note: note,
+      deliveryDate: deliveryDate,
+      place: place,
+      person: person,
+      isDeleted: isDeleted
+    }
+  });
+
+  return newTransfer;
+}
+
 export async function createCost(prisma, paymentId, bookId, amount) {
   const newCost = await prisma.cost.create({
     data: {
@@ -218,7 +251,8 @@ export async function deleteFromDB(prisma, element, type) {
     "cost": (args) => prisma.cost.delete(args),
     "kindleSale": (args) => prisma.kindleSale.delete(args),
     "impression": (args) => prisma.impression.delete(args),
-    "category": (args) => prisma.category.delete(args)
+    "category": (args) => prisma.category.delete(args),
+    'transfer': (args) => prisma.transfer.delete(args)
   }
 
   try {

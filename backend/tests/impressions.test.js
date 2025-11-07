@@ -1,16 +1,10 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import { addImpression, updateImpression, deleteImpression } from "../routes/adminRoutes.js";
 import { prisma } from "../prisma/client.js";
-import { getForMonth } from "../utils.js"
 import {
   createAuthor,
   createBook,
-  createBookstore,
   createInventory,
-  createPayment,
-  createSale,
-  createKindleSale,
-  createCost,
   createImpression,
   deleteFromDB 
 } from "../testUtils.js";

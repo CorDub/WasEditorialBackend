@@ -321,7 +321,7 @@ async function main() {
       await prisma.inventory.create({
         data: {
           bookId: impression.bookId,
-          bookstoreId: 3,
+          bookstoreId: 1,
           country: "México",
           initial: impression.quantity,
           current: impression.quantity,
@@ -337,52 +337,30 @@ async function main() {
 
     for (const inventory of allInventories) {
       const randQuantTransfers = Math.floor(Math.random() * numBookstores);
-
+      let remainingQuantity = inventory.current;
       for (let i = 0; i < randQuantTransfers; i++) {
         let createdInventory;
-        const randQuantToMove = Math.floor(Math.random() * inventory.current);
+        const randQuantToMove = Math.floor(Math.random() * 0.5 * remainingQuantity);
 
         if (randQuantToMove !== 0) {
-          if (i < inventory.bookstoreId - 1) {
-            createdInventory = await prisma.inventory.create({
-              data: {
-                bookId: inventory.bookId,
-                bookstoreId: i+1,
-                country: "México",
-                initial: randQuantToMove,
-                current: randQuantToMove,
-                createdAt: twelveMonthsAgo
-              }
-            });
+          createdInventory = await prisma.inventory.create({
+            data: {
+              bookId: inventory.bookId,
+              bookstoreId: i+2,
+              country: "México",
+              initial: randQuantToMove,
+              current: randQuantToMove,
+              createdAt: twelveMonthsAgo
+            }
+          });
 
-            await prisma.inventory.update({
-              where: {id: inventory.id},
-              data: {
-                current: inventory.current - randQuantToMove,
-                initial: inventory.initial - randQuantToMove
-              }
-            });
-
-          } else {
-            createdInventory = await prisma.inventory.create({
-              data: {
-                bookId: inventory.bookId,
-                bookstoreId: i+2,
-                country: "México",
-                initial: randQuantToMove,
-                current: randQuantToMove,
-                createdAt: twelveMonthsAgo
-              }
-            });
-
-            await prisma.inventory.update({
-              where: {id: inventory.id},
-              data: {
-                current: inventory.current - randQuantToMove,
-                initial: inventory.initial - randQuantToMove
-              }
-            });
-          }
+          await prisma.inventory.update({
+            where: {id: inventory.id},
+            data: {
+              current: remainingQuantity - randQuantToMove
+              // initial: inventory.initial - randQuantToMove
+            }
+          });
 
           const createdTransfer = await prisma.transfer.create({
             data: {
@@ -392,6 +370,8 @@ async function main() {
               createdAt: twelveMonthsAgo
             }
           });
+
+          remainingQuantity -= randQuantToMove
         }
       }
     }
@@ -446,14 +426,17 @@ async function main() {
 
     const newAllInventories = await prisma.inventory.findMany({
       include: {
-        bookstore: true
+        bookstore: true,
+        book: true,
+        transfersFrom: true
       }
     });
 
     for (const inventory of newAllInventories) {
-      let randQuantToSell = Math.floor(Math.random() * inventory.current);
+      let remainingSales = inventory.current;
+      let randQuantToSell = Math.floor(Math.random() * 0.5 * remainingSales);
       if (randQuantToSell === 0) {
-        randQuantToSell = 1
+        continue;
       }
 
       if (randQuantToSell > 0) {
@@ -550,6 +533,7 @@ async function main() {
               current: inventory.current - randQuantToSell
             }
           });
+
         } else {
           console.log("\n SALE WASNT CREATED \n");
           console.log("\n INVENTORY \n", inventory);

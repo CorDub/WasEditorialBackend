@@ -92,11 +92,6 @@ test("validates minimum correctly", () => {
   expect(validateInput("dealPercentage", -3)).toStrictEqual([["dealPercentage", -3, "minimum"]]);
 })
 
-test("validates time ranges correctly", () => {
-  expect(validateInput("date", new Date())).toStrictEqual([]);
-  expect(validateInput("date", new Date().setFullYear(new Date().getFullYear() + 1))).toStrictEqual([["date", new Date().setFullYear(new Date().getFullYear() + 1), "timerange"]])
-})
-
 test("validates range correctly", () => {
   expect(validateInput("regalias", 100.52)).toStrictEqual([]);
   expect(validateInput("regalias", -2563.21)).toStrictEqual([['regalias', -2563.21, "range"]])
@@ -120,4 +115,21 @@ test("validates type string or null correctly", () => {
   expect(validateInput("isbn", null)).toStrictEqual([])
   expect(validateInput("isbn", "9786078974146")).toStrictEqual([])
   expect(validateInput("isbn", 9786078974146)).toStrictEqual([["isbn", 9786078974146, "type"]])
+})
+
+test("validates type of transfer value correctly", () => {
+  expect(validateInput("type", "send")).toStrictEqual([])
+  expect(validateInput("type", "return")).toStrictEqual([])
+  expect(validateInput("type", "authordelivery")).toStrictEqual([["type", "authordelivery", "value"]])
+})
+
+test("validates type datetime or null correctly", () => {
+  expect(validateInput("deliveryDate", null)).toStrictEqual([])
+  expect(validateInput("deliveryDate", new Date("2025-11-04"))).toStrictEqual([])
+  expect(validateInput("deliveryDate", 2150)).toStrictEqual([["deliveryDate", 2150, "type"]])
+})
+
+test("validates time ranges correctly", () => {
+  expect(validateInput("date", new Date())).toStrictEqual([]);
+  expect(validateInput("date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)))).toStrictEqual([["date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)), "timerange"]])
 })

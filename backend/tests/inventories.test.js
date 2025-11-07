@@ -510,6 +510,12 @@ describe("getting a specific book inventory with valid parameters", async() => {
     expect(jsonResponse.soldTotal).toBe(300);
   })
 
+  // it(`should correctly give you the inTienda number`, async() => {
+  //   const relevantInventory = jsonResponse.sortedRelevantInventories.find(element => element.id === newInventory.id);
+  //   expect(Object.keys(relevantInventory)).toContain("inTienda");
+  //   expect(inTienda).toBe()
+  // })
+
   it(`should correctly return an array of impressions object`, async() => {
     expect(Array.isArray(jsonResponse.thatBookImpressions)).toBeTruthy();
   })

@@ -265,7 +265,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       };
 
       const quantityRef = document.getElementById(`quantity-select-${i}`);
-      console.log("quantityRef", quantityRef);
+      // console.log("quantityRef", quantityRef);
       const errorsQuantity = checkForErrors(
         "La cantidad",
         bookstoresToTransfer[i].quantity,
@@ -302,12 +302,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           },
           credentials: "include",
           body: JSON.stringify({
-            bookstoreTo: bookstoresToTransfer[i].name,
+            // bookstoreTo: bookstoresToTransfer[i].name,
             bookstoreToId: bookstoresToTransfer[i].bookstoreId,
-            bookstoreFromId: clickedRow.bookstoreId,
+            // bookstoreFromId: clickedRow.bookstoreId,
             quantity: bookstoresToTransfer[i].quantity,
             inventoryFromId: clickedRow.id,
-            bookId: clickedRow.bookId,
+            // bookId: clickedRow.bookId,
             type: transferType,
             deliveryDate: bookstoresToTransfer[i].fecha
             // country: bookstoresToTransfer[i].country
@@ -333,9 +333,9 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
-  useEffect(() => {
-    console.log(bookstoresToTransfer)
-  }, [bookstoresToTransfer])
+  // useEffect(() => {
+  //   console.log(bookstoresToTransfer)
+  // }, [bookstoresToTransfer])
 
   return(
     <div className="modal-proper">

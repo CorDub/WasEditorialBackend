@@ -6,7 +6,6 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
-// import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({
     selectedBookstoreNoSpaces,
@@ -44,6 +43,8 @@ function BookstoreInventory({
     pageIndex: 0,
     pageSize: 30
   })
+
+  console.log(data);
 
   const columns = useMemo(() => [
     {
@@ -200,7 +201,7 @@ function BookstoreInventory({
       header: "Disponibles",
       size: 50,
       Cell: ({row}) => (
-        <div>{selectedBookstoreId === 3 
+        <div>{selectedBookstoreId === 1 
           ? row.original.current + row.original.returns
           : row.original.current - row.original.returns}</div>
       ),
@@ -344,7 +345,7 @@ function BookstoreInventory({
       setReturnsTotal(specificBookstore.returnsTotal)
       setImpressions(specificBookstore.extraImpressionsTotal)
 
-      if (specificBookstore.id === 3) {
+      if (specificBookstore.id === 1) {
         setColumnVisibility(
           {
             'impressions': true,
@@ -408,9 +409,9 @@ function BookstoreInventory({
       case 'edit':
         setModalAction("edit");
         break;
-      // case 'delete':
-      //   setModalAction("delete");
-      //   break;
+      case 'delete':
+        setModalAction("delete");
+        break;
       default:
         console.log("Unknown error")
         return;

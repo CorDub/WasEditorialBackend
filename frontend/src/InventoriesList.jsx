@@ -34,7 +34,8 @@ function InventoriesList() {
   const [isSpecificBookstoreOpen, setSpecificBookstoreOpen] = useState(false);
   const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
   const [isInventoryTypeBook, setInventoryType] = useState(false)
-  const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false});
+  const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false, "returns": true});
+  console.log(data)
 
   const columns = useMemo(() => [
     // {
@@ -70,9 +71,17 @@ function InventoriesList() {
       )
     },
     {
-      header: "Inicial",
+      header: "Copias",
       size: 100,
       accessorKey: "initial",
+      Cell: ({row}) => {
+        // console.log(row.original)
+        return (
+          row.original.type === "bookstore" && row.original.bookstoreId === 1 ?
+          row.original.initial + row.original.extraImpressions :
+          row.original.initial
+        )
+      }
     },
     {
       header: "Impresiónes",
@@ -87,12 +96,12 @@ function InventoriesList() {
     {
       header: "Devueltos",
       size: 100,
-      // accessorKey: "returns",
+      accessorKey: "returns",
       Cell: ({row}) => (
         // <div>{row.original.id === 1 
         //       ? `+ ${row.original.returns}` 
         //       : `- ${row.original.returns}`}</div>
-        <div>{row.original.returns === 0 ? 0 : row.original.id === 1 ? `+ ${row.original.returns}` : `- ${row.original.returns}`}</div>
+        <div>{row.original.returns === 0 ? 0 : row.original.id === 1 && row.original.type === "bookstore" ? `+ ${row.original.returns}` : `- ${row.original.returns}`}</div>
       )
     },
     {
@@ -104,9 +113,11 @@ function InventoriesList() {
       header: "Disponibles",
       size: 100,
       Cell: ({row}) => (
-        <div>{row.original.id === 1 ? 
-          row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:
-          row.original.initial - row.original.sold - row.original.returns - row.original.givenToAuthor}</div>
+        row.original.type === "book" ?
+          <div>{row.original.initial + row.original.extraImpressions - row.original.sold - row.original.givenToAuthor}</div> :
+          <div>{row.original.id === 1 ? 
+            row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:
+            row.original.initial - row.original.sold - row.original.returns - row.original.givenToAuthor}</div>
       )
     },
   ], []);
@@ -128,6 +139,7 @@ function InventoriesList() {
           onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
             Inventarios por libro</div>
       </div>
+      
     ),
     initialState: {
       density: 'compact',
@@ -273,10 +285,10 @@ function InventoriesList() {
     setInventoryType(newType);
     if (newType) {
       getBookInventories();
-      setColumnVisibility((prev) => ({...prev, extraImpressions: true}))
+      setColumnVisibility((prev) => ({...prev, extraImpressions: true, returns: false}))
     } else {
       getBookstoreInventories();
-      setColumnVisibility((prev) => ({...prev, extraImpressions: false}))
+      setColumnVisibility((prev) => ({...prev, extraImpressions: false, returns: true}))
     }
   }
 

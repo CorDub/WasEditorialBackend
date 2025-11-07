@@ -172,7 +172,7 @@ export function validateInput(inputName, inputValue) {
       ['range', 'positive'],
     ],
     'note': [
-      ['type', 'string'],
+      ['type', 'string or null'],
       ['length', 255]
     ],
     'clabe': [
@@ -206,6 +206,34 @@ export function validateInput(inputName, inputValue) {
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
+    "bookstoreToId": [
+      ['type', 'number or null']
+    ],
+    'bookstoreFromId': [
+      ['presence', 'not empty'],
+      ['type', 'number']
+    ],
+    'inventoryFromId': [
+      ['presence', 'not empty'],
+      ['type', 'number']
+    ],
+    'type': [
+      ['type', 'string'],
+      ['value', ['send', 'return', ]]
+    ],
+    "deliveryDate": [
+      ["type", "datetime or null"],
+      ["timerange", "no future"]
+    ],
+    "place": [
+      ["type", "string or null"],
+      ["length", 255]
+    ],
+    "person": [
+      ["type", "string or null"],
+      ["length", 255]
+    ]
+    
   }
 
   for (const check of possibleChecks[inputName]) {
@@ -249,7 +277,7 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "datetime") {
-          if (!inputValue instanceof Date) {
+          if (!(inputValue instanceof Date)) {
             errors.push([inputName, inputValue, "type"]);
             return errors
           }
@@ -257,6 +285,20 @@ export function validateInput(inputName, inputValue) {
           if (isNaN(inputValue)) {
             errors.push([inputName, inputValue, "type"]);
             return errors
+          }
+        }
+
+        if (check[1] === "datetime or null") {
+          if (inputValue !== null) {
+            if (!(inputValue instanceof Date)) {
+              errors.push([inputName, inputValue, "type"]);
+              return errors
+            }
+
+            if (isNaN(inputValue)) {
+              errors.push([inputName, inputValue, "type"]);
+              return errors
+            }
           }
         }
       break;
@@ -274,7 +316,7 @@ export function validateInput(inputName, inputValue) {
       break;
 
       case "length":
-        if (inputValue.length > check[1]) {
+        if (inputValue && inputValue.length > check[1]) {
           errors.push([inputName, inputValue, "length"])
           return errors
         }

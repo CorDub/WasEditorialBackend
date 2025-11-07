@@ -5,7 +5,6 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
-import ProgressBar from "./ProgressBar";
 
 function BookInventory({
     isBookInventoryOpen,
@@ -41,6 +40,8 @@ function BookInventory({
     pageIndex: 0,
     pageSize: 30
   })
+
+  console.log(data);
 
   // slides down the top of the table
   useEffect(() => {
@@ -91,9 +92,9 @@ function BookInventory({
       }
     },
     {
-      header: "Inicial",
+      header: "Copias",
       Cell: ({row}) => {
-        return (<div>{row.original.initial}</div>)
+        return (<div>{row.original.inTienda}</div>)
       },
       muiTableBodyCellProps: {
         sx: {
@@ -102,27 +103,14 @@ function BookInventory({
           overflow: "hidden",
           textOverflow: "ellipsis"
         }
-      }
+      },
     },
     // {
     //   header: "Impresiónes",
+    //   size: 100,
     //   Cell: ({row}) => {
-    //     return (<div>{row.original.totalSales}</div>)
+    //     return (<div>{row.original.bookstoreId === 1 && impressions ? impressions : 0}</div>)
     //   },
-    //   // muiTableHeadCellProps: {
-    //   //   sx: {
-    //   //     width: '3%'
-    //   //   }
-    //   // },
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       // width: '3%',
-    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-    //       whiteSpace: "nowrap",
-    //       overflow: "hidden",
-    //       textOverflow: "ellipsis"
-    //     }
-    //   }
     // },
     {
       header: "Vendidos",
@@ -141,7 +129,13 @@ function BookInventory({
     {
       header: "Devueltos",
       Cell: ({row}) => (
-        <div>{row.original.returns}</div>
+        <div>{
+          row.original.returns === 0 ?
+          0 :
+            row.original.bookstoreId === 1 ?
+            ` + ${row.original.returns}` :
+            ` - ${row.original.returns}`
+          }</div>
       ),
       muiTableBodyCellProps: {
         sx: {
@@ -220,14 +214,14 @@ function BookInventory({
     enablePagination: true,
     enableFullScreenToggle: false,
     enableRowVirtualization: false,
-    renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <div
-          className="campos-obligatorios"
-          style={{ fontSize: `clamp(0.8rem, 1.1rem)`}}>
-            Una transferencia de Plataforma Was a otra librería retira la cantidad de la columna "Inicial" de Was.</div>
-      </div>
-    ),
+    // renderTopToolbarCustomActions: () => (
+    //   <div className="table-add-button">
+    //     <div
+    //       className="campos-obligatorios"
+    //       style={{ fontSize: `clamp(0.8rem, 1.1rem)`}}>
+    //         Una transferencia de Plataforma Was a otra librería retira la cantidad de la columna "Inicial" de Was.</div>
+    //   </div>
+    // ),
     initialState: {
       density: 'compact',
     },

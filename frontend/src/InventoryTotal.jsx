@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ProgressBar from "./ProgressBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { faStore } from '@fortawesome/free-solid-svg-icons';
@@ -126,18 +125,12 @@ function InventoryTotal({
         {extraImpressions > 0 && 
           <div className="inventory-total-details">Nuevas impresiónes: {extraImpressions}</div>}
         <div className="inventory-total-details">Vendidos: {soldTotal}</div>
-        <div className="inventory-total-details">Devueltos: {returnsTotal}</div>
+        {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
         <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
         <div className="inventory-total-details">Disponibles: {
           initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
           }</div>
         <div className="bookstore-progress-return">  
-          {/* <ProgressBar
-            current={currentTotal}
-            initial={initialTotal}
-            returns={returnsTotal}
-            sold={soldTotal}
-            given={givenToAuthorTotal}/> */}
           <FontAwesomeIcon
             icon={faCircleXmark}
             className="inventory-back-button"

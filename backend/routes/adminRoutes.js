@@ -14,6 +14,7 @@ import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
 import { createRandomPassword } from "../passwordUtils.js";
+import { cp } from "fs";
 
 const upload = multer();
 const router = express.Router();
@@ -1342,16 +1343,19 @@ export async function getInventoriesByBook(req, res) {
           "returns": inventory.returns,
           "givenToAuthor": inventory.givenToAuthor
         })
+        continue;
       };
 
       let existingBook = false
       for (const bookInventory of inventoriesByBook) {
         if (bookInventory.name === inventory.book.title) {
-          bookInventory.initial += inventory.initial
+          // bookInventory.initial += inventory.initial
           bookInventory.sold += sold
           bookInventory.current += inventory.current
           bookInventory.returns += inventory.returns
-          bookInventory.givenToAuthor += inventory.givenToAuthor
+          if (bookInventory.givenToAuthor === 0) {
+            bookInventory.givenToAuthor += inventory.givenToAuthor
+          }
           existingBook = true
         }
       }
@@ -1407,6 +1411,9 @@ export async function getBookInventory(req, res) {
         isDeleted: true,
         createdAt: true,
         date: true
+      },
+      orderBy: {
+        date: "asc"
       }
     })
 
@@ -1440,6 +1447,19 @@ export async function getBookInventory(req, res) {
             quantity: true,
             isDeleted: true
           }
+        },
+        transfersFrom: {
+          select: {
+            quantity: true,
+            isDeleted: true,
+            toInventoryId: true
+          }
+        },
+        transfersTo: {
+          select: {
+            quantity: true,
+            isDeleted: true,
+          }
         }
       }
     })
@@ -1455,7 +1475,7 @@ export async function getBookInventory(req, res) {
     for (const inventory of thatBookInventories) {
       let thisInventorySalesTotal = 0
       currentTotal += inventory.current;
-      initialTotal += inventory.initial;
+      // initialTotal += inventory.initial;
       returnsTotal += inventory.returns;
       givenToAuthorTotal += inventory.givenToAuthor;
       for (const sale of inventory.sales) {
@@ -1464,8 +1484,38 @@ export async function getBookInventory(req, res) {
           thisInventorySalesTotal += sale.quantity
         }
       }
-      const inventoryPlusSales = {...inventory, totalSales: thisInventorySalesTotal}
-      relevantInventories.push(inventoryPlusSales);
+
+      let inTiendaTotal = 0
+      for (const transferFrom of inventory.transfersFrom) {
+        if (transferFrom.isDeleted === false && transferFrom.toInventoryId) {
+          inTiendaTotal -= transferFrom.quantity
+        } 
+      }
+      for (const transferTo of inventory.transfersTo) {
+        if (transferTo.isDeleted === false) {
+          inTiendaTotal += transferTo.quantity
+        }
+      }
+      if (inventory.bookstoreId === 1) {
+        for (const impression of thatBookImpressions) {
+          if (impression.isDeleted === false) {
+            inTiendaTotal += impression.quantity
+          }
+        }
+        initialTotal += inventory.initial
+        inTiendaTotal -= inventory.returns
+
+      } else {
+        inTiendaTotal += inventory.returns
+      }
+
+      const inventoryComplete = {
+        ...inventory, 
+        totalSales: thisInventorySalesTotal, 
+        inTienda: inTiendaTotal,
+        impressions: thatBookImpressions
+      }
+      relevantInventories.push(inventoryComplete);
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     const payload = {
@@ -1499,7 +1549,13 @@ export async function getInventoriesByBookstore(req, res) {
         id: true,
         book: {
           select: {
-            title: true
+            title: true,
+            impressions: {
+              select: {
+                quantity: true,
+                isDeleted: true
+              }
+            }
           }
         },
         bookId: true,
@@ -1534,22 +1590,40 @@ export async function getInventoriesByBookstore(req, res) {
       }
 
       if (inventoriesByBookstore.length === 0) {
+        //adding extra impressions to initial (copias) in plataforma Was
+        let extraImpressions = 0;
+        if (inventory.bookstoreId === 1) {
+          for (const impression of inventory.book.impressions.slice(1)) {
+            if (!impression.isDeleted) {
+              extraImpressions += impression.quantity 
+            }
+          }
+        }
+
         inventoriesByBookstore.push({
           "id": inventory.bookstoreId,
           "type": "bookstore",
           "name": inventory.bookstore.name,
-          "initial": inventory.initial,
+          "initial": inventory.initial + extraImpressions,
           "sold": sold,
           "current": inventory.current,
           "returns": inventory.returns,
           "givenToAuthor": inventory.givenToAuthor
         })
-      };
-
+      } else {
       let existingBookstore = false
       for (const bookstoreInventory of inventoriesByBookstore) {
+        let extraImpressions = 0;
+        if (inventory.bookstoreId === 1) {
+          for (const impression of inventory.book.impressions.slice(1)) {
+            if (!impression.isDeleted) {
+              extraImpressions += impression.quantity 
+            }
+          }
+        }
+
         if (bookstoreInventory.name === inventory.bookstore.name) {
-          bookstoreInventory.initial += inventory.initial
+          bookstoreInventory.initial += inventory.initial + extraImpressions
           bookstoreInventory.sold += sold
           bookstoreInventory.current += inventory.current
           bookstoreInventory.returns += inventory.returns
@@ -1559,11 +1633,20 @@ export async function getInventoriesByBookstore(req, res) {
       }
 
       if (!existingBookstore) {
+        let extraImpressions = 0;
+        if (inventory.bookstoreId === 1) {
+          for (const impression of inventory.book.impressions.slice(1)) {
+            if (!impression.isDeleted) {
+              extraImpressions += impression.quantity 
+            }
+          }
+        }
+
         inventoriesByBookstore.push({
           "id": inventory.bookstoreId,
           "type": "bookstore",
           "name": inventory.bookstore.name,
-          "initial": inventory.initial,
+          "initial": inventory.initial + extraImpressions,
           "sold": sold,
           "current": inventory.current,
           "returns": inventory.returns,
@@ -1571,6 +1654,7 @@ export async function getInventoriesByBookstore(req, res) {
         })
       }
     }
+  }
 
     res.status(200).json(inventoriesByBookstore);
 
@@ -2318,61 +2402,60 @@ router.patch('/impression/:id', updateImpression);
 
 /// Transfer route
 
-router.post('/transfer', async (req, res) => {
+export async function addTransfer(req, res) {
   try {
-    const {
-      bookstoreTo,
-      bookstoreToId,
-      bookstoreFromId,
-      quantity,
-      inventoryFromId,
-      bookId,
-      type,
-      note,
-      deliveryDate,
-      place,
-      person,
-      // country
-    } = req.body;
-
-    const dateInDateTime = new Date(deliveryDate);
+    const inputs = {
+      // bookstoreTo: req.body.bookstoreTo,
+      bookstoreToId: req.body.bookstoreToId ? parseInt(req.body.bookstoreToId) : null,
+      // bookstoreFromId: parseInt(req.body.bookstoreFromId),
+      quantity: parseInt(req.body.quantity),
+      inventoryFromId: parseInt(req.body.inventoryFromId),
+      // bookId: parseInt(req.body.bookId),
+      type: req.body.type,
+      note: req.body.note || null,
+      deliveryDate: req.body.deliveryDate ? new Date(req.body.deliveryDate) : null,
+      place: req.body.place || null,
+      person: req.body.person || null
+    }
+    validateInputs(inputs);
 
     // Start by getting the inventoryFrom
     await prisma.$transaction(async (tx) => {
       const currentInventoryFrom = await tx.inventory.findUnique({
         where: {
-          id: parseInt(inventoryFromId),
-          isDeleted: false
+          id: inputs.inventoryFromId,
         }
       });
 
-      // Route 1 : delivered to Author
-      if (type === "send" && !bookstoreToId) {
+      if (currentInventoryFrom.isDeleted) {
+        throw new Error("deleted inventory from")
+      }
 
-        // if (country !== "México") {
-        //   res.status(400).json({message: "Una entrega al autor debe estar hecho desde el inventario de Was del libro en Mexico"})
-        //   return;
-        // }
+      // Route 1 : delivered to Author
+      if (inputs.type === "send" && !inputs.bookstoreToId) {
 
         const newTransferToAuthor = await tx.transfer.create({
           data: {
-            fromInventoryId: inventoryFromId,
-            quantity: parseInt(quantity),
-            note: note,
-            deliveryDate: dateInDateTime,
-            place: place,
-            person: person
+            fromInventoryId: inputs.inventoryFromId,
+            quantity: inputs.quantity,
+            note: inputs.note,
+            deliveryDate: inputs.deliveryDate,
+            place: inputs.place,
+            person: inputs.person
           }
         });
 
         if(newTransferToAuthor) {
           const updatedFromInventory = await tx.inventory.update({
-            where: {id: inventoryFromId},
+            where: {id: currentInventoryFrom.id},
             data: {
-              givenToAuthor: currentInventoryFrom.givenToAuthor + parseInt(quantity),
-              current: currentInventoryFrom.current - parseInt(quantity)
+              givenToAuthor: currentInventoryFrom.givenToAuthor + inputs.quantity,
+              current: currentInventoryFrom.current - inputs.quantity
             }
           });
+
+          console.log("updatedFromInventory givenToAuthor", updatedFromInventory.givenToAuthor)
+          console.log("updatedFromInventory current", updatedFromInventory.current)
         };
 
         res.status(200).json(newTransferToAuthor);
@@ -2384,111 +2467,92 @@ router.post('/transfer', async (req, res) => {
       let currentInventoryTo = await tx.inventory.findUnique({
         where: {
           bookId_bookstoreId: {
-            bookId: parseInt(bookId),
-            bookstoreId: parseInt(bookstoreToId)
+            bookId: currentInventoryFrom.bookId,
+            bookstoreId: inputs.bookstoreToId
           },
-          isDeleted: false
         }
       });
+      
+      if (inputs.type === "return" && (!currentInventoryTo || currentInventoryTo.isDeleted)) {
+        throw new Error("arrival inventory doesn't exist");
+      }
 
-      let newInventoryTo;
-      let recoveredInventoryTo;
-
-      // if it doesnt exist check if it isn't soft deleted. 1/ Get it if deleted
+      //if it doesn't exist create it
+      let created;
       if (!currentInventoryTo) {
-        const deletedInventoryMaybe = await tx.inventory.findUnique({
-          where: {
-            bookId_bookstoreId: {
-              bookId: parseInt(bookId),
-              bookstoreId: parseInt(bookstoreToId),
-            },
-            isDeleted: true
+        const newInventoryTo = await tx.inventory.create({
+          data: {
+            bookId: currentInventoryFrom.bookId,
+            bookstoreId: inputs.bookstoreToId,
+            initial: inputs.quantity,
+            current: inputs.quantity
           }
         });
 
-        // 2/ If it is not, create it.
-        if (!deletedInventoryMaybe) {
-          newInventoryTo = await tx.inventory.create({
-            data: {
-              bookId: parseInt(bookId),
-              bookstoreId: parseInt(bookstoreToId),
-              initial: parseInt(quantity),
-              current: parseInt(quantity)
-            }
-          });
-        // 3/ Otherwise recover it
-        } else {
-          recoveredInventoryTo = await tx.inventory.update({
-            where: {id: deletedInventoryMaybe.id},
-            data: {
-              isDeleted: false,
-              current: parseInt(quantity),
-              initial: parseInt(quantity)
-            }
-          });
-        }
-      };
-
-      // 4/ Set it to current
-      if (newInventoryTo) {
         currentInventoryTo = newInventoryTo
-      };
-
-      if (recoveredInventoryTo) {
-        currentInventoryTo = recoveredInventoryTo
+        created = true;
       }
+
+      // if it's soft deleted recover it
+      if (currentInventoryTo && currentInventoryTo.isDeleted) {
+        const recoveredInventoryTo = await tx.inventory.update({
+          where: {id: currentInventoryTo.id},
+          data: {
+            isDeleted: false,
+            current: inputs.quantity,
+            initial: inputs.quantity
+          }
+        });
+
+        currentInventoryTo = recoveredInventoryTo;
+        created = true;
+      } 
 
       // 5-Create the actual transfer now that you got the proper inventory To and From
       const newTransfer = await tx.transfer.create({
         data: {
-          fromInventoryId: parseInt(inventoryFromId),
+          fromInventoryId: inputs.inventoryFromId,
           toInventoryId: parseInt(currentInventoryTo.id),
-          quantity: parseInt(quantity),
-          type: type
+          quantity: inputs.quantity,
+          type: inputs.type
         }
       });
 
-      // 6- If creating the inventory succeeded, proceed further
-      // (don't want to proceed further if that step fails for whichever reason)
-      if (newTransfer) {
-        // If it's a send - update both From and To inventories
-        if (newTransfer.type === "send") {
-          const updatedInventoryFrom = await tx.inventory.update({
-            where: {id: parseInt(inventoryFromId)},
-            data: {
-              current: currentInventoryFrom.current - parseInt(quantity),
-              initial: currentInventoryFrom.initial - parseInt(quantity)
-            }
-          });
-          // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
-          if (!newInventoryTo && !recoveredInventoryTo) {
-            const updatedInventoryTo = await tx.inventory.update({
-              where: {id: currentInventoryTo.id},
-              data: {
-                current: currentInventoryTo.current + parseInt(quantity),
-                initial: currentInventoryTo.initial + parseInt(quantity)
-              }
-            });
+      // If it's a send - update both From and To inventories
+      if (newTransfer.type === "send") {
+        const updatedInventoryFrom = await tx.inventory.update({
+          where: {id: inputs.inventoryFromId},
+          data: {
+            current: currentInventoryFrom.current - inputs.quantity,
           }
-        // If it's a return - same process
-        } else {
-          const updatedInventoryFrom = await tx.inventory.update({
-            where: {id: parseInt(inventoryFromId)},
+        });
+        // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
+        if (!created) {
+          const updatedInventoryTo = await tx.inventory.update({
+            where: {id: currentInventoryTo.id},
             data: {
-              current: currentInventoryFrom.current - parseInt(quantity),
-              returns: currentInventoryFrom.returns + parseInt(quantity),
+              current: currentInventoryTo.current + inputs.quantity,
             }
           });
+        }
+      // If it's a return - same process
+      } else {
+        const updatedInventoryFrom = await tx.inventory.update({
+          where: {id: inputs.inventoryFromId},
+          data: {
+            current: currentInventoryFrom.current - inputs.quantity,
+            returns: currentInventoryFrom.returns + inputs.quantity,
+          }
+        });
 
-          if (!newInventoryTo && !recoveredInventoryTo) {
-            const updatedInventoryTo = await tx.inventory.update({
-              where: {id: currentInventoryTo.id},
-              data: {
-                current: currentInventoryTo.current + parseInt(quantity),
-                returns: currentInventoryTo.returns + parseInt(quantity),
-              }
-            });
-          }
+        if (!created) {
+          const updatedInventoryTo = await tx.inventory.update({
+            where: {id: currentInventoryTo.id},
+            data: {
+              current: currentInventoryTo.current + inputs.quantity,
+              returns: currentInventoryTo.returns + inputs.quantity,
+            }
+          });
         }
       }
 
@@ -2499,7 +2563,8 @@ router.post('/transfer', async (req, res) => {
     console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
     res.status(500).json({error: "a server error occurred while creating the transfer"})
   }
-})
+} 
+router.post('/transfer', addTransfer);
 
 /// Payments routes
 router.get('/payments', async (req, res) => {

@@ -35,7 +35,6 @@ function InventoriesList() {
   const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
   const [isInventoryTypeBook, setInventoryType] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false, "returns": true});
-  console.log(data)
 
   const columns = useMemo(() => [
     // {

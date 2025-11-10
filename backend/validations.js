@@ -232,6 +232,10 @@ export function validateInput(inputName, inputValue) {
     "person": [
       ["type", "string or null"],
       ["length", 255]
+    ],
+    "status": [
+      ["presence", "not empty"],
+      ["value", ["solicited", "created", "paid"]]
     ]
     
   }

@@ -1,6 +1,11 @@
 import { validateInput } from "validations.js"
 
-export async function createAuthor(prisma, first_name, last_name, email, role, isDeleted, categoryId) {
+export async function createAuthor(
+  prisma, 
+  first_name, 
+  last_name, 
+  email, 
+  role, isDeleted, categoryId) {
   const newAuthor = await prisma.user.create({
     data: {
       first_name: first_name,
@@ -48,11 +53,27 @@ export async function createBook(prisma, title, userList, isDeleted) {
   return newBook
 }
 
-export async function createBookstore(prisma, name, isDeleted) {
+export async function createBookstore(
+  prisma, 
+  name, 
+  {
+    isDeleted = false,
+    deal_percentage = 30.00,
+    comissions = false,
+    contact_name = "",
+    contact_phone = "",
+    contact_email = "",
+  } = {}
+) {
   const newBookstore = await prisma.bookstore.create({
     data: {
       name: name,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      deal_percentage: deal_percentage,
+      comissions: comissions,
+      contact_name: contact_name,
+      contact_phone: contact_phone,
+      contact_email: contact_email,
     }
   })
 
@@ -148,7 +169,8 @@ export async function createKindleSale(
   quantityPod, 
   dateCut, 
   datePay,
-  regalias
+  regalias,
+  {isDeleted = false} = {}
 ) {
   for (const element of paymentsIdList) {
     if (!element.id || validateInput("id", element.id).length > 0) {
@@ -167,7 +189,8 @@ export async function createKindleSale(
       quantityPod: quantityPod,
       dateCut: dateCut,
       datePay: datePay,
-      regalias: regalias
+      regalias: regalias,
+      isDeleted: isDeleted
     }
   })
 
@@ -224,12 +247,23 @@ export async function createTransfer(
   return newTransfer;
 }
 
-export async function createCost(prisma, paymentId, bookId, amount) {
+export async function createCost(
+  prisma, 
+  paymentId, 
+  bookId, 
+  amount,
+  {
+    note = null,
+    isDeleted = false
+  } = {}
+) {
   const newCost = await prisma.cost.create({
     data: {
       paymentId: paymentId,
       bookId: bookId,
-      amount: amount
+      amount: amount,
+      note: note,
+      isDeleted: isDeleted
     }
   })
 

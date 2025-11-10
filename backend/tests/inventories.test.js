@@ -386,7 +386,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
   let newInventory, deletedSale, newSale1, newSale2, newSale3, newBook2, newPayment;
   let deletedBook, deletedBookstore, newImpression2, newImpression3, newInventory2;
   let newInventory3, newInventory4, newBookstore2, newBookstore3, newBookstore4;
-  let newSale4;
+  let newSale4, originalInventory;
   let mockRes, mockReq, jsonResponse;
 
   beforeAll(async() => {
@@ -408,6 +408,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
     newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
     newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
     newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
+    originalInventory = await createInventory(prisma, newBook.id, 1, 1000, 1000, false, 0, 0);
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
     deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
     newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
@@ -438,6 +439,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
     if (newInventory2) {await deleteFromDB(prisma, newInventory2, "inventory")};
     if (newInventory3) {await deleteFromDB(prisma, newInventory3, "inventory")};
     if (newInventory4) {await deleteFromDB(prisma, newInventory4, "inventory")};
+    if (originalInventory) {await deleteFromDB(prisma, originalInventory, "inventory")};
     if (deletedInventory) {await deleteFromDB(prisma, deletedInventory, "inventory")};
     if (newBookstore) {await deleteFromDB(prisma, newBookstore, "bookstore")};
     if (newBookstore2) {await deleteFromDB(prisma, newBookstore2, "bookstore")};
@@ -503,8 +505,8 @@ describe("getting a specific book inventory with valid parameters", async() => {
   });
 
   it(`should correctly return the totals of all relevant inventories`, async() => {
-    expect(jsonResponse.currentTotal).toBe(9000);
-    expect(jsonResponse.initialTotal).toBe(9000);
+    expect(jsonResponse.currentTotal).toBe(10000);
+    expect(jsonResponse.initialTotal).toBe(1000);
     expect(jsonResponse.returnsTotal).toBe(20);
     expect(jsonResponse.givenToAuthorTotal).toBe(20);
     expect(jsonResponse.soldTotal).toBe(300);

@@ -7,9 +7,6 @@ function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gend
   const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
   const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
 
-  console.log("fieldName", fieldName);
-  console.log("fieldValue", fieldValue);
-
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
       fieldRef.classList.remove("error-inputs");

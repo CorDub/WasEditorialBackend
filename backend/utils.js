@@ -6,7 +6,6 @@ export function calculateAuthorRevenue(
   management, 
   storeCutPercent, 
   quantity) {
-
     let res = 0;
     if (onComission) {
       res = ((price - management) * quantity)

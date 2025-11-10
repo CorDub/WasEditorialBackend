@@ -2566,19 +2566,26 @@ export async function addTransfer(req, res) {
 } 
 router.post('/transfer', addTransfer);
 
+
 /// Payments routes
-router.get('/payments', async (req, res) => {
-  const chosenPaymentStatus = req.query.status;
+export async function getPayments(req, res) {
   try {
+    const inputs = {
+      status: req.query.status
+    }
+    validateInputs(inputs);
+
     const selectedPayments = await prisma.payment.findMany({
       where: {
         isDeleted: false,
-        status: chosenPaymentStatus
+        status: inputs.status
       },
       select: {
         id: true,
         userId: true,
         dateMarkedAsPaid: true,
+        status: true,
+        isDeleted: true,
         user: {
           select: {
             first_name: true,
@@ -2607,6 +2614,13 @@ router.get('/payments', async (req, res) => {
             }
           }
         },
+        kindleSales: {
+          select: {
+            id: true,
+            regalias: true,
+            isDeleted: true
+          }
+        },
         costs: {
           select: {
             id: true,
@@ -2620,7 +2634,7 @@ router.get('/payments', async (req, res) => {
       }
     });
 
-    for (const payment of selectedPayments) {
+    async function updateAmount(payment) {
       payment.amount = 0;
 
       const userWithCategory = await prisma.user.findUnique({
@@ -2632,28 +2646,51 @@ router.get('/payments', async (req, res) => {
         }
       })
 
-      if (payment.sales.length > 0) {
-        for (const sale of payment.sales) {
-          if (sale.isDeleted === false) {
-            payment.amount += calculateAuthorRevenue(
-              sale.inventory.bookstore.comissions,
-              sale.inventory.price,
-              userWithCategory.category.management_min,
-              sale.inventory.bookstore.deal_percentage,
-              sale.quantity
-            )
+      async function updateSales(payment) {
+        if (payment.sales.length > 0) {
+          for (const sale of payment.sales) {
+            if (sale.isDeleted === false) {
+              payment.amount += calculateAuthorRevenue(
+                sale.inventory.bookstore.comissions,
+                sale.inventory.price,
+                userWithCategory.category.management_min,
+                sale.inventory.bookstore.deal_percentage,
+                sale.quantity
+              )
+            }
           }
-        }
-      };
+        };
+      }
 
-      if (payment.costs.length > 0) {
-        for (const cost of payment.costs) {
-          if (cost.isDeleted === false) {
-            payment.amount -= cost.amount
+      async function updateKindleSales(payment) {
+        if (payment.kindleSales.length > 0) {
+          for (const kindleSale of payment.kindleSales) {
+            if (kindleSale.isDeleted === false) {
+              payment.amount += kindleSale.regalias
+            }
           }
         }
       }
+
+      async function updateCosts(payment) {
+        if (payment.costs.length > 0) {
+          for (const cost of payment.costs) {
+            if (cost.isDeleted === false) {
+              payment.amount -= cost.amount
+            }
+          }
+        }
+      }
+      
+      await Promise.all([
+        updateSales(payment),
+        updateKindleSales(payment),
+        updateCosts(payment)
+      ])
     }
+
+    const promises = selectedPayments.map(payment => updateAmount(payment));
+    const results = await Promise.all(promises)
 
     res.status(200).json(selectedPayments);
 
@@ -2661,37 +2698,44 @@ router.get('/payments', async (req, res) => {
     console.error("\n ERROR FETCHING PAYMENTS \n", error);
     res.status(500).json({error: "a server error occurred while fetching payments"})
   }
-})
+}
+router.get('/payments', getPayments);
 
-router.patch('/markAsPaid/:id', async (req, res) => {
+
+export async function markPaymentAsPaid(req, res) {
   try {
-    const queryPaymentId = parseInt(req.params.id)
+    const inputs = {
+      id: parseInt(req.params.id),
+    }
+    validateInputs(inputs);
+
     const now = new Date()
+    const paymentToUpdate = await prisma.payment.findUnique({where: {id: inputs.id}})
+    if (paymentToUpdate && paymentToUpdate.isDeleted) {throw new Error("deleted payment")};
+    if (paymentToUpdate && paymentToUpdate.status === "created") {throw new Error("not solicited yet")};
+    if (paymentToUpdate && paymentToUpdate.status === "paid") {throw new Error("already paid")};
+
     const updatedPayment = await prisma.payment.update({
       where: {
-        id: queryPaymentId
+        id: inputs.id
       },
       data: {
         status: 'paid',
         dateMarkedAsPaid: now
       }
     })
-
-    if (updatedPayment) {
-      res.status(200).json({message: "Successfully marked payment as paid"})
-    } else {
-      res.status(500).json({error:"a server error occurred while updating payments"});
-    }
-
+    
+    res.status(200).json({message: "Successfully marked payment as paid"})
   } catch(error) {
     console.error("\n ERROR MARKING PAYMENT AS PAID \n", error);
     res.status(500).json({error:"a server error occurred while updating payments"})
   }
-})
+}
+router.patch('/markAsPaid/:id', markPaymentAsPaid);
 
 /// Costs routes
 
-router.get('/currentCosts', async (req, res) => {
+export async function getCurrentCosts(req, res) {
   try {
     const currentCosts = await prisma.cost.findMany({
       where: {
@@ -2733,12 +2777,13 @@ router.get('/currentCosts', async (req, res) => {
     console.error("\n ERROR getting current costs from server \n", error);
     res.status(500).json({error:"a server error occurred while fetching payments"})
   }
-})
+}
+router.get('/currentCosts', getCurrentCosts)
 
 export async function addCost(req, res) {
   try {
     const inputs = {
-      "paymentId": req.body.paymentId !== null ? parseInt(req.body.paymentId) : null,
+      "paymentId": req.body.paymentId ? parseInt(req.body.paymentId) : null,
       "amount": parseFloat(req.body.amount),
       "note": req.body.note,
       "bookId": parseInt(req.body.bookId),
@@ -2842,22 +2887,28 @@ export async function addCost(req, res) {
 }
 router.post('/cost', addCost)
 
-router.patch("/cost/:id", async (req, res) => {
+export async function updateCost(req, res) {
   try {
-    const costId = parseInt(req.params.id);
-    const amountQuery = parseFloat(req.body.amount);
-    const noteQuery = req.body.note;
-    const bookIdQuery = parseInt(req.body.bookId);
+    const inputs = {
+      id: parseInt(req.params.id),
+      amount: parseFloat(req.body.amount),
+      note: req.body.note,
+      bookId: parseInt(req.body.bookId)
+    }
+    validateInputs(inputs);
+
+    const cost = await prisma.cost.findUnique({where: {id: inputs.id}})
+    if (cost.isDeleted) { throw new Error ("deleted cost") }
 
     await prisma.$transaction(async (tx) => {
       const updatedCost = await tx.cost.update({
         where: {
-          id: costId
+          id: inputs.id
         },
         data: {
-          amount: amountQuery,
-          note: noteQuery,
-          bookId: bookIdQuery
+          amount: inputs.amount,
+          note: inputs.note,
+          bookId: inputs.bookId
         }
       })
     })
@@ -2867,40 +2918,24 @@ router.patch("/cost/:id", async (req, res) => {
     console.error("\n ERROR UPDATING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while updating the cost"})
   }
-}) 
+}
+router.patch("/cost/:id", updateCost) 
 
-router.delete('/cost/:id', async (req, res) => {
+export async function deleteCost(req, res) {
   try {
-    const costId = parseInt(req.params.id);
+    const inputs = {
+      id: parseInt(req.params.id)
+    }
 
     await prisma.$transaction(async (tx) => {
       const markedAsDeletedCost = await tx.cost.update({
         where: {
-          id: costId
+          id: inputs.id
         },
         data: {
           isDeleted: true
         }
       });
-
-      // if (markedAsDeletedCost) {
-      //   const previousPayment = await tx.payment.findUnique({
-      //     where: {
-      //       id: markedAsDeletedCost.paymentId
-      //     }
-      //   });
-
-      //   if (previousPayment) {
-      //     const updatedPayment = await tx.payment.update({
-      //       where: {
-      //         id: markedAsDeletedCost.paymentId
-      //       },
-      //       data: {
-      //         amount: previousPayment.amount + markedAsDeletedCost.amount
-      //       }
-      //     })
-      //   }
-      // }
     })
 
     res.status(200).json({message: "The cost was deleted successfully"});
@@ -2908,12 +2943,13 @@ router.delete('/cost/:id', async (req, res) => {
     console.error("\n ERROR DELETING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while deleting the cost"})
   }
-})
+}
+router.delete('/cost/:id', deleteCost)
 
 
 /// KINDLE SALES ROUTES
 
-router.get('/kindlesales', async (req, res) => {
+export async function getKindleSales(req, res) {
   try {
     let startDate = new Date(JSON.parse(req.query.startDate))
     let endDate = new Date(JSON.parse(req.query.endDate))
@@ -2998,10 +3034,12 @@ router.get('/kindlesales', async (req, res) => {
     console.error(error);
     res.status(500).json({error: "Server error at sales route"});
   }
-});
+}
+router.get('/kindlesales', getKindleSales);
 
 export async function addKindleSale (req, res) {
   try {
+    console.log("req", req.body)
     const inputs = {
       "bookId": parseInt(req.body.book),
       "quantityEbook": parseInt(req.body.quantityEbook),
@@ -3047,7 +3085,7 @@ export async function addKindleSale (req, res) {
           const createdPayment = await tx.payment.create({
             data: {
               userId: author,
-              forMonth: getForMonth(datePayQuery)
+              forMonth: getForMonth(inputs.datePay)
             }
           })
           paymentIds.push({"id": createdPayment.id})
@@ -3079,7 +3117,7 @@ export async function addKindleSale (req, res) {
 }
 router.post("/kindlesales", addKindleSale);
 
-router.patch("/kindlesales/:id", async (req, res) => {
+export async function updateKindleSale(req, res) {
   try {
     const kindleSaleIdQuery = parseInt(req.params.id);
     const bookIdQuery = parseInt(req.body.book);
@@ -3108,9 +3146,10 @@ router.patch("/kindlesales/:id", async (req, res) => {
     console.log("Server error at updating kindlesales ", error);
     res.status(500).json({error: "Server error while updating the kindle sale"})
   }
-})
+}
+router.patch("/kindlesales/:id", updateKindleSale)
 
-router.delete("/kindlesales/:id", async (req, res) => {
+export async function deleteKindleSale(req, res) {
   try {
     const kindleSaleIdQuery = parseInt(req.params.id);
     const deletedKindleSale = await prisma.kindleSale.update({
@@ -3127,7 +3166,8 @@ router.delete("/kindlesales/:id", async (req, res) => {
     console.log("error at deleting kindlesales ", error);
     res.status(500).json({error: "Server error while deleting the kindle sale"})
   }
-})
+}
+router.delete("/kindlesales/:id", deleteKindleSale)
 
 /// soft delete on cascade
 

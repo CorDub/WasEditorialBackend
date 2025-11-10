@@ -268,10 +268,12 @@ function BookInventory({
   useEffect(() => {
     if (specificBook) {
       setData(specificBook.sortedRelevantInventories)
+      console.log("data", specificBook.sortedRelevantInventories)
       setSelectedBook(specificBook.name)
       setSelectedBookId(specificBook.id)
       setCurrentTotal(specificBook.currentTotal)
       setInitialTotal(specificBook.initialTotal)
+      console.log('initialTotal', specificBook.initialTotal)
       setSoldTotal(specificBook.soldTotal)
       setGivenToAuthorTotal(specificBook.givenToAuthorTotal)
       setReturnsTotal(specificBook.returnsTotal)

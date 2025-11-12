@@ -1,6 +1,6 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { addTransfer } from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
+import { addTransfer } from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
 import {
   createAuthor,
   createBook,
@@ -8,7 +8,7 @@ import {
   createInventory,
   createTransfer,
   deleteFromDB 
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 
 //ADDING

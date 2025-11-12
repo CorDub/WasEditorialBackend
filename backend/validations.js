@@ -236,6 +236,11 @@ export function validateInput(inputName, inputValue) {
     "status": [
       ["presence", "not empty"],
       ["value", ["solicited", "created", "paid"]]
+    ],
+    "password": [
+      ["presence", "not empty"],
+      ['type', "string"],
+      ["length", 25]
     ]
     
   }

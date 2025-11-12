@@ -1,6 +1,6 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { getPayments, markPaymentAsPaid } from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
+import { getPayments, markPaymentAsPaid } from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
 import {
   createAuthor,
   createBook,
@@ -12,7 +12,7 @@ import {
   createCost,
   deleteFromDB, 
   createCategory
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 describe(`getting all valid solicited payments`, async() => {
   let newAuthor, newAuthor2, newBook, newBookstore, newInventory, newPayment, newPayment2;
@@ -24,8 +24,8 @@ describe(`getting all valid solicited payments`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -134,8 +134,8 @@ describe(`getting all valid created payments`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -235,8 +235,8 @@ describe(`getting all valid paid payments`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -337,8 +337,8 @@ describe(`marking a solicited payment as paid`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -417,8 +417,8 @@ describe(`marking a deleted payment as paid`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -497,8 +497,8 @@ describe(`marking a created payment as paid`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -578,8 +578,8 @@ describe(`marking an already paid payment as paid`, async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})

@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { validateInput } from "../validations.js";
+import { validateInput } from "../../validations.js";
 
 test("validates type string correctly", () => {
   expect(validateInput("firstName", "string")).toStrictEqual([])

@@ -45,15 +45,16 @@ export function generateMonthKeysForRange(startDate, endDate) {
 
   const start = startString.substring(0,7);
   const end = endString.substring(0,7);
+
   let numMonthsInRange = 0;
   if (start.substring(0,4) === end.substring(0,4)) {
-    numMonthsInRange = Number(end.substring(5,7)) - Number(start.substring(5,7)) + 1;
+    numMonthsInRange = Number(end.substring(5,7)) - Number(start.substring(5,7));
   } else {
     numMonthsInRange = Number(end.substring(5,7)) 
       + (Number(end.substring(0,4)) - Number(start.substring(0,4))) * 12
       - Number(start.substring(5,7))
   }
-  
+
   let monthKeysInRange = []
   for (let i = 0; i <= numMonthsInRange; i++) {
     const month = (Number(start.substring(5,7)) + i) - (12 * Math.trunc((Number(start.substring(5,7)) + i -1)/12)) 

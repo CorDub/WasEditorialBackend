@@ -1,13 +1,13 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { addImpression, updateImpression, deleteImpression } from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
+import { addImpression, updateImpression, deleteImpression } from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
 import {
   createAuthor,
   createBook,
   createInventory,
   createImpression,
   deleteFromDB 
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 //ADDING
 describe(`adding an impression with valid parameters`, async() => {

@@ -1,7 +1,7 @@
 import { describe, expect, vi, it, afterAll, beforeAll } from "vitest";
-import { addAdmin, updateAdmin, deleteAdmin } from "../routes/superAdminRoutes.js";
-import { prisma } from "../prisma/client.js";
-import * as mailer from "../mailer.js";
+import { addAdmin, updateAdmin, deleteAdmin } from "../../routes/superAdminRoutes.js";
+import { prisma } from "../../prisma/client.js";
+import * as mailer from "../../mailer.js";
 vi.mock('../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),
 }));

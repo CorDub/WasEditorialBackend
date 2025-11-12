@@ -5,9 +5,9 @@ import {
   addBookstore,
   updateBookstore,
   deleteBookstore
-} from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
-import { getForMonth } from "../utils.js"
+} from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
+import { getForMonth } from "../../utils.js"
 import {
   createAuthor,
   createBook,
@@ -19,7 +19,7 @@ import {
   createCost,
   createImpression,
   deleteFromDB 
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 // GETTING
 describe("getting all valid bookstores", async() => {

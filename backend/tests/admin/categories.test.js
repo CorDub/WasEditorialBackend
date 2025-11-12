@@ -5,13 +5,13 @@ import {
   getCategoryTypes,
   deleteCategory,
   updateCategory
- } from "../routes/adminRoutes.js";
- import { prisma } from '../prisma/client.js';
+ } from "../../routes/adminRoutes.js";
+ import { prisma } from '../../prisma/client.js';
  import { 
   createCategory,
   deleteFromDB, 
   createAuthor
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 //GETTING
 describe("getting all valid categories", () => {
@@ -403,8 +403,8 @@ describe('deleting a category with valid parameters', () => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "Omega Premium", 200.25)
     otherCategory = await createCategory(prisma, "Not so premium", 100.50)
-    newAuthor = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author", false, newCategory.id)
-    newDeletedAuthor = await createAuthor(prisma, "newDeleted", "author", "newDeleted.author@gmail.com", "author", true, newCategory.id)
+    newAuthor = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
+    newDeletedAuthor = await createAuthor(prisma, "newDeleted", "author", "newDeleted.author@gmail.com", "author", {isDeleted: true, categoryId: newCategory.id})
 
     mockReq = {
       params: {

@@ -1,7 +1,7 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { getSales, addSale, updateSale, deleteSale } from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
-import { getForMonth } from "../utils.js"
+import { getSales, addSale, updateSale, deleteSale } from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
+import { getForMonth } from "../../utils.js"
 import {
   createAuthor,
   createBook,
@@ -13,7 +13,7 @@ import {
   createCost,
   createImpression,
   deleteFromDB 
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 async function seed() {
   let newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");

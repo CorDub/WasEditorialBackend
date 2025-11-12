@@ -23,12 +23,15 @@ function ForgottenPasswordPage() {
         setErrors(prev => [...prev, "Los correos ingresados no eran los mismos."])
       }
 
-      const response = await fetch(`${baseURL}/api/user?email=${correo1}`, {
-        method: "GET",
+      const response = await fetch(`${baseURL}/api/reset`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
+        body: {
+          email: correo1
+        }
       });
 
       if (response.ok === false) {

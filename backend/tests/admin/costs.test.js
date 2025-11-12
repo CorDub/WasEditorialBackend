@@ -1,6 +1,6 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { getCurrentCosts, addCost, updateCost, deleteCost } from "../routes/adminRoutes.js";
-import { prisma } from "../prisma/client.js";
+import { getCurrentCosts, addCost, updateCost, deleteCost } from "../../routes/adminRoutes.js";
+import { prisma } from "../../prisma/client.js";
 import {
   createAuthor,
   createBook,
@@ -12,7 +12,7 @@ import {
   createCost,
   deleteFromDB, 
   createCategory
-} from "../testUtils.js";
+} from "../../testUtils.js";
 
 describe('getting all valid current costs', async() => {
   let newAuthor, newAuthor2, newBook, newBookstore, newInventory, newPayment, newPayment2;
@@ -24,8 +24,8 @@ describe('getting all valid current costs', async() => {
   beforeAll(async() => {
     newCategory = await createCategory(prisma, "premium", 180);
     newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false, newCategory2.id)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false, newCategory.id)
+    newAuthor = await {isDeleted: (prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newBookstore = await createBookstore(prisma, "newBookstore")
     newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
@@ -111,8 +111,8 @@ describe("adding a valid cost without paymentId", () => {
   let addedCosts
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false})
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false})
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
 
     mockReq = {
@@ -182,8 +182,8 @@ describe(`adding a valid cost with paymentId`, async() => {
   let addedCosts
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
 
@@ -255,8 +255,8 @@ describe(`adding an invalid cost`, async() => {
   let addedCosts
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
 
@@ -311,8 +311,8 @@ describe(`updating a cost with valid parameters`, async() => {
   let newCost, newPayment, newBook, newAuthor, newAuthor2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newCost = await createCost(prisma, newPayment.id, newBook.id, 50.25, {note: "newCost"})
@@ -360,8 +360,8 @@ describe(`updating a cost with invalid parameters`, async() => {
   let newCost, newPayment, newBook, newAuthor, newAuthor2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newCost = await createCost(prisma, newPayment.id, newBook.id, 50.25, {note: "newCost"})
@@ -409,8 +409,8 @@ describe(`updating a deleted cost`, async() => {
   let newCost, newPayment, newBook, newAuthor, newAuthor2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newCost = await createCost(prisma, newPayment.id, newBook.id, 50.25, {note: "newCost", isDeleted: true})
@@ -458,8 +458,8 @@ describe(`deleting a cost with valid parameters`, async() => {
   let newCost, newPayment, newBook, newAuthor, newAuthor2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", false)
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", false)
+    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author")
+    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author")
     newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newCost = await createCost(prisma, newPayment.id, newBook.id, 50.25, {note: "newCost"})

@@ -5,7 +5,20 @@ export async function createAuthor(
   first_name, 
   last_name, 
   email, 
-  role, isDeleted, categoryId) {
+  role, 
+  { 
+    isDeleted = false,
+    categoryId = 1,
+    referido = null,
+    phone = null,
+    birthday = null,
+    clabe = null,
+    name_bank_account = null,
+    bank = null,
+    swift = null,
+    password = null,
+  } = {}
+) {
   const newAuthor = await prisma.user.create({
     data: {
       first_name: first_name,
@@ -13,7 +26,15 @@ export async function createAuthor(
       email: email,
       role: role,
       isDeleted: isDeleted,
-      categoryId: categoryId
+      categoryId: categoryId,
+      referido: referido,
+      phone: phone,
+      birthday: birthday,
+      clabe: clabe,
+      name_bank_account: name_bank_account,
+      bank: bank,
+      swift: swift,
+      password: password
     }
   });
 

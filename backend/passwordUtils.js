@@ -12,14 +12,12 @@ export async function setResetPasswordCode(user_id, code) {
       where : {id: user_id},
       data: {reset_password_code: code},
     })
-    console.log(set_code);
 
     setTimeout(() => {
       const invalidate_code = prisma.user.update({
         where: {id: user_id},
         data: {reset_password_code: null},
       });
-      console.log(invalidate_code);
     }, 1 * 24 * 60 * 60 * 1000);
 
   } catch(error) {

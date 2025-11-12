@@ -165,7 +165,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         },
         credentials: "include",
         body: JSON.stringify({
-          book: book,
           quantityEbook: quantityEbook,
           quantityPod: quantityPod,
           dateCut: dateCut,

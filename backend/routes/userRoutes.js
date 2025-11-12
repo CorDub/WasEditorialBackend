@@ -3,22 +3,28 @@ import { matchConfirmationCode } from './../passwordUtils.js';
 import bcrypt from 'bcrypt';
 import { sendResetPasswordMail } from './../mailer.js';
 import { prisma } from "../prisma/client.js"
+import { validateInputs } from '../utils.js';
 
 const router = express.Router();
 
-router.post('/login', async (req, res) => {
+export async function login(req, res) {
   try {
-    const { email, password } = req.body;
-    const user = await prisma.user.findUnique({
-      where: {
-        email: email,
-        isDeleted: false
-      }});
-    if (user === null) {
+    // const { email, password } = req.body;
+    const inputs = {
+      email: req.body.email,
+      password: req.body.password
+    }
+    validateInputs(inputs);
+
+    const user = await prisma.user.findUnique({where: {email: inputs.email}});
+    if (user && user.isDeleted) {
+      return res.status(401).send("No tenemos una cuenta registrada con este correo.")
+    }
+    if (!user) {
       return res.status(401).send("No tenemos una cuenta registrada con este correo.");
     }
 
-    if (user.email === email && (await bcrypt.compare(password, user.password))) {
+    if (user.email === inputs.email && (await bcrypt.compare(inputs.password, user.password))) {
       req.session.user_id =  user.id ;
       const user_send = {
         id: user.id,
@@ -36,37 +42,43 @@ router.post('/login', async (req, res) => {
   } catch(error) {
     console.error(error);
   }
-})
+}
+router.post('/login', login)
 
-router.get('/user', async (req, res) => {
+export async function getReset(req, res) {
   try {
-    const email = req.query.email;
-    const user = await prisma.user.findUnique({where: {
-      email: email,
-      isDeleted: false
-    }});
-
-    if (user === null) {
-      res.status(204).json("No user with this email were found");
-    } else {
-      sendResetPasswordMail(email, user.first_name)
-      const user_send = {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        referido: user.referido,
-        categoryId: user.categoryId,
-        role: user.role,
-        font_size: user.font_size
-      }
-      res.status(200).json(user_send);
+    const inputs = {
+      email: req.body.email
     }
+    validateInputs(inputs)
+
+    const user = await prisma.user.findUnique({where: {email: inputs.email,}});
+    if (user && user.isDeleted) {
+      return res.status(500).json("Error retrieving the user");
+    }
+    if (!user) {
+      return res.status(500).json("Error retrieving the user");
+    } 
+
+    await sendResetPasswordMail(inputs.email, user.first_name)
+    const user_send = {
+      id: user.id,
+      // first_name: user.first_name,
+      // last_name: user.last_name,
+      // referido: user.referido,
+      // categoryId: user.categoryId,
+      // role: user.role,
+      // font_size: user.font_size
+    }
+    res.status(200).json(user_send);
   } catch (error) {
     console.error("Error retrieving the user:", error)
+    return res.status(500).json("Error retrieving the user");
   }
-})
+}
+router.post('/reset', getReset)
 
-router.get('/user_extra', async (req, res) => {
+export async function getUserExtra(req, res) {
   try {
     const user_id = req.session.user_id;
     const user = await prisma.user.findUnique({where: {
@@ -92,9 +104,10 @@ router.get('/user_extra', async (req, res) => {
   } catch (error) {
     console.error("Error retrieving info: ", error)
   }
-})
+}
+router.get('/user_extra', getUserExtra)
 
-router.patch('/user', async (req, res) => {
+export async function updateUser(req, res) {
   try {
     const fieldToChange = req.body;
     const updatedUser = await prisma.user.update({
@@ -114,9 +127,10 @@ router.patch('/user', async (req, res) => {
     console.error("Error when updating user: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
-})
+}
+router.patch('/user', updateUser)
 
-router.post('/confirmation_code', async (req, res) => {
+export async function getConfirmationCode(req, res) {
   try {
     const { confirmation_code, user_id } = req.body;
     const matched = await matchConfirmationCode(confirmation_code, user_id);
@@ -132,9 +146,10 @@ router.post('/confirmation_code', async (req, res) => {
     console.error("Error confirming code:", error);
     res.status(500).json({error: 'A server error ocurred while confirming the code'});
   }
-})
+}
+router.post('/confirmation_code', getConfirmationCode)
 
-router.post('/logout', async (req, res) => {
+export async function logout(req, res) {
   try {
     req.session.destroy((err) => {
       if (err) {
@@ -147,6 +162,7 @@ router.post('/logout', async (req, res) => {
   } catch(error) {
     console.error("Error in logout route:", error);
   }
-})
+}
+router.post('/logout', logout)
 
 export default router;

@@ -38,7 +38,6 @@ function ConfirmationCodePage() {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
         alert('El codigo que ingreso no esta correcto');
       } else {
         navigate("/author/change-password", {state: { user_id: id }});

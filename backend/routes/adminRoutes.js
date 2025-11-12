@@ -2951,18 +2951,23 @@ router.delete('/cost/:id', deleteCost)
 
 export async function getKindleSales(req, res) {
   try {
-    let startDate = new Date(JSON.parse(req.query.startDate))
-    let endDate = new Date(JSON.parse(req.query.endDate))
+    // let startDate = new Date(JSON.parse(req.query.startDate))
+    // let endDate = new Date(JSON.parse(req.query.endDate))
+    const inputs = {
+      startDate: new Date(req.query.startDate),
+      endDate: new Date(req.query.endDate)
+    }
+    validateInputs(inputs)
 
-    startDate.setUTCHours(0, 0, 0, 0);
-    endDate.setUTCHours(23, 59, 59, 999);
+    inputs.startDate.setUTCHours(0, 0, 0, 0);
+    inputs.endDate.setUTCHours(23, 59, 59, 999);
 
     const kindleSales = await prisma.kindleSale.findMany({
       where: {
         isDeleted: false,
         datePay: {
-          gte: startDate,
-          lt: endDate
+          gte: inputs.startDate,
+          lt: inputs.endDate
         }
       },
       select: {
@@ -2997,7 +3002,7 @@ export async function getKindleSales(req, res) {
       kindleSale.authorsString = getAuthorString(kindleSale.book.users);
     })
 
-    const monthsRange = generateMonthKeysForRange(startDate, endDate)
+    const monthsRange = generateMonthKeysForRange(inputs.startDate, inputs.endDate)
     let kindleSalesCompiled = [];
     for (const month of monthsRange) {
       kindleSalesCompiled.push(
@@ -3029,7 +3034,7 @@ export async function getKindleSales(req, res) {
       }
     }
 
-    res.json(kindleSalesCompiled);
+    res.status(200).json(kindleSalesCompiled);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at sales route"});
@@ -3039,7 +3044,6 @@ router.get('/kindlesales', getKindleSales);
 
 export async function addKindleSale (req, res) {
   try {
-    console.log("req", req.body)
     const inputs = {
       "bookId": parseInt(req.body.book),
       "quantityEbook": parseInt(req.body.quantityEbook),
@@ -3119,25 +3123,29 @@ router.post("/kindlesales", addKindleSale);
 
 export async function updateKindleSale(req, res) {
   try {
-    const kindleSaleIdQuery = parseInt(req.params.id);
-    const bookIdQuery = parseInt(req.body.book);
-    const quantityEbookQuery = parseInt(req.body.quantityEbook);
-    const quantityPodQuery = parseInt(req.body.quantityPod);
-    const dateCutQuery = new Date(req.body.dateCut);
-    const datePayQuery = new Date(req.body.datePay);
-    const regaliasQuery = parseFloat(req.body.regalias);
+    const inputs = {
+      id: parseInt(req.params.id),
+      quantityEbook: parseInt(req.body.quantityEbook),
+      quantityPod: parseInt(req.body.quantityPod),
+      dateCut: new Date(req.body.dateCut),
+      datePay: new Date(req.body.datePay),
+      regalias: parseFloat(req.body.regalias)
+    }
+    validateInputs(inputs)
+
+    const targetSale = await prisma.kindleSale.findUnique({where: {id: inputs.id}})
+    if (targetSale.isDeleted) { throw new Error ("deleted kindle sale") }
 
     const updateKindleSale = await prisma.kindleSale.update({
       where: {
-        id: kindleSaleIdQuery
+        id: inputs.id
       },
       data: {
-        bookId : bookIdQuery,
-        quantityEbook: quantityEbookQuery,
-        quantityPod: quantityPodQuery,
-        dateCut: dateCutQuery,
-        datePay: datePayQuery,
-        regalias: regaliasQuery
+        quantityEbook: inputs.quantityEbook,
+        quantityPod: inputs.quantityPod,
+        dateCut: inputs.dateCut,
+        datePay: inputs.datePay,
+        regalias: inputs.regalias
       }
     })
 
@@ -3151,10 +3159,14 @@ router.patch("/kindlesales/:id", updateKindleSale)
 
 export async function deleteKindleSale(req, res) {
   try {
-    const kindleSaleIdQuery = parseInt(req.params.id);
+    const inputs = {
+      id: parseInt(req.params.id)
+    }
+    validateInputs(inputs)
+
     const deletedKindleSale = await prisma.kindleSale.update({
       where: {
-        id: kindleSaleIdQuery
+        id: inputs.id
       },
       data: {
         isDeleted: true
@@ -3359,323 +3371,5 @@ async function softDeleteCostsOnCascade(deletedBookId, tx) {
 
   return deletedCostsIds;
 }
-
-// updateOnCascade routes
-
-// async function updatePaymentsOnCascade(category, previousCategory, tx) {
-//   const impactedUsers = await tx.user.findMany({
-//     where: {
-//       categoryId: category.id,
-//       isDeleted: false
-//     }
-//   });
-
-//   if (impactedUsers.length === 0) {
-//     return;
-//   }
-
-//   let impactedSales = [];
-//   for (const user of impactedUsers) {
-//     const impactedBooks = await tx.book.findMany({
-//       where: {
-//         users: {
-//           some: {
-//             id: user.id
-//           }
-//         },
-//         isDeleted: false
-//       },
-//       include: {
-//         users: true
-//       }
-//     })
-
-//     for (const book of impactedBooks) {
-//       const numberOfAuthors = book.users.length
-//       const impactedInventories = await tx.inventory.findMany({
-//         where: {
-//           bookId: book.id,
-//           isDeleted: false
-//         },
-//         include: {
-//           bookstore: true
-//         }
-//       })
-
-//       for (const inventory of impactedInventories) {
-//         const impactedSalesForInventory = await tx.sale.findMany({
-//           where: {
-//             inventoryId: inventory.id,
-//             isDeleted: false
-//           }
-//         });
-  
-//         for (const sale of impactedSalesForInventory) {
-//           impactedSales.push(
-//             {...sale, 
-//             "userId": user.id,
-//             "price": inventory.price,
-//             "comissions": inventory.bookstore.comissions,
-//             "numberOfAuthors": numberOfAuthors}
-//           )
-//         };
-//       }
-//     }
-//   }
-
-//   for (const sale of impactedSales) {
-//     const paymentForMonth = getForMonth(sale.createdAt);
-//     const previousSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       previousCategory.management_min,
-//       previousCategory.percentage_management_stores,
-//       sale.quantity,
-//     );
-//     const newSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       category.management_min,
-//       category.percentage_management_stores,
-//       sale.quantity,
-//     )
-
-//     const previousPayment = await tx.payment.findUnique({
-//       where: {
-//         userId_forMonth: {
-//           userId: sale.userId,
-//           forMonth: paymentForMonth,
-//         },
-//         isDeleted: false
-//       }
-//     });
-
-//     const quantityUpdate = newSaleValue - previousSaleValue
-
-//     if (previousPayment && previousPayment.status !== "paid") {
-//       const updatedPayment = await tx.payment.update({
-//         where: {
-//           userId_forMonth: {
-//             userId: sale.userId,
-//             forMonth: paymentForMonth,
-//           },
-//           isDeleted: false
-//         },
-//         data: {
-//           amount: previousPayment.amount + quantityUpdate
-//         }
-//       })
-//     }
-//   }
-// }
-
-// async function updatePaymentsOnCascadeFromBookstore(bookstore, tx) {
-//   let impactedSales = [];
-//   const impactedInventories = await tx.inventory.findMany({
-//     where: {
-//       bookstoreId: bookstore.id,
-//       isDeleted: false
-//     },
-//     include: {
-//       bookstore: true,
-//       book: true,
-//       sales: true
-//     }
-//   });
-
-//   for (const inventory of impactedInventories) {
-//     const impactedBook = await tx.book.findFirst({
-//       where: {
-//         id: inventory.bookId,
-//         isDeleted: false
-//       },
-//       select: {
-//         users: {
-//           select: {
-//             id: true,
-//             category: {
-//               select: {
-//                 percentage_management_stores: true,
-//                 percentage_royalties: true,
-//                 management_min: true
-//               }
-//             }
-//           }
-//         }
-//       }
-//     });
-
-//     const impactedUsers = impactedBook.users;
-
-//     const impactedSalesForInventory = await tx.sale.findMany({
-//       where: {
-//         inventoryId: inventory.id,
-//         isDeleted: false
-//       }
-//     });
-
-//     for (const sale of impactedSalesForInventory) {
-//       for (const user of impactedUsers) {
-//         impactedSales.push(
-//           {...sale,
-//             "userId": user.id,
-//             "price": inventory.price,
-//             'management_min': user.category.management_min,
-//             "percentage_management_stores": user.category.percentage_management_stores,
-//             "percentage_royalties": user.category.percentage_royalties,
-//             "comissions": inventory.bookstore.comissions,
-//             "numberOfAuthors": impactedUsers.length
-//           }
-//         )
-//       }
-//     };
-//   }
-
-//   let count = 0;
-//   for (const sale of impactedSales) {
-//     const paymentForMonth = getForMonth(sale.createdAt);
-//     const previousSaleValue = calculateAuthorRevenue(
-//       !sale.comissions,
-//       sale.price,
-//       sale.management_min,
-//       sale.percentage_management_stores,
-//       sale.quantity,
-//     );
-//     const newSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       sale.management_min,
-//       sale.percentage_management_stores,
-//       sale.quantity,
-//     )
-//     const previousPayment = await tx.payment.findUnique({
-//       where: {
-//         userId_forMonth: {
-//           userId: sale.userId,
-//           forMonth: paymentForMonth,
-//         },
-//         isDeleted: false
-//       }
-//     });
-
-//     const quantityUpdate = newSaleValue - previousSaleValue
-
-//     if (previousPayment && previousPayment.status !== "paid") {
-//       const updatedPayment = await tx.payment.update({
-//         where: {
-//           userId_forMonth: {
-//             userId: sale.userId,
-//             forMonth: paymentForMonth,
-//           },
-//           isDeleted: false
-//         },
-//         data: {
-//           amount: previousPayment.amount + quantityUpdate
-//         }
-//       });
-//     }
-//   }
-// }
-
-// async function updatePaymentsOnCascadeFromInventory(inventory, previousPrice, tx) {
-//   let impactedSales = [];
-//   const impactedBook = await tx.book.findFirst({
-//     where: {
-//       id: inventory.bookId,
-//       isDeleted: false
-//     },
-//     select: {
-//       users: {
-//         select: {
-//           id: true,
-//           category: {
-//             select: {
-//               percentage_management_stores: true,
-//               percentage_royalties: true,
-//               management_min: true
-//             }
-//           }
-//         }
-//       }
-//     }
-//   });
-
-//   const impactedUsers = impactedBook.users;
-//   const relatedBookstore = await tx.bookstore.findFirst({
-//     where: {
-//       id: inventory.bookstoreId,
-//       isDeleted: false
-//     },
-//     select: {
-//       comissions: true
-//     }
-//   })
-
-//   const impactedSalesForInventory = await tx.sale.findMany({
-//     where: {
-//       inventoryId: inventory.id,
-//       isDeleted: false
-//     }
-//   });
-
-//   for (const sale of impactedSalesForInventory) {
-//     for (const user of impactedUsers) {
-//       impactedSales.push(
-//         {...sale,
-//           "userId": user.id,
-//           "price": inventory.price,
-//           'management_min': user.category.management_min,
-//           "percentage_management_stores": user.category.percentage_management_stores,
-//           "percentage_royalties": user.category.percentage_royalties,
-//           "comissions": relatedBookstore.comissions,
-//           "numberOfAuthors": impactedUsers.length
-//         }
-//       )
-//     }
-//   };
-
-//   for (const sale of impactedSales) {
-//     const paymentForMonth = getForMonth(sale.createdAt);
-//     const previousSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       previousPrice,
-//       sale.management_min,
-//       sale.percentage_management_stores,
-//       sale.quantity,
-//     );
-//     const newSaleValue = calculateAuthorRevenue(
-//       sale.comissions,
-//       sale.price,
-//       sale.management_min,
-//       sale.percentage_management_stores,
-//     )
-//     const previousPayment = await tx.payment.findUnique({
-//       where: {
-//         userId_forMonth: {
-//           userId: sale.userId,
-//           forMonth: paymentForMonth,
-//         },
-//         isDeleted: false
-//       }
-//     });
-
-//     const quantityUpdate = newSaleValue - previousSaleValue
-
-//     if (previousPayment && previousPayment.status !== "paid") {
-//       const updatedPayment = await tx.payment.update({
-//         where: {
-//           userId_forMonth: {
-//             userId: sale.userId,
-//             forMonth: paymentForMonth,
-//           },
-//           isDeleted: false
-//         },
-//         data: {
-//           amount: previousPayment.amount + quantityUpdate
-//         }
-//       });
-//     }
-//   }
-// }
 
 export default router;

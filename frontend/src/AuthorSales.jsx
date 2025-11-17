@@ -18,7 +18,6 @@ function AuthorSales() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('total');
-  // const [dateRange, setDateRange] = useState(null);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)).toLocaleDateString('en-CA'),
     endDate: new Date().toLocaleDateString('en-CA')
@@ -26,21 +25,8 @@ function AuthorSales() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
 
-  // function setDefaultRange() {
-  //   const now = new Date();
-  //   const startDateDT = new Date(now.setDate(now.getDate() - 30));
-  //   setDateRange({
-  //     startDate: startDateDT.toISOString().split('T')[0],
-  //     endDate: new Date().toISOString().split('T')[0]
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   setDefaultRange();
-  // }, []);
-
   function processMonthlyData(sales, bookId = 'total') {
-    console.log("sales in processMonthly data", sales)
+    // console.log("sales in processMonthly data", sales)
     const monthlySales = {};
     // if (!sales || sales.length === 0) return;
     if (sales && sales.length > 0 ) {
@@ -71,8 +57,6 @@ function AuthorSales() {
       const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
       let counter = 0;
       for (let i = 0; i < monthKeysInRange.length; i++) {
-        console.log("sortedData[counter]", sortedData[counter]);
-        console.log(sortedData[counter] === undefined);
         if (sortedData[counter] === undefined || monthKeysInRange[i] !== sortedData[counter].month) {
           const monthToInsert = {
             "month": monthKeysInRange[i],
@@ -140,8 +124,6 @@ function AuthorSales() {
     }
   };
 
-  console.log(salesData);
-
   useEffect(() => {
     if (dateRange !== null) {
       fetchSales();
@@ -195,7 +177,7 @@ function AuthorSales() {
     return <div className="sales-container">No hay información de ventas.</div>;
   }
 
-  // console.log(salesData)
+  console.log(salesData)
 
   return (
     <div className="author-sales"

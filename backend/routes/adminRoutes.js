@@ -182,7 +182,7 @@ export async function addMultipleAuthors(req, res) {
           phone: fields[5],
           birthday: fields[6],
           clabe: fields[7],
-          nameBankAccount: fields[8],
+          name_bank_account: fields[8],
           bank: fields[9],
           swift: fields[10],
           referido: fields[11]

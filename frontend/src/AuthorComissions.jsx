@@ -2,7 +2,7 @@ import useCheckUser from "./customHooks/useCheckUser";
 import { useEffect, useState, useContext } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
-import Table from "./Table";
+// import Table from "./Table";
 import CommissionMonthSelector from "./CommissionMonthSelector";
 import "./AuthorCommissions.scss"
 import Modal from "./Modal";

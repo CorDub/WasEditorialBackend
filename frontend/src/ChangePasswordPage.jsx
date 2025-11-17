@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+// import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import "./ChangePasswordPage.scss";
 import ChangePasswordPageErrors from "./ChangePasswordPageErrors";
 import Alert from "./Alert";
@@ -8,8 +9,8 @@ function ChangePasswordPage() {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [cs1, setCs1] = useState('');
   const [cs2, setCs2] = useState('');
-  const location = useLocation();
-  const { user_id } = location.state || {};
+  // const location = useLocation();
+  // const { user_id } = location.state || {};
   const navigate = useNavigate();
   const [errorList, setErrorList] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
@@ -17,7 +18,7 @@ function ChangePasswordPage() {
 
   async function sendToServer() {
     if (cs1 !== cs2) {
-      alert("La contraseña no fue la misma en ambos campos.");
+      alert("Las dos contraseñas no son las mismas.");
       return;
     };
 
@@ -28,7 +29,7 @@ function ChangePasswordPage() {
       },
       credentials: "include",
       body: JSON.stringify({
-        user_id: user_id,
+        // user_id: user_id,
         password: cs1
       })
     });

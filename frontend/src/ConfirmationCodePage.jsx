@@ -54,7 +54,7 @@ function ConfirmationCodePage() {
 
   return (
     <div className="ccp">
-      <p>Por favor ingrese el codigo de confirmación que le ha esta enviado a su correo.</p>
+      <p>Por favor ingrese el codigo de confirmación mandado por correo.</p>
       <form onSubmit={handleSubmit}>
         <div>
           <input type="text" maxLength='1' id='ccp1'

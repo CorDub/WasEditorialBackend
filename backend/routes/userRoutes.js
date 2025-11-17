@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendResetPasswordMail } from './../mailer.js';
 import { prisma } from "../prisma/client.js"
 import { validateInputs } from '../utils.js';
+import { validateInput } from '../validations.js';
 
 const router = express.Router();
 
@@ -81,26 +82,25 @@ router.post('/reset', getReset)
 export async function getUserExtra(req, res) {
   try {
     const user_id = req.session.user_id;
-    const user = await prisma.user.findUnique({where: {
-      id: user_id,
-      isDeleted: false
-    }});
-
-    if (user === null) {
-      res.status(204).json("No user found");
-    } else {
-      const user_send = {
-        "email": user.email,
-        "phone": user.phone,
-        "birthday": user.birthday,
-        "font_size": user.font_size,
-        "clabe": user.clabe,
-        "name_bank_account": user.name_bank_account,
-        "bank": user.bank,
-        "swift": user.swift
-      }
-      res.status(200).json(user_send);
+    const user = await prisma.user.findUnique({where: {id: user_id}});
+    if (user && user.isDeleted) {
+      return res.status(204).json({message: "No user found"})
     }
+    if (!user) {
+      return res.status(204).json({message: "No user found"});
+    }
+
+    const user_send = {
+      "email": user.email,
+      "phone": user.phone,
+      "birthday": user.birthday,
+      "font_size": user.font_size,
+      "clabe": user.clabe,
+      "name_bank_account": user.name_bank_account,
+      "bank": user.bank,
+      "swift": user.swift
+    }
+    res.status(200).json(user_send);
   } catch (error) {
     console.error("Error retrieving info: ", error)
   }
@@ -110,6 +110,32 @@ router.get('/user_extra', getUserExtra)
 export async function updateUser(req, res) {
   try {
     const fieldToChange = req.body;
+    const permittedFields = [
+      "email", "phone", "country", "birthday", 'font_size', 'clabe', "name_bank_account",
+      "bank", "swift"
+    ]
+    for (const field of Object.entries(fieldToChange)) {
+      if (!permittedFields.includes(field[0])) {
+        return res.status(500).json({error: "Internal server error" })
+      }
+
+      let errors;
+      if (field[0] === "font_size") {
+        errors = validateInput(parseFloat(field[0]), field[1])
+      } else {
+        errors = validateInput(field[0], field[1])
+      }
+      
+      if (errors.length > 0) {
+        throw new Error (`invalid input ${errors[0]}`)
+      }
+    }
+
+    const targetUser = await prisma.user.findUnique({ where: {id: req.session.user_id}})
+    if (!targetUser || targetUser.isDeleted) {
+      return res.status(500).json({message: "Updated"})
+    }
+
     const updatedUser = await prisma.user.update({
       where: {id: req.session.user_id},
       data: {
@@ -117,11 +143,7 @@ export async function updateUser(req, res) {
       }
     });
 
-    if (updatedUser) {
-      res.status(200).json({message: "Updated"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the user details"});
-    }
+    res.status(200).json({message: "Updated"});
 
   } catch (error) {
     console.error("Error when updating user: ", error);
@@ -133,14 +155,26 @@ router.patch('/user', updateUser)
 export async function getConfirmationCode(req, res) {
   try {
     const { confirmation_code, user_id } = req.body;
+    if (isNaN(parseInt(confirmation_code)) || confirmation_code.toString().length < 6) {
+      return res.status(500).json({error: "A server error occurred while confirming the code"});
+    }
+
+    const error = validateInput("id", user_id);
+    if (error.length > 0) {
+      return res.status(500).json({error: "A server error occurred while confirming the code"});
+    }
+
     const matched = await matchConfirmationCode(confirmation_code, user_id);
 
     if (matched === true) {
       const user = await prisma.user.findUnique({where: {id: user_id}});
+      if (user.isDeleted) {
+        return res.status(500).json({error: "A server error occurred while confirming the code"});
+      }
       req.session.user_id = user.id;
       res.status(200).json({message: "All good"});
     } else {
-      res.status(401).json({error: "Unauthorized"});
+      res.status(500).json({error: 'A server error ocurred while confirming the code'});
     }
   } catch(error) {
     console.error("Error confirming code:", error);
@@ -158,7 +192,7 @@ export async function logout(req, res) {
       }
     });
     res.clearCookie('connect.sid');
-    res.json({message: 'Logged out'});
+    res.status(200).json({message: 'Logged out'});
   } catch(error) {
     console.error("Error in logout route:", error);
   }

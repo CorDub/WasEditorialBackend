@@ -10,11 +10,11 @@ function ShowInventories({
     setNameDetailsActive,
     setCurrentDetailsActive,
     setTotalInventoryOpen,
-    setGivenToAuthorOpen,
-    setBooksSoldGraphOpen,
-    setAuthorBookstoreInventoryOpen,
-    setAuthorWasInventoryOpen,
-    setAuthorAvailableInventoryOpen,
+    // setGivenToAuthorOpen,
+    // setBooksSoldGraphOpen,
+    // setAuthorBookstoreInventoryOpen,
+    // setAuthorWasInventoryOpen,
+    // setAuthorAvailableInventoryOpen,
     legendDisplays,
     setLegendDisplays,
     setExclusions,
@@ -45,11 +45,11 @@ function ShowInventories({
 
     const toggleFunctions = {
       total: setTotalInventoryOpen,
-      given: setGivenToAuthorOpen,
-      sold: setBooksSoldGraphOpen,
-      bookstore: setAuthorBookstoreInventoryOpen,
-      was: setAuthorWasInventoryOpen,
-      available: setAuthorAvailableInventoryOpen,
+      // given: setGivenToAuthorOpen,
+      // sold: setBooksSoldGraphOpen,
+      // bookstore: setAuthorBookstoreInventoryOpen,
+      // was: setAuthorWasInventoryOpen,
+      // available: setAuthorAvailableInventoryOpen,
     }
 
     // removing and adding the active style to the right components.

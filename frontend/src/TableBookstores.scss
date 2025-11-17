@@ -1,3 +1,14 @@
+.table {
+  width: 95%;
+  // height: 100%;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
 .table-bookstore-header-name {
   font-weight: bold;
   text-align: center;

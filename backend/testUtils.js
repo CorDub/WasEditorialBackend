@@ -16,7 +16,9 @@ export async function createAuthor(
     name_bank_account = null,
     bank = null,
     swift = null,
-    password = null,
+    password = "ThisIsValidPassword71!",
+    font_size = 1.0,
+    reset_password_code = null,
   } = {}
 ) {
   const newAuthor = await prisma.user.create({
@@ -34,7 +36,9 @@ export async function createAuthor(
       name_bank_account: name_bank_account,
       bank: bank,
       swift: swift,
-      password: password
+      password: password,
+      font_size: font_size,
+      reset_password_code: reset_password_code,
     }
   });
 

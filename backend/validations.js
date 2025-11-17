@@ -179,7 +179,7 @@ export function validateInput(inputName, inputValue) {
       ['type', 'string'],
       ['format', 'clabe']
     ],
-    "nameBankAccount": [
+    "name_bank_account": [
       ['type', 'string'],
       ['length', 255]
     ],
@@ -242,7 +242,6 @@ export function validateInput(inputName, inputValue) {
       ['type', "string"],
       ["length", 25]
     ]
-    
   }
 
   for (const check of possibleChecks[inputName]) {

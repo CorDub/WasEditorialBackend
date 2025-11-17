@@ -3,14 +3,21 @@ import bcrypt from 'bcrypt';
 import { prisma } from "../prisma/client.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
-import { calculateAuthorRevenue, getForMonth } from "../utils.js";
+import { 
+  calculateAuthorRevenue, 
+  getForMonth, 
+  twelveMonthsAgo,
+  validateInputs 
+} from "../utils.js";
 
 const upload = multer();
 const router = express.Router();
 
-router.patch('/change_password', async (req, res) => {
+export async function changePassword(req, res) {
   try {
-    const { user_id, password } = req.body;
+    const password = req.body.password;
+    const user_id = req.session.user_id;
+
     let errors = [];
 
     let upper = 0;
@@ -49,332 +56,198 @@ router.patch('/change_password', async (req, res) => {
       errors.push(14);
     }
 
-    if (errors.length > 0) {
-      res.status(400).json(errors);
-      return;
-    }
+    if (errors.length > 0) { return res.status(400).json(errors); } 
 
     const update = await prisma.user.update({
       where: {id: user_id},
       data: {password: await bcrypt.hash(password, 10)}
     });
 
-    if (update) {
-      res.status(200).json({message: "Successfully updated password"});
-    } else {
-      res.status(500).json({error: "There was an issue updating the password."});
-    }
+    res.status(200).json({message: "Successfully updated password"});
 
   } catch(error) {
     console.error("Error at the change_password route:", error);
+    res.status(500).json({error: "There was an issue updating the password."});
   }
-})
-
-router.get('/books', async (req, res) => {
-  try {
-    const books = await prisma.book.findMany({
-        where: {
-            users: {
-                some: { id: req.session.user_id }
-            },
-            isDeleted: false
-        }
-    });
-
-    res.status(200).json(books);
-  } catch (error) {
-      console.error(error);
-    res.status(500).send("Server error");
-  }
-})
+}
+router.patch('/change_password', changePassword);
 
 
-router.get('/inventories', async (req, res) => {
+export async function getAuthorInventories (req, res) {
   try {
     // Check if user is authenticated
     if (!req.session.user_id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // Get all books with their inventory and sales data that belong to the user
-    const books = await prisma.book.findMany({
+    // Fetch all necessary data
+    const data = await prisma.user.findUnique({
       where: {
-        users: {
-          some: { id: req.session.user_id }
-        },
-        isDeleted: false
+        id: req.session.user_id
       },
       select: {
-        id: true,
-        title: true,
-        users: {
+        first_name: true,
+        last_name: true,
+        books: {
           select: {
-            first_name: true,
-            last_name: true
-          }
-        },
-        inventories: {
-          select: {
-            sales: {
-              select: {
-                quantity: true,
-                isDeleted: true
-              }
-            },
-            country: true,
-            initial: true,
-            givenToAuthor: true,
-            current: true,
-            bookstoreId: true
-          }
-        },
-        impressions: {
-          select: {
-            quantity: true,
+            id: true,
+            title: true,
             isDeleted: true,
-            date: true
-          }
-        }
-      }
-    });
-
-    const allAuthorPayments = await prisma.payment.findMany({
-      where: {
-        userId: req.session.user_id
-      },
-      select: {
-        sales: {
-          select: {
-            quantity: true,
-            isDeleted: true,
-            inventory: {
+            inventories: {
               select: {
-                book: {
+                initial: true,
+                givenToAuthor: true,
+                current: true,
+                bookstoreId: true,
+                isDeleted: true,
+                sales: {
                   select: {
-                    id: true,
-                    title: true
+                    quantity: true,
+                    isDeleted: true
                   }
                 }
               }
+            },
+            impressions: {
+              select: {
+                quantity: true,
+                isDeleted: true,
+                date: true,
+              }
             }
           }
-        }
+        },
       }
-    })
+    });
 
-    let soldByBooks = [];
-    for (const payment of allAuthorPayments) {
-      for (const sale of payment.sales) {
-        if (soldByBooks.length === 0) {
-          if (sale.isDeleted === false) {
-            soldByBooks.push({
-              "id": sale.inventory.book.id,
-              "title": sale.inventory.book.title,
-              "sold": sale.quantity
-            })
-            continue;
-          }
-        }
-
-        let existingBook = false;
-        for (const book of soldByBooks) {
-          if (book.title === sale.inventory.book.title) {
-            if (sale.isDeleted === false) {
-              book.sold += sale.quantity
-              existingBook = true
-            }
-          }
-        }
-        
-        if (!existingBook) {
-          if (sale.isDeleted === false) {
-            soldByBooks.push({
-              "id": sale.inventory.book.id,
-              'title': sale.inventory.book.title,
-              'sold': sale.quantity
-            })
-          }
-        }
-      }
-    }
-
-    // Calculate overall totals across all books
+    //group and format data
     let overallInitialTotal = 0;
     let overallNewImpressions = 0;
     let overallSoldTotal = 0;
     let overallInventoryInBookstores = 0;
     let overallInventoryInWas = 0;
-    let overallInventoryInWasPerCountry = {};
     let overallEntregadosAlAutor = 0;
-  
-    // Calculate sales summary for each book
-    const bookInventories = books.map(book => {
-      // initial
-      const initialTotal = book.inventories.reduce((sum, inv) => sum + inv.initial, 0);
+    let overallRemainingTotal = 0;
 
-      // sold
-      let soldTotal = 0;
+    let bookInventories = [];
 
-      // let soldTotalPayments = 0;
-      for (const bookSold of soldByBooks) {
-        if (book.id === bookSold.id) {
-          soldTotal = bookSold.sold
-        }
-      }
-      // console.log("soldTotalPayments", soldTotalPayments)
-
-      //givenToAuthor
-      let entregadosAlAutor = 0;
-      for (const inventory of book.inventories) {
-        entregadosAlAutor += inventory.givenToAuthor
-      };
-
-      // remaining (disponibles)
-      let remainingTotal = initialTotal - soldTotal - entregadosAlAutor;
-
-      // bookstores
-      let inventoryInBookstores = 0;
-
-      // was + wasbyCountry
-      let inventoryInWas = 0;
-      let inventoryInWasPerCountry = {};
-      for (const inventory of book.inventories) {
-        // 1 = Plataforma Was Id
-        if (inventory.bookstoreId === 1) {
-          inventoryInWas = inventory.current
-          // create key:value if doesn't exist, add if it does
-          if (inventory.country in inventoryInWasPerCountry) {
-            inventoryInWasPerCountry[inventory.country] += inventory.current
-          } else {
-            inventoryInWasPerCountry[inventory.country] = inventory.current
-          }
-        } else {
-          inventoryInBookstores += inventory.current
-        }
-      }
-
-      // Add to overall totals
-      overallInitialTotal += initialTotal;
-      overallSoldTotal += soldTotal;
-      overallInventoryInBookstores += inventoryInBookstores;
-      overallInventoryInWas += inventoryInWas;
-      overallEntregadosAlAutor += entregadosAlAutor;
-      // have to use a for loop for overallInventoryInWasPerCountry
-      for (const [country, number] of Object.entries(inventoryInWasPerCountry)) {
-        if (country in overallInventoryInWasPerCountry) {
-          overallInventoryInWasPerCountry[country] += number;
-        } else {
-          overallInventoryInWasPerCountry[country] = number;
-        }
-      }
-
-      // Do the impressions now
+    for (const book of data.books) {
+      if (book.isDeleted) { continue }
+      let initialTotal = 0;
       let newImpressionsTotal = 0;
-      for (let i = 0; i < book.impressions.length; i++) {
-        if (i === 0) {
-          continue;
+      let soldTotal = 0;
+      let givenToAuthorTotal = 0;
+      let remainingTotal = 0;
+      let impressionsData = [];
+
+      let bookstoresCopies = 0;
+      let wasCopies = 0;
+
+      for (const inventory of book.inventories) {
+        if (inventory.isDeleted) { continue }
+
+        if (inventory.bookstoreId === 1) {
+          wasCopies += inventory.current
+          overallInventoryInWas += inventory.current
+        } else {
+          bookstoresCopies += inventory.current
+          overallInventoryInBookstores += inventory.current
         }
 
-        newImpressionsTotal += book.impressions[i].quantity;
-        overallNewImpressions += book.impressions[i].quantity;
-        remainingTotal += book.impressions[i].quantity;
+        givenToAuthorTotal += inventory.givenToAuthor
+        overallEntregadosAlAutor += inventory.givenToAuthor
+
+        remainingTotal += inventory.current
+        overallRemainingTotal += inventory.current
+
+        for (const sale of inventory.sales) {
+          if (sale.isDeleted) { continue }
+
+          soldTotal += sale.quantity
+          overallSoldTotal += sale.quantity
+        }
       }
 
-      return {
+      for (const impression of book.impressions) {
+        if (impression.isDeleted) {
+          continue
+        } else {
+          initialTotal += impression.quantity
+          overallInitialTotal += impression.quantity
+          impressionsData.push({
+            quantity: impression.quantity,
+            date: impression.date
+          })
+          break;
+        } 
+      }
+
+      if (book.impressions.length > 1) {
+        for (const impression of book.impressions.slice(1)) {
+          if (impression.isDeleted) { continue }
+
+          newImpressionsTotal += impression.quantity
+          overallNewImpressions += impression.quantity
+          impressionsData.push({
+            quantity: impression.quantity,
+            date: impression.date
+          })
+        }
+      }
+
+      bookInventories.push({
         bookId: book.id,
         title: book.title,
-        author: book.author,
-        impressions: book.impressions,
         summary: {
+          bookstores: bookstoresCopies,
+          was: wasCopies,
+          givenToAuthor: givenToAuthorTotal,
           initial: initialTotal,
           impressions: newImpressionsTotal,
           sold: soldTotal,
-          total: remainingTotal,
-          bookstores: inventoryInBookstores,
-          was: inventoryInWas,
-          wasPerCountry: inventoryInWasPerCountry,
-          givenToAuthor: entregadosAlAutor
-        }
-      };
-    });
+          total: remainingTotal
+        },
+        impressions: impressionsData
+      })
+    }
 
-    const overallRemainingTotal = overallInitialTotal + overallNewImpressions - overallSoldTotal - overallEntregadosAlAutor;
-
-    res.status(200).json({
+    const packagedData = {
       summary: {
         initial: overallInitialTotal,
         impressions: overallNewImpressions,
         sold: overallSoldTotal,
+        givenToAuthor: overallEntregadosAlAutor,
         total: overallRemainingTotal,
         bookstores: overallInventoryInBookstores,
-        was: overallInventoryInWas,
-        wasPerCountry: overallInventoryInWasPerCountry,
-        givenToAuthor: overallEntregadosAlAutor
+        was: overallInventoryInWas
       },
-      bookInventories: bookInventories
-    });
+      bookInventories: bookInventories,
+    }
+
+    res.status(200).json(packagedData);
   } catch(error) {
-    console.error("Error in the home route:", error);
+    console.log("Error in the home route:",  error);
     res.status(500).json({error: 'A server error occurred while fetching inventory data'});
   }
-});
+}
+router.get('/inventories', getAuthorInventories);
 
-
-router.get('/books/:bookId/inventories', async (req, res) => {
+export async function getAuthorSales (req, res) {
   try {
-    if (!req.session.user_id) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    if (!req.session.user_id) {return res.status(401).json({message: "Unauthorized"});}
 
-    const book = await prisma.book.findFirst({
-      where: {
-        id: parseInt(req.params.bookId),
-        users: {
-          some: { id: req.session.user_id }
-        },
-        isDeleted: false
-      }
-    });
-
-    if (!book) {
-      return res.status(404).json({ message: "Book not found or access denied" });
-    }
-
-    const inventories = await prisma.inventory.findMany({
-      where: { bookId: parseInt(req.params.bookId) },
-      include: {
-        sales: true
-      }
-    });
-
-    const initialTotal = inventories.reduce((sum, inv) => sum + inv.initial, 0);
-    const soldTotal = inventories.reduce((sum, inv) => {
-      const itemSales = inv.sales?.reduce((salesSum, sale) => salesSum + sale.quantity, 0) || 0;
-      return sum + itemSales;
-    }, 0);
-    const remainingTotal = initialTotal - soldTotal;
-
-    res.status(200).json({
-      inventories,
-      summary: {
-        initial: initialTotal,
-        sold: soldTotal,
-        total: remainingTotal
-      }
-    });
-  } catch(error) {
-    console.error("Error in the get inventories route:", error);
-    res.status(500).json({error: 'A server error occurred while fetching inventories'});
-  }
-});
-
-router.get('/sales', async (req, res) => {
-  try {
     const authorId = req.session.user_id;
-
     // Get date range from query parameters
-    const startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
+    const startDate = req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo();
     const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
+    const inputs = {
+      startDate: startDate,
+      endDate: endDate
+    }
+    validateInputs(inputs);
+    if (startDate >= endDate) {
+      return res.status(400).json({message: "The start date cannot come after the end date"})
+    }
 
     let allSales = await prisma.sale.findMany({
       where: {
@@ -521,289 +394,11 @@ router.get('/sales', async (req, res) => {
     console.error('Error fetching sales:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
-
-router.get('/monthlySales', async (req, res) => {
-  try {
-    // Get the last twelfth month first day as a cutoff date
-    const ltm = new Date();
-    ltm.setMonth(ltm.getMonth()-12);
-    ltm.setDate(1);
-
-    // Get all sales for that user based on that;
-    const data = await prisma.sale.findMany({
-      where: {
-        inventory: {
-          book: {
-            users: {
-              some: {
-                id: req.session.user_id
-              }
-            },
-            isDeleted: false
-          },
-          bookstore: {
-            isDeleted: false
-          }
-        },
-        isDeleted: false,
-        createdAt: {
-          gt: ltm
-        }
-      },
-      select: {
-        id: true,
-        quantity: true,
-        createdAt: true,
-        inventory: {
-          select: {
-            bookstore: {
-              select: {
-                name: true,
-                comissions: true,
-                deal_percentage: true
-              }
-            },
-            book: {
-              select: {
-                id: true,
-                title: true,
-              }
-            },
-            price: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: req.session.user_id
-      }
-    });
-    const userCategory = await prisma.category.findUnique({
-      where: {
-        id: user.categoryId
-      }
-    });
-
-    // Preparing a 'scaffold' to reuse later, basically empty models
-    let bookstores = await prisma.bookstore.findMany({
-      where: {
-        isDeleted: false
-      },
-      select: {
-        id: true,
-        name: true,
-      }
-    });
-
-    // Adding quantity to the scaffold
-    for (const bookstore of bookstores) {
-      bookstore["quantity"] = 0;
-    }
-
-    // Ensuring sales are grouped by month.
-    let salesByMonths = {};
-    let numberOfAuthors = {};
-    for (const sale of data) {
-      const date = new Date(sale.createdAt);
-      const year = date.getFullYear();
-      const month = (date.getMonth() +1).toString().padStart(2, "0");
-      const key = `${year}-${month}`;
-      if (!numberOfAuthors[sale.inventory.book.id]) {
-        const authorCount = await prisma.book.findUnique({
-          where: {id: sale.inventory.book.id},
-          select: {
-            _count: {
-              select: {users: true}
-            }
-          }
-        });
-        numberOfAuthors[sale.inventory.book.id] = authorCount._count.users;
-      }
-
-      // console.log("")
-      // console.log("sale.inventory.bookstore.comissions", sale.inventory.bookstore.comissions)
-      // console.log("sale.inventory.price ", sale.inventory.price )
-      // console.log("userCategory.management_min", userCategory.management_min)
-      // console.log("sale.inventory.bookstore.deal_percentage", sale.inventory.bookstore.deal_percentage)
-      // console.log("sale.quantity", sale.quantity)
-
-      if (salesByMonths[key]) {
-        salesByMonths[key]["sales"].push({...sale, 
-          comissions: sale.inventory.bookstore.comissions
-            ? userCategory.management_min
-            : sale.inventory.price 
-              * (sale.inventory.bookstore.deal_percentage / 100)
-          //     * (userCategory.percentage_royalties / 100),
-          // sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
-        });
-        
-        // console.log("comissions", salesByMonths[key]["sales"]);
-
-        salesByMonths[key]["total"] += calculateAuthorRevenue(
-          sale.inventory.bookstore.comissions,
-          sale.inventory.price,
-          userCategory.management_min,
-          sale.inventory.bookstore.deal_percentage,
-          sale.quantity,
-        )
-      } else {
-        salesByMonths[key] = {
-          sales: [{...sale, 
-          comissions: sale.inventory.bookstore.comissions
-            ? userCategory.management_min
-            : sale.inventory.price 
-              * (sale.inventory.bookstore.deal_percentage / 100)
-              // * (userCategory.percentage_royalties / 100),
-          // sharePerAuthor: (1/numberOfAuthors[sale.inventory.book.id] * 100).toFixed(2) + " %"
-        }],
-          ganancia: (
-            sale.inventory.bookstore.comissions 
-              ? (sale.inventory.price - userCategory.management_min)
-                // / numberOfAuthors[sale.inventory.book.id]
-              : sale.inventory.price
-                * (sale.inventory.bookstore.deal_percentage / 100)
-                // * (userCategory.percentage_royalties / 100)
-                // / numberOfAuthors[sale.inventory.book.id]
-          ),
-          total: calculateAuthorRevenue(
-              sale.inventory.bookstore.comissions,
-              sale.inventory.price,
-              userCategory.management_min,
-              sale.inventory.bookstore.deal_percentage,
-              sale.quantity,
-            ),
-          // deep cloning the bookstores to avoid having the same object being mutated later
-          // and shared across different months instead of a different object every time
-          transfers: bookstores.map(bookstore => ({...bookstore})),
-          transfersTotal: 0
-        }
-      }
-    }
-
-    /// Adding transfers for the "entregado" column - same process
-    // Get all the transfers from the last 12 months
-    const allAuthorTransfers = await prisma.transfer.findMany({
-      where: {
-        isDeleted: false,
-        fromInventory: {
-          book: {
-            users: {
-              some: {
-                id: req.session.user_id
-              }
-            }
-          }
-        },
-        createdAt: {
-          gte: ltm
-        }
-      },
-      select: {
-        id: true,
-        quantity: true,
-        createdAt: true,
-        toInventory: {
-          select: {
-            bookstore: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        }
-      }
-    });
-
-    // Then add the transfer data to salesBymonth if the month of the transfer exist
-    // Otherwise create it
-    if (allAuthorTransfers.length > 0) {
-      for (const transfer of allAuthorTransfers) {
-        const transferMonth = getForMonth(transfer.createdAt);
-
-        if (!salesByMonths[transferMonth]) {
-          salesByMonths[transferMonth] = {
-            sales: [],
-            ganancia: 0,
-            total: 0,
-            // deep cloning the bookstores to avoid having the same object being mutated later
-            // and shared across different months instead of a different object every time
-            transfers: bookstores.map(bookstore => ({...bookstore})),
-            transfersTotal: 0,
-          }
-        };
-
-        for (const bookstore of salesByMonths[transferMonth]['transfers']) {
-          // skip deliveries to author
-          if (transfer.toInventory === null) {
-            // bookstore.quantity += transfer.quantity;
-            continue;
-          }
-          if (bookstore.id === transfer.toInventory.bookstore.id) {
-            bookstore.quantity += transfer.quantity
-          }
-        }
-        salesByMonths[transferMonth]["transfersTotal"] += transfer.quantity
-      }
-    }
-
-    // Fill in the missing months with phantom data (0s) so that it will display
-    // correctly with the month chosen (based on index)
-
-    let salesByMonthsList = Object.entries(salesByMonths);
-    let newSalesByMonthsList = [];
-    // Get the YYYY-MM combination 12m ago
-    const now = new Date();
-    let currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-
-    // Get an array of all the 12 monhts Y + M combination
-    let ltmStrings = [];
-    for (let i = 0; i < 13; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-      ltmStrings.push(monthStr);
-    }
-
-    for (let i = 0; i < ltmStrings.length; i++) {
-      let existing = false;
-
-      for (const month of salesByMonthsList) {
-        if (ltmStrings[i] === month[0]) {
-          newSalesByMonthsList.push(month);
-          existing = true;
-          continue;
-        }
-      }
-
-      if (!existing) {
-        newSalesByMonthsList.push([
-          ltmStrings[i], {
-            ganancia: 0,
-            sales: [],
-            total: 0,
-            transfers: [],
-            transfersTotal: 0
-          }
-        ])
-      }
-    }
-
-    res.status(200).json(newSalesByMonthsList);
-  } catch (error) {
-    console.error("error fetching monthly sales", error);
-    res.status(500).json({error: 'Internal server error'});
-  }
-})
+}
+router.get('/sales', getAuthorSales)
 
 
-export async function getMonthlySalesBypayments (req, res) {
+export async function getMonthlySalesByPayments (req, res) {
   // Get the last twelfth month first day as a cutoff date
   const ltm = new Date();
   ltm.setMonth(ltm.getMonth()-12);
@@ -1164,360 +759,10 @@ export async function getMonthlySalesBypayments (req, res) {
     res.status(500).json({error: 'Internal server error'});
   }
 }
-router.get('/monthlySalesByPayments', getMonthlySalesBypayments);
+router.get('/monthlySalesByPayments', getMonthlySalesByPayments);
 
-router.get('/currentTienda', async (req, res) => {
-  try {
-    const month = req.query.month;
 
-    let monthDateTime;
-    if (parseInt(month.substring(5,7)) === 12) {
-      monthDateTime = new Date(`${parseInt(month.substring(0,4))+1}-01-01`)
-    } else {
-      const nextMonth = parseInt(month.substring(5,7)) + 1
-      monthDateTime = new Date(`${month.substring(0,4)}-${nextMonth}-01`);
-    }
-
-    const inventories = await prisma.inventory.findMany({
-      where: {
-        isDeleted: false,
-        createdAt: {
-          lt: monthDateTime
-        },
-        book: {
-          users: {
-            some: {
-              id: req.session.user_id
-            }
-          }
-        }
-      },
-      include: {
-        bookstore: {
-          select: {
-            id: true,
-            name: true
-          },
-        },
-        sales: {
-          where: {
-            isDeleted: false
-          }
-        },
-        transfersFrom: {
-          where: {
-            isDeleted : false
-          }
-        },
-        transfersTo: {
-          where: {
-            isDeleted : false
-          }
-        },
-      }
-    });
-
-    let inventoriesReconstructed = [];
-    for (const inventory of inventories) {
-      let existing = false;
-
-      for (const obj of inventoriesReconstructed) {
-        if (obj.id === inventory.bookstore.id) {
-          obj.total += inventory.initial,
-          obj.current += inventory.current
-
-          for (const transfer of inventory.transfersFrom) {
-            if (transfer.createdAt >= monthDateTime) {
-              obj.current += transfer.quantity
-              obj.initial += transfer.quantity
-            }
-          };
-
-          for (const sale of inventory.sales) {
-            if (sale.createdAt >= monthDateTime) {
-              obj.current += sale.quantity
-            }
-          };
-
-          for (const transfer of inventory.transfersTo) {
-            if (transfer.createdAt > monthDateTime) {
-              obj.current -= transfer.quantity
-              obj.initial -= transfer.quantity
-            }
-          }
-
-          existing = true;
-          break;
-        }
-      }
-
-      if (!existing) {
-        let tbp = {
-          name: inventory.bookstore.name,
-          total: inventory.initial,
-          current: inventory.current
-        };
-
-        // initial should be more appropriately renamed to total
-        for (const transfer of inventory.transfersFrom) {
-          if (transfer.createdAt >= monthDateTime) {
-            tbp.current += transfer.quantity
-            tbp.initial += transfer.quantity
-          }
-        };
-
-        for (const sale of inventory.sales) {
-          if (sale.createdAt >= monthDateTime) {
-            tbp.current += sale.quantity
-          }
-        };
-
-        for (const transfer of inventory.transfersTo) {
-          if (transfer.createdAt >= monthDateTime) {
-            tbp.current -= transfer.quantity
-            tbp.initial -= transfer.quantity
-          }
-        };
-
-        inventoriesReconstructed.push(tbp);
-      }
-    }
-
-    let groupedTiendaData = inventoriesReconstructed.reduce((groupedByTienda, {name, total, current}) => {
-      if (!groupedByTienda[name]) {
-        groupedByTienda[name] = { name, total: 0, current: 0};
-      }
-      groupedByTienda[name].total += total;
-      groupedByTienda[name].current += current;
-      return groupedByTienda;
-    }, {});
-
-    const groupedTiendaDataList = Object.values(groupedTiendaData);
-
-    res.status(200).json(groupedTiendaDataList);
-  } catch (error) {
-    console.log("\n ERROR PROVIDING RELEVANT INVENTORIES \n",error);
-    res.status(500).json({error: "There was a server error fetching the relevant data"});
-  };
-})
-
-router.get('/givenToAuthorTransfers', async (req, res) => {
-  const currentUserId = req.session.user_id;
-  try {
-    const relevantTransfers = await prisma.transfer.findMany({
-      where: {
-        isDeleted: false,
-        type: 'send',
-        toInventoryId: null,
-        fromInventory: {
-          book: {
-            users: {
-              some: {
-                id: currentUserId
-              }
-            }
-          }
-        }
-      },
-      select: {
-        id: true,
-        quantity: true,
-        note: true,
-        deliveryDate: true,
-        place: true,
-        person: true,
-        fromInventory: {
-          select: {
-            book: {
-              select: {
-                title: true,
-                id: true
-              }
-            }
-          }
-        }
-      },
-
-    })
-
-    res.status(200).json(relevantTransfers);
-  } catch (error) {
-    console.log("\n ERROR FETCHING RELEVENT TRANSFERS FROM SERVER \n", error);
-    res.status(500).json({error: "a server error occurred while fetching relevant transfers"});
-  }
-})
-
-router.get('/bookstoreInventories/:id', async (req, res) => {
-  try {
-    const bookId = parseInt(req.params.id);
-    // fetch all inventories from the author
-
-    let relevantInventories;
-    if (bookId) {
-      relevantInventories = await prisma.inventory.findMany({
-        where: {
-          isDeleted: false,
-          bookId: bookId
-        },
-        select: {
-          id: true,
-          book: {
-            select: {
-              title: true
-            }
-          },
-          bookId: true,
-          bookstore: {
-            select: {
-              name: true,
-              color: true
-            }
-          },
-          bookstoreId: true,
-          current: true
-        }
-      });
-    } else {
-      relevantInventories = await prisma.inventory.findMany({
-        where: {
-          isDeleted: false,
-          book: {
-            users: {
-              some: {
-                id: req.session.user_id
-              }
-            }
-          }
-        },
-        select: {
-          id: true,
-          book: {
-            select: {
-              title: true
-            }
-          },
-          bookId: true,
-          bookstore: {
-            select: {
-              name: true,
-              color: true
-            }
-          },
-          bookstoreId: true,
-          current: true
-        }
-      });
-    }
-
-    // group the results by bookstore and books
-    let relevantInventoriesByBookstore = {};
-    let relevantInventoriesByBook = {};
-
-    for (const inventory of relevantInventories) {
-      // grouping by bookstores
-      if (relevantInventoriesByBookstore.hasOwnProperty(inventory.bookstoreId)) {
-        relevantInventoriesByBookstore[inventory.bookstoreId].current += inventory.current
-      } else {
-        /// 1 = BookstoreId of Plataforma Was that we'll be excluding here.
-        if (inventory.bookstoreId !== 1) {
-          relevantInventoriesByBookstore[inventory.bookstoreId] = {
-            name: inventory.bookstore.name,
-            current: inventory.current,
-            color: inventory.bookstore.color,
-            title: inventory.book.title
-          }
-        }
-      };
-
-      // grouping by book and populating summary
-      if (relevantInventoriesByBook.hasOwnProperty(inventory.bookId)) {
-        relevantInventoriesByBook[inventory.bookId].summary += inventory.current;
-        if (relevantInventoriesByBook[inventory.bookId].hasOwnProperty(inventory.bookstoreId)) {
-          relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId].current += inventory.current
-        } else {
-          relevantInventoriesByBook[inventory.bookId][inventory.bookstoreId] = {
-            bookstoreName: inventory.bookstore.name,
-            current: inventory.current,
-            color: inventory.bookstore.color
-          }
-        }
-      } else {
-        relevantInventoriesByBook[inventory.bookId] = {
-          title: inventory.book.title,
-          [inventory.bookstoreId] : {
-            bookstoreName : inventory.bookstore.name,
-            current: inventory.current
-          },
-          summary: inventory.current,
-          color: inventory.bookstore.color
-        }
-      }
-    }
-
-    res.status(200).json({
-      "inventoriesByBookstores" : relevantInventoriesByBookstore,
-      "inventoriesByBook": relevantInventoriesByBook
-    });
-  } catch (error) {
-    console.log("\n ERROR FETCHING RELEVANT INVENTORIES FROM SERVER \n", error);
-    res.status(500).json({error: "a server error occured while fetching relevant inventories"});
-  }
-})
-
-router.get("/wasInventories", async (req, res) => {
-  try {
-    // fetch all was inventories from the author
-    const relevantInventories = await prisma.inventory.findMany({
-      where: {
-        isDeleted: false,
-        book: {
-          users: {
-            some: {
-              id: req.session.user_id
-            }
-          }
-        },
-        bookstoreId: 3
-      },
-      select: {
-        id: true,
-        book: {
-          select: {
-            title: true
-          }
-        },
-        bookId: true,
-        bookstore: {
-          select: {
-            name: true,
-          }
-        },
-        bookstoreId: true,
-        current: true
-      }
-    });
-
-    let relevantInventoriesByBook = {};
-
-    for (const inventory of relevantInventories) {
-      if (relevantInventoriesByBook.hasOwnProperty(inventory.bookId)) {
-        relevantInventoriesByBook[inventory.bookId].current += inventory.current
-      } else {
-        relevantInventoriesByBook[inventory.bookId] = {
-          title: inventory.book.title,
-          current: inventory.current
-        }
-      }
-    }
-
-    res.status(200).json(relevantInventoriesByBook);
-  } catch (error) {
-    console.log('\n ERROR WHILE FETCHING THE WAS INVENTORIES FROM SERVER \n', error);
-    res.status(500).json({error: "a server error occured while fetching relevant inventories"});
-  }
-})
-
-router.get("/bookInventories/:id", async (req, res) => {
+export async function getAuthorBookInventories(req, res) {
   try {
     const bookId = parseInt(req.params.id);
 
@@ -1576,9 +821,10 @@ router.get("/bookInventories/:id", async (req, res) => {
     console.log("\n ERROR WHILE FETCHING THE BOOK INVENTORIES FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching relevant book inventories"});
   }
-})
+}
+router.get("/bookInventories/:id", getAuthorBookInventories)
 
-router.get("/payments", async (req, res) => {
+export async function getAuthorPayments (req, res) {
   try {
     // Getting our range ready by setting it 12m ago
     const ltm = new Date();
@@ -1720,12 +966,10 @@ router.get("/payments", async (req, res) => {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching relevant transfers"})
   }
-})
+}
+router.get("/payments", getAuthorPayments);
 
-router.post("/sendInvoice", upload.fields([
-  { name: "factura", maxCount: 1},
-  { name: "constancia", maxCount: 1}
-]), async (req, res) => {
+export async function sendInvoice(req, res) {
   try {
     const userID = req.session.user_id;
     const user = await prisma.user.findUnique({
@@ -1755,9 +999,14 @@ router.post("/sendInvoice", upload.fields([
     console.log("\n ERROR WHILE SENDING INVOICE \n", error);
     res.status(500).json({error: "a server error occurred while sending the invoice"})
   }
-})
+}
+router.post("/sendInvoice", upload.fields([
+  { name: "factura", maxCount: 1},
+  { name: "constancia", maxCount: 1}
+]), sendInvoice)
 
-router.get("/completeInventory", async (req, res) => {
+
+export async function getCompleteInventory(req, res) {
   try {
     const allAuthorInventories = await prisma.inventory.findMany({
       where: {
@@ -1817,33 +1066,8 @@ router.get("/completeInventory", async (req, res) => {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})
   }
-})
+}
+router.get("/completeInventory", getCompleteInventory)
 
-router.get("/costs/:id", async (req, res) => {
-  const paymentIdQuery = parseInt(req.params.id);
-  try {
-    const fetchedCosts = await prisma.cost.findMany({
-      where: {
-        paymentId: paymentIdQuery,
-        isDeleted: false,
-        payment: {
-          userId: req.session.user_id
-        }
-      },
-      select: {
-        id: true,
-        note: true,
-        amount: true
-      }
-    });
-
-    if (fetchedCosts) {
-      res.status(200).json(fetchedCosts);
-    }
-  } catch(error) {
-    console.log("\n ERROR WHILE FETCHING COSTS FROM THE SERVER \n", error);
-    res.status(500).json({error: "a server error occurred while fetching costs."})
-  }
-})
 
 export default router;

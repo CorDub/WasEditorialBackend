@@ -3,13 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
-import BooksSoldGraph from "./BooksSoldGraph";
+// import BooksSoldGraph from "./unused/BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
-import GivenToAuthorDetails from "./GivenToAuthorDetails";
-import AuthorBookstoreInventory from "./AuthorBookstoreInventory";
-import AuthorWasInventory from "./AuthorWasInventory";
-import AuthorAvailableInventory from "./AuthorAvailableInventory";
+// import GivenToAuthorDetails from "./unused/GivenToAuthorDetails";
+// import AuthorBookstoreInventory from "./unused/AuthorBookstoreInventory";
+// import AuthorWasInventory from "./unused/AuthorWasInventory";
+// import AuthorAvailableInventory from "./unused/AuthorAvailableInventory";
 import InventoryGraph from "./InventoryGraph"
 
 function AuthorInventory(){
@@ -23,11 +23,11 @@ function AuthorInventory(){
   const [currentDetailsActive, setCurrentDetailsActive] = useState(null);
   const [nameDetailsActive, setNameDetailsActive] = useState("total");
   const [isTotalInventoryOpen, setTotalInventoryOpen] = useState(true);
-  const [isGivenToAuthorOpen, setGivenToAuthorOpen] = useState(false);
-  const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(false);
-  const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
-  const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
-  const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
+  // const [isGivenToAuthorOpen, setGivenToAuthorOpen] = useState(false);
+  // const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(false);
+  // const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
+  // const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
+  // const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
   const [reset, setReset] = useState(false);
   const [exclusions, setExclusions] = useState("");
   const legendValues = [
@@ -95,8 +95,6 @@ function AuthorInventory(){
     }
   }, [selectedBookId]);
 
-  // console.log(inventories)
-
   return (
     <div className="author-inventory"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -123,11 +121,11 @@ function AuthorInventory(){
           setNameDetailsActive={setNameDetailsActive}
           setCurrentDetailsActive={setCurrentDetailsActive}
           setTotalInventoryOpen={setTotalInventoryOpen}
-          setGivenToAuthorOpen={setGivenToAuthorOpen}
-          setBooksSoldGraphOpen={setBooksSoldGraphOpen}
-          setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
-          setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
-          setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
+          // setGivenToAuthorOpen={setGivenToAuthorOpen}
+          // setBooksSoldGraphOpen={setBooksSoldGraphOpen}
+          // setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
+          // setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
+          // setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
           legendDisplays={legendDisplays}
           setLegendDisplays={setLegendDisplays}
           exclusions={exclusions}
@@ -143,12 +141,12 @@ function AuthorInventory(){
               legendDisplays={legendDisplays}
               setLegendDisplays={setLegendDisplays}
               exclusions={exclusions}/>)}
-          {isGivenToAuthorOpen && (
+          {/* {isGivenToAuthorOpen && (
             <GivenToAuthorDetails
-              selectedBookId={selectedBookId}/>)}
+              selectedBookId={selectedBookId}/>)} */}
         </div>
 
-        {isBooksSoldGraphOpen && (
+        {/* {isBooksSoldGraphOpen && (
           <BooksSoldGraph
             bookSales={booksInventories}
             selectedBookId={selectedBookId} />)}
@@ -162,7 +160,7 @@ function AuthorInventory(){
         {isAuthorAvailableInventoryOpen && (
           <AuthorAvailableInventory
             bookSales={inventories.bookInventories}
-            selectedBookId={selectedBookId}/>)}
+            selectedBookId={selectedBookId}/>)} */}
       </div>
     </div>
     </div>

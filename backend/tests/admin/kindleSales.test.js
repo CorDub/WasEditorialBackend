@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, it, beforeAll, afterAll } from "vitest";
-import { getMonthlySalesBypayments } from "../../routes/authorRoutes.js";
+import { getMonthlySalesByPayments } from "../../routes/authorRoutes.js";
 import { 
   getKindleSales, 
   addKindleSale,
@@ -32,7 +32,7 @@ describe("getting monthly sales by payments", async() => {
   }
 
   it('should return an array of length 13', async() => {
-    await getMonthlySalesBypayments(mockReq, mockRes);
+    await getMonthlySalesByPayments(mockReq, mockRes);
     expect(mockRes.json).toHaveBeenCalled();
     const responseData = mockRes.json.mock.calls[0][0];
     expect(Array.isArray(responseData)).toBe(true);

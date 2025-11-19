@@ -127,7 +127,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const salesByPayments = await response.json();
-        // console.log("salesByPayments", salesByPayments);
+        console.log("salesByPayments", salesByPayments);
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {

@@ -115,6 +115,7 @@ function AuthorSales() {
       const data = await response.json();
       sessionStorage.setItem("authorSalesData", JSON.stringify(data));
       setSalesData(data);
+      console.log("salesData", salesData);
       processMonthlyData(data.sales, selectedBook);
     } catch (error) {
       console.error('Error fetching sales:', error);
@@ -177,7 +178,7 @@ function AuthorSales() {
     return <div className="sales-container">No hay información de ventas.</div>;
   }
 
-  console.log(salesData)
+  
 
   return (
     <div className="author-sales"

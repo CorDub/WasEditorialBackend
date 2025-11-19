@@ -8,6 +8,7 @@ const SalesContent = ({
   monthlyData,
   preferredFontSize }) => {
   useCheckUser();
+  console.log("salesData", salesData)
   const selectedBookSales = selectedBook === 'total'
     ? salesData.totalSales
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;

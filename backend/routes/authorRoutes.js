@@ -5,6 +5,7 @@ import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { 
   calculateAuthorRevenue, 
+  generateMonthKeysForRange, 
   getForMonth, 
   twelveMonthsAgo,
   validateInputs 
@@ -234,33 +235,30 @@ router.get('/inventories', getAuthorInventories);
 
 export async function getAuthorSales (req, res) {
   try {
+    // Validate all inputs
     if (!req.session.user_id) {return res.status(401).json({message: "Unauthorized"});}
-
-    const authorId = req.session.user_id;
-    // Get date range from query parameters
-    const startDate = req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo();
-    const endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
     const inputs = {
-      startDate: startDate,
-      endDate: endDate
+      startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
+      endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
     }
     validateInputs(inputs);
-    if (startDate >= endDate) {
+    if (inputs.startDate >= inputs.endDate) {
       return res.status(400).json({message: "The start date cannot come after the end date"})
     }
 
-    let allSales = await prisma.sale.findMany({
+    // Get data
+    let salesInRange = await prisma.sale.findMany({
       where: {
         payments: {
           some: {
-            userId: authorId
+            userId: req.session.user_id
           }
         },
+        isDeleted: false,
         date: {
-          gte: startDate,
-          lte: endDate
-        },
-        isDeleted: false
+          gte: inputs.startDate,
+          lte: inputs.endDate
+        }
       },
       include: {
         inventory: {
@@ -272,82 +270,23 @@ export async function getAuthorSales (req, res) {
         payments: true
       },
       orderBy: {
-        date: 'desc'
+        date: "desc"
       }
     });
 
-    let totalSales = 0;
-    let totalValue = 0;
-    let bookSalesHashMap = {};
-    let sales = [];
-    const author = await prisma.user.findUnique({
-      where: {
-        id: authorId
-      },
-      select: {
-        category: {
-          select: {
-            percentage_management_stores: true,
-            percentage_royalties: true,
-            management_min: true,
-          }
-        }
-      }
-    })
-
-    
-
-    for (const sale of allSales) {
-      const saleValue = calculateAuthorRevenue(
-        sale.inventory.bookstore.comissions,
-        sale.inventory.price,
-        author.category.management_min,
-        sale.inventory.bookstore.deal_percentage,
-        sale.quantity,
-      )
-
-      totalSales += sale.quantity
-      totalValue += saleValue
-      sales.push({
-        id: sale.id,
-        book_id: sale.inventory.book.id,
-        bookstore_id: sale.inventory.bookstore.id,
-        quantity: sale.quantity,
-        date: sale.date,
-        title: sale.inventory.book.title,
-        bookstore_name: sale.inventory.bookstore.name,
-        price: sale.inventory.price,
-        value: saleValue
-      })
-
-      if (!bookSalesHashMap[sale.inventory.book.title]) {
-        bookSalesHashMap[sale.inventory.book.title] = {
-          "bookId": sale.inventory.book.id,
-          "title": sale.inventory.book.title,
-          "quantity": sale.quantity,
-          "value": saleValue,
-          "price": sale.inventory.price
-        }
-      } else {
-        bookSalesHashMap[sale.inventory.book.title].quantity += sale.quantity
-        bookSalesHashMap[sale.inventory.book.title].value += saleValue
-      }
-    }
-
-    // NOW ADD KINDLE SALES
-    const authorKindleSales = await prisma.kindleSale.findMany({
+    const kindleSalesInRange = await prisma.kindleSale.findMany({
       where: {
         payments: {
           some: {
-            userId: authorId
-          },
+            userId: req.session.user_id
+          }
         },
+        isDeleted: false,
         datePay: {
-          gte: startDate,
-          lte: endDate
-        }, 
-        isDeleted: false
-      }, 
+          gte: inputs.startDate,
+          lte: inputs.endDate
+        }
+      },
       include: {
         payments: true,
         book: true
@@ -357,63 +296,128 @@ export async function getAuthorSales (req, res) {
       }
     });
 
-    for (const kindleSale of authorKindleSales) {
-      totalSales += kindleSale.quantityEbook + kindleSale.quantityPod;
-      totalValue += kindleSale.regalias
-      sales.push({
-        id: kindleSale.id,
-        book_id: kindleSale.bookId,
-        quantity: (kindleSale.quantityEbook + kindleSale.quantityPod),
-        date: kindleSale.datePay,
-        title: kindleSale.book.title,
-        value: kindleSale.regalias
-      })
-
-      if (!bookSalesHashMap[kindleSale.book.title]) {
-        bookSalesHashMap[kindleSale.book.title] = {
-          "bookId": kindleSale.bookId,
-          "title": kindleSale.book.title,
-          "quantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
-          "value": kindleSale.regalias,
-          // "price": 1
+    const author = await prisma.user.findUnique({
+      where: {
+        id: req.session.user_id
+      },
+      select: {
+        category: {
+          select: {
+            percentage_management_stores: true,
+            percentage_royalties: true,
+            management_min: true
+          }
         }
-      } else {
-        bookSalesHashMap[kindleSale.book.title].quantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
-        bookSalesHashMap[kindleSale.book.title].value += kindleSale.regalias
       }
+    });
+
+    //Format data
+    let totalSales = 0;
+    let totalValue = 0;
+    let salesByBook = new Map();
+    let sales = [];
+
+
+    //Start with sales
+    for (const sale of salesInRange) {
+      const saleValue = calculateAuthorRevenue(
+        sale.inventory.bookstore.comissions,
+        sale.inventory.price,
+        author.category.management_min,
+        sale.inventory.bookstore.deal_percentage,
+        sale.quantity
+      )
+
+      totalSales += sale.quantity
+      totalValue += saleValue
+      
+      if (salesByBook.has(sale.inventory.book.title)) {
+        const targetedBook = salesByBook.get(sale.inventory.book.title)
+        targetedBook.quantity += sale.quantity
+        targetedBook.value += saleValue
+      } else {
+        salesByBook.set(sale.inventory.book.title, {
+          "bookId": sale.inventory.book.id,
+          "title": sale.inventory.book.title,
+          "quantity": sale.quantity,
+          "value": saleValue,
+        }) 
+      }
+
+      sales.push({
+        book_id: sale.inventory.bookId,
+        date: sale.date,
+        id: sale.id,
+        quantity: sale.quantity,
+        title: sale.inventory.book.title,
+        value: saleValue
+      })
     }
 
-    const bookSales = Object.values(bookSalesHashMap);
+    // Add kindleSales
+    for (const kindleSale of kindleSalesInRange) {
+      totalSales += kindleSale.quantityPod + kindleSale.quantityEbook;
+      totalValue += kindleSale.regalias
 
-    res.status(200).json({
-      totalSales,
-      totalValue,
-      bookSales,
-      sales})
-  } catch (error) {
-    console.error('Error fetching sales:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      if (salesByBook.has(kindleSale.book.title)) {
+        const targetedBook = salesByBook.get(kindleSale.book.title);
+        targetedBook.quantity += kindleSale.quantityPod + kindleSale.quantityEbook;
+        targetedBook.value += kindleSale.regalias;
+      } else {
+        salesByBook.set(kindleSale.book.title, {
+          "bookId": kindleSale.bookId,
+          "title": kindleSale.book.title,
+          "quantity": kindleSale.quantityPod + kindleSale.quantityEbook,
+          "value": kindleSale.regalias,
+        }) 
+      }
+
+      sales.push({
+        book_id: kindleSale.bookId,
+        date: kindleSale.datePay,
+        id: kindleSale.id,
+        quantity: kindleSale.quantityEbook + kindleSale.quantityPod,
+        value: kindleSale.regalias
+      })
+    }
+
+    const finalPayload = {
+      totalSales: totalSales,
+      totalValue: totalValue,
+      bookSales: [...salesByBook.values()],
+      sales: sales
+    }
+
+    res.status(200).json(finalPayload)
+  } catch(error) {
+    console.log("Error fetching sales: ", error)
+    res.status(500).json({message: "Internal server error"})
   }
 }
 router.get('/sales', getAuthorSales)
 
 
 export async function getMonthlySalesByPayments (req, res) {
-  // Get the last twelfth month first day as a cutoff date
-  const ltm = new Date();
-  ltm.setMonth(ltm.getMonth()-12);
-  ltm.setDate(1);
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: req.session.user_id
-    },
-    include: {
-      category: true
-    }
-  })
-
   try {
+    // Get the last twelfth month first day as a cutoff date
+    if (!req.session.user_id) {
+      return res.status(401).json({message: "Unauthorized"})
+    }
+
+    const ltm = new Date();
+    ltm.setMonth(ltm.getMonth()-12);
+    ltm.setDate(1);
+    console.log("ltm", ltm)
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.user_id
+      },
+      include: {
+        category: true
+      }
+    })
+
     // Get all existing payments and tied sales for that author
     const allAuthorPayments = await prisma.payment.findMany({
       where: {
@@ -477,9 +481,19 @@ export async function getMonthlySalesByPayments (req, res) {
         createdAt: "desc"
       }
     });
+    console.log("allAuthorsPayments.length", allAuthorPayments.length);
+
+    let filteredAuthorPayments = [];
+    for (const payment of allAuthorPayments) {
+      const forMonthDate = new Date(payment.forMonth + "-01")
+      if (forMonthDate >= ltm) {
+        filteredAuthorPayments.push(payment)
+      }
+    }
+    console.log("filteredAuthorPayments", filteredAuthorPayments);
 
     let monthlySales = [];
-    for (const payment of allAuthorPayments) {
+    for (const payment of filteredAuthorPayments) {
       let paymentSales = {
         "forMonth": payment.forMonth, 
         "sales": [], 
@@ -621,6 +635,7 @@ export async function getMonthlySalesByPayments (req, res) {
       for (const cost of payment.costs) {
         if (cost.isDeleted === false) {
           paymentSales.costs.push({"amount": cost.amount, "note": cost.note})
+          paymentSales.totalValue -= cost.amount
         }
       }
 
@@ -718,42 +733,26 @@ export async function getMonthlySalesByPayments (req, res) {
       
       monthlySales.push(paymentSales);
     }
-    // console.log("monthlySales", monthlySales);
-    // console.log("monthlySales.length", monthlySales.length);
+
+    let paddedMonthlySales = []
     if (monthlySales.length < 13) {
-      const now = new Date()
-      let currentMonth = getForMonth(now);
-
-      function decrementMonth() {
-        let year = parseInt(currentMonth.substring(0,4))
-        let month = parseInt(currentMonth.substring(5,7))
-        
-        if (month - 1 === 0) {
-          const newYear = year - 1;
-          const newMonth = 12;
-          year = newYear;
-          month = newMonth
+      let keys = generateMonthKeysForRange(ltm, new Date())
+      for (const key of keys) {
+        const existingPayment = monthlySales.find(payment => payment.forMonth === key)
+        if (existingPayment) {
+          paddedMonthlySales.push(existingPayment)
+          continue
         } else {
-          const newMonth = month - 1;
-          month = newMonth;
-        }
-
-        const nextCurrentMonth = year.toString() + '-' + month.toString().padStart(2, "0");
-        currentMonth = nextCurrentMonth;
-      }  
-
-      for (let i = 0; i < 13; i++) {
-        if (!monthlySales[i] || monthlySales[i].forMonth !== currentMonth) {
-          monthlySales.splice(i, 0, {"forMonth": currentMonth, "sales": [], "costs": []});
-          decrementMonth()
-        } else {
-          decrementMonth()
-          continue;
+          paddedMonthlySales.push({
+            "forMonth": key,
+            "sales": [],
+            "costs": []
+          })
         }
       }
     }
 
-    res.status(200).json(monthlySales);
+    res.status(200).json(paddedMonthlySales);
   } catch (error) {
     console.log('error fetching monthly sales by payments', error) 
     res.status(500).json({error: 'Internal server error'});

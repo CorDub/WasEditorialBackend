@@ -43,7 +43,7 @@ function CommissionMonthSelectorRow({
     }
   }
 
-  return(
+  return (
     <div
       className={active ? "cms-row-active" : "cms-row"}
       style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}

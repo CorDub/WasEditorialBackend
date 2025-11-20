@@ -9,7 +9,6 @@
 //         }
 //     });
 
-import { verify } from "crypto";
 import { prisma } from "../prisma/client";
 import { calculateAuthorRevenue, generateMonthKeysForRange, getForMonth } from "../utils";
 
@@ -738,3 +737,222 @@ import { calculateAuthorRevenue, generateMonthKeysForRange, getForMonth } from "
 //   }
 // }
 // router.get("/costs/:id", getAuthorCosts);
+
+
+// export async function getAuthorBookInventories(req, res) {
+//   try {
+//     if (!req.session.user_id) {
+//       return res.status(401).json({message: 'Unauthorized'})
+//     }
+
+//     const inputs = {
+//       bookId: parseInt(req.params.id)
+//     }
+//     validateInputs(inputs);
+
+//     // Get all inventories for that specific book
+//     const bookInventories = await prisma.inventory.findMany({
+//       where: {
+//         bookId: inputs.bookId,
+//         isDeleted: false
+//       },
+//       select: {
+//         id: true,
+//         bookstoreId: true,
+//         bookstore: {
+//           select: {
+//             name: true,
+//             // color: true
+//           }
+//         },
+//         book: {
+//           select: {
+//             title: true
+//           }
+//         },
+//         initial: true,
+//         current: true,
+//         returns: true,
+//         givenToAuthor: true
+//       }
+//     });
+
+//     // Group by bookstore
+//     let groupedByBookstore = {}
+//     // create the object if it doesn't exist, add things if it does
+//     for (const inventory of bookInventories) {
+//       if (inventory.bookstore.name in groupedByBookstore) {
+//         groupedByBookstore[inventory.bookstore.name].initial += inventory.initial;
+//         groupedByBookstore[inventory.bookstore.name].current += inventory.current;
+//         if (inventory.bookstoreId !== 1) {
+//           groupedByBookstore[inventory.bookstore.name].returns += inventory.returns;
+//         } else {
+//           groupedByBookstore[inventory.bookstore.name].given += inventory.givenToAuthor;
+//         }
+//       } else {
+//         groupedByBookstore[inventory.bookstore.name] = {
+//           bookstoreId: inventory.bookstoreId,
+//           name: inventory.bookstore.name,
+//           title: inventory.book.title,
+//           initial: inventory.initial,
+//           current: inventory.current,
+//         }
+//         if (inventory.bookstoreId !== 1) {
+//           groupedByBookstore[inventory.bookstore.name].returns += inventory.returns;
+//         } else {
+//           groupedByBookstore[inventory.bookstore.name].given += inventory.givenToAuthor;
+//         }
+//       }
+//     }
+
+//     res.status(200).json(Object.values(groupedByBookstore));
+//   } catch (error) {
+//     console.log("\n ERROR WHILE FETCHING THE BOOK INVENTORIES FROM SERVER \n", error);
+//     res.status(500).json({error: "a server error occurred while fetching relevant book inventories"});
+//   }
+// }
+// router.get("/bookInventories/:id", getAuthorBookInventories)
+
+
+// export async function getAuthorPayments (req, res) {
+//   try {
+//     if (!req.session.user_id) {
+//       return res.status(401).json({message: "Unauthorized"})
+//     }
+
+//     // Getting our range ready by setting it 12m ago
+//     const ltm = new Date();
+//     ltm.setMonth(ltm.getMonth()-12);
+//     ltm.setDate(1);
+
+//     // Getting all payments from that date to now
+//     const allPayments = await prisma.payment.findMany({
+//       where: {
+//         isDeleted: false,
+//         userId: req.session.user_id,
+//         createdAt: {
+//           gt: ltm
+//         }
+//       },
+//       include: {
+//         sales: true,
+//         kindleSales: true,
+//         costs: true
+//       },
+//       orderBy: {
+//         createdAt: "desc"
+//       }
+//     });
+
+//     const userWithCategory = await prisma.user.findUnique({
+//       where: {
+//         id: req.session.user_id
+//       },
+//       include: {
+//         category: true
+//       }
+//     })
+
+//     // Fill in empty months with 0s if necessary
+//     if (allPayments.length < 13) {
+//       // Get the YYYY-MM combination 12m ago
+//       const now = new Date();
+//       let currentYear = now.getFullYear();
+//       const currentMonth = now.getMonth() + 1;
+
+//       // Get an array of all the 12 monhts Y + M combination
+//       let ltmStrings = [];
+//       for (let i = 0; i < 12; i++) {
+//         let monthString = "";
+//         if ((currentMonth - i) <= 0) {
+//           let newCurrentMonth = currentMonth - i + 12;
+//           if (newCurrentMonth.toString().length === 1) {
+//             newCurrentMonth = "0" + newCurrentMonth.toString();
+//           } else {
+//             newCurrentMonth = newCurrentMonth.toString();
+//           }
+
+//           monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
+//         } else {
+//           let newCurrentMonth = (currentMonth-i).toString();
+//           if (newCurrentMonth.toString().length === 1) {
+//             newCurrentMonth = "0" + newCurrentMonth.toString();
+//           } else {
+//             newCurrentMonth = newCurrentMonth.toString();
+//           }
+
+//           monthString = currentYear.toString() + '-'+ newCurrentMonth;
+//         }
+//         ltmStrings.push(monthString);
+//       }
+
+//       // Compare with allPayments and fill in if missing
+//       for (let i = 0; i < ltmStrings.length; i++) {
+//         let existing = false;
+
+//         for (const payment of allPayments) {
+//           if (ltmStrings[i] === payment.forMonth) {
+//             existing = true;
+//           }
+//         }
+
+//         if (!existing) {
+//           allPayments.splice(i, 0, {
+//             forMonth: ltmStrings[i],
+//             status: "created",
+//             // sales: [],
+//             // kindleSales: [],
+//             // costs: []
+//           });
+//         }
+//       };
+//     }
+
+//     //Calculate and add the total amount of each payment
+//     for (const payment of allPayments) {
+//       payment.amount = 0;
+//       // sales
+//       if (payment.sales.length > 0) {
+//         for (const sale of payment.sales) {
+//           const saleInventory = await prisma.inventory.findUnique({
+//             where:{
+//               id: sale.inventoryId
+//             },
+//             include: {
+//               bookstore: true
+//             }
+//           })
+
+//           payment.amount += calculateAuthorRevenue(
+//             saleInventory.bookstore.comissions,
+//             saleInventory.price,
+//             userWithCategory.category.management_min,
+//             saleInventory.bookstore.deal_percentage,
+//             sale.quantity
+//           )
+//         }
+//       }
+
+//       //kindleSales
+//       if (payment.kindleSales.length > 0) {
+//         for (const sale of payment.kindleSales) {
+//           if (!sale.isDeleted) {
+//             payment.amount += sale.regalias
+//           }
+//         }
+//       }
+
+//       //costs
+//       if (payment.costs.length > 0) {
+//         for (const cost of payment.costs) {
+//           payment.amount -= cost.amount
+//         }
+//       }
+//     }
+
+//     res.status(200).json(allPayments);
+//   } catch(error) {
+//     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
+//     res.status(500).json({error: "a server error occurred while fetching relevant transfers"})
+//   }
+// }

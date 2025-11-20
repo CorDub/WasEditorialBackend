@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";
-import "./AuthorInventoryGlobal.scss";
+// import "./AuthorInventoryGlobal.scss";
 import Legend from "./Legend";
 import LoadingWheel from "./LoadingWheel";
 

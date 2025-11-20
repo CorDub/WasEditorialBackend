@@ -3,13 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import ShowInventories from "./ShowInventories";
-// import BooksSoldGraph from "./unused/BooksSoldGraph";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
-// import GivenToAuthorDetails from "./unused/GivenToAuthorDetails";
-// import AuthorBookstoreInventory from "./unused/AuthorBookstoreInventory";
-// import AuthorWasInventory from "./unused/AuthorWasInventory";
-// import AuthorAvailableInventory from "./unused/AuthorAvailableInventory";
 import InventoryGraph from "./InventoryGraph"
 
 function AuthorInventory(){
@@ -23,11 +18,6 @@ function AuthorInventory(){
   const [currentDetailsActive, setCurrentDetailsActive] = useState(null);
   const [nameDetailsActive, setNameDetailsActive] = useState("total");
   const [isTotalInventoryOpen, setTotalInventoryOpen] = useState(true);
-  // const [isGivenToAuthorOpen, setGivenToAuthorOpen] = useState(false);
-  // const [isBooksSoldGraphOpen, setBooksSoldGraphOpen] = useState(false);
-  // const [isAuthorBookstoreInventoryOpen, setAuthorBookstoreInventoryOpen] = useState(false);
-  // const [isAuthorWasInventoryOpen, setAuthorWasInventoryOpen] = useState(false);
-  // const [isAuthorAvailableInventoryOpen, setAuthorAvailableInventoryOpen] = useState(false);
   const [reset, setReset] = useState(false);
   const [exclusions, setExclusions] = useState("");
   const legendValues = [
@@ -121,11 +111,6 @@ function AuthorInventory(){
           setNameDetailsActive={setNameDetailsActive}
           setCurrentDetailsActive={setCurrentDetailsActive}
           setTotalInventoryOpen={setTotalInventoryOpen}
-          // setGivenToAuthorOpen={setGivenToAuthorOpen}
-          // setBooksSoldGraphOpen={setBooksSoldGraphOpen}
-          // setAuthorBookstoreInventoryOpen={setAuthorBookstoreInventoryOpen}
-          // setAuthorWasInventoryOpen={setAuthorWasInventoryOpen}
-          // setAuthorAvailableInventoryOpen={setAuthorAvailableInventoryOpen}
           legendDisplays={legendDisplays}
           setLegendDisplays={setLegendDisplays}
           exclusions={exclusions}
@@ -141,26 +126,7 @@ function AuthorInventory(){
               legendDisplays={legendDisplays}
               setLegendDisplays={setLegendDisplays}
               exclusions={exclusions}/>)}
-          {/* {isGivenToAuthorOpen && (
-            <GivenToAuthorDetails
-              selectedBookId={selectedBookId}/>)} */}
         </div>
-
-        {/* {isBooksSoldGraphOpen && (
-          <BooksSoldGraph
-            bookSales={booksInventories}
-            selectedBookId={selectedBookId} />)}
-        {isAuthorBookstoreInventoryOpen && (
-          <AuthorBookstoreInventory
-            selectedBookId={selectedBookId}/>)}
-        {isAuthorWasInventoryOpen && (
-          <AuthorWasInventory
-            booksInventories={booksInventories}
-            selectedBookId={selectedBookId}/>)}
-        {isAuthorAvailableInventoryOpen && (
-          <AuthorAvailableInventory
-            bookSales={inventories.bookInventories}
-            selectedBookId={selectedBookId}/>)} */}
       </div>
     </div>
     </div>

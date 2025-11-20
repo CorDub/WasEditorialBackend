@@ -8,7 +8,8 @@ import {
   generateMonthKeysForRange, 
   getForMonth, 
   twelveMonthsAgo,
-  validateInputs 
+  validateInputs,
+  roundToSecondDecimal 
 } from "../utils.js";
 
 const upload = multer();
@@ -407,7 +408,6 @@ export async function getMonthlySalesByPayments (req, res) {
     const ltm = new Date();
     ltm.setMonth(ltm.getMonth()-12);
     ltm.setDate(1);
-    console.log("ltm", ltm)
 
     const user = await prisma.user.findUnique({
       where: {
@@ -481,7 +481,6 @@ export async function getMonthlySalesByPayments (req, res) {
         createdAt: "desc"
       }
     });
-    console.log("allAuthorsPayments.length", allAuthorPayments.length);
 
     let filteredAuthorPayments = [];
     for (const payment of allAuthorPayments) {
@@ -490,7 +489,6 @@ export async function getMonthlySalesByPayments (req, res) {
         filteredAuthorPayments.push(payment)
       }
     }
-    console.log("filteredAuthorPayments", filteredAuthorPayments);
 
     let monthlySales = [];
     for (const payment of filteredAuthorPayments) {
@@ -737,14 +735,14 @@ export async function getMonthlySalesByPayments (req, res) {
     let paddedMonthlySales = []
     if (monthlySales.length < 13) {
       let keys = generateMonthKeysForRange(ltm, new Date())
-      for (const key of keys) {
-        const existingPayment = monthlySales.find(payment => payment.forMonth === key)
+      for (let i = 0; i < keys.length; i++) {
+        const existingPayment = monthlySales.find(payment => payment.forMonth === keys[keys.length - (i+1)])
         if (existingPayment) {
           paddedMonthlySales.push(existingPayment)
           continue
         } else {
           paddedMonthlySales.push({
-            "forMonth": key,
+            "forMonth": keys[keys.length - (i+1)],
             "sales": [],
             "costs": []
           })
@@ -761,70 +759,12 @@ export async function getMonthlySalesByPayments (req, res) {
 router.get('/monthlySalesByPayments', getMonthlySalesByPayments);
 
 
-export async function getAuthorBookInventories(req, res) {
-  try {
-    const bookId = parseInt(req.params.id);
-
-    // Get all inventories for that specific book
-    const bookInventories = await prisma.inventory.findMany({
-      where: {
-        bookId: bookId,
-        isDeleted: false
-      },
-      select: {
-        id: true,
-        bookstoreId: true,
-        bookstore: {
-          select: {
-            name: true,
-            color: true
-          }
-        },
-        book: {
-          select: {
-            title: true
-          }
-        },
-        initial: true,
-        current: true,
-        returns: true,
-        givenToAuthor: true
-      }
-    });
-
-    // Group by bookstore
-    let groupedByBookstore = {}
-    // create the object if it doesn't exist, add things if it does
-    for (const inventory of bookInventories) {
-      if (inventory.bookstore.name in groupedByBookstore) {
-        groupedByBookstore[inventory.bookstore.name].initial += inventory.initial;
-        groupedByBookstore[inventory.bookstore.name].current += inventory.current;
-        groupedByBookstore[inventory.bookstore.name].returns += inventory.returns;
-        groupedByBookstore[inventory.bookstore.name].given += inventory.givenToAuthor;
-      } else {
-        groupedByBookstore[inventory.bookstore.name] = {
-          bookstoreId: inventory.bookstoreId,
-          name: inventory.bookstore.name,
-          title: inventory.book.title,
-          color: inventory.bookstore.color,
-          initial: inventory.initial,
-          current: inventory.current,
-          returns: inventory.returns,
-          given: inventory.givenToAuthor
-        }
-      }
-    }
-
-    res.status(200).json(Object.values(groupedByBookstore));
-  } catch (error) {
-    console.log("\n ERROR WHILE FETCHING THE BOOK INVENTORIES FROM SERVER \n", error);
-    res.status(500).json({error: "a server error occurred while fetching relevant book inventories"});
-  }
-}
-router.get("/bookInventories/:id", getAuthorBookInventories)
-
 export async function getAuthorPayments (req, res) {
   try {
+    if (!req.session.user_id) {
+      return res.status(401).json({message: "Unauthorized"})
+    }
+
     // Getting our range ready by setting it 12m ago
     const ltm = new Date();
     ltm.setMonth(ltm.getMonth()-12);
@@ -839,15 +779,45 @@ export async function getAuthorPayments (req, res) {
           gt: ltm
         }
       },
-      // select: {
-      //   id: true,
-      //   forMonth: true,
-      //   status: true,
-      // },
-      include: {
-        sales: true,
-        kindleSales: true,
-        costs: true
+      select: {
+        forMonth: true, 
+        isDeleted: true,
+        status: true,
+        sales: {
+          select: {
+            id: true,
+            isDeleted: true,
+            quantity: true,
+            inventory: {
+              select: {
+                bookstore: {
+                  select: {
+                    comissions: true,
+                    deal_percentage: true
+                  }
+                },
+                bookstoreId: true,
+                price: true
+              }
+            }
+          }
+        },
+        kindleSales: {
+          select: {
+            id: true,
+            isDeleted: true,
+            quantityEbook: true,
+            quantityPod: true,
+            regalias: true
+          }
+        },
+        costs: {
+          select: {
+            id: true,
+            isDeleted: true,
+            amount: true
+          }
+        }
       },
       orderBy: {
         createdAt: "desc"
@@ -863,110 +833,72 @@ export async function getAuthorPayments (req, res) {
       }
     })
 
-    // Fill in empty months with 0s if necessary
-    if (allPayments.length < 13) {
-      // Get the YYYY-MM combination 12m ago
-      const now = new Date();
-      let currentYear = now.getFullYear();
-      const currentMonth = now.getMonth() + 1;
-
-      // Get an array of all the 12 monhts Y + M combination
-      let ltmStrings = [];
-      for (let i = 0; i < 12; i++) {
-        let monthString = "";
-        if ((currentMonth - i) <= 0) {
-          let newCurrentMonth = currentMonth - i + 12;
-          if (newCurrentMonth.toString().length === 1) {
-            newCurrentMonth = "0" + newCurrentMonth.toString();
-          } else {
-            newCurrentMonth = newCurrentMonth.toString();
-          }
-
-          monthString = (currentYear - 1).toString() + '-' + newCurrentMonth;
-        } else {
-          let newCurrentMonth = (currentMonth-i).toString();
-          if (newCurrentMonth.toString().length === 1) {
-            newCurrentMonth = "0" + newCurrentMonth.toString();
-          } else {
-            newCurrentMonth = newCurrentMonth.toString();
-          }
-
-          monthString = currentYear.toString() + '-'+ newCurrentMonth;
-        }
-        ltmStrings.push(monthString);
-      }
-
-      // Compare with allPayments and fill in if missing
-      for (let i = 0; i < ltmStrings.length; i++) {
-        let existing = false;
-
-        for (const payment of allPayments) {
-          if (ltmStrings[i] === payment.forMonth) {
-            existing = true;
-          }
-        }
-
-        if (!existing) {
-          allPayments.splice(i, 0, {
-            forMonth: ltmStrings[i],
-            status: "created",
-            sales: [],
-            kindleSales: [],
-            costs: []
-          });
-        }
-      };
-    }
-
-    //Calculate and add the total amount of each payment
+    let filteredAuthorPayments = new Map();
     for (const payment of allPayments) {
-      payment.amount = 0;
-      // sales
-      if (payment.sales.length > 0) {
-        for (const sale of payment.sales) {
-          const saleInventory = await prisma.inventory.findUnique({
-            where:{
-              id: sale.inventoryId
-            },
-            include: {
-              bookstore: true
-            }
-          })
+      const forMonthDate = new Date(payment.forMonth + "-01")
+      if (forMonthDate >= ltm && !payment.isDeleted) {
+        payment.amount  = 0
 
-          payment.amount += calculateAuthorRevenue(
-            saleInventory.bookstore.comissions,
-            saleInventory.price,
-            userWithCategory.category.management_min,
-            saleInventory.bookstore.deal_percentage,
-            sale.quantity
-          )
+        if (payment.sales.length > 0) {
+          for (const sale of payment.sales) {
+            if (sale.isDeleted) {continue}
+
+            payment.amount += calculateAuthorRevenue(
+              sale.inventory.bookstore.comissions,
+              sale.inventory.price,
+              userWithCategory.category.management_min,
+              sale.inventory.bookstore.deal_percentage,
+              sale.quantity
+            )
+          }
         }
-      }
 
-      //kindleSales
-      if (payment.kindleSales.length > 0) {
-        for (const sale of payment.kindleSales) {
-          if (!sale.isDeleted) {
+        if (payment.kindleSales.length > 0) {
+          for (const sale of payment.kindleSales) {
+            if (sale.isDeleted) {continue}
+
             payment.amount += sale.regalias
           }
         }
-      }
 
-      //costs
-      if (payment.costs.length > 0) {
-        for (const cost of payment.costs) {
-          payment.amount -= cost.amount
+        if (payment.costs.length > 0) {
+          for (const cost of payment.costs) {
+            if (cost.isDeleted) {continue}
+
+            payment.amount -= cost.amount
+          }
         }
+
+        filteredAuthorPayments.set(payment.forMonth, {
+          forMonth: payment.forMonth,
+          status: payment.status,
+          amount: payment.amount
+        })
       }
     }
 
-    res.status(200).json(allPayments);
-  } catch(error) {
+    let paymentsPerMonth = [];
+    let keys = generateMonthKeysForRange(ltm, new Date())
+    for (let i = 0; i < keys.length; i++) {
+      if (filteredAuthorPayments.has(keys[keys.length - (i+1)])) {
+        paymentsPerMonth.push(filteredAuthorPayments.get(keys[keys.length - (i+1)]))
+      } else {
+        paymentsPerMonth.push({
+          forMonth: keys[keys.length - (i+1)],
+          status: "created",
+          amount: 0
+        })
+      }
+    }
+
+    res.status(200).json(paymentsPerMonth);
+  } catch (error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
-    res.status(500).json({error: "a server error occurred while fetching relevant transfers"})
+    res.status(500).json({error: "a server error occurred"})
   }
 }
 router.get("/payments", getAuthorPayments);
+
 
 export async function sendInvoice(req, res) {
   try {

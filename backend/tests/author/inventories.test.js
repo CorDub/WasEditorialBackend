@@ -226,3 +226,88 @@ describe(`getting author inventories without being logged in`, () => {
     expect(mockRes.json.mock.calls[0][0]).toEqual({ message: "Unauthorized" });
   })
 })
+
+
+describe(`get all valid inventories of a specific book of an author 
+grouped by bookstores`, async() => {
+  let mockReq, mockRes, jsonRes;
+  let author;
+  let book1, book2;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2, inventory3, inventory4, wasInventory1, wasInventory2;
+  let impression1, impression2, impression3, impression4;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma, "Geroan", "Idfenopte", 'geroan.idfenopte@gmail.com', "author")
+    book1 = await createBook(prisma, "book1", [{"id": author.id}])
+    book2 = await createBook(prisma, "book2", [{"id": author.id}])
+    bookstore1 = await createBookstore(prisma, "bookstore1")
+    bookstore2 = await createBookstore(prisma, "bookstore2")
+    wasInventory1 = await createInventory(prisma, book1.id, 1, 400, 280, false, 30, 0)
+    inventory1 = await createInventory(prisma, book1.id, bookstore1.id, 100, 70, false, 20, 10)
+    inventory2 = await createInventory(prisma, book1.id, bookstore2.id, 100, 50, false, 10, 40)
+    wasInventory2 = await createInventory(prisma, book2.id, 1, 100, 100, false, 10, 0)
+    inventory3 = await createInventory(prisma, book2.id, bookstore1.id, 100, 80, false, 10, 10)
+    inventory4 = await createInventory(prisma, book2.id, bookstore2.id, 100, 80, true, 10, 10)
+    impression1 = await createImpression(prisma, book1.id, 200)
+    impression2 = await createImpression(prisma, book1.id, 200)
+    impression3 = await createImpression(prisma, book2.id, 200, {isDeleted: false})
+    impression4 = await createImpression(prisma, book2.id, 200, {isDeleted: true})
+
+    mockReq = {
+      params: {
+        id: book1.id    
+      }
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
+
+  afterAll(async() => {
+    await deleteFromDB(prisma, inventory1, "inventory")
+    await deleteFromDB(prisma, inventory2, "inventory")
+    await deleteFromDB(prisma, inventory3, "inventory")
+    await deleteFromDB(prisma, inventory4, "inventory")
+    await deleteFromDB(prisma, bookstore1, "bookstore")
+    await deleteFromDB(prisma, bookstore2, "bookstore")
+    await deleteFromDB(prisma, book1, "book")
+    await deleteFromDB(prisma, book2, "book")
+    await deleteFromDB(prisma, author, "author")
+  })
+
+  it(`should return a status 200`, async() => {
+    await getAuthorBookInventories(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+  })
+
+  it(`should return the bookstoreId, name, title, initial, 
+  current, returns and givenToAuthor total values for each bookstore,
+  not taking deleted into account`, async() => {
+    jsonRes = mockRes.status.mock.calls[0][0]
+    expect(jsonRes.length).toBe(3)
+
+    expect(jsonRes[0].bookstoreId).toBe(1)
+    expect(jsonRes[0].name).toBe("Plataforma Was")
+    expect(jsonRes[0].initial).toBe(500)
+    expect(jsonRes[0].current).toBe(150)
+    expect(jsonRes[0].returns).toBe(30)
+    expect(jsonRes[0].given).toBe(20)
+
+    expect(jsonRes[1].bookstoreId).toBe(bookstore1.id)
+    expect(jsonRes[1].name).toBe("bookstore1")
+    expect(jsonRes[1].initial).toBe(200)
+    expect(jsonRes[1].current).toBe(150)
+    expect(jsonRes[1].returns).toBe(30)
+    expect(jsonRes[1].given).toBe(20)
+
+    expect(jsonRes[2].bookstoreId).toBe(bookstore2.id)
+    expect(jsonRes[2].name).toBe("bookstore2")
+    expect(jsonRes[2].initial).toBe(200)
+    expect(jsonRes[2].current).toBe(50)
+    expect(jsonRes[2].returns).toBe(10)
+    expect(jsonRes[2].given).toBe(40)
+  })
+})

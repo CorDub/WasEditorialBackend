@@ -20,6 +20,10 @@ export function calculateAuthorRevenue(
     return res
 }
 
+export function roundToSecondDecimal(float) {
+  return Number(float.toFixed(2))
+}
+
 export function getForMonth(timestamp) {
   const date = new Date(timestamp);
   const year = String(date.getFullYear());

@@ -28,6 +28,9 @@ function AuthorCommissions() {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [salesByPayments, setSalesByPayments] = useState([]);
 
+  console.log("salesByPayments", salesByPayments);
+  console.log("payments", payments);
+
   // set the status of payment
   useEffect(() => {
     if (paymentInfo != null) {
@@ -86,6 +89,8 @@ function AuthorCommissions() {
         const data = await response.json();
         sessionStorage.setItem("authorPayments", JSON.stringify(data));
         console.log("cache storage");
+        console.log("data", data)
+        console.log("data[0]", data[0])
         setPayments(data);
         setPaymentInfo(data[0]);
         setForceRender(false);
@@ -142,8 +147,6 @@ function AuthorCommissions() {
     fetchSalesByPayments()
   }, [])
 
-  // console.log(salesByPayments);
-
   return(
     <div className="author-commissions"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
@@ -159,11 +162,7 @@ function AuthorCommissions() {
           setPaymentInfo={setPaymentInfo}/>
       
         <div className="author-commissions-right-side">
-          {/* <Table
-            data={dataByMonths}
-            activeMonth={activeMonth}
-            setActiveMonth={setActiveMonth}
-            paymentInfo={paymentInfo}/> */}
+
           <TableBookstores
             salesByPayments={salesByPayments}
             activeMonth={activeMonth}/>
@@ -181,8 +180,6 @@ function AuthorCommissions() {
             <div className="author-commissions-solicitar-pago-unavailable"
               onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
               onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
-              {/* {isDemandPaymentTooltipOpen && (
-                <div className="demand-payment-tooltip">Solicitar un pago es solamente posible después del 10 del mes</div>)} */}
             </div>
           )}
           {isDemandPaymentPossible === "solicited" && (

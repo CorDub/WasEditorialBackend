@@ -24,6 +24,8 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     }
   }, [user])
 
+  console.log("paymentInfo", paymentInfo);
+
   function checkFile(e, type) {
     const file = e.target.files[0];
     if (!file) {
@@ -194,7 +196,9 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
         <div className="dempay-adicional-info">
           <p>Por favor, usa el uso de CFDI "Gastos Generales"</p>
           <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p>
+          <p>-</p>
           <p>No añade el IVA en la factura.</p>
+          <p>-</p>
           <p>El pago sera hecho por transferencia y en una sola exhibición.</p>
         </div>
         <div className="modal-form-upload">

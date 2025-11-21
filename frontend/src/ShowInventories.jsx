@@ -144,7 +144,7 @@ function ShowInventories({
           //   declareActive(totalRef, 'total', setTotalInventoryOpen),
           //   setExclusions("")}}
           >
-          <p className="author-inventory-label">Nuevas impressiones</p>
+          <p className="author-inventory-label">Nuevas impresiónes</p>
           <p className="author-inventory-number">{inventories.summary.impressions || 0}</p>
         </div>
         {!showTotal && 
@@ -163,6 +163,10 @@ function ShowInventories({
               })}
             </>
           )}
+        <div className="author-inventory-line ail-bold">
+          <p className="author-inventory-label">Copias imprimidas totales</p>
+          <p className="author-inventory-label">{(inventories.summary.impressions + inventories.summary.initial) || 0}</p>
+        </div>
         <div className="author-inventory-line"
           ref={givenRef}
           // onClick={() => {
@@ -181,23 +185,34 @@ function ShowInventories({
           <p className="author-inventory-label">Libros vendidos</p>
           <p className="author-inventory-number">{inventories.summary.sold || 0}</p>
         </div>
-        <div className="author-inventory-line"
+        
+        <div className="author-inventory-line ail-bold"
+          ref={availableRef}
+          // onClick={() => {
+          //   declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)
+          //   setExclusions("")}}
+          >
+          <p className="author-inventory-label" title='Inventario total disponible'>Inventario total disponible</p>
+          <p className="author-inventory-number">{inventories.summary.total || 0}</p>
+        </div>
+
+        <div className="author-inventory-line ail-repartition"
           ref={bookstoreRef}
           // onClick={() => {
           //   declareActive(bookstoreRef, "bookstore", setAuthorBookstoreInventoryOpen),
           //   setExclusions('allButWas')}}
           >
-          <p className="author-inventory-label">Inventario en librerías</p>
+          <p className="author-inventory-label">Inventario disponible en librerías</p>
           <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
         </div>
-        <div className="author-inventory-line"
+        <div className="author-inventory-line ail-repartition"
           ref={wasRef}
           // onClick={() => {
           //   declareActive(wasRef, "was", setAuthorWasInventoryOpen)
           //   setWasPerCountryOpen(!isWasPerCountryOpen)
           //   setExclusions("onlyWas")}}
           >
-          <p className="author-inventory-label">Libros en bodega Was</p>
+          <p className="author-inventory-label">Libros disponibles en bodega Was</p>
           <p className="author-inventory-number">{inventories.summary.was || 0}</p>
         </div>
         {isWasPerCountryOpen && Object.entries(inventories.summary.wasPerCountry).map((country, index) => (
@@ -208,15 +223,6 @@ function ShowInventories({
             <p className="author-inventory-was-number">{country[1]}</p>
           </div>
         ))}
-        <div className="author-inventory-line"
-          ref={availableRef}
-          // onClick={() => {
-          //   declareActive(availableRef, "available", setAuthorAvailableInventoryOpen)
-          //   setExclusions("")}}
-          >
-          <p className="author-inventory-label" title='Inventario total disponible'>Inventario total disponible</p>
-          <p className="author-inventory-number">{inventories.summary.total || 0}</p>
-        </div>
       </div>
     )
   )

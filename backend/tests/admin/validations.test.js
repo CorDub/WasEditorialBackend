@@ -133,3 +133,62 @@ test("validates time ranges correctly", () => {
   expect(validateInput("date", new Date())).toStrictEqual([]);
   expect(validateInput("date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)))).toStrictEqual([["date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)), "timerange"]])
 })
+
+test('validates file type correctly', () => {
+  expect(validateInput(
+    "factura", 
+    {
+      originalname: "factura.pdf",
+      buffer: Buffer.from('factura data'),
+      mimetype: 'application/pdf', 
+      size: Buffer.from('factura data').length
+    })).toStrictEqual([])
+  expect(validateInput(
+    "factura",
+    {
+      originalname: "factura.pdf",
+      buffer: Buffer.from('factura data'),
+      mimetype: 'image/webp', 
+      size: Buffer.from('factura data').length
+    }
+  )).toStrictEqual([[
+    'factura', 
+    {
+      originalname: "factura.pdf",
+      buffer: Buffer.from('factura data'),
+      mimetype: 'image/webp', 
+      size: Buffer.from('factura data').length
+    }, 
+    "type"
+  ]])
+})
+
+test(`validates file size correctly`, () => {
+  expect(validateInput(
+    'factura',
+    {
+      originalname: "factura.pdf",
+      buffer: Buffer.from('factura data'),
+      mimetype: 'application/pdf', 
+      size: Buffer.from('factura data').length
+    }
+  )).toStrictEqual([])
+  expect(validateInput(
+    'factura',
+    {
+      originalname: "factura.pdf",
+      buffer: Buffer.from('factura data'),
+      mimetype: 'application/pdf', 
+      size: 6*1024*1024
+    }
+  )).toStrictEqual([[
+      'factura',
+      {
+        originalname: "factura.pdf",
+        buffer: Buffer.from('factura data'),
+        mimetype: 'application/pdf', 
+        size: 6*1024*1024
+      },
+      "size"
+    ]])
+})

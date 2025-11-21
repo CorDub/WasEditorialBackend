@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";
-// import "./AuthorInventoryGlobal.scss";
 import Legend from "./Legend";
 import LoadingWheel from "./LoadingWheel";
 
@@ -109,34 +108,40 @@ function InventoryGraph({
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
 
-      // getting the sales total first for this inventory,
-      // as we'll add it either way
-      let sumSales = 0;
-      for (const sale of inventory.sales) {
-        if (!sale.isDeleted) {
-          sumSales += sale.quantity
-        }
-      }
-
       // create the result objects if doesn't exist yet, add if it does
       if (groupBy in results) {
-        results[groupBy].initial += inventory.initial
-        results[groupBy].current += inventory.current
+        results[groupBy].total += inventory.current + inventory.sold 
+        if (inventory.bookstore.id === 1) {
+          results[groupBy].total += inventory.givenToAuthor
+          results[groupBy].current += inventory.current - inventory.returns
+        } else {
+          results[groupBy].total += inventory.returns
+          results[groupBy].current += inventory.current
+        }
+
         results[groupBy].givenToAuthor += inventory.givenToAuthor
         results[groupBy].returns += inventory.returns
-        results[groupBy].sold += sumSales
+        results[groupBy].sold += inventory.sold
       } else {
         results[groupBy] = {
           name: groupBy,
-          initial: inventory.initial,
+          total: inventory.current + inventory.sold,
           current: inventory.current,
           givenToAuthor: inventory.givenToAuthor,
           returns: inventory.returns,
-          sold: sumSales,
-          color: scope === "bookstore" ? inventory.bookstore.color : '#E2E2E2'
+          sold: inventory.sold,
+        }
+
+        if (inventory.bookstore.id === 1) {
+          results[groupBy].total += inventory.givenToAuthor
+          results[groupBy].current -= inventory.returns 
+        } else {
+          results[groupBy].total += inventory.returns
         }
       }
     }
+
+    console.log("results", results)
 
     // second filtering pass based on selectedDisplays
     let generalMax = 0;
@@ -169,10 +174,10 @@ function InventoryGraph({
     // storing it as a list instead of an object to be able to map
     const listResults = Object.entries(results);
     if (generalMax === 0) {
-      const sorted = [...listResults].sort((a, b) => b[1]["initial"] - a[1]["initial"]);
+      const sorted = [...listResults].sort((a, b) => b[1]["total"] - a[1]["total"]);
       setFilteredData(sorted);
       if (sorted.length > 0) {
-        setMax(sorted[0][1]["initial"]);
+        setMax(sorted[0][1]["total"]);
       }
     } else {
       const sorted = [...listResults].sort((a, b) => getSum(b[1]) - getSum(a[1]));

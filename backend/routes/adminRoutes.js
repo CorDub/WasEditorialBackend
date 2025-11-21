@@ -14,7 +14,6 @@ import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
 import { createRandomPassword } from "../passwordUtils.js";
-import { cp } from "fs";
 
 const upload = multer();
 const router = express.Router();
@@ -2433,6 +2432,10 @@ export async function addTransfer(req, res) {
 
       // Route 1 : delivered to Author
       if (inputs.type === "send" && !inputs.bookstoreToId) {
+        const inventoryFrom = await tx.inventory.findUnique({where: {id: inputs.inventoryFromId}})
+        if (inventoryFrom.bookstoreId !== 1) {
+          return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde el inventario de la bodega Was"})
+        }
 
         const newTransferToAuthor = await tx.transfer.create({
           data: {

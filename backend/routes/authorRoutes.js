@@ -9,7 +9,6 @@ import {
   getForMonth, 
   twelveMonthsAgo,
   validateInputs,
-  roundToSecondDecimal 
 } from "../utils.js";
 
 const upload = multer();
@@ -902,23 +901,45 @@ router.get("/payments", getAuthorPayments);
 
 export async function sendInvoice(req, res) {
   try {
+    if (!req.session.user_id) {
+      return res.status(401).json({message: "Unauthorized"})
+    }
+
     const userID = req.session.user_id;
     const user = await prisma.user.findUnique({
       where: {
         id: userID,
       }
     });
-    const factura = req.files.factura[0];
-    const constancia = req.files.constancia[0]
-    const { month, monthOriginal, amount, uso, correo } = req.body;
+
+    const inputs = {
+      month: req.body.month,
+      monthOriginal: req.body.monthOriginal,
+      amount: parseFloat(req.body.amount),
+      email: req.body.correo,
+      factura: req.files.factura[0],
+      constancia: req.files.constancia[0]
+    }
+    validateInputs(inputs)
+
     const name = user.first_name + " " + user.last_name;
-    sendEmailWithInvoice(name, month, amount, uso, factura, constancia, correo);
+    const info = await sendEmailWithInvoice(
+      name, 
+      inputs.month, 
+      inputs.amount, 
+      inputs.factura, 
+      inputs.constancia, 
+      inputs.email);
+    console.log("info", info)
+    if (!info.accepted.includes(inputs.email)) {
+      throw new Error ({error: "email was not sent successfully"})
+    }
 
     const updatedPayment = await prisma.payment.update({
       where: {
         userId_forMonth: {
           userId: userID,
-          forMonth: monthOriginal
+          forMonth: inputs.monthOriginal
         }
       },
       data: {
@@ -939,6 +960,10 @@ router.post("/sendInvoice", upload.fields([
 
 export async function getCompleteInventory(req, res) {
   try {
+    if (!req.session.user_id) {
+      return res.status(401).json({message: "Unauthorized"})
+    }
+
     const allAuthorInventories = await prisma.inventory.findMany({
       where: {
         isDeleted: false,
@@ -955,44 +980,55 @@ export async function getCompleteInventory(req, res) {
           select: {
             id: true,
             title: true,
-            isDeleted: true
           },
         },
         bookstore: {
           select: {
             id: true,
             name: true,
-            color: true,
-            isDeleted: true
           }
         },
         country: true,
         price: true,
-        initial: true,
         current: true,
         returns: true,
         givenToAuthor: true,
         sales: {
           select: {
-            quantity: true,
             isDeleted: true,
-            payments: {
-              select: {
-                userId: true
-              }
-            }
+            quantity: true
           }
         }
       }
     });
 
+    let inventoriesWithSales = [];
     for (const inventory of allAuthorInventories) {
-      inventory.sales = inventory.sales.filter(
-        sale => sale.payments.some(payment => payment.userId === req.session.user_id)
-      );
-    }
+      let totalSold = 0;
+      for (const sale of inventory.sales) {
+        if (sale.isDeleted) {continue}
 
-    res.status(200).json(allAuthorInventories);
+        totalSold += sale.quantity
+      }
+
+      inventoriesWithSales.push({
+        book: {
+          id: inventory.book.id,
+          title: inventory.book.title 
+        },
+        bookstore: {
+          id: inventory.bookstore.id,
+          name: inventory.bookstore.name
+        },
+        country: inventory.country,
+        current: inventory.current,
+        givenToAuthor: inventory.givenToAuthor,
+        returns: inventory.returns,
+        sold: totalSold
+      })
+    }
+    
+    res.status(200).json(inventoriesWithSales);
   } catch (error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})

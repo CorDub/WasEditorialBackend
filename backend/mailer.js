@@ -56,7 +56,7 @@ export async function sendResetPasswordMail(to, name) {
   }
 };
 
-export async function sendEmailWithInvoice(name, month, amount, uso, factura, constancia, correo) {
+export async function sendEmailWithInvoice(name, month, amount, factura, constancia, correo) {
   try {
     const mimeToExtension = {
       "application/pdf": ".pdf",
@@ -71,19 +71,22 @@ export async function sendEmailWithInvoice(name, month, amount, uso, factura, co
       text: `Hola, \n
       Eso es un correo automatico mandado por el sitio web de Was Editorial.
       ${name}, con correo ${correo} solicitó nueva factura de $ ${amount} para el mes de ${month}.
-      Está adjunto al correo con la constancia de situación fiscal.
-      El uso de CFDI dado es ${uso}.`,
+      Está adjunto al correo con la constancia de situación fiscal.`,
       attachments: [
         {
           filename: `Factura ${name} - ${month} - ${amount}${mimeToExtension[factura.mimetype]}`,
-          content: factura.buffer
+          content: factura.buffer,
+          contentType: factura.mimetype
         },
         {
           filename: `Constancia ${name}${mimeToExtension[constancia.mimetype]}`,
-          content: constancia.buffer
+          content: constancia.buffer,
+          contentType: factura.mimetype
         }
       ]
     })
+
+    return info
   } catch(error) {
     console.error('Error sending the invoice email:', error);
   }

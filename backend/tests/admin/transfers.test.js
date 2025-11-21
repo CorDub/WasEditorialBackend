@@ -140,6 +140,69 @@ describe(`adding a transfer type delivery to author on a deleted inventory`, asy
 })
 
 
+describe(`adding a transfer type delivery to author from a non Was inventory`, async() => {
+  let mockReq, mockRes;
+  let newAuthor, newBook, newBookstore, fromInventory, newInventory, newTransferToAuthor;
+
+  beforeAll(async() => {
+    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
+    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
+    newBookstore = await createBookstore(prisma, "newBookstore");
+    fromInventory = await createInventory(prisma, newBook.id, 2, 1000, 500, true, 0, 0);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+
+    mockReq = {
+      body: {
+        bookstoreToId: null,
+        quantity: 100,
+        inventoryFromId: fromInventory.id,
+        type: "send",
+        note: "lo que te entregamos el otro día",
+        deliveryDate: new Date("2025-11-04"),
+        place: "Salon del libro Guadalajara",
+        person: "Rebeca"
+      }
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  });
+
+  afterAll(async() => {
+    await deleteFromDB(prisma, newTransferToAuthor, "transfer");
+    await deleteFromDB(prisma, newInventory, "inventory");
+    await deleteFromDB(prisma, fromInventory, "inventory");
+    await deleteFromDB(prisma, newBookstore, "bookstore");
+    await deleteFromDB(prisma, newBook, "book");
+    await deleteFromDB(prisma, newAuthor, "author");
+  })
+
+  it("should return a status 500", async() => {
+    await addTransfer(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+  })
+
+  it("should not create a new transfer with the correct data", async() => {
+    const jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(jsonResponse).toStrictEqual({error: "a server error occurred while creating the transfer"});
+    const inventory = await prisma.inventory.findUnique({
+      where: {id: fromInventory.id},
+      include: {transfersFrom: true}
+    });
+    expect(inventory.transfersFrom.length).toBe(0)
+  })
+
+  it("should not update the departed inventory", async() => {
+    const notUpdatedInventory = await prisma.inventory.findUnique({where: {id: fromInventory.id}})
+    expect(notUpdatedInventory.current).toBe(500);
+    expect(notUpdatedInventory.initial).toBe(1000);
+    expect(notUpdatedInventory.givenToAuthor).toBe(0);
+  })
+})
+
+
 describe(`adding a transfer type delivery to author with invalid parameters`, async() => {
   let mockReq, mockRes;
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransferToAuthor;

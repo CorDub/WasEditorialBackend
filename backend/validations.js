@@ -241,6 +241,24 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ['type', "string"],
       ["length", 25]
+    ], 
+    "month": [
+      ["type", "string"],
+      ["type", "string"],
+    ],
+    "monthOriginal": [
+      ["type", "string"],
+      ["length", 7],
+    ],
+    "factura": [
+      ["presence", "not empty"],
+      ["type", "file"],
+      ["size", 5*1024*1024]
+    ],
+    "constancia": [
+      ["presence", "not empty"],
+      ["type", "file"],
+      ["size", 5*1024*1024]
     ]
   }
 
@@ -307,6 +325,16 @@ export function validateInput(inputName, inputValue) {
               errors.push([inputName, inputValue, "type"]);
               return errors
             }
+          }
+        }
+
+        if (check[1] === "file") {
+          if (inputValue.mimetype !== "application/pdf"
+            && inputValue.mimetype !== "image/jpeg"
+            && inputValue.mimetype !== "image/png"
+          ) {
+            errors.push([inputName, inputValue, "type"]);
+            return errors
           }
         }
       break;
@@ -457,6 +485,13 @@ export function validateInput(inputName, inputValue) {
             return errors
           }
         } 
+      break;
+
+      case "size": 
+        if (inputValue?.size > check[1]) {
+          errors.push([inputName, inputValue, "size"])
+          return errors
+        }
       break;
     }
   }

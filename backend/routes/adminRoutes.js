@@ -1896,8 +1896,8 @@ export async function getSales(req, res) {
     // let startDate = new Date(req.query.startDate)
     // let endDate = new Date(req.query.endDate)
     const inputs = {
-      startDate: new Date(req.query.startDate),
-      endDate: new Date(req.query.endDate)
+      startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
+      endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
     };
     validateInputs(inputs);
 

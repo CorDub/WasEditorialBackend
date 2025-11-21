@@ -71,16 +71,23 @@ export function generateMonthKeysForRange(startDate, endDate) {
 }
 
 export function twelveMonthsAgo() {
+  // const now = new Date();
+  // let remainder = 12 - (now.getMonth());
+  // let twelveMonthsAgo;
+  // if (remainder > 0) {
+  //   const minusOneYear = new Date(now.setFullYear(now.getFullYear()-1))
+  //   twelveMonthsAgo = new Date(minusOneYear.setMonth(12-remainder));
+  // } else {
+  //   twelveMonthsAgo = new Date(now.setMonth(remainder));
+  // }
+  // return twelveMonthsAgo
+
   const now = new Date();
-  let remainder = 12 - (now.getMonth());
-  let twelveMonthsAgo;
-  if (remainder > 0) {
-    const minusOneYear = new Date(now.setFullYear(now.getFullYear()-1))
-    twelveMonthsAgo = new Date(minusOneYear.setMonth(12-remainder));
-  } else {
-    twelveMonthsAgo = new Date(now.setMonth(remainder));
-  }
-  return twelveMonthsAgo
+  const result = new Date(now);
+
+  result.setMonth(result.getMonth() - 12);
+
+  return result;
 }
 
 export function changeDateFormat(date, format='normal') {

@@ -469,14 +469,14 @@ export function validateInput(inputName, inputValue) {
         }
       break;
 
-      case "timerange":
-        if (check[1] === "no future") {
-          if (inputValue > new Date()) {
-            errors.push([inputName, inputValue, "timerange"])
-            return errors
-          }
-        }
-      break;
+      // case "timerange":
+      //   if (check[1] === "no future") {
+      //     if (inputValue > new Date()) {
+      //       errors.push([inputName, inputValue, "timerange"])
+      //       return errors
+      //     }
+      //   }
+      // break;
 
       case "range":
         if (check[1] === "positive") {

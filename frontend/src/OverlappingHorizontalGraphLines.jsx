@@ -93,30 +93,42 @@ function OverlappingHorizontalGraphLines({
     let finalCurrentPercent = baseCalcCurrentPercent;
     // check if number is visible
 
-    // if (returns === 0 && sold === 0) {
-    //   if ((baseCalcCurrentPercent - minCurrentPercent) < finalGivenPercent) {
-    //     const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalGivenPercent)
-    //     finalCurrentPercent = baseCalcCurrentPercent + diff;
-    //   }
-    // } else if (returns === 0 && sold > 0) {
+    if (returns === 0 && sold === 0) {
+      if ((baseCalcCurrentPercent - minCurrentPercent) < finalGivenPercent) {
+        const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalGivenPercent)
+        finalCurrentPercent = baseCalcCurrentPercent + diff;
+      }
 
-    // }
-
-    if ((baseCalcCurrentPercent - minCurrentPercent) < finalReturnsPercent) {
-      const difference = finalReturnsPercent - (baseCalcCurrentPercent - minCurrentPercent)
-      if ((baseCalcCurrentPercent + difference) <= 100) {
-        finalCurrentPercent = baseCalcCurrentPercent + difference
-      } else {
-        finalCurrentPercent = baseCalcCurrentPercent
-        if ((finalReturnsPercent - difference) < finalSoldPercent) {
-          finalSoldPercent = finalSoldPercent - difference 
-          finalReturnsPercent = finalReturnsPercent - difference
+    } else if (returns === 0 && sold > 0) {
+      if ((baseCalcCurrentPercent - minCurrentPercent) < finalSoldPercent) {
+        const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalSoldPercent)
+        if ((baseCalcCurrentPercent + difference) <= 100) {
+          finalCurrentPercent = baseCalcCurrentPercent + difference
         } else {
-          finalReturnsPercent = finalReturnsPercent - difference
+          if ((finalSoldPercent - diff) < finalGivenPercent) {
+            finalGivenPercent -= diff
+            finalSoldPercent -= diff
+          } else {
+            finalSoldPercent -= diff
+          }
+        } 
+      }
+    } else if (returns > 0 && sold > 0) {
+      if ((baseCalcCurrentPercent - minCurrentPercent) < finalReturnsPercent) {
+        const difference = finalReturnsPercent - (baseCalcCurrentPercent - minCurrentPercent)
+        if ((baseCalcCurrentPercent + difference) <= 100) {
+          finalCurrentPercent = baseCalcCurrentPercent + difference
+        } else {
+          finalCurrentPercent = baseCalcCurrentPercent
+          if ((finalReturnsPercent - difference) < finalSoldPercent) {
+            finalSoldPercent = finalSoldPercent - difference 
+            finalReturnsPercent = finalReturnsPercent - difference
+          } else {
+            finalReturnsPercent = finalReturnsPercent - difference
+          }
         }
       }
     }
-
     switch (type) {
       case 'current': 
         return finalCurrentPercent

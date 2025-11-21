@@ -267,7 +267,7 @@ export async function addMultipleAuthors(req, res) {
     res.status(500).json({"error": error});
   }
 }
-router.post('/author/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleAuthors);
+router.post('/api/author/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleAuthors);
 
 export async function updateAuthor(req, res) {
   try {
@@ -2004,6 +2004,7 @@ export async function getSales(req, res) {
   }
 } 
 router.get('/sales', getSales);
+
 
 export async function addSale(req, res) {
   try {

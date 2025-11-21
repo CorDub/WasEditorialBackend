@@ -174,7 +174,7 @@ function CostsLists() {
 
     async function getCurrentCosts() {
         try {
-            const response = await fetch(`${baseURL}/admin/currentCosts`, {
+            const response = await fetch(`${baseURL}/api/admin/currentCosts`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

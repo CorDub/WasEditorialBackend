@@ -6,7 +6,7 @@ function DeleteCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
     async function deleteCost() {
         try {
-            const response = await fetch(`${baseURL}/admin/cost/${clickedRow.id}`, {
+            const response = await fetch(`${baseURL}/api/admin/cost/${clickedRow.id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"

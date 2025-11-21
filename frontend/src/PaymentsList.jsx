@@ -187,7 +187,7 @@ function PaymentsList() {
   async function getPendingPayments() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/admin/payments?status=${chosenPaymentStatus}`, {
+      const response = await fetch(`${baseURL}/api/admin/payments?status=${chosenPaymentStatus}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

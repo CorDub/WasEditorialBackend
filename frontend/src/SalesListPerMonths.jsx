@@ -33,7 +33,7 @@ function SalesListPerMonths() {
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

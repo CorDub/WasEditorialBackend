@@ -22,7 +22,7 @@ function ChangePasswordPage() {
       return;
     };
 
-    const response = await fetch(`${baseURL}/author/change_password`, {
+    const response = await fetch(`${baseURL}/api/author/change_password`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"

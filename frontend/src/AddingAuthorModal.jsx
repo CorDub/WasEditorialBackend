@@ -62,7 +62,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     const cat = await categories.find(cat => cat.type === category);
 
     try {
-      const response = await fetch(`${baseURL}/admin/user`, {
+      const response = await fetch(`${baseURL}/api/admin/user`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
 
   async function fetchCategoryTypes() {
     try {
-      const response = await fetch(`${baseURL}/admin/categories-type`, {
+      const response = await fetch(`${baseURL}/api/admin/categories-type`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

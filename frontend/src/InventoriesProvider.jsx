@@ -7,7 +7,7 @@ function InventoriesProvider({ children }) {
 
   async function fetchInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventories`, {
+      const response = await fetch(`${baseURL}/api/admin/inventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

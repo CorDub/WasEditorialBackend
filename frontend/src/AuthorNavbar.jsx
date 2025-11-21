@@ -35,9 +35,9 @@ function AuthorNavbar({ active, preferredFontSize }) {
   return(
     <div className="admin-navbar"
       style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
-      <Link to='/author/sales' className="navbar-button">Ventas</Link>
-      <Link to='/author/inventory' className="navbar-button">Inventario</Link>
-      <Link to='/author/commissions' className="navbar-button">Comisiones</Link>
+      <Link to='/api/author/sales' className="navbar-button">Ventas</Link>
+      <Link to='/api/author/inventory' className="navbar-button">Inventario</Link>
+      <Link to='/api/author/commissions' className="navbar-button">Comisiones</Link>
     </div>
   )
 }

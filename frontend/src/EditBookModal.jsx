@@ -33,7 +33,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
   async function fetchUsers() {
     try {
-      const response = await fetch(`${baseURL}/admin/users`, {
+      const response = await fetch(`${baseURL}/api/admin/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -71,7 +71,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/book/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/book/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

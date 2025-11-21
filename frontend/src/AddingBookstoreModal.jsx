@@ -23,7 +23,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/bookstore`, {
+      const response = await fetch(`${baseURL}/api/admin/bookstore`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

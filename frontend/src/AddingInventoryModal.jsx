@@ -74,7 +74,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBooks() {
     try {
-      const response = await fetch(`${baseURL}/admin/existingBooks`, {
+      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBookstores() {
     try {
-      const response = await fetch(`${baseURL}/admin/existingBookstores`, {
+      const response = await fetch(`${baseURL}/api/admin/existingBookstores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -235,7 +235,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventory`, {
+      const response = await fetch(`${baseURL}/api/admin/inventory`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

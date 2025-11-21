@@ -56,7 +56,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/transfer`, {
+      const response = await fetch(`${baseURL}/api/admin/transfer`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

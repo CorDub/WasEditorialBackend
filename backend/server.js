@@ -108,9 +108,9 @@ async function authenticateSuperAdmin(req, res, next) {
 }
 
 //Routes
-app.use('/author', authenticateUser, authorRoutes);
-app.use('/admin', authenticateAdmin, adminRoutes);
-app.use('/superadmin', authenticateSuperAdmin, superAdminRoutes);
+app.use('/api/author', authenticateUser, authorRoutes);
+app.use('/api/admin', authenticateAdmin, adminRoutes);
+app.use('/api/superadmin', authenticateSuperAdmin, superAdminRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

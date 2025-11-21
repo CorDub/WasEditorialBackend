@@ -197,7 +197,7 @@ function InventoriesList() {
   async function openSpecifics(type, id) {
     try {
       if (type === "bookstore") {
-        const response = await fetch(`${baseURL}/admin/inventoriesByBookstore/${id}`, {
+        const response = await fetch(`${baseURL}/api/admin/inventoriesByBookstore/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -211,7 +211,7 @@ function InventoriesList() {
           setSpecificBookstoreOpen(true);
         }
       } else if (type === "book") {
-        const response = await fetch(`${baseURL}/admin/inventoriesByBook/${id}`, {
+        const response = await fetch(`${baseURL}/api/admin/inventoriesByBook/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -233,7 +233,7 @@ function InventoriesList() {
 
   async function getBookstoreInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoriesByBookstore`, {
+      const response = await fetch(`${baseURL}/api/admin/inventoriesByBookstore`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -261,7 +261,7 @@ function InventoriesList() {
 
   async function getBookInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoriesByBook`, {
+      const response = await fetch(`${baseURL}/api/admin/inventoriesByBook`, {
         method: "GET",
         header: {
           "Content-Type": "application/json"

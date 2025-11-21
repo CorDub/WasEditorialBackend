@@ -162,7 +162,7 @@ function AdminsList() {
   async function fetchAdmins() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/superadmin/admins`, {
+      const response = await fetch(`${baseURL}/api/superadmin/admins`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

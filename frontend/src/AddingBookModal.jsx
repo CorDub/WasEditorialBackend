@@ -24,7 +24,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function fetchUsers() {
     try {
-      const response = await fetch(`${baseURL}/admin/users`, {
+      const response = await fetch(`${baseURL}/api/admin/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -50,7 +50,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${baseURL}/admin/book`, {
+      const response = await fetch(`${baseURL}/api/admin/book`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

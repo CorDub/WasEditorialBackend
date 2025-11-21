@@ -61,8 +61,6 @@ app.get(`/checkPermissions`, authenticateUser, async (req, res) => {
   }
 })
 
-app.use("/api", userRoutes);
-
 async function authenticateUser(req, res, next) {
   if (!req.session.user_id) {
     return res.status(401).json({ error: "Unauthorized"});
@@ -111,6 +109,7 @@ async function authenticateSuperAdmin(req, res, next) {
 app.use('/api/author', authenticateUser, authorRoutes);
 app.use('/api/admin', authenticateAdmin, adminRoutes);
 app.use('/api/superadmin', authenticateSuperAdmin, superAdminRoutes);
+app.use("/api/user", userRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

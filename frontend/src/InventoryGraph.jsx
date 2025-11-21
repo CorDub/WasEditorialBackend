@@ -141,8 +141,6 @@ function InventoryGraph({
       }
     }
 
-    console.log("results", results)
-
     // second filtering pass based on selectedDisplays
     let generalMax = 0;
     let keyList = [];

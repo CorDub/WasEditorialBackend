@@ -15,8 +15,6 @@ function BookSelector({
     })) || [])
   ];
 
-  console.log(booksInventories)
-
   const handleChange = (value) => {
     onBookChange({ target: { value } });
   };

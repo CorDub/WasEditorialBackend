@@ -131,7 +131,7 @@ function CategoriesList() {
   async function fetchCategories() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/admin/categories`, {
+      const response = await fetch(`${baseURL}/api/admin/categories`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

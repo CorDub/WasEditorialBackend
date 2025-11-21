@@ -67,7 +67,7 @@ function AddingImpressionModal({
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/impression`, {
+      const response = await fetch(`${baseURL}/api/admin/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

@@ -6,7 +6,7 @@ function DeleteBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   async function deleteBookstore() {
     const baseURL = import.meta.env.VITE_API_URL || '';
     try {
-      const response = await fetch(`${baseURL}/admin/bookstore/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/bookstore/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

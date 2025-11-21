@@ -39,7 +39,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/superadmin/admin/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/superadmin/api/admin/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

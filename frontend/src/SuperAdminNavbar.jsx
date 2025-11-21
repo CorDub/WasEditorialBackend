@@ -117,7 +117,7 @@ function SuperAdminNavbar({
 
   async function fetchInventories() {
     try {
-      const response = await fetch(`${baseURL}/admin/inventoryNames`, {
+      const response = await fetch(`${baseURL}/api/admin/inventoryNames`, {
         method: "GET",
         headers: {
           "Content-Type":"application/json"
@@ -145,11 +145,11 @@ function SuperAdminNavbar({
           ? { fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.1rem)`}
           : { fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}
       }>
-      <Link to='/superadmin/admins' className="navbar-button">Administradores</Link>
-      <Link to='/admin/authors' className="navbar-button">Autores</Link>
-      <Link to='/admin/books' className="navbar-button">Libros</Link>
-      <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
-      <Link to='/admin/categories' className="navbar-button">Categorias</Link>
+      <Link to='/api/superadmin/admins' className="navbar-button">Administradores</Link>
+      <Link to='/api/admin/authors' className="navbar-button">Autores</Link>
+      <Link to='/api/admin/books' className="navbar-button">Libros</Link>
+      <Link to='/api/admin/bookstores' className="navbar-button">Librerías</Link>
+      <Link to='/api/admin/categories' className="navbar-button">Categorias</Link>
       {/* {active === "inventories" ?
         <>
           <input
@@ -177,13 +177,13 @@ function SuperAdminNavbar({
             null
           }
         </>: }
-        <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link> */
+        <Link to='/api/admin/inventories-list' className="navbar-button">Inventarios</Link> */
       }
-      <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link>
-      <Link to='/admin/sales' className="navbar-button">Ventas</Link>
-      <Link to='/admin/kindle' className="navbar-button">Kindle</Link>
-      <Link to='/admin/payments' className="navbar-button">Pagos</Link>
-      <Link to='/admin/costs' className="navbar-button">Costos</Link>
+      <Link to='/api/admin/inventories-list' className="navbar-button">Inventarios</Link>
+      <Link to='/api/admin/sales' className="navbar-button">Ventas</Link>
+      <Link to='/api/admin/kindle' className="navbar-button">Kindle</Link>
+      <Link to='/api/admin/payments' className="navbar-button">Pagos</Link>
+      <Link to='/api/admin/costs' className="navbar-button">Costos</Link>
     </div>
   )
 }

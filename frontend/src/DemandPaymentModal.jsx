@@ -92,7 +92,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("amount", paymentInfo.amount);
       formData.append("correo", correo);
 
-      const response = await fetch(`${baseURL}/author/sendInvoice`, {
+      const response = await fetch(`${baseURL}/api/author/sendInvoice`, {
         method: "POST",
         credentials: "include",
         body: formData

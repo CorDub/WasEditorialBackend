@@ -26,7 +26,7 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
       }
       formData.append("archivo", archivo)
 
-      const response = await fetch(`${baseURL}/admin/author/addMultiples`, {
+      const response = await fetch(`${baseURL}/api/admin/api/author/addMultiples`, {
         method: "POST",
         credentials: "include",
         body: formData

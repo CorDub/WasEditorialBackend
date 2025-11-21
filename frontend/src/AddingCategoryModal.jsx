@@ -14,7 +14,7 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/category`, {
+      const response = await fetch(`${baseURL}/api/admin/category`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFil
       }
       formData.append("archivo", archivo)
 
-      const response = await fetch(`${baseURL}/admin/book/addMultiples`, {
+      const response = await fetch(`${baseURL}/api/admin/book/addMultiples`, {
         method: "POST",
         credentials: "include",
         body: formData

@@ -29,7 +29,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function getExistingBooks() {
     try {
-      const response = await fetch(`${baseURL}/admin/existingBooks`, {
+      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
        method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -167,7 +167,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/kindlesales`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

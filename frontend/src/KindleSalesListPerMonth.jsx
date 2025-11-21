@@ -26,7 +26,7 @@ function KindleSalesListPerMonth() {
   async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
       setLoading(true)
-      const response = await fetch(`${baseURL}/admin/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

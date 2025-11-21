@@ -94,7 +94,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     });
 
     try {
-      const response = await fetch(`${baseURL}/admin/user/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -268,7 +268,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function fetchCategoryTypes() {
       try {
-        const response = await fetch(`${baseURL}/admin/categories-type`, {
+        const response = await fetch(`${baseURL}/api/admin/categories-type`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json"

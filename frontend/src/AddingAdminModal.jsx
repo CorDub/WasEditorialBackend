@@ -18,7 +18,7 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/superadmin/admin`, {
+      const response = await fetch(`${baseURL}/api/superadmin/admin`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

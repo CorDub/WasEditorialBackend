@@ -31,27 +31,27 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LoginPage/>} />
-          <Route path="/superadmin/admins" element={<AdminsList />} />
-          <Route path='/admin/authors' element={<AuthorsList />} />
-          <Route path="/admin/categories" element={<CategoriesList />} />
-          <Route path="/admin/inventories" element={<InventoriesAreaDashboard />} />
-          <Route path="/admin/bookstoreInventory" element={<BookstoreInventory />} />
-          <Route path="/admin/bookInventory" element={<BookInventory />} />
-          <Route path="/admin/sales" element={<SalesListPerMonths />} />
-          <Route path='/admin/kindle' element={<KindleSalesListPerMonth />} />
-          <Route path="/admin/books" element={<BooksList />} />
-          <Route path="/admin/bookstores" element={<BookstoresList />} />
-          <Route path='/admin/payments' element={<PaymentsList />} />
-          <Route path='/admin/costs' element={<CostsList />} />
-          {/* <Route path='/admin/sales2' element={<SalesListPerMonths />} /> */}
-          <Route path='/admin/inventories-list' element={<InventoriesList/>} />
+          <Route path="/api/superadmin/admins" element={<AdminsList />} />
+          <Route path='/api/admin/authors' element={<AuthorsList />} />
+          <Route path="/api/admin/categories" element={<CategoriesList />} />
+          <Route path="/api/admin/inventories" element={<InventoriesAreaDashboard />} />
+          <Route path="/api/admin/bookstoreInventory" element={<BookstoreInventory />} />
+          <Route path="/api/admin/bookInventory" element={<BookInventory />} />
+          <Route path="/api/admin/sales" element={<SalesListPerMonths />} />
+          <Route path='/api/admin/kindle' element={<KindleSalesListPerMonth />} />
+          <Route path="/api/admin/books" element={<BooksList />} />
+          <Route path="/api/admin/bookstores" element={<BookstoresList />} />
+          <Route path='/api/admin/payments' element={<PaymentsList />} />
+          <Route path='/api/admin/costs' element={<CostsList />} />
+          {/* <Route path='/api/admin/sales2' element={<SalesListPerMonths />} /> */}
+          <Route path='/api/admin/inventories-list' element={<InventoriesList/>} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
           <Route path='/profile-page' element={<ProfilePage/>} />
-          <Route path='/author/change-password' element={<ChangePasswordPage />} />
-          <Route path='/author/inventory' element={<AuthorInventory/>} />
-          <Route path='/author/sales' element={<AuthorSales/>} />
-          <Route path='/author/commissions' element={<AuthorCommissions />} />
+          <Route path='/api/author/change-password' element={<ChangePasswordPage />} />
+          <Route path='/api/author/inventory' element={<AuthorInventory/>} />
+          <Route path='/api/author/sales' element={<AuthorSales/>} />
+          <Route path='/api/author/commissions' element={<AuthorCommissions />} />
         </Routes>
       </Router>
     </UserProvider>

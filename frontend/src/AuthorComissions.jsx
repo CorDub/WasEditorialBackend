@@ -74,7 +74,7 @@ function AuthorCommissions() {
       }
 
       console.log("refetch");
-      const response = await fetch(`${baseURL}/author/payments`, {
+      const response = await fetch(`${baseURL}/api/author/payments`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +119,7 @@ function AuthorCommissions() {
 
   async function fetchSalesByPayments() {
     try {
-      const response = await fetch(`${baseURL}/author/monthlySalesByPayments`, {
+      const response = await fetch(`${baseURL}/api/author/monthlySalesByPayments`, {
         method: "GET",
         headers: {
           "Content-Type":"application/json"

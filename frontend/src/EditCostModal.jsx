@@ -17,7 +17,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
     async function fetchExistingBooks() {
         try {
-            const response = await fetch(`${baseURL}/admin/existingBooks`, {
+            const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -80,7 +80,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
     async function sendToServer() {
         try {
-            const response = await fetch(`${baseURL}/admin/cost/${clickedRow.id}`, {
+            const response = await fetch(`${baseURL}/api/admin/cost/${clickedRow.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

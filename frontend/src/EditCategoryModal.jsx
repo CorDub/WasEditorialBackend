@@ -13,7 +13,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/admin/category`, {
+      const response = await fetch(`${baseURL}/api/admin/category`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

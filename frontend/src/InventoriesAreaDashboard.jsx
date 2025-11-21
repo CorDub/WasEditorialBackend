@@ -41,7 +41,7 @@ function InventoriesAreaDashboard() {
   }, []);
 
   async function getCurrentTotals() {
-    const response = await fetch(`${baseURL}/admin/inventoriesCurrentTotals`, {
+    const response = await fetch(`${baseURL}/api/admin/inventoriesCurrentTotals`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"

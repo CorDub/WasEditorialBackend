@@ -131,7 +131,7 @@ export async function updateAdmin(req, res) {
     res.status(500).json({ error: error });
   }
 }
-router.patch('/admin/:id', updateAdmin);
+router.patch('/api/admin/:id', updateAdmin);
 
 export async function deleteAdmin(req, res) {
   try {
@@ -152,6 +152,6 @@ export async function deleteAdmin(req, res) {
     res.status(500).json({error: 'A server error occurred while deleting the admin'});
   }
 }
-router.delete('/admin/:id', deleteAdmin);
+router.delete('/api/admin/:id', deleteAdmin);
 
 export default router;

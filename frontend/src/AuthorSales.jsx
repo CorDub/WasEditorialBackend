@@ -100,7 +100,7 @@ function AuthorSales() {
         endDate: dateRange.endDate
       });
 
-      const response = await fetch(`${baseURL}/author/sales?${queryParams}`, {
+      const response = await fetch(`${baseURL}/api/author/sales?${queryParams}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'

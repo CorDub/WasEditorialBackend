@@ -28,9 +28,6 @@ function AuthorCommissions() {
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [salesByPayments, setSalesByPayments] = useState([]);
 
-  console.log("salesByPayments", salesByPayments);
-  console.log("payments", payments);
-
   // set the status of payment
   useEffect(() => {
     if (paymentInfo != null) {

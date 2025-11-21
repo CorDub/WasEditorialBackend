@@ -25,10 +25,10 @@ function OverlappingHorizontalGraphLines({
     sold: 0,
     given: 0
   })
-  const [isGivenNumberHidden, setGivenNumberHidden] = useState(false);
-  const [isSoldNumberHidden, setSoldNumberHidden] = useState(false);
-  const [isReturnsNumberHidden, setReturnsNumberHidden] = useState(false);
-  const [isCurrentNumberHidden, setCurrentNumberHidden] = useState(false);
+  // const [isGivenNumberHidden, setGivenNumberHidden] = useState(false);
+  // const [isSoldNumberHidden, setSoldNumberHidden] = useState(false);
+  // const [isReturnsNumberHidden, setReturnsNumberHidden] = useState(false);
+  // const [isCurrentNumberHidden, setCurrentNumberHidden] = useState(false);
   const actualLinesRef = useRef();
   const numberGivenRef = useRef();
   const numberSoldRef = useRef();
@@ -37,14 +37,96 @@ function OverlappingHorizontalGraphLines({
 
   function getLength(type, max) {
     switch (type) {
-      case 'current':
-        return ((current + sold + returns + given) * 100) / max
+      case 'current': 
+        return (((current + sold + returns + given) * 100) / max) 
       case 'returns':
-        return ((given + sold + returns) * 100) / max
+        return (((given + sold + returns) * 100) / max) 
       case 'sold':
-        return ((given + sold) * 100) / max
-      case 'given':
-        return (given * 100) / max
+        return (((given + sold) * 100) / max) 
+      case 'given': {
+        return ((given * 100) / max) 
+      }
+    }
+  }
+
+  function getLength2(type, max) {
+    function calcMinLength(value, max) {
+      // const maxInPixels = actualLinesRef.current.getBoundingClientRect().width;
+      // console.log(maxInPixels);
+      const numLength = value === 0 ? 0 : value.toString().length
+      const additionalPixels = (numLength * 8)
+      const additionalProportion = (additionalPixels * 100 / max)
+      return additionalProportion
+    }
+
+    const baseCalcGivenPercent = ((given * 100) / max)
+    const minGivenPercent = calcMinLength(given, max)
+    let finalGivenPercent = 0;
+    if (baseCalcGivenPercent <= minGivenPercent) {
+      finalGivenPercent = minGivenPercent
+    } else {
+      finalGivenPercent = baseCalcGivenPercent
+    }
+
+    const baseCalcSoldPercent = (((given + sold) * 100) / max)
+    const minSoldPercent = calcMinLength(sold, max)
+    // check if number is visible
+    let finalSoldPercent = 0;
+    if ((baseCalcSoldPercent - minSoldPercent) < finalGivenPercent) {
+      finalSoldPercent = baseCalcSoldPercent + (finalGivenPercent - (baseCalcSoldPercent - minSoldPercent))
+    } else {
+      finalSoldPercent = baseCalcSoldPercent
+    }
+
+    const baseCalcReturnsPercent = (((given + sold + returns) * 100) / max) 
+    const minReturnsPercent = calcMinLength(returns, max)
+    // check if number is visible
+    let finalReturnsPercent = 0;
+    if ((baseCalcReturnsPercent - minReturnsPercent) < finalSoldPercent) {
+      finalReturnsPercent = baseCalcReturnsPercent + (finalSoldPercent - (baseCalcReturnsPercent - minReturnsPercent))
+    } else {
+      finalReturnsPercent = baseCalcReturnsPercent
+    }
+
+    const baseCalcCurrentPercent = (((current + sold + returns + given) * 100) / max) 
+    const minCurrentPercent = calcMinLength(returns, max)
+    let finalCurrentPercent = baseCalcCurrentPercent;
+    // check if number is visible
+
+    // if (returns === 0 && sold === 0) {
+    //   if ((baseCalcCurrentPercent - minCurrentPercent) < finalGivenPercent) {
+    //     const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalGivenPercent)
+    //     finalCurrentPercent = baseCalcCurrentPercent + diff;
+    //   }
+    // } else if (returns === 0 && sold > 0) {
+
+    // }
+
+    if ((baseCalcCurrentPercent - minCurrentPercent) < finalReturnsPercent) {
+      const difference = finalReturnsPercent - (baseCalcCurrentPercent - minCurrentPercent)
+      if ((baseCalcCurrentPercent + difference) <= 100) {
+        finalCurrentPercent = baseCalcCurrentPercent + difference
+      } else {
+        finalCurrentPercent = baseCalcCurrentPercent
+        if ((finalReturnsPercent - difference) < finalSoldPercent) {
+          finalSoldPercent = finalSoldPercent - difference 
+          finalReturnsPercent = finalReturnsPercent - difference
+        } else {
+          finalReturnsPercent = finalReturnsPercent - difference
+        }
+      }
+    }
+
+    switch (type) {
+      case 'current': 
+        return finalCurrentPercent
+      case 'returns':
+        return finalReturnsPercent
+      case 'sold':
+        return finalSoldPercent 
+      case 'given': {
+        return finalGivenPercent 
+      }
     }
   }
 
@@ -58,14 +140,20 @@ function OverlappingHorizontalGraphLines({
       }
 
       const newLengths = {
-        current: getLength('current', max),
-        returns: getLength('returns', max),
-        sold: getLength('sold', max),
-        given: getLength('given', max)
+        current: getLength2('current', max),
+        returns: getLength2('returns', max),
+        sold: getLength2('sold', max),
+        given: getLength2('given', max)
       }
       setNewLengths(newLengths);
     })
   }, [max]);
+
+
+
+  // useLayoutEffect(() => {
+  //   getLength2()
+  // }, [max])
 
   // hide number if overflowing
   useLayoutEffect(() => {
@@ -113,29 +201,29 @@ function OverlappingHorizontalGraphLines({
       numberLengths.current = context.measureText(current).width
     }
 
-    if (numberLengths.given + 4 > newLengthsEstimates.given) {
-      setGivenNumberHidden(true)
-    } else {
-      setGivenNumberHidden(false)
-    }
+    // if (numberLengths.given + 4 > newLengthsEstimates.given) {
+    //   setGivenNumberHidden(true)
+    // } else {
+    //   setGivenNumberHidden(false)
+    // }
 
-    if (numberLengths.sold + 4 > newLengthsEstimates.sold) {
-      setSoldNumberHidden(true)
-    } else {
-      setSoldNumberHidden(false)
-    }
+    // if (numberLengths.sold + 4 > newLengthsEstimates.sold) {
+    //   setSoldNumberHidden(true)
+    // } else {
+    //   setSoldNumberHidden(false)
+    // }
 
-    if (numberLengths.returns + 4 > newLengthsEstimates.returns) {
-      setReturnsNumberHidden(true)
-    } else {
-      setReturnsNumberHidden(false)
-    }
+    // if (numberLengths.returns + 4 > newLengthsEstimates.returns) {
+    //   setReturnsNumberHidden(true)
+    // } else {
+    //   setReturnsNumberHidden(false)
+    // }
 
-    if (numberLengths.current + 4 > newLengthsEstimates.current) {
-      setCurrentNumberHidden(true)
-    } else {
-      setCurrentNumberHidden(false)
-    }
+    // if (numberLengths.current + 4 > newLengthsEstimates.current) {
+    //   setCurrentNumberHidden(true)
+    // } else {
+    //   setCurrentNumberHidden(false)
+    // }
 
     setNumberWidths(numberLengths);
   }
@@ -242,16 +330,16 @@ function OverlappingHorizontalGraphLines({
       availableLengths.returns = displayLengthsPixels.current - numberWidths.current - displayLengthsPixels.returns;
     }
 
-    displayLengths.current = pixelsToPercents(displayLengthsPixels.current)
+    displayLengths.current = pixelsToPercents(displayLengthsPixels.current) 
     displayLengths.returns = pixelsToPercents(displayLengthsPixels.returns)
     displayLengths.sold = pixelsToPercents(displayLengthsPixels.sold)
     displayLengths.given = pixelsToPercents(displayLengthsPixels.given)
 
     setNewLengths(displayLengths);
-    setGivenNumberHidden(false)
-    setSoldNumberHidden(false)
-    setReturnsNumberHidden(false)
-    setCurrentNumberHidden(false)
+    // setGivenNumberHidden(false)
+    // setSoldNumberHidden(false)
+    // setReturnsNumberHidden(false)
+    // setCurrentNumberHidden(false)
   }
 
   function returnLengths() {
@@ -283,27 +371,32 @@ function OverlappingHorizontalGraphLines({
               style={{width: `${newLengths.current}%`}}
               ref={numberCurrentRef}>
               <div className="ohgl-current-number">
-                {isCurrentNumberHidden? "" : current}
+                {/* {isCurrentNumberHidden? "" : current} */}
+                {current}
               </div>
             </div>
           )}
           {sold > 0 && (
             <div
               className="ohgl-sold"
+              // style={{width: `${newLengths.sold}%`}}
               style={{width: `${newLengths.sold}%`}}
               ref={numberSoldRef}>
               <div className="ohgl-sold-number">
-                {isSoldNumberHidden ? "" : sold}
+                {/* {isSoldNumberHidden ? "" : sold} */}
+                {sold}
               </div>
             </div>)}
           {given > 0 && (
             <div
-              className={isGivenNumberHidden ? "ohgl-given no-padding" : "ohgl-given"}
+              // className={isGivenNumberHidden ? "ohgl-given no-padding" : "ohgl-given"}
+              className="ohgl-given"
               ref={numberGivenRef}
               style={{width: `${newLengths.given}%`}}>
               <div className='ohgl-number'
                 id='ohgl-number-given'>
-                {isGivenNumberHidden ? "" : given}
+                {/* {isGivenNumberHidden ? "" : given} */}
+                {given}
               </div>
             </div>)}
           {returns > 0 && (
@@ -312,7 +405,8 @@ function OverlappingHorizontalGraphLines({
               style={{width: `${newLengths.returns}%`}}
               ref={numberReturnsRef}>
               <div className="ohgl-returns-number">
-                {isReturnsNumberHidden ? "" : returns}
+                {/* {isReturnsNumberHidden ? "" : returns} */}
+                {returns}
               </div>
             </div>)}
           </div>

@@ -22,7 +22,7 @@ function ProfilePageSlider({
 
   async function closeAndSave() {
     try {
-      const response = await fetch(`${baseURL}/api/user`, {
+      const response = await fetch(`${baseURL}/api/user/user`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

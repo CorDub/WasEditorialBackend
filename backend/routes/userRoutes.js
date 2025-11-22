@@ -142,7 +142,7 @@ export async function updateUser(req, res) {
         ...fieldToChange
       }
     });
-
+user/
     res.status(200).json({message: "Updated"});
 
   } catch (error) {
@@ -197,6 +197,6 @@ export async function logout(req, res) {
     console.error("Error in logout route:", error);
   }
 }
-router.post('/logout', logout)
+router.post('/user/logout', logout)
 
 export default router;

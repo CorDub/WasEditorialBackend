@@ -40,7 +40,7 @@ function ConfirmationCodePage() {
       if (response.ok === false) {
         alert('El codigo que ingreso no esta correcto');
       } else {
-        navigate("/api/author/change-password", {state: { user_id: id }});
+        navigate("/author/change-password", {state: { user_id: id }});
       }
 
     } catch(error) {

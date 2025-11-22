@@ -25,7 +25,7 @@ function ConfirmationCodePage() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${baseURL}/api/confirmation_code`, {
+      const response = await fetch(`${baseURL}/api/user/confirmation_code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

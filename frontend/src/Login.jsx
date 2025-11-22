@@ -63,11 +63,11 @@ function LoginPage() {
         setUser(data);
         setLoading(false);
         if (data.role === "admin") {
-          navigate('/api/admin/authors')
+          navigate('/admin/authors')
         } else if (data.role === "superadmin") {
-          navigate('/api/superadmin/admins')
+          navigate('/superadmin/admins')
         } else {
-          navigate(`/api/author/sales`);
+          navigate(`/author/sales`);
         }
       }
 

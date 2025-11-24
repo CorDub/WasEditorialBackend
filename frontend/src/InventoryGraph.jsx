@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// import OverlappingHorizontalGraphLines from "./unused/OverlappingHorizontalGraphLinesOld";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";
@@ -210,6 +211,10 @@ function InventoryGraph({
     }
   }
 
+  useEffect(() => {
+    console.log("scope", scope)
+  }, [scope])
+
   return(
     <div className="author-inventory-global">
       <div className="aig-scope-and-title">
@@ -227,7 +232,6 @@ function InventoryGraph({
         <OverlappingHorizontalGraphLines
           key={index}
           title={dataPoint[0]}
-          color={dataPoint[1].color}
           sold={legendDisplays['sold'] && dataPoint[1].sold}
           given={legendDisplays['givenToAuthor'] && dataPoint[1].givenToAuthor}
           returns={legendDisplays['returns'] && dataPoint[1].returns}

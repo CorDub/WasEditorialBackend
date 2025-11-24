@@ -1,9 +1,8 @@
 import "./OverlappingHorizontalGraphLines.scss";
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 
-function OverlappingHorizontalGraphLines({
+export default function OverlappingHorizontalGraphLines2({
     title,
-    color,
     sold,
     given,
     current,
@@ -12,351 +11,301 @@ function OverlappingHorizontalGraphLines({
   const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
   const titleRef = useRef();
   const [isEllipsed, setEllipsed] = useState(false);
-  const [newLengths, setNewLengths] = useState({
+  const [lengths, setLengths] = useState({
     current: 0,
     returns: 0,
     sold: 0,
     given: 0
   })
-  const [savedLengths, setSavedLengths] = useState(null);
-  const [numberWidths, setNumberWidths] = useState({
+  const [savedLengths, setSavedLengths] = useState({
     current: 0,
     returns: 0,
     sold: 0,
     given: 0
   })
-  // const [isGivenNumberHidden, setGivenNumberHidden] = useState(false);
-  // const [isSoldNumberHidden, setSoldNumberHidden] = useState(false);
-  // const [isReturnsNumberHidden, setReturnsNumberHidden] = useState(false);
-  // const [isCurrentNumberHidden, setCurrentNumberHidden] = useState(false);
+  const [maxLength, setMaxLength] = useState(0);
+
   const actualLinesRef = useRef();
   const numberGivenRef = useRef();
   const numberSoldRef = useRef();
   const numberReturnsRef = useRef();
   const numberCurrentRef = useRef();
 
-  function getLength(type, max) {
-    switch (type) {
-      case 'current': 
-        return (((current + sold + returns + given) * 100) / max) 
-      case 'returns':
-        return (((given + sold + returns) * 100) / max) 
-      case 'sold':
-        return (((given + sold) * 100) / max) 
-      case 'given': {
-        return ((given * 100) / max) 
-      }
-    }
-  }
-
-  function getLength2(type, max) {
-    function calcMinLength(value, max) {
-      // const maxInPixels = actualLinesRef.current.getBoundingClientRect().width;
-      // console.log(maxInPixels);
-      const numLength = value === 0 ? 0 : value.toString().length
-      const additionalPixels = (numLength * 8)
-      const additionalProportion = (additionalPixels * 100 / max)
-      return additionalProportion
-    }
-
-    const baseCalcGivenPercent = ((given * 100) / max)
-    const minGivenPercent = calcMinLength(given, max)
-    let finalGivenPercent = 0;
-    if (baseCalcGivenPercent <= minGivenPercent) {
-      finalGivenPercent = minGivenPercent
-    } else {
-      finalGivenPercent = baseCalcGivenPercent
-    }
-
-    const baseCalcSoldPercent = (((given + sold) * 100) / max)
-    const minSoldPercent = calcMinLength(sold, max)
-    // check if number is visible
-    let finalSoldPercent = 0;
-    if ((baseCalcSoldPercent - minSoldPercent) < finalGivenPercent) {
-      finalSoldPercent = baseCalcSoldPercent + (finalGivenPercent - (baseCalcSoldPercent - minSoldPercent))
-    } else {
-      finalSoldPercent = baseCalcSoldPercent
-    }
-
-    const baseCalcReturnsPercent = (((given + sold + returns) * 100) / max) 
-    const minReturnsPercent = calcMinLength(returns, max)
-    // check if number is visible
-    let finalReturnsPercent = 0;
-    if ((baseCalcReturnsPercent - minReturnsPercent) < finalSoldPercent) {
-      finalReturnsPercent = baseCalcReturnsPercent + (finalSoldPercent - (baseCalcReturnsPercent - minReturnsPercent))
-    } else {
-      finalReturnsPercent = baseCalcReturnsPercent
-    }
-
-    const baseCalcCurrentPercent = (((current + sold + returns + given) * 100) / max) 
-    const minCurrentPercent = calcMinLength(returns, max)
-    let finalCurrentPercent = baseCalcCurrentPercent;
-    // check if number is visible
-
-    if (returns === 0 && sold === 0) {
-      if ((baseCalcCurrentPercent - minCurrentPercent) < finalGivenPercent) {
-        const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalGivenPercent)
-        finalCurrentPercent = baseCalcCurrentPercent + diff;
-      }
-
-    } else if (returns === 0 && sold > 0) {
-      if ((baseCalcCurrentPercent - minCurrentPercent) < finalSoldPercent) {
-        const diff = ((baseCalcCurrentPercent - minCurrentPercent) - finalSoldPercent)
-        if ((baseCalcCurrentPercent + difference) <= 100) {
-          finalCurrentPercent = baseCalcCurrentPercent + difference
-        } else {
-          if ((finalSoldPercent - diff) < finalGivenPercent) {
-            finalGivenPercent -= diff
-            finalSoldPercent -= diff
-          } else {
-            finalSoldPercent -= diff
-          }
-        } 
-      }
-    } else if (returns > 0 && sold > 0) {
-      if ((baseCalcCurrentPercent - minCurrentPercent) < finalReturnsPercent) {
-        const difference = finalReturnsPercent - (baseCalcCurrentPercent - minCurrentPercent)
-        if ((baseCalcCurrentPercent + difference) <= 100) {
-          finalCurrentPercent = baseCalcCurrentPercent + difference
-        } else {
-          finalCurrentPercent = baseCalcCurrentPercent
-          if ((finalReturnsPercent - difference) < finalSoldPercent) {
-            finalSoldPercent = finalSoldPercent - difference 
-            finalReturnsPercent = finalReturnsPercent - difference
-          } else {
-            finalReturnsPercent = finalReturnsPercent - difference
-          }
-        }
-      }
-    }
-    switch (type) {
-      case 'current': 
-        return finalCurrentPercent
-      case 'returns':
-        return finalReturnsPercent
-      case 'sold':
-        return finalSoldPercent 
-      case 'given': {
-        return finalGivenPercent 
-      }
-    }
-  }
-
-  // make sure we display a tooltip only if the text is ellipsed
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (titleRef.current) {
-        if (titleRef.current.scrollWidth > titleRef.current.clientWidth) {
-          setEllipsed(true);
-        }
-      }
-
-      const newLengths = {
-        current: getLength2('current', max),
-        returns: getLength2('returns', max),
-        sold: getLength2('sold', max),
-        given: getLength2('given', max)
-      }
-      setNewLengths(newLengths);
-    })
-  }, [max]);
-
-
-
-  // useLayoutEffect(() => {
-  //   getLength2()
-  // }, [max])
-
-  // hide number if overflowing
   useLayoutEffect(() => {
-    hideOverflow();
+    calcLengths()
   }, [sold, given, current, returns, max])
 
-  function hideOverflow() {
-    const available_width = actualLinesRef.current.getBoundingClientRect().width;
-    const newLengthsEstimates = {
-      current: getLength('current', max) * available_width / 100,
-      returns: getLength('returns', max) * available_width / 100,
-      sold: getLength('sold', max) * available_width / 100,
-      given: getLength('given', max) * available_width / 100,
-    };
-
-    // this is the only way I found to make sure I have the actual number widths
-    // scroll widths keeps changing
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    let numberLengths = {
-      current: 0,
-      returns: 0,
-      sold: 0,
-      given: 0
-    };
-
-    if (numberGivenRef.current) {
-      context.font = `${numberGivenRef.current.fontSize} ${numberGivenRef.current.fontFamily}`
-      numberLengths.given = context.measureText(given).width
-    };
-
-    if (numberSoldRef.current) {
-      context.font = `${numberSoldRef.current.fontSize} ${numberSoldRef.current.fontFamily}`
-      numberLengths.sold = context.measureText(sold).width
+  function calcLengthOfNumbers(key) {
+    const possibleValues = {
+      "given": given,
+      "sold": sold,
+      "returns": returns,
+      "current": current
     }
-
-    if (numberReturnsRef.current) {
-      context.font = `${numberReturnsRef.current.fontSize} ${numberReturnsRef.current.fontFamily}`
-      numberLengths.returns = context.measureText(returns).width
-    }
-
-    if (numberCurrentRef.current) {
-      context.font = `${numberCurrentRef.current.fontSize} ${numberCurrentRef.current.fontFamily}`
-      numberLengths.current = context.measureText(current).width
-    }
-
-    // if (numberLengths.given + 4 > newLengthsEstimates.given) {
-    //   setGivenNumberHidden(true)
-    // } else {
-    //   setGivenNumberHidden(false)
-    // }
-
-    // if (numberLengths.sold + 4 > newLengthsEstimates.sold) {
-    //   setSoldNumberHidden(true)
-    // } else {
-    //   setSoldNumberHidden(false)
-    // }
-
-    // if (numberLengths.returns + 4 > newLengthsEstimates.returns) {
-    //   setReturnsNumberHidden(true)
-    // } else {
-    //   setReturnsNumberHidden(false)
-    // }
-
-    // if (numberLengths.current + 4 > newLengthsEstimates.current) {
-    //   setCurrentNumberHidden(true)
-    // } else {
-    //   setCurrentNumberHidden(false)
-    // }
-
-    setNumberWidths(numberLengths);
+    const numLength = possibleValues[key] === 0 ? 0 : possibleValues[key].toString().length
+    const additionalPixels = (numLength * 8) + 2
+    return additionalPixels
   }
 
-  function displayAllNumbers() {
-    const available_width = actualLinesRef.current.getBoundingClientRect().width;
-    setSavedLengths({...newLengths});
-    let displayLengths = {...newLengths};
-    let availableLengths = {
-      current: 0,
-      returns: 0,
-      sold: 0,
-      given: 0
-    }
+  function calcLengths() {
+    const maxLength = actualLinesRef.current.getBoundingClientRect().width;
+    setMaxLength(maxLength);
 
-    function percentsToPixels(percent) {
-      return percent * available_width / 100
-    }
-
-    function pixelsToPercents(pixel) {
-      return pixel * 100 / available_width
-    }
-
-    let displayLengthsPixels = {
-      current: percentsToPixels(displayLengths.current),
-      returns: percentsToPixels(displayLengths.returns),
-      sold: percentsToPixels(displayLengths.sold),
-      given: percentsToPixels(displayLengths.given)
-    }
-
-    //Given
-    if (numberWidths.given + 4 > percentsToPixels(newLengths.given)) {
-      displayLengthsPixels.given += numberWidths.given + 4
-    } else {
-      availableLengths.given = percentsToPixels(newLengths.given) - numberWidths.given
-    }
-
-    //Sold
-    const necessarySold = displayLengthsPixels.given - (displayLengthsPixels.sold - numberWidths.sold - 4);
-    if (displayLengthsPixels.given > (displayLengthsPixels.sold - numberWidths.sold - 16)) {
-      if (availableLengths.given > 0) {
-        let remaining = necessarySold + 18
-        if (availableLengths.given < necessarySold) {
-          displayLengthsPixels.given -= availableLengths.given
-          remaining -= availableLengths.given
-        } else {
-          displayLengthsPixels.given -= necessarySold
-        }
-
-        if (remaining > 0) {
-          displayLengthsPixels.sold += remaining;
-          remaining = 0;
-        }
-      } else {
-        displayLengthsPixels.sold += necessarySold;
+    const lines = [];
+    for (const [key, value] of Object.entries(
+      {"given": given,
+      "sold": sold,
+      "returns": returns,
+      "current": current}
+    )) {
+      if (value) {
+        lines.push([key, value])
       }
-    } else {
-      availableLengths.sold = displayLengthsPixels.sold - numberWidths.sold - displayLengthsPixels.given;
     }
 
-    //Returns
-    const necessaryReturns = displayLengthsPixels.sold - (displayLengthsPixels.returns - numberWidths.returns - 4);
-    if (displayLengthsPixels.sold > (displayLengthsPixels.returns - numberWidths.returns - 16)) {
-      if (availableLengths.sold > 0) {
-        let remaining = necessaryReturns + 18
-        if (availableLengths.sold < necessaryReturns) {
-          displayLengthsPixels.sold -= availableLengths.given
-          remaining -= availableLengths.sold
-        } else {
-          displayLengthsPixels.sold -= necessaryReturns
+    let total = given + sold + returns + current;
+
+    const firstLengths = [];
+    for (let i = 0; i < lines.length; i++) {
+      if (i === 0) {
+        const proportionalLength = (lines[i][1] / max) * maxLength;
+        const min = calcLengthOfNumbers(lines[i][0]);
+        const finalLength = proportionalLength < min ? min : proportionalLength;
+        firstLengths.push([
+          [lines[i][0]], finalLength
+        ]);
+      } else if (i === (lines.length - 1)) {
+        const length = (total * maxLength) / max;
+
+        let min = 0;
+        if (firstLengths.length > 0) {
+          min = firstLengths[0][1]
         }
 
-        if (remaining > 0) {
-          displayLengthsPixels.returns += remaining;
-          remaining = 0;
-        }
+        let finalLength = length < min ? min + length : length;
+        
+        firstLengths.push([
+          [lines[i][0]], finalLength + 8
+        ])
       } else {
-        displayLengthsPixels.returns += necessarySold;
+        const proportionalLength = (lines[i][1] / max) * maxLength;
+        const finalLength = proportionalLength + firstLengths[firstLengths.length - 1][1]
+        firstLengths.push([
+          [lines[i][0]], finalLength
+        ])
       }
-    } else {
-      availableLengths.returns = displayLengthsPixels.returns - numberWidths.returns - displayLengthsPixels.sold;
     }
 
-    //Current
-    const necessaryCurrent = displayLengthsPixels.returns - (displayLengthsPixels.current - numberWidths.current);
-    if (displayLengthsPixels.returns > (displayLengthsPixels.current - numberWidths.current - 16)) {
-      if (availableLengths.sold > 0) {
-        let remaining = necessaryCurrent + 18
-        if (availableLengths.sold < necessaryCurrent) {
-          displayLengthsPixels.returns -= availableLengths.given
-          remaining -= availableLengths.sold
-        } else {
-          displayLengthsPixels.returns -= necessaryCurrent
-        }
-
-        if (remaining > 0) {
-          displayLengthsPixels.current += remaining;
-          remaining = 0;
-        }
-      } else {
-        displayLengthsPixels.current += necessarySold;
-      }
-    } else {
-      availableLengths.returns = displayLengthsPixels.current - numberWidths.current - displayLengthsPixels.returns;
+    let objectFirstLengths = {};
+    for (const entry of firstLengths) {
+      objectFirstLengths[entry[0]] = entry[1]
     }
 
-    displayLengths.current = pixelsToPercents(displayLengthsPixels.current) 
-    displayLengths.returns = pixelsToPercents(displayLengthsPixels.returns)
-    displayLengths.sold = pixelsToPercents(displayLengthsPixels.sold)
-    displayLengths.given = pixelsToPercents(displayLengthsPixels.given)
+    for (const key of ["given", "sold", "returns", "current"]) {
+      if (!objectFirstLengths[key]) {
+        objectFirstLengths[key] = 0
+      }
+    }
 
-    setNewLengths(displayLengths);
-    // setGivenNumberHidden(false)
-    // setSoldNumberHidden(false)
-    // setReturnsNumberHidden(false)
-    // setCurrentNumberHidden(false)
+    setLengths(objectFirstLengths);
+    setSavedLengths(objectFirstLengths);
+
+    // // adjust if needed 
+    // if (firstLengths[firstLengths.length - 1][1] === maxLength) {
+    //   //get min number (min pixels to display numbers)
+    //   const mins = {
+    //     "sold": calcLengthOfNumbers(sold),
+    //     "returns": calcLengthOfNumbers(returns),
+    //     "current": calcLengthOfNumbers(current),
+    //   }
+
+    //   // check for clashes
+    //   let adjustedLengths = []
+    //   for (let i = 0; i < firstLengths.length; i++) {
+    //     if (i === 0) {
+    //       adjustedLengths.push(firstLengths[i])
+    //     } else if (i === firstLengths.length - 1) {
+    //       adjustedLengths.push([firstLengths[i][0], (firstLengths[i][1] - lengthNumbersCurrent)]);
+    //     } else {
+    //       const necessaryLength = firstLengths[i][1] - mins[firstLengths[i][0]]
+    //       if (necessaryLength < adjustedLengths[adjustedLengths - 1][1]) {
+    //         const diff = adjustedLengths[adjustedLengths - 1][1]
+    //         adjustedLengths.push([firstLengths[i][0], firstLengths[i][1] + diff])
+    //       }
+    //     }
+    //   }
+
+    
+
+    // //get actual pixels in proportion to maxLength
+    // const lengthBarGiven = (given / max) * maxLength;
+    // const lengthBarSold = ((sold / max) * maxLength) + lengthBarGiven;
+    // const lengthBarReturns = ((returns / max) * maxLength) + lengthBarSold;
+    // const lengthBarCurrent = (total * maxLength) / max;
+
+    // //minimums to display numbers for sold, returns and current
+    // const minSold = lengthBarSold - lengthNumbersSold;
+    // const minReturns = lengthBarReturns - lengthNumbersReturns;
+    // const minCurrent = lengthBarCurrent - lengthNumbersCurrent;
+
+    // // adjust if necessary
+    // let finalGiven = 0;
+    // let finalSold = minSold;
+    // let finalReturns = minReturns;
+    // let finalCurrent = lengthBarCurrent;
+
+    // if (lengthBarGiven < lengthNumbersGiven) {
+    //   finalGiven = lengthNumbersGiven;
+    // } else {
+    //   finalGiven = lengthBarGiven;
+    // }
+
+    // if (finalGiven > minSold) {
+    //   const diff = finalGiven - minSold;
+    //   finalSold = finalGiven + diff
+    // }
+
+    // if (finalSold > minReturns) {
+    //   const diff = finalSold - minReturns;
+    //   finalReturns = finalSold + diff
+    // }
+
+    // if (finalReturns > minCurrent) {
+    //   const diff = finalReturns - minCurrent;
+    //   const potentialFinalCurrent = finalReturns + diff;
+    //   if (potentialFinalCurrent <= maxLength) {
+    //     finalCurrent = potentialFinalCurrent;
+    //   } else {
+    //     //pushing back if we can't push out
+    //     finalReturns -= diff
+    //     if (finalSold > finalReturns) {
+    //       const diffSoldReturns = finalSold - finalReturns;
+    //       finalSold -= diffSoldReturns;
+    //     }
+
+    //     if (finalGiven > finalSold) {
+    //       const diffGivenSold = finalGiven - finalSold;
+    //       finalGiven -= diffGivenSold
+    //     }
+    //   }
+    // }
+
+    // // set everything
+    // const finalLengths = {
+    //   given: finalGiven,
+    //   sold: finalSold,
+    //   returns: finalReturns,
+    //   current: finalCurrent
+    // }
+
+    // setSavedLengths(finalLengths);
+    // setLengths(finalLengths);
   }
+
+  function slightlyMove() {
+    // let newGiven = 0;
+    // let newSold = 0;
+    // let newReturns = 0;
+    // let newCurrent = 0;
+
+    // if (lengths.given < calcLengthOfNumbers(given) - 2) {
+    //   newGiven = lengths.given
+    // } else {
+    //   newGiven -= 2
+    // }
+
+    // newSold = lengths.sold + 2;
+    // newReturns = lengths.returns + 2;
+    
+    // if (lengths.current + 2 < maxLength) {
+    //   newCurrent = lengths.current + 2
+    // } else {
+    //   newCurrent = lengths.current;
+    //   //push back if necessary
+    //   const numbersCurrent = calcLengthOfNumbers(current);
+    //   const minNewCurrent = newCurrent - numbersCurrent;
+    //   if (newReturns > minNewCurrent) {
+    //     const diff = newReturns - minNewCurrent;
+    //     newReturns -= diff
+
+    //     if (newSold > newReturns) {
+    //       const diff = newSold - newReturns;
+    //       newSold -= diff
+    //     }
+    //   }
+    // }
+
+    // const newLengths = {
+    //   given: newGiven,
+    //   sold: newSold,
+    //   returns: newReturns,
+    //   current: newCurrent
+    // }
+
+    // setLengths(newLengths);
+
+    // determine which numbers are not being displayed successfully
+    let actualLines = [];
+    for (let i = 0; i < Object.entries(lengths).length; i++) {
+      if (Object.entries(lengths)[i][1]) {
+        actualLines.push([Object.entries(lengths)[i][0], Object.entries(lengths)[i][1]])
+      }
+    }
+
+    if (actualLines.length <= 1) {
+      return
+    }
+
+    let newLengths = [];
+    for (let i = 0; i < actualLines.length; i++) {
+      if (i === 0) {
+        newLengths.push([[actualLines[i][0]], actualLines[i][1]]) 
+        continue;
+      } 
+
+      if (i === actualLines.length -1) {
+        const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
+        const diff = actualLines[i-1][1] - min
+        if (diff > -4) {
+          const potentialLength = actualLines[i][1] + diff
+          const missing = calcLengthOfNumbers(actualLines[i][0])
+          if (potentialLength > maxLength) {
+            newLengths[actualLines[i-1][0]] -= missing
+          } else {
+            newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing])
+          }
+        } else {
+          newLengths.push([[actualLines[i][0]], actualLines[i][1]])
+        }
+        continue;
+      }
+
+      const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
+      const diff = actualLines[i-1][1] - min
+      const missing = calcLengthOfNumbers(actualLines[i][0]);
+      if (diff > 0) {
+        newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing])
+      } else {
+        newLengths.push([[actualLines[i][0]], actualLines[i][1]])
+      }
+    }
+
+    let objectNewLengths = {};
+    for (const entry of newLengths) {
+      objectNewLengths[entry[0]] = entry[1]
+    }
+
+    for (const key of ["given", "sold", "returns", "current"]) {
+      if (!objectNewLengths[key]) {
+        objectNewLengths[key] = 0
+      }
+    }
+
+    setLengths(objectNewLengths);
+  } 
 
   function returnLengths() {
-    setNewLengths(savedLengths);
-    hideOverflow();
+    setLengths(savedLengths);
   }
 
   return(
@@ -375,15 +324,15 @@ function OverlappingHorizontalGraphLines({
       <div className="overlapping-horizontal-graph-lines">
           <div className="ohgl-actual-lines"
             ref={actualLinesRef}
-            onMouseEnter={displayAllNumbers}
-            onMouseLeave={returnLengths}>
+            onMouseEnter={slightlyMove}
+            onMouseLeave={returnLengths}
+            >
           {current > 0 && (
             <div
               className="ohgl-current"
-              style={{width: `${newLengths.current}%`}}
+              style={{width: `${lengths.current}px`}}
               ref={numberCurrentRef}>
               <div className="ohgl-current-number">
-                {/* {isCurrentNumberHidden? "" : current} */}
                 {current}
               </div>
             </div>
@@ -391,33 +340,28 @@ function OverlappingHorizontalGraphLines({
           {sold > 0 && (
             <div
               className="ohgl-sold"
-              // style={{width: `${newLengths.sold}%`}}
-              style={{width: `${newLengths.sold}%`}}
+              style={{width: `${lengths.sold}px`}}
               ref={numberSoldRef}>
               <div className="ohgl-sold-number">
-                {/* {isSoldNumberHidden ? "" : sold} */}
                 {sold}
               </div>
             </div>)}
           {given > 0 && (
             <div
-              // className={isGivenNumberHidden ? "ohgl-given no-padding" : "ohgl-given"}
               className="ohgl-given"
               ref={numberGivenRef}
-              style={{width: `${newLengths.given}%`}}>
+              style={{width: `${lengths.given}px`}}>
               <div className='ohgl-number'
                 id='ohgl-number-given'>
-                {/* {isGivenNumberHidden ? "" : given} */}
                 {given}
               </div>
             </div>)}
           {returns > 0 && (
             <div
               className="ohgl-returns"
-              style={{width: `${newLengths.returns}%`}}
+              style={{width: `${lengths.returns}px`}}
               ref={numberReturnsRef}>
               <div className="ohgl-returns-number">
-                {/* {isReturnsNumberHidden ? "" : returns} */}
                 {returns}
               </div>
             </div>)}
@@ -426,5 +370,3 @@ function OverlappingHorizontalGraphLines({
     </div>
   )
 }
-
-export default OverlappingHorizontalGraphLines;

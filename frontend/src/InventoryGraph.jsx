@@ -108,7 +108,6 @@ function InventoryGraph({
       //get the correct groupBy with possibleScopes
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
-      console.log('groupBy', groupBy);
 
       // create the result objects if doesn't exist yet, add if it does
       if (groupBy in results) {
@@ -143,7 +142,6 @@ function InventoryGraph({
         }
       }
     }
-    console.log("results", results);
 
     // second filtering pass based on selectedDisplays
     let generalMax = 0;

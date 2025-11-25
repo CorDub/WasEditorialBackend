@@ -236,6 +236,7 @@ function TableWithDrawers({
       setAlertType(alertType);
     }
   }
+  
   return(
     <div className="twd">
       {isModalOpen && 

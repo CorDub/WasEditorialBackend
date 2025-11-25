@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import OverlappingHorizontalGraphLines from "./unused/OverlappingHorizontalGraphLinesOld";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";
@@ -108,7 +107,6 @@ function InventoryGraph({
       //get the correct groupBy with possibleScopes
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
-      console.log('groupBy', groupBy);
 
       // create the result objects if doesn't exist yet, add if it does
       if (groupBy in results) {
@@ -116,7 +114,8 @@ function InventoryGraph({
         if (inventory.bookstore.id === 1) {
           results[groupBy].total += inventory.givenToAuthor
           results[groupBy].returns += inventory.returns
-          results[groupBy].current += inventory.current - inventory.returns
+          // results[groupBy].current += inventory.current - inventory.returns
+          results[groupBy].current += inventory.current
         } else {
           results[groupBy].total += inventory.returns
           results[groupBy].current += inventory.current
@@ -136,13 +135,12 @@ function InventoryGraph({
 
         if (inventory.bookstore.id === 1) {
           results[groupBy].total += inventory.givenToAuthor
-          results[groupBy].current -= inventory.returns 
+          // results[groupBy].current -= inventory.returns 
         } else {
           results[groupBy].total += inventory.returns
         }
       }
     }
-    console.log("results", results);
 
     // second filtering pass based on selectedDisplays
     let generalMax = 0;

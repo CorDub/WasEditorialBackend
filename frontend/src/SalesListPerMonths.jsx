@@ -27,7 +27,7 @@ function SalesListPerMonths() {
   const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
-    console.log(forceRender)
+    fetchSalesPerMonths(startDate, new Date());
   }, [forceRender])
 
   async function fetchSalesPerMonths(startDate, endDate) {
@@ -68,16 +68,6 @@ function SalesListPerMonths() {
   }, [forceRender])
 
   async function refetchAndFilter() {
-    //checking if a refecth is needed if the time range changed
-    const previousStartDate = sessionStorage.getItem("startDate");
-    const previousEndDate = sessionStorage.getItem("endDate");
-
-    if (startDate < new Date(previousStartDate)
-      && endDate > new Date(previousEndDate)
-    ) {
-      await fetchSalesPerMonths(startDate, endDate)
-    }
-
     let monthData = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i].forMonth === activeMonth) {

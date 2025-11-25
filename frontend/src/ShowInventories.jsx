@@ -1,7 +1,7 @@
 import './ShowInventories.scss';
 import { useRef, useEffect, useState } from "react";
 import useCheckUser from './customHooks/useCheckUser';
-import { convertISOString } from '../../backend/utils';
+import { changeDateFormat, convertISOString } from '../../backend/utils';
 
 function ShowInventories({
     inventories,
@@ -130,7 +130,7 @@ function ShowInventories({
           >
           <p className="author-inventory-label">Inventario total inicial 
             {!showTotal && (
-              <span className="author-inventory-date">({convertISOString(inventories.impressions[0].date) || ""})</span>
+              <span className="author-inventory-date">{changeDateFormat(inventories.impressions[0].date, "fullDate") || ""}</span>
             )}
           </p>
           {/* {!showTotal && (
@@ -155,7 +155,8 @@ function ShowInventories({
                 if (index !== 0) {
                   return (
                     <div key={index} className="author-inventory-impressions">
-                      <p className="author-inventory-date">({convertISOString(impression.date)})</p>
+                      {/* <p className="author-inventory-date">({convertISOString(impression.date)})</p> */}
+                      <p className="author-inventory-date">{changeDateFormat(impression.date, "fullDate")}</p>
                       <p className="author-inventory-date">{impression.quantity}</p>
                     </div>
                   )

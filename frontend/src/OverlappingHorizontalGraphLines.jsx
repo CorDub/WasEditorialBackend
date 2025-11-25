@@ -1,5 +1,5 @@
 import "./OverlappingHorizontalGraphLines.scss";
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 
 export default function OverlappingHorizontalGraphLines2({
     title,
@@ -31,6 +31,8 @@ export default function OverlappingHorizontalGraphLines2({
   const numberSoldRef = useRef();
   const numberReturnsRef = useRef();
   const numberCurrentRef = useRef();
+  const [spanValue, setSpanValue] = useState("incl."); 
+  const [adjustedCurrent, setAdjustedCurrent] = useState(0);
 
   useLayoutEffect(() => {
     calcLengths()
@@ -177,6 +179,26 @@ export default function OverlappingHorizontalGraphLines2({
     setLengths(savedLengths);
   }
 
+  function adjustForReturns() {
+    let res = "";
+    let adjustedCurrent = 0;
+    if (scope === "bookstore"  && title === "Plataforma Was") {
+      res = " + "
+      adjustedCurrent -= returns 
+    } else if (scope === "bookstore" && title !== "Plataforma Was") {
+      res = " - "
+      adjustedCurrent += returns
+    } else {
+      res = "incl."
+    }
+    setSpanValue(res)
+    setAdjustedCurrent(adjustedCurrent)
+  }
+
+  useEffect(() => {
+    adjustForReturns()
+  }, [scope, title])
+
   return(
     <div className="ohgl-global">
       <div className="ohgl-title-container"
@@ -196,90 +218,57 @@ export default function OverlappingHorizontalGraphLines2({
             onMouseEnter={slightlyMove}
             onMouseLeave={returnLengths}
             >
-          {title === "Plataforma Was" 
-            ? 
-              <>
-              {current > 0 && (
-                <div
-                  className="ohgl-current"
-                  style={{width: `${lengths.current}px`}}
-                  ref={numberCurrentRef}>
-                  <div className="ohgl-current-number">
-                    {current}
-                  </div>
+            {current > 0 && (
+              <div
+                className="ohgl-current"
+                style={{width: `${lengths.current}px`}}
+                ref={numberCurrentRef}>
+                <div className="ohgl-current-number">
+                  {returns > 0 && (
+                    <div className="ohgl-returns-number">
+                      <p>
+                        <span className="incl">
+                          {spanValue}
+                        </span>
+                        {returns}
+                      </p>
+                    </div>
+                  )}
+                  {returns > 0 
+                    ? current + adjustedCurrent
+                    : current
+                  }
                 </div>
-              )}
-              {sold > 0 && (
-                <div
-                  className="ohgl-sold"
-                  style={{width: `${lengths.sold}px`}}
-                  ref={numberSoldRef}>
-                  <div className="ohgl-sold-number">
-                    {sold}
-                  </div>
-                </div>)}
-              {given > 0 && (
-                <div
-                  className="ohgl-given"
-                  ref={numberGivenRef}
-                  style={{width: `${lengths.given}px`}}>
-                  <div className='ohgl-number'
-                    id='ohgl-number-given'>
-                    {given}
-                  </div>
-                </div>)}
-              {returns > 0 && (
-                <div
-                  className="ohgl-returns"
-                  style={{width: `${lengths.returns}px`}}
-                  ref={numberReturnsRef}>
-                  <div className="ohgl-returns-number">
-                    {returns}
-                  </div>
-                </div>)}
-              </>
-            : 
-              <>
-              {current > 0 && (
-                <div
-                  className="ohgl-current"
-                  style={{width: `${lengths.current}px`}}
-                  ref={numberCurrentRef}>
-                  <div className="ohgl-current-number">
-                    {current}
-                  </div>
+              </div>
+            )}
+            {sold > 0 && (
+              <div
+                className="ohgl-sold"
+                style={{width: `${lengths.sold}px`}}
+                ref={numberSoldRef}>
+                <div className="ohgl-sold-number">
+                  {sold}
                 </div>
-              )}
-              {sold > 0 && (
-                <div
-                  className="ohgl-sold"
-                  style={{width: `${lengths.sold}px`}}
-                  ref={numberSoldRef}>
-                  <div className="ohgl-sold-number">
-                    {sold}
-                  </div>
-                </div>)}
-              {given > 0 && (
-                <div
-                  className="ohgl-given"
-                  ref={numberGivenRef}
-                  style={{width: `${lengths.given}px`}}>
-                  <div className='ohgl-number'
-                    id='ohgl-number-given'>
-                    {given}
-                  </div>
-                </div>)}
-              {returns > 0 && (
-                <div
-                  className="ohgl-returns"
-                  style={{width: `${lengths.returns}px`}}
-                  ref={numberReturnsRef}>
-                  <div className="ohgl-returns-number">
-                    {returns}
-                  </div>
-                </div>)}
-            </>
-          }
+              </div>)}
+            {given > 0 && (
+              <div
+                className="ohgl-given"
+                ref={numberGivenRef}
+                style={{width: `${lengths.given}px`}}>
+                <div className='ohgl-number'
+                  id='ohgl-number-given'>
+                  {given}
+                </div>
+              </div>)}
+            {/* {returns > 0 && (
+              <div
+                className="ohgl-returns"
+                style={{width: `${lengths.returns}px`}}
+                ref={numberReturnsRef}>
+                <div className="ohgl-returns-number">
+                  {returns}
+                </div>
+              </div>)} */}
           </div>
       </div>
     </div>

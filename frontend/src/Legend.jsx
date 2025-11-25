@@ -4,8 +4,8 @@ function Legend({values, displays, setDisplays}) {
   const valuesToDisplay = {
     0: "givenToAuthor",
     1: "sold",
-    2: "returns",
-    3: "current"
+    2: "current",
+    3: "returns"
   }
 
   return(
@@ -22,7 +22,7 @@ function Legend({values, displays, setDisplays}) {
               : {backgroundColor: "#f8f9fa", border: `1px solid ${value[1]}`}}
             onClick={() => setDisplays(prev => ({
               ...prev,
-              [valuesToDisplay[index]]: !displays[valuesToDisplay[index]]
+              [valuesToDisplay[index]]: !prev[valuesToDisplay[index]]
             }))}>
           </div>
           <div className="legend-value-name">{value[0]}</div>

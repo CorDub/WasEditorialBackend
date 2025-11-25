@@ -26,10 +26,6 @@ function SalesListPerMonths() {
   const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)));
   const [endDate, setEndDate] = useState(new Date());
 
-  useEffect(() => {
-    console.log(forceRender)
-  }, [forceRender])
-
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
       setLoading(true);

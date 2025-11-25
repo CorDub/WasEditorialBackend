@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import OverlappingHorizontalGraphLines from "./unused/OverlappingHorizontalGraphLinesOld";
 import OverlappingHorizontalGraphLines from "./OverlappingHorizontalGraphLines";
 import ScopeSelector from "./ScopeSelector";
 import "./InventoryGraph.scss";

@@ -1,12 +1,11 @@
 import "./ScopeSelector.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faShop, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
+import { faBook, faShop } from '@fortawesome/free-solid-svg-icons'
 import { useState } from "react";
 
 function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) {
   const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
   const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
-  const [isCountryTooltipOpen, setCountryTooltipOpen] = useState(false);
 
   function determineLeft() {
     switch (scope) {
@@ -31,7 +30,7 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
             "givenToAuthor": true,
             "sold": true,
             "current": true,
-            "returns": true
+            "returns": false
           })
         }}
         onMouseEnter={() => setBookTooltipOpen(true)}
@@ -48,27 +47,12 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
             "givenToAuthor": true,
             "sold": true,
             "current": true,
-            "returns": true
+            "returns": false
           })}}
         onMouseEnter={() => setBookstoreTooltipOpen(true)}
         onMouseLeave={() => setBookstoreTooltipOpen(false)} />
       {isBookstoreTooltipOpen && (
         <div className="scope-selector-tooltip-libreria">Librería</div>)}
-      {/* <FontAwesomeIcon
-        icon={faEarthAmericas}
-        className={scope === "country" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
-        onClick={() => {
-          setScope("country")
-          setLegendDisplays({
-            "givenToAuthor": true,
-            "sold": true,
-            "current": true,
-            "returns": true
-          })}}
-        onMouseEnter={() => setCountryTooltipOpen(true)}
-        onMouseLeave={() => setCountryTooltipOpen(false)} />
-      {isCountryTooltipOpen && (
-        <div className="scope-selector-tooltip-pais">País</div>)} */}
       <div
         className="scope-selector-slider"
         style={{ left: `${determineLeft()}`}}></div>

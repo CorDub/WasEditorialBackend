@@ -31,6 +31,7 @@ export default function OverlappingHorizontalGraphLines2({
   const numberSoldRef = useRef();
   const numberReturnsRef = useRef();
   const numberCurrentRef = useRef();
+  const currentReturnsRef = useRef();
   const [spanValue, setSpanValue] = useState("incl."); 
   const [adjustedCurrent, setAdjustedCurrent] = useState(0);
 
@@ -116,6 +117,9 @@ export default function OverlappingHorizontalGraphLines2({
 
   function slightlyMove() {
     // determine which numbers are not being displayed successfully
+    const currentNumWidth = currentReturnsRef.current.getBoundingClientRect().width
+    console.log("currentNumWidth", currentNumWidth);
+
     let actualLines = [];
     for (let i = 0; i < Object.entries(lengths).length; i++) {
       if (Object.entries(lengths)[i][1]) {
@@ -135,11 +139,19 @@ export default function OverlappingHorizontalGraphLines2({
       } 
 
       if (i === actualLines.length -1) {
-        const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
+        // const min = actualLines[i][1] - currentNumWidth;
+        // const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
+        let min = 0;
+        if (returns) {
+          min = actualLines[i][1] - currentNumWidth;
+        } else {
+          min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
+        }
         const diff = newLengths[i-1][1] - min
+        console.log("diff", diff);
         if (diff > -4) {
           const potentialLength = actualLines[i][1] + diff
-          const missing = calcLengthOfNumbers(actualLines[i][0]) + diff
+          const missing = calcLengthOfNumbers(actualLines[i][0]) + (diff / 2)
           if (potentialLength > maxLength) {
             newLengths[actualLines[i-1][0]] -= missing + 8
           } else {
@@ -223,7 +235,12 @@ export default function OverlappingHorizontalGraphLines2({
                 className="ohgl-current"
                 style={{width: `${lengths.current}px`}}
                 ref={numberCurrentRef}>
-                <div className="ohgl-current-number">
+                <div className="ohgl-current-number"
+                  ref={currentReturnsRef}>
+                  {returns > 0 
+                    ? current + adjustedCurrent
+                    : current
+                  }
                   {returns > 0 && (
                     <div className="ohgl-returns-number">
                       <p>
@@ -234,10 +251,6 @@ export default function OverlappingHorizontalGraphLines2({
                       </p>
                     </div>
                   )}
-                  {returns > 0 
-                    ? current + adjustedCurrent
-                    : current
-                  }
                 </div>
               </div>
             )}

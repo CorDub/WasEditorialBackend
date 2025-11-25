@@ -23,13 +23,13 @@ function AuthorInventory(){
   const legendValues = [
     ['Entregados al autor', '#57eafa'],
     ['Vendidos', '#4E5981'],
-    ['Devoluciones', 'grey'],
     ['Disponibles', '#E2E2E2'],
+    ['Devoluciones', 'grey'],
   ]
   const [legendDisplays, setLegendDisplays] = useState({
     'givenToAuthor': true,
     'sold': true,
-    'returns': true,
+    'returns': false,
     'current': true
   });
 
@@ -37,6 +37,11 @@ function AuthorInventory(){
     fetchInventories()
     setShowTotal(true);
   },[])
+
+
+  useEffect(() => {
+    console.log(legendDisplays)
+  }, [legendDisplays])
 
   async function fetchInventories() {
     try {

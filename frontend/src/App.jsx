@@ -10,10 +10,8 @@ import CategoriesList from './CategoriesList.jsx';
 import BooksList from "./BooksList.jsx";
 import BookstoresList from './BookstoresList.jsx';
 import AdminsList from "./AdminsList.jsx";
-// import SalesList from "./SalesList.jsx"
 import InventoriesAreaDashboard from './InventoriesAreaDashboard.jsx';
 import AuthorInventory from './AuthorInventory.jsx';
-// import InventoriesProvider from './InventoriesProvider.jsx';
 import BookstoreInventory from './BookstoreInventory.jsx';
 import BookInventory from './BookInventory.jsx';
 import AuthorSales from './AuthorSales.jsx';
@@ -43,7 +41,6 @@ function App() {
           <Route path="/admin/bookstores" element={<BookstoresList />} />
           <Route path='/admin/payments' element={<PaymentsList />} />
           <Route path='/admin/costs' element={<CostsList />} />
-          {/* <Route path='/api/admin/sales2' element={<SalesListPerMonths />} /> */}
           <Route path='/admin/inventories-list' element={<InventoriesList/>} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           <Route path='/confirmation-code' element={<ConfirmationCodePage />} />

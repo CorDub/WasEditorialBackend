@@ -1893,8 +1893,6 @@ router.patch('/inventory/:id', updateInventory);
 
 export async function getSales(req, res) {
   try {
-    // let startDate = new Date(req.query.startDate)
-    // let endDate = new Date(req.query.endDate)
     const inputs = {
       startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
       endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()

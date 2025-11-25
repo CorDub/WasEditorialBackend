@@ -108,12 +108,14 @@ function InventoryGraph({
       //get the correct groupBy with possibleScopes
       // we can now pass it an inventory for it to fetch the actual data point to groupBy
       const groupBy = possibleScopes[scope](inventory);
+      console.log('groupBy', groupBy);
 
       // create the result objects if doesn't exist yet, add if it does
       if (groupBy in results) {
         results[groupBy].total += inventory.current + inventory.sold 
         if (inventory.bookstore.id === 1) {
           results[groupBy].total += inventory.givenToAuthor
+          results[groupBy].returns += inventory.returns
           results[groupBy].current += inventory.current - inventory.returns
         } else {
           results[groupBy].total += inventory.returns
@@ -121,7 +123,6 @@ function InventoryGraph({
         }
 
         results[groupBy].givenToAuthor += inventory.givenToAuthor
-        results[groupBy].returns += inventory.returns
         results[groupBy].sold += inventory.sold
       } else {
         results[groupBy] = {
@@ -141,6 +142,7 @@ function InventoryGraph({
         }
       }
     }
+    console.log("results", results);
 
     // second filtering pass based on selectedDisplays
     let generalMax = 0;
@@ -211,10 +213,6 @@ function InventoryGraph({
     }
   }
 
-  useEffect(() => {
-    console.log("scope", scope)
-  }, [scope])
-
   return(
     <div className="author-inventory-global">
       <div className="aig-scope-and-title">
@@ -232,6 +230,7 @@ function InventoryGraph({
         <OverlappingHorizontalGraphLines
           key={index}
           title={dataPoint[0]}
+          scope={scope}
           sold={legendDisplays['sold'] && dataPoint[1].sold}
           given={legendDisplays['givenToAuthor'] && dataPoint[1].givenToAuthor}
           returns={legendDisplays['returns'] && dataPoint[1].returns}

@@ -3,6 +3,7 @@ import { useState, useRef, useLayoutEffect } from "react";
 
 export default function OverlappingHorizontalGraphLines2({
     title,
+    scope,
     sold,
     given,
     current,
@@ -109,141 +110,9 @@ export default function OverlappingHorizontalGraphLines2({
 
     setLengths(objectFirstLengths);
     setSavedLengths(objectFirstLengths);
-
-    // // adjust if needed 
-    // if (firstLengths[firstLengths.length - 1][1] === maxLength) {
-    //   //get min number (min pixels to display numbers)
-    //   const mins = {
-    //     "sold": calcLengthOfNumbers(sold),
-    //     "returns": calcLengthOfNumbers(returns),
-    //     "current": calcLengthOfNumbers(current),
-    //   }
-
-    //   // check for clashes
-    //   let adjustedLengths = []
-    //   for (let i = 0; i < firstLengths.length; i++) {
-    //     if (i === 0) {
-    //       adjustedLengths.push(firstLengths[i])
-    //     } else if (i === firstLengths.length - 1) {
-    //       adjustedLengths.push([firstLengths[i][0], (firstLengths[i][1] - lengthNumbersCurrent)]);
-    //     } else {
-    //       const necessaryLength = firstLengths[i][1] - mins[firstLengths[i][0]]
-    //       if (necessaryLength < adjustedLengths[adjustedLengths - 1][1]) {
-    //         const diff = adjustedLengths[adjustedLengths - 1][1]
-    //         adjustedLengths.push([firstLengths[i][0], firstLengths[i][1] + diff])
-    //       }
-    //     }
-    //   }
-
-    
-
-    // //get actual pixels in proportion to maxLength
-    // const lengthBarGiven = (given / max) * maxLength;
-    // const lengthBarSold = ((sold / max) * maxLength) + lengthBarGiven;
-    // const lengthBarReturns = ((returns / max) * maxLength) + lengthBarSold;
-    // const lengthBarCurrent = (total * maxLength) / max;
-
-    // //minimums to display numbers for sold, returns and current
-    // const minSold = lengthBarSold - lengthNumbersSold;
-    // const minReturns = lengthBarReturns - lengthNumbersReturns;
-    // const minCurrent = lengthBarCurrent - lengthNumbersCurrent;
-
-    // // adjust if necessary
-    // let finalGiven = 0;
-    // let finalSold = minSold;
-    // let finalReturns = minReturns;
-    // let finalCurrent = lengthBarCurrent;
-
-    // if (lengthBarGiven < lengthNumbersGiven) {
-    //   finalGiven = lengthNumbersGiven;
-    // } else {
-    //   finalGiven = lengthBarGiven;
-    // }
-
-    // if (finalGiven > minSold) {
-    //   const diff = finalGiven - minSold;
-    //   finalSold = finalGiven + diff
-    // }
-
-    // if (finalSold > minReturns) {
-    //   const diff = finalSold - minReturns;
-    //   finalReturns = finalSold + diff
-    // }
-
-    // if (finalReturns > minCurrent) {
-    //   const diff = finalReturns - minCurrent;
-    //   const potentialFinalCurrent = finalReturns + diff;
-    //   if (potentialFinalCurrent <= maxLength) {
-    //     finalCurrent = potentialFinalCurrent;
-    //   } else {
-    //     //pushing back if we can't push out
-    //     finalReturns -= diff
-    //     if (finalSold > finalReturns) {
-    //       const diffSoldReturns = finalSold - finalReturns;
-    //       finalSold -= diffSoldReturns;
-    //     }
-
-    //     if (finalGiven > finalSold) {
-    //       const diffGivenSold = finalGiven - finalSold;
-    //       finalGiven -= diffGivenSold
-    //     }
-    //   }
-    // }
-
-    // // set everything
-    // const finalLengths = {
-    //   given: finalGiven,
-    //   sold: finalSold,
-    //   returns: finalReturns,
-    //   current: finalCurrent
-    // }
-
-    // setSavedLengths(finalLengths);
-    // setLengths(finalLengths);
   }
 
   function slightlyMove() {
-    // let newGiven = 0;
-    // let newSold = 0;
-    // let newReturns = 0;
-    // let newCurrent = 0;
-
-    // if (lengths.given < calcLengthOfNumbers(given) - 2) {
-    //   newGiven = lengths.given
-    // } else {
-    //   newGiven -= 2
-    // }
-
-    // newSold = lengths.sold + 2;
-    // newReturns = lengths.returns + 2;
-    
-    // if (lengths.current + 2 < maxLength) {
-    //   newCurrent = lengths.current + 2
-    // } else {
-    //   newCurrent = lengths.current;
-    //   //push back if necessary
-    //   const numbersCurrent = calcLengthOfNumbers(current);
-    //   const minNewCurrent = newCurrent - numbersCurrent;
-    //   if (newReturns > minNewCurrent) {
-    //     const diff = newReturns - minNewCurrent;
-    //     newReturns -= diff
-
-    //     if (newSold > newReturns) {
-    //       const diff = newSold - newReturns;
-    //       newSold -= diff
-    //     }
-    //   }
-    // }
-
-    // const newLengths = {
-    //   given: newGiven,
-    //   sold: newSold,
-    //   returns: newReturns,
-    //   current: newCurrent
-    // }
-
-    // setLengths(newLengths);
-
     // determine which numbers are not being displayed successfully
     let actualLines = [];
     for (let i = 0; i < Object.entries(lengths).length; i++) {
@@ -265,14 +134,14 @@ export default function OverlappingHorizontalGraphLines2({
 
       if (i === actualLines.length -1) {
         const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
-        const diff = actualLines[i-1][1] - min
+        const diff = newLengths[i-1][1] - min
         if (diff > -4) {
           const potentialLength = actualLines[i][1] + diff
-          const missing = calcLengthOfNumbers(actualLines[i][0])
+          const missing = calcLengthOfNumbers(actualLines[i][0]) + diff
           if (potentialLength > maxLength) {
-            newLengths[actualLines[i-1][0]] -= missing
+            newLengths[actualLines[i-1][0]] -= missing + 8
           } else {
-            newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing])
+            newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing + 8])
           }
         } else {
           newLengths.push([[actualLines[i][0]], actualLines[i][1]])
@@ -281,10 +150,10 @@ export default function OverlappingHorizontalGraphLines2({
       }
 
       const min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
-      const diff = actualLines[i-1][1] - min
-      const missing = calcLengthOfNumbers(actualLines[i][0]);
+      const diff = newLengths[i-1][1] - min
+      const missing = calcLengthOfNumbers(actualLines[i][0]) + diff;
       if (diff > 0) {
-        newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing])
+        newLengths.push([[actualLines[i][0]], actualLines[i][1] + missing + 8])
       } else {
         newLengths.push([[actualLines[i][0]], actualLines[i][1]])
       }
@@ -327,44 +196,90 @@ export default function OverlappingHorizontalGraphLines2({
             onMouseEnter={slightlyMove}
             onMouseLeave={returnLengths}
             >
-          {current > 0 && (
-            <div
-              className="ohgl-current"
-              style={{width: `${lengths.current}px`}}
-              ref={numberCurrentRef}>
-              <div className="ohgl-current-number">
-                {current}
-              </div>
-            </div>
-          )}
-          {sold > 0 && (
-            <div
-              className="ohgl-sold"
-              style={{width: `${lengths.sold}px`}}
-              ref={numberSoldRef}>
-              <div className="ohgl-sold-number">
-                {sold}
-              </div>
-            </div>)}
-          {given > 0 && (
-            <div
-              className="ohgl-given"
-              ref={numberGivenRef}
-              style={{width: `${lengths.given}px`}}>
-              <div className='ohgl-number'
-                id='ohgl-number-given'>
-                {given}
-              </div>
-            </div>)}
-          {returns > 0 && (
-            <div
-              className="ohgl-returns"
-              style={{width: `${lengths.returns}px`}}
-              ref={numberReturnsRef}>
-              <div className="ohgl-returns-number">
-                {returns}
-              </div>
-            </div>)}
+          {title === "Plataforma Was" 
+            ? 
+              <>
+              {current > 0 && (
+                <div
+                  className="ohgl-current"
+                  style={{width: `${lengths.current}px`}}
+                  ref={numberCurrentRef}>
+                  <div className="ohgl-current-number">
+                    {current}
+                  </div>
+                </div>
+              )}
+              {sold > 0 && (
+                <div
+                  className="ohgl-sold"
+                  style={{width: `${lengths.sold}px`}}
+                  ref={numberSoldRef}>
+                  <div className="ohgl-sold-number">
+                    {sold}
+                  </div>
+                </div>)}
+              {given > 0 && (
+                <div
+                  className="ohgl-given"
+                  ref={numberGivenRef}
+                  style={{width: `${lengths.given}px`}}>
+                  <div className='ohgl-number'
+                    id='ohgl-number-given'>
+                    {given}
+                  </div>
+                </div>)}
+              {returns > 0 && (
+                <div
+                  className="ohgl-returns"
+                  style={{width: `${lengths.returns}px`}}
+                  ref={numberReturnsRef}>
+                  <div className="ohgl-returns-number">
+                    {returns}
+                  </div>
+                </div>)}
+              </>
+            : 
+              <>
+              {current > 0 && (
+                <div
+                  className="ohgl-current"
+                  style={{width: `${lengths.current}px`}}
+                  ref={numberCurrentRef}>
+                  <div className="ohgl-current-number">
+                    {current}
+                  </div>
+                </div>
+              )}
+              {sold > 0 && (
+                <div
+                  className="ohgl-sold"
+                  style={{width: `${lengths.sold}px`}}
+                  ref={numberSoldRef}>
+                  <div className="ohgl-sold-number">
+                    {sold}
+                  </div>
+                </div>)}
+              {given > 0 && (
+                <div
+                  className="ohgl-given"
+                  ref={numberGivenRef}
+                  style={{width: `${lengths.given}px`}}>
+                  <div className='ohgl-number'
+                    id='ohgl-number-given'>
+                    {given}
+                  </div>
+                </div>)}
+              {returns > 0 && (
+                <div
+                  className="ohgl-returns"
+                  style={{width: `${lengths.returns}px`}}
+                  ref={numberReturnsRef}>
+                  <div className="ohgl-returns-number">
+                    {returns}
+                  </div>
+                </div>)}
+            </>
+          }
           </div>
       </div>
     </div>

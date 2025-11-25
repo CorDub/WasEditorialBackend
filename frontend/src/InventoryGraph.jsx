@@ -116,7 +116,8 @@ function InventoryGraph({
         if (inventory.bookstore.id === 1) {
           results[groupBy].total += inventory.givenToAuthor
           results[groupBy].returns += inventory.returns
-          results[groupBy].current += inventory.current - inventory.returns
+          // results[groupBy].current += inventory.current - inventory.returns
+          results[groupBy].current += inventory.current
         } else {
           results[groupBy].total += inventory.returns
           results[groupBy].current += inventory.current
@@ -136,7 +137,7 @@ function InventoryGraph({
 
         if (inventory.bookstore.id === 1) {
           results[groupBy].total += inventory.givenToAuthor
-          results[groupBy].current -= inventory.returns 
+          // results[groupBy].current -= inventory.returns 
         } else {
           results[groupBy].total += inventory.returns
         }

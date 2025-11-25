@@ -62,10 +62,6 @@ function SalesListPerMonths() {
       console.log(error);
     }
   }
-  
-  useEffect(() => {
-    fetchSalesPerMonths(startDate, endDate);
-  }, [forceRender])
 
   async function refetchAndFilter() {
     let monthData = [];

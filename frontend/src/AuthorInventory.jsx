@@ -23,7 +23,7 @@ function AuthorInventory(){
   const legendValues = [
     ['Entregados al autor', '#57eafa'],
     ['Vendidos', '#4E5981'],
-    ['Devoluciones', 'black'],
+    ['Devoluciones', 'grey'],
     ['Disponibles', '#E2E2E2'],
   ]
   const [legendDisplays, setLegendDisplays] = useState({

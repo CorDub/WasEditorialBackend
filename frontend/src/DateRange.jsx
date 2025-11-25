@@ -14,12 +14,12 @@ function DateRange({
         className="global-input dr-input"
         type="date"
         value={convertISOString(startDate)}
-        onChange={(e) => setStartDate(new Date(e.target.value).toISOString())}></input>
+        onChange={(e) => setStartDate(new Date(e.target.value))}></input>
       <input
         className="global-input dr-input"
         type="date"
         value={convertISOString(endDate)}
-        onChange={(e) => setEndDate(new Date(e.target.value).toISOString())}></input>
+        onChange={(e) => setEndDate(new Date(e.target.value))}></input>
     </div>
   )
 }

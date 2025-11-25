@@ -38,11 +38,6 @@ function AuthorInventory(){
     setShowTotal(true);
   },[])
 
-
-  useEffect(() => {
-    console.log(legendDisplays)
-  }, [legendDisplays])
-
   async function fetchInventories() {
     try {
       const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");

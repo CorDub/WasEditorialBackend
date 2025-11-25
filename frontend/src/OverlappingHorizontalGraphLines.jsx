@@ -8,7 +8,9 @@ export default function OverlappingHorizontalGraphLines2({
     given,
     current,
     returns,
-    max}) {
+    max,
+    triggerResize,
+  }) {
   const [isTitleTooltipOpen, setTitleTooltipOpen] = useState(false);
   const titleRef = useRef();
   const [isEllipsed, setEllipsed] = useState(false);
@@ -29,7 +31,7 @@ export default function OverlappingHorizontalGraphLines2({
   const actualLinesRef = useRef();
   const numberGivenRef = useRef();
   const numberSoldRef = useRef();
-  const numberReturnsRef = useRef();
+  // const numberReturnsRef = useRef();
   const numberCurrentRef = useRef();
   const currentReturnsRef = useRef();
   const [spanValue, setSpanValue] = useState("incl."); 
@@ -37,7 +39,12 @@ export default function OverlappingHorizontalGraphLines2({
 
   useLayoutEffect(() => {
     calcLengths()
-  }, [sold, given, current, returns, max])
+    if (triggerResize && returns > 0) {
+      displayReturns()
+    } else if (!triggerResize && returns > 0) {
+      returnLengths()
+    }
+  }, [sold, given, current, returns, max, triggerResize])
 
   function calcLengthOfNumbers(key) {
     const possibleValues = {
@@ -116,9 +123,10 @@ export default function OverlappingHorizontalGraphLines2({
   }
 
   function slightlyMove() {
+    if (triggerResize && returns > 0) {return}
+
     // determine which numbers are not being displayed successfully
     const currentNumWidth = currentReturnsRef.current.getBoundingClientRect().width
-    console.log("currentNumWidth", currentNumWidth);
 
     let actualLines = [];
     for (let i = 0; i < Object.entries(lengths).length; i++) {
@@ -148,10 +156,9 @@ export default function OverlappingHorizontalGraphLines2({
           min = actualLines[i][1] - calcLengthOfNumbers(actualLines[i][0]);
         }
         const diff = newLengths[i-1][1] - min
-        console.log("diff", diff);
         if (diff > -4) {
           const potentialLength = actualLines[i][1] + diff
-          const missing = calcLengthOfNumbers(actualLines[i][0]) + (diff / 2)
+          const missing = calcLengthOfNumbers(actualLines[i][0]) + (diff/2)
           if (potentialLength > maxLength) {
             newLengths[actualLines[i-1][0]] -= missing + 8
           } else {
@@ -188,6 +195,7 @@ export default function OverlappingHorizontalGraphLines2({
   } 
 
   function returnLengths() {
+    if (triggerResize && returns > 0) {return}
     setLengths(savedLengths);
   }
 
@@ -210,6 +218,33 @@ export default function OverlappingHorizontalGraphLines2({
   useEffect(() => {
     adjustForReturns()
   }, [scope, title])
+
+  function displayReturns() {
+    const currentNumsWidth = currentReturnsRef.current.getBoundingClientRect().width;
+    const soldWidth = lengths.sold;
+    const currentWidth = lengths.current;
+
+    const minToDisplay = currentWidth - currentNumsWidth;
+    const diff = soldWidth - minToDisplay;
+
+    const spaceRight = currentWidth + diff + 12
+    const newLengths = {
+      given : lengths.given,
+      sold: lengths.sold,
+      returns: lengths.returns,
+      current: lengths.current
+    }
+
+    if (diff > 0) {
+      if (spaceRight > maxLength) {
+        newLengths.sold -= diff + 12
+      } else {
+        newLengths.current += diff + 12
+      }
+    }
+
+    setLengths(newLengths);
+  }
 
   return(
     <div className="ohgl-global">

@@ -19,7 +19,7 @@ function InventoryGraph({
   const [max, setMax] = useState(0);
   const [scope, setScope] = useState("book");
   const [isLoading, setLoading] = useState(false);
-
+  const [triggerResize, setTriggerResize] = useState(false);
 
   async function fetchAllAuthorInventories() {
     try {
@@ -218,7 +218,8 @@ function InventoryGraph({
           scope={scope}
           setScope={setScope}
           setSelectedBookId={setSelectedBookId}
-          setLegendDisplays={setLegendDisplays}/>
+          setLegendDisplays={setLegendDisplays}
+          setTriggerResize={setTriggerResize}/>
         <div className="aig-title"><h2>{displayScopeInTitle()}</h2></div>
       </div>
       {isLoading && (
@@ -233,11 +234,15 @@ function InventoryGraph({
           given={legendDisplays['givenToAuthor'] && dataPoint[1].givenToAuthor}
           returns={legendDisplays['returns'] && dataPoint[1].returns}
           current={legendDisplays['current'] && dataPoint[1].current}
-          max={max} />))}
+          max={max} 
+          triggerResize={triggerResize} 
+          setTriggerResize={setTriggerResize}/>))}
       <Legend
         values={legendValues}
         displays={legendDisplays}
-        setDisplays={setLegendDisplays}/>
+        setDisplays={setLegendDisplays}
+        triggerResize={triggerResize}
+        setTriggerResize={setTriggerResize}/>
     </div>
   )
 }

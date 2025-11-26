@@ -3,7 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faShop } from '@fortawesome/free-solid-svg-icons'
 import { useState } from "react";
 
-function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) {
+function ScopeSelector({
+  scope, 
+  setScope, 
+  setSelectedBookId, 
+  setLegendDisplays,
+  setTriggerResize
+}) {
   const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
   const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
 
@@ -31,7 +37,8 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
             "sold": true,
             "current": true,
             "returns": false
-          })
+          });
+          setTriggerResize(false)
         }}
         onMouseEnter={() => setBookTooltipOpen(true)}
         onMouseLeave={() => setBookTooltipOpen(false)} />
@@ -48,7 +55,9 @@ function ScopeSelector({scope, setScope, setSelectedBookId, setLegendDisplays}) 
             "sold": true,
             "current": true,
             "returns": false
-          })}}
+          });
+          setTriggerResize(false)
+        }}
         onMouseEnter={() => setBookstoreTooltipOpen(true)}
         onMouseLeave={() => setBookstoreTooltipOpen(false)} />
       {isBookstoreTooltipOpen && (

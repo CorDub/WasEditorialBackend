@@ -1840,7 +1840,6 @@ export async function updateInventory(req, res) {
         data: {
           bookId: inputs.bookId,
           bookstoreId: inputs.bookstoreId,
-          // country: country,
           initial: inputs.inicial,
           current: currentInventory.current + difference,
           price: inputs.price

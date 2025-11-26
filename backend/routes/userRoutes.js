@@ -48,6 +48,7 @@ router.post('/login', login)
 
 export async function getReset(req, res) {
   try {
+    console.log("reset called")
     const inputs = {
       email: req.body.email
     }

@@ -49,7 +49,8 @@ async function seed() {
   // let newInventory8 = await createInventory(prisma, newBook6.id, newBookstore.id, 3000, 3000, false, 0, 0);
   // let newInventory9 = await createInventory(prisma, newBook6.id, newBookstore2.id, 50, 50, false, 0, 0);
 
-  let newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
+  let newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-11-02")));
+  let previousPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-09-02")));
   let oldPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2024-01-01")));
   // let deletedPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-10-04")), {isDeleted: true});
 
@@ -95,6 +96,7 @@ async function seed() {
     // newInventory9:   { type: "inventory", data: newInventory9 },
 
     newPayment:      { type: "payment", data: newPayment },
+    previousPayment: { type: "payment", data: previousPayment},
     oldPayment:      { type: "payment", data: oldPayment },
     // deletedPayment:  { type: "payment", data: deletedPayment},
  
@@ -111,7 +113,7 @@ async function seed() {
 async function reap(testDBObjects) {
   const deletionList = [
     "oldSale", "newSale1", "newSale2", "newSale3", "newSale4", "deletedSale",
-    "oldPayment", "newPayment", "deletedPayment",
+    "oldPayment", "previousPayment", "newPayment", "deletedPayment",
     'newInventory8', "newInventory7", "newInventory6", "newInventory5", "newInventory4",
     "newInventory3", "newInventory2", "newInventory", "deletedInventory",
     "deletedBookstore", "newBookstore4", "newBookstore3", "newBookstore2",
@@ -550,7 +552,7 @@ describe(`updating a sale with valid parameters`, async() => {
   })
 
   it(`should update the sale with the correct data`, async() => {
-    updatedSale = await prisma.sale.findUnique({where: {id: testDBObjects.newSale1.data.id}});
+    updatedSale = await prisma.sale.findUnique({where: {id: testDBObjects.newSale1.data.id}, include: {payments: true}});
     updatedInventory = await prisma.inventory.findUnique({where: {id: testDBObjects.newInventory.data.id}})
     expect(updatedSale.id).toBe(testDBObjects.newSale1.data.id);
     expect(updatedSale.inventoryId).toBe(updatedInventory.id);
@@ -561,7 +563,140 @@ describe(`updating a sale with valid parameters`, async() => {
   it(`should update the inventory current`, async() => {
     expect(updatedInventory.current).toBe(3080);
   })
+
+  it(`should change the payment it's tied to`, async() => {
+    for (const payment of updatedSale.payments) {
+      try {
+        expect(payment.forMonth).toBe("2025-09");
+      } catch(error) {
+        console.log(`there was an error with payment ${payment.id}`)
+        throw error
+      }
+    }
+  })
 })
+
+describe(`updating the date of a valid sale for a book with multiple authors`, async() => {
+  let mockReq, mockRes;
+  let author1, author2, author3, author4;
+  let book1;
+  let bookstore1;
+  let inventory1;
+  let oldPayment1, oldPayment2, oldPayment3, oldPayment4;
+  let newPayment1, newPayment2, newPayment3;
+  let sale1;
+  let updatedSale, updatedInventory, recreatedPayment, createdPayment;
+  
+  beforeAll(async() => {
+    author1 = await createAuthor(prisma, "v", "m", "v.m@gmail.com", "author");
+    author2 = await createAuthor(prisma, "z", "v", "z.v@gmail.com", "author");
+    author3 = await createAuthor(prisma, "p", "q", "p.q@gmail.com", "author");
+    author4 = await createAuthor(prisma, "s", "z", "s.z@gmail.com", "author");
+    book1 = await createBook(prisma, "book1", [{"id": author1.id}, {"id": author2.id}, {"id": author3.id}, {"id": author4.id}]);
+    bookstore1 = await createBookstore(prisma, "bookstore1");
+    inventory1 = await createInventory(prisma, book1.id, bookstore1.id, 1000, 900, false, 0, 0);
+    oldPayment1 = await createPayment(prisma, author1.id, "2025-11")
+    oldPayment2 = await createPayment(prisma, author2.id, "2025-11")
+    oldPayment3 = await createPayment(prisma, author3.id, "2025-11")
+    oldPayment4 = await createPayment(prisma, author4.id, "2025-11")
+    newPayment1 = await createPayment(prisma, author1.id, "2025-09")
+    newPayment2 = await createPayment(prisma, author2.id, "2025-09")
+    newPayment3 = await createPayment(prisma, author3.id, "2025-09", {isDeleted: true})
+    sale1 = await createSale(prisma, inventory1.id, [{"id": oldPayment1.id}, {"id": oldPayment2.id}, {"id": oldPayment4.id}, {"id": oldPayment3.id}], 100, {date: new Date("2025-11-02")})
+
+    mockReq = {
+      params: {
+        "id": sale1.id
+      },
+      body: {
+        "book": book1.id,
+        "bookstore": bookstore1.id,
+        "quantity": 100,
+        "date": new Date("2025-09-04"),
+      }
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
+
+  afterAll(async() => {
+    await deleteFromDB(prisma, sale1, "sale");
+    await deleteFromDB(prisma, oldPayment1, "payment");
+    await deleteFromDB(prisma, oldPayment2, "payment");
+    await deleteFromDB(prisma, oldPayment3, "payment");
+    await deleteFromDB(prisma, oldPayment4, "payment");
+    await deleteFromDB(prisma, newPayment1, "payment");
+    await deleteFromDB(prisma, newPayment2, "payment");
+    await deleteFromDB(prisma, recreatedPayment, "payment");
+    await deleteFromDB(prisma, createdPayment, "payment");
+    await deleteFromDB(prisma, inventory1, "inventory");
+    await deleteFromDB(prisma, bookstore1, "bookstore");
+    await deleteFromDB(prisma, book1, "book");
+    await deleteFromDB(prisma, author1, "author");
+    await deleteFromDB(prisma, author2, "author");
+    await deleteFromDB(prisma, author3, "author");
+    await deleteFromDB(prisma, author4, "author");
+  })
+
+  it(`should return a status 200`, async() => {
+    await updateSale(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+  })
+
+  it(`should update the sale with the correct data`, async() => {
+    updatedSale = await prisma.sale.findUnique({where: {id: sale1.id}, include: {payments: true}});
+    updatedInventory = await prisma.inventory.findUnique({where: {id: inventory1.id}})
+    expect(updatedSale.id).toBe(sale1.id);
+    expect(updatedSale.inventoryId).toBe(updatedInventory.id);
+    expect(updatedSale.quantity).toBe(100);
+    expect(updatedSale.date).toStrictEqual(new Date("2025-09-04"));
+  })
+
+  it(`should update the inventory current`, async() => {
+    expect(updatedInventory.current).toBe(900);
+  })
+
+  it(`should change the all payments it's tied to`, async() => {
+    expect(updatedSale.payments.length).toBe(4)
+    for (const payment of updatedSale.payments) {
+      try {
+        expect(payment.forMonth).toBe("2025-09");
+      } catch(error) {
+        console.log(`there was an error with payment ${payment.id}`)
+        throw error
+      }
+    }
+  })
+
+  it(`should create the payment if it didn't exist`, async() => {
+    createdPayment = await prisma.payment.findUnique({
+      where: {
+        userId_forMonth: {
+          userId: author4.id,
+          forMonth: "2025-09"
+        }
+      }
+    });
+    expect(createdPayment).toBeTruthy();
+  })
+
+  it(`should delete the payment and create a new one if it was marked deleted`, async() => {
+    recreatedPayment = await prisma.payment.findUnique({
+      where: {
+        userId_forMonth: {
+          userId: author3.id,
+          forMonth: "2025-09"
+        }
+      }
+    });
+    expect(recreatedPayment).toBeTruthy();
+    expect(recreatedPayment.id).not.toBe(newPayment3.id);
+  })
+})
+
 
 describe(`updating a sale with a larger quantity than what's remaining`, async() => {
   let testDBObjects;
@@ -613,6 +748,7 @@ describe(`updating a sale with a larger quantity than what's remaining`, async()
   })
 })
 
+
 describe("updating a sale tied to a deleted inventory", async() => {
   let testDBObjects;
   let mockReq, mockRes;
@@ -662,6 +798,7 @@ describe("updating a sale tied to a deleted inventory", async() => {
     expect(updatedInventory.current).toBe(100);
   })
 })
+
 
 describe(`updating a deleted sale`, async() => {
   let testDBObjects;

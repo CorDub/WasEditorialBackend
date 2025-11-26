@@ -2020,7 +2020,6 @@ export async function addSale(req, res) {
           bookId_bookstoreId: {
             bookId : inputs.bookId,
             bookstoreId: inputs.bookstoreId,
-            // country: country,
           }
         },
         include: {
@@ -2141,7 +2140,24 @@ export async function updateSale(req, res) {
         return;
       }
 
-      const previousSale = await tx.sale.findUnique({where: {id: inputs.id}});
+      const previousSale = await tx.sale.findUnique({
+        where: {
+          id: inputs.id
+        },
+        include: {
+          inventory: {
+            include: {
+              book: {
+                include: {
+                  users: true
+                }
+              },
+              bookstore: true
+            }
+          },
+          payments: true
+        }
+      });
       if (previousSale.isDeleted) {
         res.status(400).json({message: "Esta venta ha sido eliminada"})
         return;
@@ -2154,20 +2170,67 @@ export async function updateSale(req, res) {
         return;
       }
 
+      let recipientPayments = []
+      if (getForMonth(inputs.date) !== getForMonth(previousSale.date)) {
+        for (const user of previousSale.inventory.book.users) {
+          const existingPayment = await prisma.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: user.id,
+                forMonth: getForMonth(inputs.date)
+              }
+            }
+          })
+
+          if (!existingPayment) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(inputs.date)
+              }
+            })
+            recipientPayments.push({"id": createdPayment.id})
+            continue;
+          }
+
+          if (existingPayment && existingPayment.isDeleted) {
+            const deletedPayment = await prisma.payment.delete({where: {id: existingPayment.id}})
+            const recreatedPayment = await prisma.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(inputs.date)
+              }
+            });
+            recipientPayments.push({"id": recreatedPayment.id});
+            continue;
+          }
+
+          recipientPayments.push({"id": existingPayment.id});
+        };          
+      } 
+
       const updatedSale = await tx.sale.update({
         where: {id: inputs.id},
         data: {
           inventoryId: selectedInventory.id,
           quantity: inputs.quantity,
-          date: new Date(inputs.date)
+          date: new Date(inputs.date), 
+          payments: {
+            set: recipientPayments
+          }
         },
         include: {
           inventory: {
             include: {
-              book: true,
+              book: {
+                include: {
+                  users: true
+                }
+              },
               bookstore: true
             }
-          }
+          },
+          payments: true
         }
       });
 

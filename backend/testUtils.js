@@ -321,6 +321,7 @@ export async function deleteFromDB(prisma, element, type) {
       }
     })
   } catch(error) {
-    console.error(`Failed to delete ${element}`, error);
+    console.log(`Failed to delete ${element}`, error);
+    throw error
   }
 }

@@ -3197,10 +3197,61 @@ export async function updateKindleSale(req, res) {
     }
     validateInputs(inputs)
 
-    const targetSale = await prisma.kindleSale.findUnique({where: {id: inputs.id}})
+    const targetSale = await prisma.kindleSale.findUnique({
+      where: {
+        id: inputs.id
+      }, 
+      include: {
+        book: {
+          include: {
+            users: true
+          }
+        },
+        payments: true
+      }
+    })
     if (targetSale.isDeleted) { throw new Error ("deleted kindle sale") }
 
-    const updateKindleSale = await prisma.kindleSale.update({
+    let recipientPayments = []
+    if (getForMonth(inputs.datePay) !== getForMonth(targetSale.datePay)) {
+      for (const user of targetSale.book.users) {
+        const existingPayment = await prisma.payment.findUnique({
+          where: {
+            userId_forMonth: {
+              userId: user.id,
+              forMonth: getForMonth(inputs.datePay)
+            }
+          }
+        })
+
+        if (!existingPayment) {
+          const createdPayment = await prisma.payment.create({
+            data: {
+              userId: user.id,
+              forMonth: getForMonth(inputs.datePay)
+            }
+          })
+          recipientPayments.push({"id": createdPayment.id})
+          continue;
+        }
+
+        if (existingPayment && existingPayment.isDeleted) {
+          const deletedPayment = await prisma.payment.delete({where: {id: existingPayment.id}})
+          const recreatedPayment = await prisma.payment.create({
+            data: {
+              userId: user.id,
+              forMonth: getForMonth(inputs.datePay)
+            }
+          });
+          recipientPayments.push({"id": recreatedPayment.id});
+          continue;
+        }
+
+        recipientPayments.push({"id": existingPayment.id});
+      };          
+    } 
+
+    const updatedKindleSale = await prisma.kindleSale.update({
       where: {
         id: inputs.id
       },
@@ -3209,7 +3260,10 @@ export async function updateKindleSale(req, res) {
         quantityPod: inputs.quantityPod,
         dateCut: inputs.dateCut,
         datePay: inputs.datePay,
-        regalias: inputs.regalias
+        regalias: inputs.regalias,
+        payments: {
+          set: recipientPayments
+        }
       }
     })
 

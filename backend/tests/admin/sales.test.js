@@ -659,7 +659,7 @@ describe(`updating the date of a valid sale for a book with multiple authors`, a
     expect(updatedInventory.current).toBe(900);
   })
 
-  it(`should change the all payments it's tied to`, async() => {
+  it(`should change all the payments it's tied to`, async() => {
     expect(updatedSale.payments.length).toBe(4)
     for (const payment of updatedSale.payments) {
       try {

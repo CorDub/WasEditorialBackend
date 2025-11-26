@@ -2264,7 +2264,6 @@ export async function deleteSale(req, res) {
   // const inventory_id = parseInt(req.query.inventory_id);
   // const quantity = parseInt(req.query.quantity);
   try {
-    console.log("req", req)
     const inputs = {
       id: parseInt(req.params.id),
       inventoryId: parseInt(req.query.inventory_id),

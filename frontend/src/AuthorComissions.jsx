@@ -43,6 +43,10 @@ function AuthorCommissions() {
         setDemandPaymentPossible("noVentas");
         return;
       } 
+      if (paymentInfo.amount < 0) {
+        setDemandPaymentPossible("negativeAmount");
+        return;
+      }
     }
 
     if (salesByPayments.length > 0 && Number.isInteger(activeMonth)) {
@@ -137,9 +141,6 @@ function AuthorCommissions() {
     }
   }
 
-  // console.log("salesbypayments in authorcomm", salesByPayments)
-  // console.log("activeMonth in authorcomm", activeMonth)
-
   useEffect(() => {
     fetchSalesByPayments()
   }, [])
@@ -171,6 +172,9 @@ function AuthorCommissions() {
             null
           )}
           {isDemandPaymentPossible === "noVentas" && (
+            null
+          )}
+          {isDemandPaymentPossible === "negativeAmount" && (
             null
           )}
           {isDemandPaymentPossible === "tooEarlyInTheNextMonth" && (

@@ -2205,6 +2205,11 @@ export async function updateSale(req, res) {
             continue;
           }
 
+          // if (existingPayment 
+          //   && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
+            
+          // }
+
           recipientPayments.push({"id": existingPayment.id});
         };          
       } 

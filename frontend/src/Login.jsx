@@ -55,7 +55,7 @@ function LoginPage() {
       });
 
       if (response.ok === false) {
-        setErrors([...errors, 1]);
+        setErrors([1]);
         setLoading(false);
       } else {
         const data = await response.json();
@@ -77,6 +77,7 @@ function LoginPage() {
   }
 
   function checkBoundsErrors(email, password) {
+    setErrors([]);
     let newErrors = [];
 
     if (typeof email !== "string" || typeof password !== "string") {

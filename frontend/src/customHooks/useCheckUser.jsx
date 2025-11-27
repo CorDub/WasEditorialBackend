@@ -6,13 +6,6 @@ function useCheckUser() {
   const { user, fetchUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // if (user !== "") {
-  //   if (user === null) {
-  //     navigate("/");
-  //     return;
-  //   }
-  // }
-
   useEffect(() => {
     async function fetchUserData() {
       if (user !== "") {
@@ -22,21 +15,15 @@ function useCheckUser() {
           return;
         }
 
-      if (user.role === "superadmin" || user.role === "admin") {
-        return;
-      }
-
-      // if (user.id !== page_id) {
-      //   navigate("/");
-      //   return;
-      // }
+        if (user.role === "superadmin" || user.role === "admin") {
+          return;
+        }
 
         return;
       }
 
       const userData = await fetchUser();
-
-      if (userData === null) {
+      if (!userData) {
         navigate("/");
         return;
       };
@@ -44,11 +31,6 @@ function useCheckUser() {
       if (userData.role === "superadmin" || userData.role === "admin") {
         return;
       }
-
-      // if (userData.id !== page_id) {
-      //   navigate("/");
-      //   return;
-      // }
     }
 
     fetchUserData();

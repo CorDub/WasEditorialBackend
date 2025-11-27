@@ -24,7 +24,6 @@ function UserProvider({ children }) {
         setUser(prev => {
           return null;
         });
-        console.log('no user to fetch');
         return(user);
       }
 

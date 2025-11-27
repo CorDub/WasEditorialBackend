@@ -19,7 +19,6 @@ function ForgottenPasswordPage() {
   async function sendToServer() {
     try {
       if (correo1 !== correo2) {
-        // return alert("Los correos ingresados no eran los mismos.");
         setErrors(prev => [...prev, "Los correos ingresados no eran los mismos."])
       }
 
@@ -29,9 +28,9 @@ function ForgottenPasswordPage() {
           "Content-Type": "application/json"
         },
         credentials: "include",
-        body: {
+        body: JSON.stringify({
           email: correo1
-        }
+        })
       });
 
       if (response.ok === false) {

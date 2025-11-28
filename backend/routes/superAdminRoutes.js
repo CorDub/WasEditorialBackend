@@ -34,8 +34,10 @@ router.get('/admins', async (req, res) => {
   }
 });
 
-export async function addAdmin (req, res) {
+export async function addAdmin (req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+
     const inputs = {
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
@@ -47,7 +49,7 @@ export async function addAdmin (req, res) {
     /// NOW START DOING STUFF
     const password = createRandomPassword();
     const hashedPassword = await bcrypt.hash(password, 10);
-    const new_admin = await prisma.user.create({
+    const new_admin = await prismaClient.user.create({
       data: {
         first_name: inputs.firstName,
         last_name: inputs.lastName,
@@ -81,8 +83,10 @@ export async function addAdmin (req, res) {
 }
 router.post('/admin', addAdmin);
 
-export async function updateAdmin(req, res) {
+export async function updateAdmin(req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+
     const inputs = {
       "id": req.params.id,
       "firstName": req.body.firstName,
@@ -92,16 +96,18 @@ export async function updateAdmin(req, res) {
     }
     validateInputs(inputs);
 
-    const admin = await prisma.user.findUnique({
+
+    const admin = await prismaClient.user.findUnique({
       where: {
         id: inputs.id
       }
     })
-    if (admin.isDeleted) {
+
+    if (admin && admin.isDeleted) {
       throw new Error("User has been deleted")
     };
     
-    const updatedAdmin = await prisma.user.update({
+    const updatedAdmin = await prismaClient.user.update({
       where: {id: admin.id},
       data: {
         first_name: inputs.firstName,
@@ -133,14 +139,17 @@ export async function updateAdmin(req, res) {
 }
 router.patch('/api/admin/:id', updateAdmin);
 
-export async function deleteAdmin(req, res) {
+
+export async function deleteAdmin(req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+
     const inputs = {
       "id": parseInt(req.params.id)
     }
     validateInputs(inputs);
 
-    const deletedAdmin = await prisma.user.update({where:
+    const deletedAdmin = await prismaClient.user.update({where:
       {id: inputs.id},
       data: {
         isDeleted: true,

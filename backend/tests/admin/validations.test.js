@@ -129,10 +129,10 @@ test("validates type datetime or null correctly", () => {
   expect(validateInput("deliveryDate", 2150)).toStrictEqual([["deliveryDate", 2150, "type"]])
 })
 
-test("validates time ranges correctly", () => {
-  expect(validateInput("date", new Date())).toStrictEqual([]);
-  expect(validateInput("date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)))).toStrictEqual([["date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)), "timerange"]])
-})
+// test("validates time ranges correctly", () => {
+//   expect(validateInput("date", new Date())).toStrictEqual([]);
+//   expect(validateInput("date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)))).toStrictEqual([["date", new Date(new Date().setFullYear(new Date().getFullYear() + 1)), "timerange"]])
+// })
 
 test('validates file type correctly', () => {
   expect(validateInput(

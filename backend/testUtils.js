@@ -1,12 +1,14 @@
 import { validateInput } from "validations.js"
+import crypto from 'crypto';
+import { execSync } from "node:child_process";
 
 export async function createAuthor(
   prisma, 
-  first_name, 
-  last_name, 
-  email, 
-  role, 
   { 
+    first_name = null, 
+    last_name = null, 
+    email = null, 
+    role = "author", 
     isDeleted = false,
     categoryId = 1,
     referido = null,
@@ -21,11 +23,15 @@ export async function createAuthor(
     reset_password_code = null,
   } = {}
 ) {
+  const uniqueFirstName = first_name === null ? `Juan${crypto.randomUUID()}` : first_name;
+  const uniqueLastName = last_name === null ? `Cruz${crypto.randomUUID()}` : last_name;
+  const uniqueEmail = email === null ? `${crypto.randomUUID()}@gmail.com` : email;
+
   const newAuthor = await prisma.user.create({
     data: {
-      first_name: first_name,
-      last_name: last_name,
-      email: email,
+      first_name: uniqueFirstName,
+      last_name: uniqueLastName,
+      email: uniqueEmail,
       role: role,
       isDeleted: isDeleted,
       categoryId: categoryId,
@@ -45,10 +51,19 @@ export async function createAuthor(
   return newAuthor
 }
 
-export async function createCategory(prisma, type, management_min, isDeleted) {
+export async function createCategory(
+  prisma,
+  {
+    type = null, 
+    management_min = 180, 
+    isDeleted = false
+  } = {}
+) {
+  const finalType = type === null ? `catType_${crypto.randomUUID()}` : type;
+
   const newCategory = await prisma.category.create({
     data: {
-      type: type,
+      type: finalType,
       management_min: management_min,
       isDeleted: isDeleted
     }
@@ -57,19 +72,30 @@ export async function createCategory(prisma, type, management_min, isDeleted) {
   return newCategory
 }
 
-export async function createBook(prisma, title, userList, isDeleted) {
+export async function createBook(
+  prisma, 
+  userList,
+  {
+    title = null, 
+    isDeleted = false
+  } = {}
+) {
+  const validUserList = []
   for (const element of userList) {
-    if (!element.id || validateInput("id", element.id).length > 0) {
-      console.log("incorrect user list - it needs to be a list of {'id': actual_id}")
+    validUserList.push({"id": element});
+
+    if (!element || validateInput("id", element).length > 0) {
+      console.log("incorrect user list - you didn't send Ids")
       return; 
     }
   }
+  const uniqueTitle = title === null ? `title_${crypto.randomUUID()}` : title;
 
   const newBook = await prisma.book.create({
     data: {
-      title: title,
+      title: uniqueTitle,
       users: {
-        connect: userList
+        connect: validUserList
       },
       isDeleted: isDeleted
     }
@@ -79,9 +105,9 @@ export async function createBook(prisma, title, userList, isDeleted) {
 }
 
 export async function createBookstore(
-  prisma, 
-  name, 
+  prisma,  
   {
+    name = null,
     isDeleted = false,
     deal_percentage = 30.00,
     comissions = false,
@@ -90,9 +116,11 @@ export async function createBookstore(
     contact_email = "",
   } = {}
 ) {
+  const uniqueName = name === null ? `name_${crypto.randomUUID()}` : name
+  
   const newBookstore = await prisma.bookstore.create({
     data: {
-      name: name,
+      name: uniqueName,
       isDeleted: isDeleted,
       deal_percentage: deal_percentage,
       comissions: comissions,
@@ -109,11 +137,13 @@ export async function createInventory(
   prisma, 
   bookId, 
   bookstoreId,
-  initial, 
-  current,
-  isDeleted,
-  returns,
-  givenToAuthor,
+  {
+    initial = 1000, 
+    current = 1000,
+    returns = 0,
+    givenToAuthor = 0,
+    isDeleted = false
+  } = {}
 ) {
   const newInventory = await prisma.inventory.create({
     data: {
@@ -161,12 +191,18 @@ export async function createSale(
   prisma, 
   inventoryId, 
   paymentsIdList, 
-  quantity, 
-  {isDeleted = false, date = new Date()} = {}
+  {
+    quantity = 10, 
+    isDeleted = false, 
+    date = new Date()
+  } = {}
 ) {
+  const validPaymentIdList = []
   for (const element of paymentsIdList) {
-    if (!element.id || validateInput("id", element.id).length > 0) {
-      console.log("incorrect payments id list - it needs to be a list of {'id': actual_id}")
+    validPaymentIdList.push({"id": element})
+
+    if (!element || validateInput("id", element).length > 0) {
+      console.log("incorrect payments id list - you didn't pass payment IDs")
       return; 
     }
   }
@@ -175,7 +211,7 @@ export async function createSale(
     data: {
       inventoryId: inventoryId,
       payments: {
-        connect: paymentsIdList
+        connect: validPaymentIdList
       },
       quantity: quantity,
       isDeleted: isDeleted,
@@ -190,16 +226,24 @@ export async function createKindleSale(
   prisma, 
   bookId, 
   paymentsIdList, 
-  quantityEbook, 
-  quantityPod, 
-  dateCut, 
-  datePay,
-  regalias,
-  {isDeleted = false} = {}
+  {
+    datePay = null,
+    quantityEbook = 100, 
+    quantityPod = 100, 
+    regalias = 1000,
+    isDeleted = false
+  } = {}
 ) {
+  const validDatePay = datePay == null ? new Date() : datePay;
+  const validDateCut = new Date(validDatePay);
+  validDateCut.setMonth(validDateCut.getMonth() - 2);
+
+  const validPaymentIdList = []
   for (const element of paymentsIdList) {
-    if (!element.id || validateInput("id", element.id).length > 0) {
-      console.log("incorrect payments id list - it needs to be a list of {'id': actual_id}")
+    validPaymentIdList.push({"id": element})
+
+    if (!element || validateInput("id", element).length > 0) {
+      console.log("incorrect payments id list - you didn't pass Ids")
       return; 
     }
   }
@@ -208,12 +252,12 @@ export async function createKindleSale(
     data: {
       bookId: bookId,
       payments: {
-        connect: paymentsIdList
+        connect: validPaymentIdList
       },
       quantityEbook: quantityEbook,
       quantityPod: quantityPod,
-      dateCut: dateCut,
-      datePay: datePay,
+      dateCut: validDateCut,
+      datePay: validDatePay,
       regalias: regalias,
       isDeleted: isDeleted
     }
@@ -225,8 +269,12 @@ export async function createKindleSale(
 export async function createImpression(
   prisma, 
   bookId, 
-  quantity, 
-  {isDeleted=false, note=null, date=new Date()} = {}
+  {
+    quantity = 1000, 
+    isDeleted=false, 
+    note=null, 
+    date=new Date()
+  } = {}
 ) {
   const newImpression = await prisma.impression.create({
     data: {
@@ -244,7 +292,6 @@ export async function createImpression(
 export async function createTransfer(
   prisma,
   fromInventoryId,
-  quantity,
   {
     toInventoryId=null,
     type="send",
@@ -276,8 +323,8 @@ export async function createCost(
   prisma, 
   paymentId, 
   bookId, 
-  amount,
   {
+    amount = 100,
     note = null,
     isDeleted = false
   } = {}
@@ -324,4 +371,15 @@ export async function deleteFromDB(prisma, element, type) {
     console.log(`Failed to delete ${element}`, error);
     throw error
   }
+}
+
+export function createTestDB(templateName = "wasBackend_test_template") {
+  const randNum = crypto.randomUUID();
+  const dbName = `testDB_${randNum}`;
+  execSync(`createdb ${dbName} -T ${templateName}`, { stdio: "inherit" });
+  return dbName;
+}
+
+export function dropTestDB(dbName) {
+  execSync(`dropdb ${dbName}`, { stdio: "inherit" });
 }

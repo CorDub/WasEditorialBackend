@@ -7,8 +7,27 @@ import {
   createBookstore,
   createInventory,
   createTransfer,
-  deleteFromDB 
+  deleteFromDB, 
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
 
 
 //ADDING
@@ -17,11 +36,11 @@ describe(`adding a transfer type delivery to author`, async() => {
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransferToAuthor;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -82,11 +101,11 @@ describe(`adding a transfer type delivery to author on a deleted inventory`, asy
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransferToAuthor;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, true, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500, isDeleted: true});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -145,11 +164,11 @@ describe(`adding a transfer type delivery to author from a non Was inventory`, a
   let newAuthor, newBook, newBookstore, fromInventory, newInventory, newTransferToAuthor;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    fromInventory = await createInventory(prisma, newBook.id, 2, 1000, 500, true, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    fromInventory = await createInventory(prisma, newBook.id, 2, {initial: 1000, current: 500, isDeleted: true});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -208,11 +227,11 @@ describe(`adding a transfer type delivery to author with invalid parameters`, as
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransferToAuthor;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, true, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500, isDeleted: true});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -271,11 +290,11 @@ describe(`adding a transfer type send with valid parameters`, async() => {
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransfer;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -343,11 +362,11 @@ describe(`adding a valid transfer type send to a deleted inventory`, async() => 
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransfer;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, true, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500, isDeleted: true});
 
     mockReq = {
       body: {
@@ -416,11 +435,11 @@ describe(`adding a valid transfer type send to an inventory that doesn't exist`,
   let createdInventory;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -491,11 +510,11 @@ describe(`adding a transfer type return with valid parameters`, async() => {
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransfer;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {
@@ -564,11 +583,11 @@ describe(`adding a valid transfer type return to a deleted inventory`, async() =
   let newAuthor, newBook, newBookstore, wasInventory, newInventory, newTransfer;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, true, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500, isDeleted: true});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     console.log("wasInventory bookstoreId", wasInventory.bookstoreId);
     mockReq = {
@@ -639,11 +658,11 @@ describe(`adding a valid transfer type return to an inventory that doesn't exist
   let createdInventory;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "f", "c", "f.c@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "newBookstore");
-    wasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 500, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current: 500});
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 500, current: 500});
 
     mockReq = {
       body: {

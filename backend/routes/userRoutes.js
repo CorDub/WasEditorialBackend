@@ -143,7 +143,7 @@ export async function updateUser(req, res) {
         ...fieldToChange
       }
     });
-user/
+
     res.status(200).json({message: "Updated"});
 
   } catch (error) {

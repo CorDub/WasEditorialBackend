@@ -17,8 +17,28 @@ import {
   createKindleSale,
   createCost,
   deleteFromDB, 
-  createCategory
+  createCategory,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
+
 
 describe("getting monthly sales by payments", async() => {
   const mockReq = {
@@ -46,15 +66,15 @@ describe("getting all valid kindle sales", async() => {
   let newKindleSale, newKindleSale2, newKindleSale3, deletedKindleSale;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}]);
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id]);
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2024-10-02"), new Date("2025-01-02"), 100)
-    newKindleSale3 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2024-10-02"), new Date("2025-01-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-01-02"), regalias: 100})
+    newKindleSale3 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-01-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
 
     mockReq = {
       query: {
@@ -115,15 +135,15 @@ describe("getting all valid kindle sales with restricted date range", async() =>
   let newKindleSale, newKindleSale2, newKindleSale3, deletedKindleSale;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}]);
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id]);
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2024-10-02"), new Date("2025-01-02"), 100)
-    newKindleSale3 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2024-10-02"), new Date("2025-01-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-01-02"), regalias: 100})
+    newKindleSale3 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-01-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
 
     mockReq = {
       query: {
@@ -186,11 +206,11 @@ describe("adding valid kindle sale", async() => {
   let newAuthor, newAuthor2, newBook, newPayment, newPayment2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}]);
-    newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
-    newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id]);
+    newPayment = await createPayment(prisma, newAuthor.id, "2025-11");
+    newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11");
 
     mockReq = {
       "body": {
@@ -241,9 +261,9 @@ describe("adding kindle sale with missing parameters", async() => {
   let newAuthor, newAuthor2, newBook, newPayment, newPayment2;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
 
@@ -290,13 +310,13 @@ describe(`updating Kindle sale with valid parameters`, async() => {
   let newKindleSale, deletedKindleSale, updatedKindleSale;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
 
     mockReq = {
       params: {
@@ -350,11 +370,11 @@ describe(`updating a kindleSale date for a book with multiple authors`, async() 
   let newKindleSale, deletedKindleSale, updatedKindleSale, createdPayment, recreatedPayment;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newAuthor3 = await createAuthor(prisma, "b", "h", "b.h@gmail.com", "author");
-    newAuthor4 = await createAuthor(prisma, "s", "d", "s.d@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}, {"id": newAuthor3.id}, {"id": newAuthor4.id}])
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newAuthor3 = await createAuthor(prisma);
+    newAuthor4 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id, newAuthor3.id, newAuthor4.id])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
     newPayment3 = await createPayment(prisma, newAuthor3.id, "2025-11")
@@ -362,8 +382,9 @@ describe(`updating a kindleSale date for a book with multiple authors`, async() 
     oldPayment = await createPayment(prisma, newAuthor.id, "2025-10")
     oldPayment2 = await createPayment(prisma, newAuthor2.id, "2025-10")
     oldPayment3 = await createPayment(prisma, newAuthor3.id, "2025-10", {isDeleted: true}) 
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
+
 
     mockReq = {
       params: {
@@ -459,13 +480,13 @@ describe('updating a deleted Kindle sale', async() => {
   let newKindleSale, deletedKindleSale, updatedKindleSale;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
 
     mockReq = {
       params: {
@@ -516,13 +537,13 @@ describe(`deleting a kindleSale with valid parameters`, async() => {
   let newKindleSale, deletedKindleSale, updatedKindleSale;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "z", "a.z@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "b", "j", "b.j@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11")
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11")
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, new Date("2025-04-02"), new Date("2025-06-02"), 100, {isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
 
     mockReq = {
       params: {

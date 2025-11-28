@@ -11,8 +11,28 @@ import {
   createKindleSale,
   createCost,
   deleteFromDB, 
-  createCategory
+  createCategory,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
+
 
 describe(`getting all valid solicited payments`, async() => {
   let newAuthor, newAuthor2, newBook, newBookstore, newInventory, newPayment, newPayment2;
@@ -22,29 +42,28 @@ describe(`getting all valid solicited payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma, {managment_min: 180});
+    newCategory2 = await createCategory(prisma, {management_min: 150});
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -116,7 +135,6 @@ describe(`getting all valid solicited payments`, async() => {
 
   it(`should properly add sales and kindle sales and deduce costs`, async() => {
     specificPayment = jsonResponse.find(element => element.id === newPayment.id)
-    console.log("jsonResponse", jsonResponse);
     expect(specificPayment.amount).toBe(105097.6)
     specificPayment2 = jsonResponse.find(element => element.id === newPayment2.id)
     expect(specificPayment2.amount).toBe(102197.6)
@@ -132,29 +150,28 @@ describe(`getting all valid created payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -233,29 +250,28 @@ describe(`getting all valid paid payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -335,29 +351,28 @@ describe(`marking a solicited payment as paid`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -415,29 +430,28 @@ describe(`marking a deleted payment as paid`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -495,29 +509,28 @@ describe(`marking a created payment as paid`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),
@@ -576,29 +589,28 @@ describe(`marking an already paid payment as paid`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "premium", 180);
-    newCategory2 = await createCategory(prisma, "remium2", 150)
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author", {isDeleted: false, categoryId: newCategory2.id})
-    newAuthor2 = await createAuthor(prisma, "b", "c", "b.c@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}, {"id": newAuthor2.id}])
-    newBookstore = await createBookstore(prisma, "newBookstore")
-    newBookstoreComissions = await createBookstore(prisma, "newBookstoreCommissions", {comissions: true})
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 900, false, 0, 0)
-    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, 1000, 900, false, 0, 0)
+    newCategory = await createCategory(prisma);
+    newCategory2 = await createCategory(prisma);
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
+    newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBookstore = await createBookstore(prisma)
+    newBookstoreComissions = await createBookstore(prisma, {comissions: true})
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
+    newInventory2 = await createInventory(prisma, newBook.id, newBookstoreComissions.id, {initial: 1000, current: 900})
     newPayment = await createPayment(prisma, newAuthor.id, "2025-11", {status: "solicited"})
     newPayment2 = await createPayment(prisma, newAuthor2.id, "2025-11", {status: "solicited"})
     deletedPayment = await createPayment(prisma, newAuthor.id, "2025-07", {status: "solicited", isDeleted: true})
     createdPayment = await createPayment(prisma, newAuthor.id, "2025-10", {status: "created"})
     paidPayment = await createPayment(prisma, newAuthor.id, "2025-09", {status: "paid"})
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale2 = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    newSale3 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100)
-    deletedSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 100, {isDeleted: true})
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    newKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    newKindleSale2 = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100)
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [{"id": newPayment.id}, {"id": newPayment2.id}], 10, 10, dateCut, new Date(), 100, {isDeleted: true})
-    newCost = await createCost(prisma, newPayment.id, newBook.id, 100);
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale2 = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    newSale3 = await createSale(prisma, newInventory2.id, [newPayment.id, newPayment2.id], {quantity: 100})
+    deletedSale = await createSale(prisma, newInventory.id, [newPayment.id, newPayment2.id], {quantity: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    newKindleSale2 = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date(), regalias: 100, isDeleted: true})
+    newCost = await createCost(prisma, newPayment.id, newBook.id, {amount: 100});
 
     mockRes = {
       json: vi.fn(),

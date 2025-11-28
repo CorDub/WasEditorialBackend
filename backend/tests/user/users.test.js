@@ -19,10 +19,29 @@ import {
   createKindleSale,
   createCost,
   deleteFromDB, 
-  createCategory
+  createCategory,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
 import bcrypt from 'bcrypt';
 import * as mailerUtils from '../../mailer.js'
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
 
 
 describe(`login correctly`, async() => {
@@ -30,9 +49,7 @@ describe(`login correctly`, async() => {
   let newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
-      {password: await bcrypt.hash("thisisapassword", 10)}
-    )
+    newUser = await createAuthor(prisma, {email: "new.author@gmail.com", password: await bcrypt.hash("thisisapassword", 10)})
 
     mockReq = {
       body: {
@@ -65,8 +82,8 @@ describe(`login correctly`, async() => {
   it(`should return basic info on the user`, async() => {
     jsonResponse = mockRes.json.mock.calls[0][0]
     expect(jsonResponse.id).toBe(newUser.id)
-    expect(jsonResponse.first_name).toBe("new")
-    expect(jsonResponse.last_name).toBe("author")
+    expect(jsonResponse.first_name).toBe(newUser.first_name)
+    expect(jsonResponse.last_name).toBe(newUser.last_name)
     expect(jsonResponse.role).toBe("author")
     expect(jsonResponse.categoryId).toBe(1)
   })
@@ -78,9 +95,7 @@ describe(`login with wrong parameters`, async() => {
   let newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
-      {password: await bcrypt.hash("thisisapassword", 10)}
-    )
+    newUser = await createAuthor(prisma, {email: "new.author@gmail.com", password: await bcrypt.hash("thisisapassword", 10)})
 
     mockReq = {
       body: {
@@ -122,9 +137,7 @@ describe(`login with a deleted user`, async() => {
   let newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
-      {password: await bcrypt.hash("thisisapassword", 10), isDeleted: true}
-    )
+    newUser = await createAuthor(prisma, {password: await bcrypt.hash("thisisapassword", 10), isDeleted: true})
 
     mockReq = {
       body: {
@@ -202,7 +215,7 @@ describe(`getting passsword reset email with valid parameters`, async() => {
   let newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author")
+    newUser = await createAuthor(prisma)
 
     mockReq = {
       body: {
@@ -229,7 +242,7 @@ describe(`getting passsword reset email with valid parameters`, async() => {
   })
 
   it(`should send the reset password email`, async() => {
-    expect(mailSpy).toHaveBeenCalledExactlyOnceWith("new.author@gmail.com", "new")
+    expect(mailSpy).toHaveBeenCalledExactlyOnceWith(newUser.email, newUser.first_name)
   })
 
   it(`should pass you the userId`, async() => {
@@ -243,7 +256,7 @@ describe(`get user extra info`, async() => {
   let mockReq, mockRes, newUser, jsonResponse;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -276,7 +289,7 @@ describe(`get user extra info`, async() => {
 
   it(`should send the extra info for the logged in user`, async() => {
     jsonResponse = mockRes.json.mock.calls[0][0]
-    expect(jsonResponse.email).toBe("new.author@gmail.com")
+    expect(jsonResponse.email).toBe(newUser.email)
     expect(jsonResponse.phone).toBe("5544809945")
     expect(jsonResponse.birthday).toBe("22121988")
     expect(jsonResponse.font_size).toBe(1.1)
@@ -288,11 +301,11 @@ describe(`get user extra info`, async() => {
 })
 
 
-describe(`get eextra user info for deleted user`, async() => {
+describe(`get extra user info for deleted user`, async() => {
   let mockReq, mockRes, newUser, jsonResponse;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -335,7 +348,7 @@ describe(`update user bank details with valid parameters`, async() => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -374,9 +387,9 @@ describe(`update user bank details with valid parameters`, async() => {
 
   it(`should correctly update the user bank details`, async() => {
     updatedUser = await prisma.user.findUnique({where: {id: newUser.id}})
-    expect(updatedUser.first_name).toBe("new")
-    expect(updatedUser.last_name).toBe("author")
-    expect(updatedUser.email).toBe("new.author@gmail.com")
+    expect(updatedUser.first_name).toBe(newUser.first_name)
+    expect(updatedUser.last_name).toBe(newUser.last_name)
+    expect(updatedUser.email).toBe(newUser.email)
     expect(updatedUser.role).toBe("author")
     expect(updatedUser.phone).toBe("5544809945")
     expect(updatedUser.birthday).toBe("22121988")
@@ -393,7 +406,7 @@ describe(`update user invalid fields with valid parameters`, async() => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -430,9 +443,9 @@ describe(`update user invalid fields with valid parameters`, async() => {
 
   it(`should not update the user bank details`, async() => {
     updatedUser = await prisma.user.findUnique({where: {id: newUser.id}})
-    expect(updatedUser.first_name).toBe("new")
-    expect(updatedUser.last_name).toBe("author")
-    expect(updatedUser.email).toBe("new.author@gmail.com")
+    expect(updatedUser.first_name).toBe(newUser.first_name)
+    expect(updatedUser.last_name).toBe(newUser.last_name)
+    expect(updatedUser.email).toBe(newUser.email)
     expect(updatedUser.role).toBe("author")
     expect(updatedUser.phone).toBe("5544809945")
     expect(updatedUser.birthday).toBe("22121988")
@@ -449,7 +462,7 @@ describe(`update deleted user`, async() => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -486,9 +499,9 @@ describe(`update deleted user`, async() => {
 
   it(`should not update the user bank details`, async() => {
     updatedUser = await prisma.user.findUnique({where: {id: newUser.id}})
-    expect(updatedUser.first_name).toBe("new")
-    expect(updatedUser.last_name).toBe("author")
-    expect(updatedUser.email).toBe("new.author@gmail.com")
+    expect(updatedUser.first_name).toBe(newUser.first_name)
+    expect(updatedUser.last_name).toBe(newUser.last_name)
+    expect(updatedUser.email).toBe(newUser.email)
     expect(updatedUser.role).toBe("author")
     expect(updatedUser.phone).toBe("5544809945")
     expect(updatedUser.birthday).toBe("22121988")
@@ -505,7 +518,7 @@ describe(`update non logged in user`, async() => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -538,9 +551,9 @@ describe(`update non logged in user`, async() => {
 
   it(`should not update the user bank details`, async() => {
     updatedUser = await prisma.user.findUnique({where: {id: newUser.id}})
-    expect(updatedUser.first_name).toBe("new")
-    expect(updatedUser.last_name).toBe("author")
-    expect(updatedUser.email).toBe("new.author@gmail.com")
+    expect(updatedUser.first_name).toBe(newUser.first_name)
+    expect(updatedUser.last_name).toBe(newUser.last_name)
+    expect(updatedUser.email).toBe(newUser.email)
     expect(updatedUser.role).toBe("author")
     expect(updatedUser.phone).toBe("5544809945")
     expect(updatedUser.birthday).toBe("22121988")
@@ -557,7 +570,7 @@ describe(`update non logged in user`, async() => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -590,9 +603,9 @@ describe(`update non logged in user`, async() => {
 
   it(`should not update the user bank details`, async() => {
     updatedUser = await prisma.user.findUnique({where: {id: newUser.id}})
-    expect(updatedUser.first_name).toBe("new")
-    expect(updatedUser.last_name).toBe("author")
-    expect(updatedUser.email).toBe("new.author@gmail.com")
+    expect(updatedUser.first_name).toBe(newUser.first_name)
+    expect(updatedUser.last_name).toBe(newUser.last_name)
+    expect(updatedUser.email).toBe(newUser.email)
     expect(updatedUser.role).toBe("author")
     expect(updatedUser.phone).toBe("5544809945")
     expect(updatedUser.birthday).toBe("22121988")
@@ -609,7 +622,7 @@ describe(`validate the confirmation code`, async() => {
   let mockReq, mockRes, newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -655,7 +668,7 @@ describe(`validating a wrong validation code`, async() => {
   let mockReq, mockRes, newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -701,7 +714,7 @@ describe(`validate the confirmation code for a deleted user`, async() => {
   let mockReq, mockRes, newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -748,7 +761,7 @@ describe(`logout correctly`, async() => {
   let mockReq, mockRes, newUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -797,7 +810,7 @@ describe(`change password with valid credentials`, () => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -845,7 +858,7 @@ describe(`change password with password missing capitals`, () => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -893,7 +906,7 @@ describe(`change password with password missing numbers`, () => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -941,7 +954,7 @@ describe(`change password with password missing special characters`, () => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",
@@ -989,7 +1002,7 @@ describe(`change password with insufficient length`, () => {
   let mockReq, mockRes, newUser, updatedUser;
 
   beforeAll(async() => {
-    newUser = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author",
+    newUser = await createAuthor(prisma,
       {
         phone: "5544809945",
         birthday: "22121988",

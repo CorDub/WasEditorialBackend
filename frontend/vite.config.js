@@ -11,5 +11,8 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: path.resolve(__dirname, '../backend/dist')
+  },
+  test: {
+    sequential: true
   }
 });

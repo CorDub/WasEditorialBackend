@@ -12,65 +12,79 @@ import {
   createKindleSale,
   createCost,
   createImpression,
-  deleteFromDB 
+  deleteFromDB ,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
 
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
+
+
 async function seed() {
-  let newAuthor = await createAuthor(prisma, "G", "B", 'g.b@gmail.com', "author");
-  // let newAuthor2 = await createAuthor(prisma, "R", "F", 'r.f@gmail.com', 'author');
+  let newAuthor = await createAuthor(prisma);
 
-  let newBook = await createBook(prisma, "newBook", [{'id': newAuthor.id}]);
-  let newBook2 = await createBook(prisma, "newBook2", [{'id': newAuthor.id}]);
-  let newBook3 = await createBook(prisma, "newBook3", [{'id': newAuthor.id}]);
-  let newBook4 = await createBook(prisma, "newBook4", [{'id': newAuthor.id}]);
-  let newBook5 = await createBook(prisma, "newBook5", [{'id': newAuthor.id}]);
-  // let newBook6 = await createBook(prisma, "newBook6", [{'id': newAuthor.id}, {"id": newAuthor2.id}]);
-  let deletedBook = await createBook(prisma, "deleted book", [{"id": newAuthor.id}], true);
+  let newBook = await createBook(prisma, [newAuthor.id]);
+  let newBook2 = await createBook(prisma, [newAuthor.id]);
+  let newBook3 = await createBook(prisma, [newAuthor.id]);
+  let newBook4 = await createBook(prisma, [newAuthor.id]);
+  let newBook5 = await createBook(prisma, [newAuthor.id]);
 
-  let newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is the note", date: new Date("2025-10-29")});
-  let newImpression2 = await createImpression(prisma, newBook.id, 1000);
-  let newImpression3 = await createImpression(prisma, newBook.id, 1000);
-  let deletedImpression = await createImpression(prisma, newBook.id, 100, {isDeleted: true});
+  let deletedBook = await createBook(prisma, [newAuthor.id], {isDeleted: true});
 
-  let newBookstore = await createBookstore(prisma, "newBookstore");
-  let newBookstore2 = await createBookstore(prisma, "newBookstore2");
-  let newBookstore3 = await createBookstore(prisma, "newBookstore3");
-  let newBookstore4 = await createBookstore(prisma, "newBookstore4");
-  let deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+  let newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is the note", date: new Date("2025-10-29")});
+  let newImpression2 = await createImpression(prisma, newBook.id, {quantity: 1000});
+  let newImpression3 = await createImpression(prisma, newBook.id, {quantity: 1000});
+  let deletedImpression = await createImpression(prisma, newBook.id, {quantity: 100, isDeleted: true});
 
-  let deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000, true);
-  let newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 3000, 3000, false, 0, 0);
-  let newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, 3000, 3000, false, 10, 10);
-  let newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, 3000, 3000, false, 10, 10);
-  let newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, 3000, 3000, true, 0, 0);
-  let newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, 3000, 3000, false, 10, 10);
-  let newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, 3000, 3000, false, 10, 10);
-  let newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, 3000, 3000, true, 0, 0);
-  // let newInventory8 = await createInventory(prisma, newBook6.id, newBookstore.id, 3000, 3000, false, 0, 0);
-  // let newInventory9 = await createInventory(prisma, newBook6.id, newBookstore2.id, 50, 50, false, 0, 0);
+  let newBookstore = await createBookstore(prisma);
+  let newBookstore2 = await createBookstore(prisma);
+  let newBookstore3 = await createBookstore(prisma);
+  let newBookstore4 = await createBookstore(prisma);
+  let deletedBookstore = await createBookstore(prisma, {isDeleted: true});
 
+  let deletedInventory = await createInventory(prisma, newBook2.id, newBookstore.id, {initial: 1000, current: 1000, isDeleted: true});
+  let newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 3000, current: 3000, isDeleted: false, returns: 0, givenToAuthor: 0});
+  let newInventory2 = await createInventory(prisma, newBook.id, newBookstore2.id, {initial: 3000, current: 3000, isDeleted: false, returns: 10, givenToAuthor:  10});
+  let newInventory3 = await createInventory(prisma, newBook.id, newBookstore3.id, {initial: 3000, current: 3000, isDeleted: false, returns: 10, givenToAuthor:  10});
+  let newInventory4 = await createInventory(prisma, newBook.id, newBookstore4.id, {initial: 3000, current: 3000, isDeleted: true, returns: 0, givenToAuthor: 0});
+  let newInventory5 = await createInventory(prisma, newBook3.id, newBookstore.id, {initial: 3000, current: 3000, isDeleted: false, returns: 10, givenToAuthor:  10});
+  let newInventory6 = await createInventory(prisma, newBook4.id, newBookstore.id, {initial: 3000, current: 3000, isDeleted: false, returns: 10, givenToAuthor:  10});
+  let newInventory7 = await createInventory(prisma, newBook5.id, newBookstore.id, {initial: 3000, current: 3000, isDeleted: true, returns: 10, givenToAuthor: 10});
   let newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-11-02")));
   let previousPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-09-02")));
   let oldPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2024-01-01")));
-  // let deletedPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date("2025-10-04")), {isDeleted: true});
 
-  let deletedSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
-  let newSale1 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-  let newSale2 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100);
-  let newSale3 = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {isDeleted: true});
-  let newSale4 = await createSale(prisma, newInventory2.id, [{'id': newPayment.id}], 100);
-  let oldSale = await createSale(prisma, newInventory.id, [{'id': newPayment.id}], 100, {date: new Date("2024-01-01")});
+  let deletedSale = await createSale(prisma, newInventory.id, [newPayment.id], {quantity: 100, isDeleted: true});
+  let newSale1 = await createSale(prisma, newInventory.id, [newPayment.id], {quantity: 100});
+  let newSale2 = await createSale(prisma, newInventory.id, [newPayment.id], {quantity: 100});
+  let newSale3 = await createSale(prisma, newInventory.id, [newPayment.id], {quantity: 100, isDeleted: true});
+  let newSale4 = await createSale(prisma, newInventory2.id, [newPayment.id], {quantity: 100});
+  let oldSale = await createSale(prisma, newInventory.id, [newPayment.id], {quantity: 100, date: new Date("2024-01-01")});
 
   const testDBObjects = {
     newAuthor:       { type: "author", data: newAuthor },
-    // newAuthor2:       { type: "author", data: newAuthor2 },
 
     newBook:         { type: "book", data: newBook },
     newBook2:        { type: "book", data: newBook2 },
     newBook3:        { type: "book", data: newBook3 },
     newBook4:        { type: "book", data: newBook4 },
     newBook5:        { type: "book", data: newBook5 },
-    // newBook6:        { type: "book", data: newBook6 },
+
     deletedBook:     { type: "book", data: deletedBook },
 
     newImpression:   { type: "impression", data: newImpression },
@@ -92,13 +106,10 @@ async function seed() {
     newInventory5:   { type: "inventory", data: newInventory5 },
     newInventory6:   { type: "inventory", data: newInventory6 },
     newInventory7:   { type: "inventory", data: newInventory7 },
-    // newInventory8:   { type: "inventory", data: newInventory8 },
-    // newInventory9:   { type: "inventory", data: newInventory9 },
 
     newPayment:      { type: "payment", data: newPayment },
     previousPayment: { type: "payment", data: previousPayment},
     oldPayment:      { type: "payment", data: oldPayment },
-    // deletedPayment:  { type: "payment", data: deletedPayment},
  
     deletedSale:     { type: "sale", data: deletedSale },
     newSale1:        { type: "sale", data: newSale1 },
@@ -340,10 +351,10 @@ describe("adding a sale for a multi-authors book", async() => {
   let newPayments;
 
   beforeAll(async() => {
-    newAuthor2 = await createAuthor(prisma, "R", "F", 'r.f@gmail.com', 'author');
+    newAuthor2 = await createAuthor(prisma);
     testDBObjects = await seed();
-    newBook6 = await createBook(prisma, "newBook6", [{'id': testDBObjects.newAuthor.data.id}, {"id": newAuthor2.id}]);
-    newInventory8 = await createInventory(prisma, newBook6.id, testDBObjects.newBookstore.data.id, 3000, 3000, false, 0, 0);
+    newBook6 = await createBook(prisma, [testDBObjects.newAuthor.data.id, newAuthor2.id]);
+    newInventory8 = await createInventory(prisma, newBook6.id, testDBObjects.newBookstore.data.id, {initial: 3000, current: 3000});
 
     mockReq = {
       body: {
@@ -396,10 +407,10 @@ describe("adding a sale larger than the remaining inventory", async() => {
   let newAuthor2, newBook6, newInventory9;
 
   beforeAll(async() => {
-    newAuthor2 = await createAuthor(prisma, "R", "F", 'r.f@gmail.com', 'author');
+    newAuthor2 = await createAuthor(prisma);
     testDBObjects = await seed();
-    newBook6 = await createBook(prisma, "newBook6", [{'id': testDBObjects.newAuthor.data.id}, {"id": newAuthor2.id}]);
-    newInventory9 = await createInventory(prisma, newBook6.id, testDBObjects.newBookstore2.data.id, 50, 50, false, 0, 0);
+    newBook6 = await createBook(prisma, [testDBObjects.newAuthor.data.id, newAuthor2.id]);
+    newInventory9 = await createInventory(prisma, newBook6.id, testDBObjects.newBookstore2.data.id, {initial: 50, current:50});
 
     mockReq = {
       body: {
@@ -588,13 +599,13 @@ describe(`updating the date of a valid sale for a book with multiple authors`, a
   let updatedSale, updatedInventory, recreatedPayment, createdPayment;
   
   beforeAll(async() => {
-    author1 = await createAuthor(prisma, "v", "m", "v.m@gmail.com", "author");
-    author2 = await createAuthor(prisma, "z", "v", "z.v@gmail.com", "author");
-    author3 = await createAuthor(prisma, "p", "q", "p.q@gmail.com", "author");
-    author4 = await createAuthor(prisma, "s", "z", "s.z@gmail.com", "author");
-    book1 = await createBook(prisma, "book1", [{"id": author1.id}, {"id": author2.id}, {"id": author3.id}, {"id": author4.id}]);
-    bookstore1 = await createBookstore(prisma, "bookstore1");
-    inventory1 = await createInventory(prisma, book1.id, bookstore1.id, 1000, 900, false, 0, 0);
+    author1 = await createAuthor(prisma);
+    author2 = await createAuthor(prisma);
+    author3 = await createAuthor(prisma);
+    author4 = await createAuthor(prisma);
+    book1 = await createBook(prisma, [author1.id, author2.id, author3.id, author4.id]);
+    bookstore1 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book1.id, bookstore1.id, {initial: 1000, current: 900});
     oldPayment1 = await createPayment(prisma, author1.id, "2025-11")
     oldPayment2 = await createPayment(prisma, author2.id, "2025-11")
     oldPayment3 = await createPayment(prisma, author3.id, "2025-11")
@@ -602,7 +613,7 @@ describe(`updating the date of a valid sale for a book with multiple authors`, a
     newPayment1 = await createPayment(prisma, author1.id, "2025-09")
     newPayment2 = await createPayment(prisma, author2.id, "2025-09")
     newPayment3 = await createPayment(prisma, author3.id, "2025-09", {isDeleted: true})
-    sale1 = await createSale(prisma, inventory1.id, [{"id": oldPayment1.id}, {"id": oldPayment2.id}, {"id": oldPayment4.id}, {"id": oldPayment3.id}], 100, {date: new Date("2025-11-02")})
+    sale1 = await createSale(prisma, inventory1.id, [oldPayment1.id, oldPayment2.id, oldPayment4.id, oldPayment3.id], {quantity: 100, date: new Date("2025-11-02")})
 
     mockReq = {
       params: {
@@ -706,9 +717,9 @@ describe(`updating a sale with a larger quantity than what's remaining`, async()
 
   beforeAll(async() => {
     testDBObjects = await seed();
-    newBookstore100 = await createBookstore(prisma, "bookstore100", false);
-    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id , 3000, 100, false, 0, 0)
-    newSale100 = await createSale(prisma, newInventory100.id, [{'id': testDBObjects.newPayment.data.id}], 100);
+    newBookstore100 = await createBookstore(prisma);
+    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id , {initial: 3000, current: 100})
+    newSale100 = await createSale(prisma, newInventory100.id, [testDBObjects.newPayment.data.id], {quantity: 100});
 
     mockReq = {
       params: {
@@ -757,9 +768,9 @@ describe("updating a sale tied to a deleted inventory", async() => {
 
   beforeAll(async() => {
     testDBObjects = await seed();
-    newBookstore100 = await createBookstore(prisma, "bookstore100", false);
-    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id , 3000, 100, true, 0, 0)
-    newSale100 = await createSale(prisma, newInventory100.id, [{'id': testDBObjects.newPayment.data.id}], 100);
+    newBookstore100 = await createBookstore(prisma);
+    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id, {initial: 3000, current: 100, isDeleted: true})
+    newSale100 = await createSale(prisma, newInventory100.id, [testDBObjects.newPayment.data.id], {quantity: 100});
 
     mockReq = {
       params: {
@@ -808,9 +819,9 @@ describe(`updating a deleted sale`, async() => {
 
   beforeAll(async() => {
     testDBObjects = await seed();
-    newBookstore100 = await createBookstore(prisma, "bookstore100", false);
-    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id , 3000, 100, true, 0, 0)
-    newSale100 = await createSale(prisma, newInventory100.id, [{'id': testDBObjects.newPayment.data.id}], 100, {isDeleted: true});
+    newBookstore100 = await createBookstore(prisma);
+    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id, {initial: 3000, current: 100, isDeleted: true})
+    newSale100 = await createSale(prisma, newInventory100.id, [testDBObjects.newPayment.data.id], {quantity: 100, isDeleted: true});
 
     mockReq = {
       params: {
@@ -860,9 +871,9 @@ describe(`deleting a sale with valid parameters`, async() => {
 
   beforeAll(async() => {
     testDBObjects = await seed();
-    newBookstore100 = await createBookstore(prisma, "bookstore100", false);
-    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id , 3000, 2900, false, 0, 0)
-    newSale100 = await createSale(prisma, newInventory100.id, [{'id': testDBObjects.newPayment.data.id}], 100);
+    newBookstore100 = await createBookstore(prisma);
+    newInventory100 = await createInventory(prisma, testDBObjects.newBook.data.id, newBookstore100.id, {initial: 3000, current: 2900})
+    newSale100 = await createSale(prisma, newInventory100.id, [testDBObjects.newPayment.data.id], {quantity: 100});
 
     mockReq = {
       params: {

@@ -1,11 +1,4 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { 
-  getAuthors,
-  addAuthor, 
-  addMultipleAuthors, 
-  updateAuthor, 
-  deleteAuthor } from "../../routes/adminRoutes.js";
-import { prisma } from "../../prisma/client.js";
 import * as mailer from "../../mailer.js";
 import { getForMonth } from "../../utils.js";
 import {
@@ -20,23 +13,44 @@ import {
   createImpression,
   deleteFromDB 
 } from "../../testUtils.js";
+import { prisma } from "../../prisma/client.js"; 
+// import { createTestDB, dropTestDB } from "../../testUtils.js";
 
-vi.mock('../mailer.js', () => ({
+vi.mock('../../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),
 }));
+
+import { 
+  getAuthors,
+  addAuthor, 
+  addMultipleAuthors, 
+  updateAuthor, 
+  deleteAuthor 
+} from "../../routes/adminRoutes.js";
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   console.log("testDBName", testDBName);
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
 
 // GETTING 
 describe("getting all valid authors", () => {
   let mockRes, deletedAuthor, jsonResponse;
 
   beforeAll(async() => {
-    deletedAuthor = await createAuthor(prisma, 
-      "firstName", 
-      "deletedAuthor", 
-      "firstName.deletedAuthor@gmail.com",
-      "author",
-      {isDeleted: true}
-    )
+    deletedAuthor = await createAuthor(prisma, {isDeleted: true})
 
     mockRes = {
       json: vi.fn(),
@@ -133,6 +147,8 @@ describe("adding a valid author", () => {
   })
 })
 
+
+
 describe("adding an invalid author", () => {
   let mockReq, mockRes, notAddedAuthor;
   mockReq = {
@@ -181,6 +197,8 @@ describe("adding an invalid author", () => {
     vi.clearAllMocks();
   })
 })
+
+
 
 describe("adding a duplicate author (already a user)", () => {
   let mockReq, mockRes, newAuthor;
@@ -334,6 +352,8 @@ describe("adding a duplicate author (already a user)", () => {
 //   })
 // })
 
+
+
 ///UPDATING
 describe("updating an author with valid parameters", () => {
   let newAuthor, mockReq, mockRes;
@@ -413,18 +433,13 @@ describe("updating an author with valid parameters", () => {
   })
 })
 
+
+
 describe("updating an author with invalid parameters", () => {
   let mockReq, mockRes, newAuthor;
 
   beforeAll(async() => {
-    newAuthor = await prisma.user.create({
-      data: {
-        first_name: "New",
-        last_name: "Author",
-        email: "new.author@gmail.com",
-        role: "author"
-      }
-    })
+    newAuthor = await createAuthor(prisma);
 
     mockReq = {
       params: {
@@ -476,26 +491,21 @@ describe("updating an author with invalid parameters", () => {
         id: newAuthor.id
       }
     })
-    expect(updatedAuthor.first_name).toBe("New");
-    expect(updatedAuthor.last_name).toBe("Author");
-    expect(updatedAuthor.email).toBe("new.author@gmail.com");
+    expect(updatedAuthor.first_name).toBe(newAuthor.first_name);
+    expect(updatedAuthor.last_name).toBe(newAuthor.last_name);
+    expect(updatedAuthor.email).toBe(newAuthor.email);
     expect(updatedAuthor.role).toBe("author");
   })
 })
+
+
+
 
 describe("updating a deleted author", () => {
   let deletedAuthor, mockReq, mockRes, notUpdatedAuthor;
 
   beforeAll(async() => {
-    deletedAuthor = await prisma.user.create({
-      data: {
-        first_name: "New",
-        last_name: "Author",
-        email: "new.author@gmail.com",
-        role: "author",
-        isDeleted: true
-      }
-    });
+    deletedAuthor = await createAuthor(prisma, {isDeleted: true})
 
     mockReq = {
       params: {
@@ -545,13 +555,15 @@ describe("updating a deleted author", () => {
         id: deletedAuthor.id
       }
     });
-    expect(notUpdatedAuthor.first_name).toBe("New");
-    expect(notUpdatedAuthor.last_name).toBe("Author")
-    expect(notUpdatedAuthor.email).toBe("new.author@gmail.com")
+    expect(notUpdatedAuthor.first_name).toBe(deletedAuthor.first_name);
+    expect(notUpdatedAuthor.last_name).toBe(deletedAuthor.last_name)
+    expect(notUpdatedAuthor.email).toBe(deletedAuthor.email)
     expect(notUpdatedAuthor.role).toBe("author")
     expect(notUpdatedAuthor.isDeleted).toBe(true)
   })
 })
+
+
 
 ///DELETING
 describe('deleting an author with valid parameters', () => {
@@ -582,29 +594,31 @@ describe('deleting an author with valid parameters', () => {
 
   beforeAll(async() => {
     /// preparing data
-    newAuthor = await createAuthor(prisma, "New", "Author", "new.author@gmail.com", "author");
-    newAuthor2 = await createAuthor(prisma, "New2", "Author2", "new.author2@gmail.com", "author");
-    bookWithOnlyAuthor = await createBook(prisma, "First book", [{"id": newAuthor.id}]);
-    bookWithSeveralAuthors = await createBook(prisma, "Second book", [{"id": newAuthor.id}, {"id": newAuthor2.id}]);
-    impressionBookWithOnlyAuthor = await createImpression(prisma, bookWithOnlyAuthor.id, 100);
-    impressionBookWithSeveralAuthors = await createImpression(prisma, bookWithSeveralAuthors.id, 100);
-    bookstore1 = await createBookstore(prisma, "First Bookstore");
-    bookstore2 = await createBookstore(prisma, "Second Bookstore");
-    inventoryBookWithOnlyAuthor1 = await createInventory(prisma, bookWithOnlyAuthor.id, bookstore1.id, 100, 100);
-    inventoryBookWithOnlyAuthor2 = await createInventory(prisma, bookWithOnlyAuthor.id, bookstore2.id, 100, 100);
-    inventoryBookWithSeveralAuthors = await createInventory(prisma, bookWithSeveralAuthors.id, bookstore1.id, 100, 100);
+    newAuthor = await createAuthor(prisma);
+    newAuthor2 = await createAuthor(prisma);
+    bookWithOnlyAuthor = await createBook(prisma, [newAuthor.id]);
+    console.log("bookWithOnlyAuthor", bookWithOnlyAuthor);
+    // console.log("newAuthor", newAuthor);
+    bookWithSeveralAuthors = await createBook(prisma, [newAuthor.id, newAuthor2.id]);
+    impressionBookWithOnlyAuthor = await createImpression(prisma, bookWithOnlyAuthor.id, {quantity: 100});
+    impressionBookWithSeveralAuthors = await createImpression(prisma, bookWithSeveralAuthors.id, {quantity: 100});
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventoryBookWithOnlyAuthor1 = await createInventory(prisma, bookWithOnlyAuthor.id, bookstore1.id, {initial: 100, current:100});
+    inventoryBookWithOnlyAuthor2 = await createInventory(prisma, bookWithOnlyAuthor.id, bookstore2.id, {initial: 100, current:100});
+    inventoryBookWithSeveralAuthors = await createInventory(prisma, bookWithSeveralAuthors.id, bookstore1.id, {initial: 100, current:100});
     paymentNewAuthor = await createPayment(prisma, newAuthor.id, getForMonth(new Date().toISOString()));
     paymentNewAuthor2 = await createPayment(prisma, newAuthor2.id, getForMonth(new Date().toISOString()));
-    saleInventoryBookWithOnlyAuthor1 = await createSale(prisma, inventoryBookWithOnlyAuthor1.id, [{"id": paymentNewAuthor.id}], 10);
-    saleInventoryBookWithOnlyAuthor2 = await createSale(prisma, inventoryBookWithOnlyAuthor2.id, [{"id": paymentNewAuthor.id}], 10);
-    saleInventoryBookWithSeveralAuthors = await createSale(prisma, inventoryBookWithSeveralAuthors.id, [{"id": paymentNewAuthor.id}, {"id": paymentNewAuthor2.id}], 10);
-    const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
-    kindleSaleBookWithOnlyAuthor = await createKindleSale(prisma, bookWithOnlyAuthor.id, [{"id": paymentNewAuthor.id}], 10, 10, dateCut, new Date(), 100);
-    kindleSaleBookWithSeveralAuthors = await createKindleSale(prisma, bookWithSeveralAuthors.id, [{"id": paymentNewAuthor.id}, {"id": paymentNewAuthor2.id}], 10, 10, new Date(), dateCut, 100);
-    costBookWithOnlyAuthor1 = await createCost(prisma, paymentNewAuthor.id, bookWithOnlyAuthor.id, 10);
-    costBookWithOnlyAuthor2 = await createCost(prisma, paymentNewAuthor.id, bookWithOnlyAuthor.id, 10);
-    costBookWithSeveralAuthors1 = await createCost(prisma, paymentNewAuthor.id, bookWithSeveralAuthors.id, 10);
-    costBookWithSeveralAuthors2 = await createCost(prisma, paymentNewAuthor2.id, bookWithSeveralAuthors.id, 10);
+    saleInventoryBookWithOnlyAuthor1 = await createSale(prisma, inventoryBookWithOnlyAuthor1.id, [paymentNewAuthor.id], {quantity: 10});
+    saleInventoryBookWithOnlyAuthor2 = await createSale(prisma, inventoryBookWithOnlyAuthor2.id, [paymentNewAuthor.id], {quantity: 10});
+    saleInventoryBookWithSeveralAuthors = await createSale(prisma, inventoryBookWithSeveralAuthors.id, [paymentNewAuthor.id, paymentNewAuthor2.id], {quantity: 10});
+    // const dateCut = new Date(new Date().setMonth(new Date().getMonth() - 2));
+    kindleSaleBookWithOnlyAuthor = await createKindleSale(prisma, bookWithOnlyAuthor.id, [paymentNewAuthor.id], {quantityEbook: 10, quantityPod: 10, regalias: 100});
+    kindleSaleBookWithSeveralAuthors = await createKindleSale(prisma, bookWithSeveralAuthors.id, [paymentNewAuthor.id, paymentNewAuthor2.id], {quantityEbook: 10, quantityPod: 10, regalias: 100});
+    costBookWithOnlyAuthor1 = await createCost(prisma, paymentNewAuthor.id, bookWithOnlyAuthor.id, {amount: 10});
+    costBookWithOnlyAuthor2 = await createCost(prisma, paymentNewAuthor.id, bookWithOnlyAuthor.id, {amount: 10});
+    costBookWithSeveralAuthors1 = await createCost(prisma, paymentNewAuthor.id, bookWithSeveralAuthors.id, {amount: 10});
+    costBookWithSeveralAuthors2 = await createCost(prisma, paymentNewAuthor2.id, bookWithSeveralAuthors.id, {amount: 10});
 
     mockReq = {
       params: {

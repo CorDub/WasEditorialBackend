@@ -20,9 +20,11 @@ const router = express.Router();
 
 // User routes
 
-export async function getAuthors(req, res) {
+export async function getAuthors(req, res, prismaTestClient = null) {
   try {
-    const users = await prisma.user.findMany({
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
+
+    const users = await prismaClient.user.findMany({
       where: {
         role: Role.author,
         isDeleted: false,
@@ -63,8 +65,10 @@ export async function getAuthors(req, res) {
 }
 router.get('/users', getAuthors);
 
-export async function addAuthor(req, res) {
+export async function addAuthor(req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
+
     const inputs = {
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
@@ -75,10 +79,9 @@ export async function addAuthor(req, res) {
       "birthday": req.body.birthday,
       "category": parseInt(req.body.category)
     }
-    
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const existing = await tx.user.findUnique({
         where: {
           first_name_last_name: {
@@ -159,8 +162,9 @@ export async function addAuthor(req, res) {
 }
 router.post('/user', addAuthor);
 
-export async function addMultipleAuthors(req, res) {
+export async function addMultipleAuthors(req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
     const csvfile = req.files.archivo[0];
     if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
       return res.status(400).json({"error": "file is not a .csv"});
@@ -186,7 +190,6 @@ export async function addMultipleAuthors(req, res) {
           swift: fields[10],
           referido: fields[11]
         }
-        console.log("inputs", inputs);
         validateInputs(inputs);
 
         for (let j = 0; j < fields.length; j++) {
@@ -198,7 +201,7 @@ export async function addMultipleAuthors(req, res) {
         //   throw new Error("Missing first name or last name");
         // }
 
-        const deletedAuthor = await prisma.user.findFirst({
+        const deletedAuthor = await prismaClient.user.findFirst({
           where: {
             first_name: fields[0],
             last_name: fields[1],
@@ -207,7 +210,7 @@ export async function addMultipleAuthors(req, res) {
         })
 
         if (deletedAuthor) {
-          await prisma.user.delete({
+          await prismaClient.user.delete({
             where: {
               first_name_last_name: {
                 first_name: fields[0],
@@ -219,7 +222,7 @@ export async function addMultipleAuthors(req, res) {
 
         const password = createRandomPassword();
         const hashedPassword = await bcrypt.hash(password, 10);
-        const addedAuthor = await prisma.user.create({
+        const addedAuthor = await prismaClient.user.create({
           data: {
             first_name: fields[0],
             last_name: fields[1],
@@ -238,7 +241,6 @@ export async function addMultipleAuthors(req, res) {
         })
 
         if (addedAuthor) {
-          console.log("sending email");
           sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
         }
       } catch (error) {
@@ -269,8 +271,9 @@ export async function addMultipleAuthors(req, res) {
 }
 router.post('/api/author/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleAuthors);
 
-export async function updateAuthor(req, res) {
+export async function updateAuthor(req, res, prismaTestClient = null) {
   try {
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
     const inputs = {
       "id": parseInt(req.params.id),
       "firstName": req.body.firstName,
@@ -284,7 +287,7 @@ export async function updateAuthor(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const updatedAuthor = await tx.user.update({
         where: {id: inputs.id},
         data: {
@@ -320,14 +323,15 @@ export async function updateAuthor(req, res) {
 }
 router.patch('/user/:id', updateAuthor);
 
-export async function deleteAuthor(req, res) {
+export async function deleteAuthor(req, res, prismaTestClient = null) {
   try {
     const inputs = {
       "id": parseInt(req.params.id)
     };
     validateInputs(inputs);
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const deletedAuthor = await tx.user.update({
         where: {id: inputs.id},
         data: {isDeleted: true}
@@ -558,9 +562,11 @@ router.patch('/category', updateCategory);
 
 // Books routes
 
-export async function getBooks(req, res) {
+export async function getBooks(req, res, prismaTestClient = null) {
   try {
-    const books = await prisma.book.findMany({
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+
+    const books = await prismaClient.book.findMany({
       where: {
         isDeleted: false
       },
@@ -615,9 +621,10 @@ export async function getBooks(req, res) {
 }
 router.get('/book', getBooks);
 
-export async function getExistingBookTitles(req, res) {
+export async function getExistingBookTitles(req, res, prismaTestClient = null) {
   try {
-    const existingBooks = await prisma.book.findMany({
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    const existingBooks = await prismaClient.book.findMany({
       where: {
         isDeleted: false
       },
@@ -642,7 +649,7 @@ export async function getExistingBookTitles(req, res) {
 }
 router.get('/existingBooks', getExistingBookTitles);
 
-export async function addBook(req, res) {
+export async function addBook(req, res, prismaTestClient = null) {
   try {
     const inputs = {
       "title": req.body.title,
@@ -662,8 +669,10 @@ export async function addBook(req, res) {
       }
       authorsIds.push({"id": parseInt(authorId)});
     })
+
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
     
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const new_book = await tx.book.create({
         data: {
           title: inputs.title,
@@ -714,12 +723,16 @@ export async function addBook(req, res) {
 }
 router.post('/book', addBook);
 
-export async function addMultipleBooks(req, res) {
+
+
+export async function addMultipleBooks(req, res, prismaTestClient = null) {
   try {
     const csvfile = req.files.archivo[0];
     if (!csvfile || !csvfile.originalname.endsWith(".csv")) {
       return res.status(400).json({"error": "file is not a .csv"});
     }
+
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
 
     const fileContent = csvfile.buffer.toString('utf-8');
     const lines = fileContent.split("\n");
@@ -760,7 +773,7 @@ export async function addMultipleBooks(req, res) {
         }
         validateInputs(inputs);
 
-        const deletedBook = await prisma.book.findFirst({
+        const deletedBook = await prismaClient.book.findFirst({
           where: {
             title: fields[2],
             isDeleted: true
@@ -768,14 +781,14 @@ export async function addMultipleBooks(req, res) {
         })
 
         if (deletedBook) {
-          await prisma.user.delete({
+          await prismaClient.user.delete({
             where: {
               title: fields[2]
             }
           });
         }
 
-        const author = await prisma.user.findUnique({
+        const author = await prismaClient.user.findUnique({
           where: {
             first_name_last_name: {
               first_name: fields[3],
@@ -789,7 +802,7 @@ export async function addMultipleBooks(req, res) {
         }
 
         try {
-          await prisma.$transaction(async (tx) => {
+          await prismaClient.$transaction(async (tx) => {
             const addedBook = await tx.book.create({
               data: {
                 title: fields[2],
@@ -866,13 +879,17 @@ export async function addMultipleBooks(req, res) {
 }
 router.post('/book/addMultiples', upload.fields([{name: "archivo", maxCount: 1}]), addMultipleBooks);
 
-export async function deleteBook(req, res) {
+
+
+export async function deleteBook(req, res, prismaTestClient = null) {
   try {
     const inputs = {
       "id": parseInt(req.params.id)
     }
     validateInputs(inputs);
-    await prisma.$transaction(async (tx) => {
+
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    await prismaClient.$transaction(async (tx) => {
       const deletedBook = await tx.book.update({where:
         {id: inputs.id},
         data: {
@@ -897,7 +914,9 @@ export async function deleteBook(req, res) {
 }
 router.delete('/book/:id', deleteBook);
 
-export async function updateBook(req, res) {
+
+
+export async function updateBook(req, res, prismaTestClient = null) {
   try {
     const inputs = {
       "id": parseInt(req.params.id),
@@ -906,6 +925,8 @@ export async function updateBook(req, res) {
       "isbn": req.body.isbn,
     }
     validateInputs(inputs);
+
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
 
     const authors = req.body.authors;
     const authorsIds = []
@@ -917,7 +938,7 @@ export async function updateBook(req, res) {
       authorsIds.push({"id": author.id});
     })
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const previousBook = await tx.book.findUnique({
         where: {id: inputs.id},
         select: {
@@ -933,7 +954,6 @@ export async function updateBook(req, res) {
         throw new Error("This book is deleted");
       }
 
-      console.log("inputs", inputs);
       const updatedBook = await tx.book.update({
         where: {id: inputs.id},
         data: {
@@ -956,14 +976,17 @@ export async function updateBook(req, res) {
 }
 router.patch('/book/:id', updateBook);
 
-export async function updateBookPrices(req, res) {
+
+
+export async function updateBookPrices(req, res, prismaTestClient = null) {
   try {
     const inputs = {
       "id": parseInt(req.params.id),
     }
     validateInputs(inputs);
+    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
 
-    const bookWithPricesToUpdate = await prisma.book.findUnique({where: {id: inputs.id}});
+    const bookWithPricesToUpdate = await prismaClient.book.findUnique({where: {id: inputs.id}});
     if (bookWithPricesToUpdate.isDeleted) {
       throw new Error (`this book is deleted`);
     }
@@ -976,7 +999,7 @@ export async function updateBookPrices(req, res) {
       }
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       for (const price of prices) {
         const updatedInventory = await tx.inventory.update({
           where: {id: parseInt(price.inventoryId)},

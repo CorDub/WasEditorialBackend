@@ -5,20 +5,39 @@ import {
   getCategoryTypes,
   deleteCategory,
   updateCategory
- } from "../../routes/adminRoutes.js";
- import { prisma } from '../../prisma/client.js';
- import { 
+} from "../../routes/adminRoutes.js";
+import { prisma } from '../../prisma/client.js';
+import { 
   createCategory,
   deleteFromDB, 
-  createAuthor
+  createAuthor,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
 
 //GETTING
 describe("getting all valid categories", () => {
   let mockRes, deletedCategory, jsonResponse;
 
   beforeAll(async() => {
-    deletedCategory = await createCategory(prisma, "So Premium", 400, true);
+    deletedCategory = await createCategory(prisma, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -44,11 +63,13 @@ describe("getting all valid categories", () => {
   })
 })
 
+
+
 describe("getting all valid category types", () => {
   let mockRes, deletedCategory, jsonResponse;
 
   beforeAll(async() => {
-    deletedCategory = await createCategory(prisma, "So Premium", 400, true);
+    deletedCategory = await createCategory(prisma, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -176,7 +197,7 @@ describe("adding a duplicate category", () => {
       status: vi.fn().mockReturnThis()
     }
 
-    previouslyAddedCategory = await createCategory(prisma, "Omega Premium", 180.25)
+    previouslyAddedCategory = await createCategory(prisma, {type: "Omega Premium", management_min: 180.25})
   })
 
   it("should return status 500", async() => {
@@ -401,10 +422,10 @@ describe('deleting a category with valid parameters', () => {
   let mockRes;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, "Omega Premium", 200.25)
-    otherCategory = await createCategory(prisma, "Not so premium", 100.50)
-    newAuthor = await createAuthor(prisma, "new", "author", "new.author@gmail.com", "author", {isDeleted: false, categoryId: newCategory.id})
-    newDeletedAuthor = await createAuthor(prisma, "newDeleted", "author", "newDeleted.author@gmail.com", "author", {isDeleted: true, categoryId: newCategory.id})
+    newCategory = await createCategory(prisma)
+    otherCategory = await createCategory(prisma)
+    newAuthor = await createAuthor(prisma, {categoryId: newCategory.id})
+    newDeletedAuthor = await createAuthor(prisma, {isDeleted: true, categoryId: newCategory.id})
 
     mockReq = {
       params: {

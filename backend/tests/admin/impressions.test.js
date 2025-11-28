@@ -6,8 +6,28 @@ import {
   createBook,
   createInventory,
   createImpression,
-  deleteFromDB 
+  deleteFromDB,
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
+
 
 //ADDING
 describe(`adding an impression with valid parameters`, async() => {
@@ -15,9 +35,9 @@ describe(`adding an impression with valid parameters`, async() => {
   let mockReq, mockRes;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}]);
-    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current:500});
 
     mockReq = {
       body: {
@@ -69,14 +89,16 @@ describe(`adding an impression with valid parameters`, async() => {
   })
 })
 
+
+
 describe(`adding an impression with invalid parameters`, async() => {
   let newAuthor, newBook, bodegaWasInventory, newImpression;
   let mockReq, mockRes;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}]);
-    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, 1000, 500, false, 0, 0);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 1000, current:500});
 
     mockReq = {
       body: {
@@ -131,10 +153,10 @@ describe(`updating an impression with valid parameters`, async() => {
   let updatedImpression;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}]);
-    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, 2000, 3000, false, 0, 0);
-    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is a note", date: new Date('2025-11-04')})
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current: 3000});
+    newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is a note", date: new Date('2025-11-04')})
 
     mockReq = {
       params: {
@@ -188,16 +210,18 @@ describe(`updating an impression with valid parameters`, async() => {
   })
 })
 
+
+
 describe(`updating an impression with invalid parameters`, async() => {
   let newAuthor, newBook, bodegaWasInventory, newImpression;
   let mockReq, mockRes;
   let updatedImpression;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}]);
-    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, 2000, 3000, false, 0, 0);
-    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is a note", date: new Date('2025-11-04')})
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current:3000});
+    newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is a note", date: new Date('2025-11-04')})
 
     mockReq = {
       params: {
@@ -260,10 +284,10 @@ describe(`deleting an impression with valid parameters`, async() => {
   let updatedImpression;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, "a", "b", "a.b@gmail.com", "author");
-    newBook = await createBook(prisma, "newBook", [{"id": newAuthor.id}]);
-    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, 2000, 3000, false, 0, 0);
-    newImpression = await createImpression(prisma, newBook.id, 1000, {note: "this is a note", date: new Date('2025-11-04')})
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current: 3000});
+    newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is a note", date: new Date('2025-11-04')})
 
     mockReq = {
       params: {

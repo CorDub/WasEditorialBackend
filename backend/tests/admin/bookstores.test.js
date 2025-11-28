@@ -18,15 +18,34 @@ import {
   createKindleSale,
   createCost,
   createImpression,
-  deleteFromDB 
+  deleteFromDB, 
+  createTestDB,
+  dropTestDB
 } from "../../testUtils.js";
+
+
+// import { PrismaClient } from '@prisma/client';
+// let prisma;
+// let testDBName;
+
+// beforeAll(async() => {
+//   testDBName = createTestDB();
+//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+//   prisma = new PrismaClient();
+//   await prisma.$connect();
+// })
+
+// afterAll(async() => {
+//   await prisma.$disconnect();
+//   dropTestDB(testDBName);
+// })
 
 // GETTING
 describe("getting all valid bookstores", async() => {
   let mockRes, deletedBookstore, jsonResponse;
   
   beforeAll(async() => {
-    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedBookstore = await createBookstore(prisma, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -54,7 +73,7 @@ describe("getting all existing bookstore names", () => {
   let mockRes, deletedBookstore, jsonResponse;
   
   beforeAll(async() => {
-    deletedBookstore = await createBookstore(prisma, "deletedBookstore", true);
+    deletedBookstore = await createBookstore(prisma, {isDeleted: true});
 
     mockRes = {
       json: vi.fn(),
@@ -163,11 +182,13 @@ describe("adding an invalid bookstore", () => {
   })
 })
 
+
+
 describe("adding a duplicate bookstore", async() => {
   let addedBookstore, previousBookstore, mockReq, mockRes;
 
   beforeAll(async() => {
-    previousBookstore = await createBookstore(prisma, "Ye Olde Bookstore");
+    previousBookstore = await createBookstore(prisma, {name:"Ye Olde Bookstore"});
 
     mockReq = {
       body: {
@@ -208,7 +229,7 @@ describe("updating a bookstore with valid parameters", () => {
   let updatedBookstore;
 
   beforeAll(async() => {
-    newBookstore = await createBookstore(prisma, "New Bookstore");
+    newBookstore = await createBookstore(prisma);
 
     mockReq = {
       params: {
@@ -258,7 +279,7 @@ describe("updating a bookstore with invalid parameters", async() => {
   let notUpdatedBookstore;
 
   beforeAll(async() => {
-    newBookstore = await createBookstore(prisma, "New Bookstore");
+    newBookstore = await createBookstore(prisma);
 
     mockReq = {
       params: {
@@ -292,16 +313,18 @@ describe("updating a bookstore with invalid parameters", async() => {
   it("should not update the bookstore in the database", async() => {
     notUpdatedBookstore = await prisma.bookstore.findUnique({where: {id: newBookstore.id}})
     expect(notUpdatedBookstore).toBeTruthy();
-    expect(notUpdatedBookstore.name).toBe("New Bookstore");
+    expect(notUpdatedBookstore.name).toBe(newBookstore.name);
   })
 })
+
+
 
 describe("updating a deleted bookstore", async() => {
   let newBookstore, mockReq, mockRes;
   let notUpdatedBookstore;
 
   beforeAll(async() => {
-    newBookstore = await createBookstore(prisma, "New Bookstore", true);
+    newBookstore = await createBookstore(prisma, {isDeleted: true});
 
     mockReq = {
       params: {
@@ -335,7 +358,7 @@ describe("updating a deleted bookstore", async() => {
   it("should not update the bookstore in the database", async() => {
     notUpdatedBookstore = await prisma.bookstore.findUnique({where: {id: newBookstore.id}})
     expect(notUpdatedBookstore).toBeTruthy();
-    expect(notUpdatedBookstore.name).toBe("New Bookstore");
+    expect(notUpdatedBookstore.name).toBe(newBookstore.name);
   })
 })
 
@@ -347,15 +370,15 @@ describe("deleting a bookstore with valid parameters", async() => {
   let mockReq, mockRes;
 
   beforeAll(async() => {
-    newAuthor = await createAuthor(prisma, 'Y', 'B', 'y.b@gmail.com', 'author');
-    newBook = await createBook(prisma, "new book", [{"id": newAuthor.id}]);
-    newBook2 = await createBook(prisma, "new book2", [{"id": newAuthor.id}]);
-    newBookstore = await createBookstore(prisma, "New Bookstore");
-    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, 1000, 1000);
-    newInventory2 = await createInventory(prisma, newBook2.id, newBookstore.id, 1000, 1000);
+    newAuthor = await createAuthor(prisma);
+    newBook = await createBook(prisma, [newAuthor.id]);
+    newBook2 = await createBook(prisma, [newAuthor.id]);
+    newBookstore = await createBookstore(prisma);
+    newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 1000});
+    newInventory2 = await createInventory(prisma, newBook2.id, newBookstore.id, {initial: 1000, current: 1000});
     newPayment = await createPayment(prisma, newAuthor.id, getForMonth(new Date()));
-    newSale = await createSale(prisma, newInventory.id, [{"id": newPayment.id}]);
-    newSale2 = await createSale(prisma, newInventory2.id, [{"id": newPayment.id}])
+    newSale = await createSale(prisma, newInventory.id, [newPayment.id]);
+    newSale2 = await createSale(prisma, newInventory2.id, [newPayment.id])
 
     mockReq = {
       params: {

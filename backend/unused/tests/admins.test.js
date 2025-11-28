@@ -1,18 +1,43 @@
 import { describe, expect, vi, it, afterAll, beforeAll } from "vitest";
-import { addAdmin, updateAdmin, deleteAdmin } from "../../routes/superAdminRoutes.js";
-import { prisma } from "../../prisma/client.js";
+import { PrismaClient } from '@prisma/client';
+// import { prisma } from "../../prisma/client.js"; 
 import * as mailer from "../../mailer.js";
-vi.mock('../mailer.js', () => ({
+import { createAuthor, createTestDB, dropTestDB } from "../../testUtils.js";
+import { addAdmin, updateAdmin, deleteAdmin } from "../../routes/superAdminRoutes.js";
+import { createCategory } from "../../testUtils.js";
+
+vi.mock('../../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),
 }));
+
+let prisma;
+let testDBName;
+let category1;
+let author1, newAdmin;
+
+beforeAll(async() => {
+  testDBName = createTestDB();
+  process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+  prisma = new PrismaClient();
+  await prisma.$connect();
+
+  category1 = await createCategory(prisma);
+  author1 = await createAuthor(prisma, {first_name: "Iama", last_name: "Newadmin", email: "iama.newadmin@gmail.com", role: "admin"});
+  newAdmin = await createAuthor(prisma);
+})
+
+afterAll(async() => {
+  await prisma.$disconnect();
+  dropTestDB(testDBName);
+})
 
 ////ADDING 
 describe("adding a valid admin", () => {
   const mockReq = {
     body: {
       "firstName": "Iama",
-      "lastName": "Newadmin",
-      "email": "iama.newadmin@gmail.com",
+      "lastName": "Newadmin2",
+      "email": "iama.newadmin2@gmail.com",
       "role": "admin"
     }
   }
@@ -26,12 +51,12 @@ describe("adding a valid admin", () => {
 
   it(`should return status 201 and
     return an object with firstName, lastName and email,`, async() => {
-    await addAdmin(mockReq, mockRes);
+    await addAdmin(mockReq, mockRes, prisma);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       "firstName": "Iama",
-      "lastName": "Newadmin",
-      "email": 'iama.newadmin@gmail.com',
+      "lastName": "Newadmin2",
+      "email": 'iama.newadmin2@gmail.com',
     })
   })
 
@@ -40,20 +65,20 @@ describe("adding a valid admin", () => {
       where: {
         first_name_last_name: {
           first_name: "Iama",
-          last_name: "Newadmin"
+          last_name: "Newadmin2"
         }
       }
     });
     expect(createdAdmin).toBeTruthy();
     expect(createdAdmin.first_name).toBe("Iama");
-    expect(createdAdmin.last_name).toBe("Newadmin");
-    expect(createdAdmin.email).toBe("iama.newadmin@gmail.com");
+    expect(createdAdmin.last_name).toBe("Newadmin2");
+    expect(createdAdmin.email).toBe("iama.newadmin2@gmail.com");
     expect(createdAdmin.role).toBe("admin");
   })
 
   it("should send a set password email", async() => {
     expect(mailer.sendSetPasswordMail).toHaveBeenCalled();
-    expect(mailer.sendSetPasswordMail.mock.calls[0][0]).toBe("iama.newadmin@gmail.com");
+    expect(mailer.sendSetPasswordMail.mock.calls[0][0]).toBe("iama.newadmin2@gmail.com");
     expect(mailer.sendSetPasswordMail.mock.calls[0][1]).toBe("Iama");
   })
 
@@ -86,7 +111,7 @@ describe("adding an invalid admin", () => {
   }
 
   it("should return status 500", async() => {
-    await addAdmin(mockReq, mockRes);
+    await addAdmin(mockReq, mockRes, prisma);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -123,15 +148,6 @@ describe("adding a duplicate admin (already a user)", () => {
   let mockReq, mockRes, newAdmin;
 
   beforeAll(async() => {
-    newAdmin = await prisma.user.create({
-      data: {
-        "first_name": "Iama",
-        "last_name": "Newadmin",
-        "email": "iama.newadmin@gmail.com",
-        "role": "admin"
-      }
-    })
-
     mockReq = {
       body: {
         "firstName": "Iama",
@@ -150,7 +166,7 @@ describe("adding a duplicate admin (already a user)", () => {
   let notAddedAdmin;
 
   it("should return status 409 and return an object with firstName, lastName and email", async() => {
-    await addAdmin(mockReq, mockRes);
+    await addAdmin(mockReq, mockRes, prisma);
     expect(mockRes.status).toHaveBeenCalledWith(409);
   })
 
@@ -197,14 +213,14 @@ describe("updating an admin with valid parameters", () => {
   let newAdmin, mockReq, mockRes;
 
   beforeAll(async() => {
-    newAdmin = await prisma.user.create({
-      data: {
-        first_name: "New",
-        last_name: "Admin",
-        email: "new.admin@gmail.com",
-        role: "admin"
-      }
-    })
+    // newAdmin = await prisma.user.create({
+    //   data: {
+    //     first_name: "New",
+    //     last_name: "Admin",
+    //     email: "new.admin@gmail.com",
+    //     role: "admin"
+    //   }
+    // })
 
     mockReq = {
       params: {

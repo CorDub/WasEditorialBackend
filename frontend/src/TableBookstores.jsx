@@ -43,6 +43,8 @@ function TableBookstores({salesByPayments, activeMonth}) {
         </div>
         <div className="table-bookstore-header-name">Total</div>
       </div>
+      
+      <div className="table-data">
       {monthlySalesData 
         && monthlySalesData.length > 0
         && monthlySalesData.map((monthlySalesData, index) => (
@@ -79,6 +81,7 @@ function TableBookstores({salesByPayments, activeMonth}) {
           <div className="table-bookstores-no-sales-message">No ventas este mes</div>
         </div>
       )}
+      </div>
     </div>
   )
 }

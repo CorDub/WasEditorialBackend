@@ -7,10 +7,21 @@
   justify-content: center;
 }
 
+.author-comissions-left-side {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  align-items: center;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .author-commissions-right-side {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 70%;
   align-items: center;
 }
 

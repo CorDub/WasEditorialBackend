@@ -8,6 +8,7 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import TableBookstores from "./TableBookstores";
 import { isForMonthNextMonth } from "../../backend/utils";
+import DemandPaymentButton from "./DemandPaymentButton";
 
 function AuthorCommissions() {
   useCheckUser();
@@ -150,19 +151,26 @@ function AuthorCommissions() {
         subNav={user && user.role}
         active={"comisiones"} />
       <div className="contain">
-        <CommissionMonthSelector
-          activeMonth={activeMonth}
-          setActiveMonth={setActiveMonth}
-          payments={payments}
-          preferredFontSize={user.font_size}
-          setPaymentInfo={setPaymentInfo}/>
-      
-        <div className="author-commissions-right-side">
+        <div className="author-comissions-left-side">
+          <CommissionMonthSelector
+            activeMonth={activeMonth}
+            setActiveMonth={setActiveMonth}
+            payments={payments}
+            preferredFontSize={user.font_size}
+            setPaymentInfo={setPaymentInfo}/>
+          <DemandPaymentButton 
+            paymentInfo={paymentInfo}
+            setModalOpen={setModalOpen}
+            salesByPayments={salesByPayments}
+            activeMonth={activeMonth}
+            forceRender={forceRender}/>
+        </div>
 
+        <div className="author-commissions-right-side">
           <TableBookstores
             salesByPayments={salesByPayments}
             activeMonth={activeMonth}/>
-          {isDemandPaymentPossible === "available" && (
+          {/* {isDemandPaymentPossible === "available" && (
             <div className="author-commissions-solicitar-pago"
               onClick={() => setModalOpen(true)}>Solicitar Pago</div>
           )}
@@ -186,7 +194,7 @@ function AuthorCommissions() {
           )}
           {isDemandPaymentPossible === "paid" && (
             <div className="author-commissions-solicitar-pago-paid">Pagado</div>
-          )}
+          )} */}
         </div>
       </div>
       {isModalOpen && <Modal

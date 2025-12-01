@@ -57,7 +57,8 @@ describe('updating a book with valid parameters', () => {
         "pasta": "Dura",
         "isbn": null,
         "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -67,7 +68,7 @@ describe('updating a book with valid parameters', () => {
   });
 
   it("should return status 200", async() => {
-    await updateBook(mockReq, mockRes, prisma);
+    await updateBook(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200);
   })
 
@@ -115,7 +116,8 @@ describe("updating a book with invalid parameters", () => {
         "pasta": "",
         "isbn": null,
         "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -131,7 +133,7 @@ describe("updating a book with invalid parameters", () => {
   });
 
   it("should return status 500", async() => {
-    await updateBook(mockReq, mockRes, prisma);
+    await updateBook(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -164,7 +166,8 @@ describe("updating a deleted book", async() => {
         "pasta": "",
         "isbn": null,
         "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -180,7 +183,7 @@ describe("updating a deleted book", async() => {
   });
 
   it("should return status 500", async() => {
-    await updateBook(mockReq, mockRes, prisma);
+    await updateBook(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -220,7 +223,8 @@ describe("updating prices for a given book", async() => {
             "price": 349.99
           }
         ]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -230,7 +234,7 @@ describe("updating prices for a given book", async() => {
   })
 
   it("should respond with a status 200", async() => {
-    await updateBookPrices(mockReq, mockRes, prisma) 
+    await updateBookPrices(mockReq, mockRes) 
     expect(mockRes.status).toHaveBeenCalledWith(200)
   }) 
 
@@ -272,7 +276,8 @@ describe('updating prices for a book with invalid data', async() => {
             "price": -349.99
           }
         ]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -286,7 +291,7 @@ describe('updating prices for a book with invalid data', async() => {
   afterAll(async() => {mute.mockRestore()})
 
   it("should respond with a status 500", async() => {
-    await updateBookPrices(mockReq, mockRes, prisma) 
+    await updateBookPrices(mockReq, mockRes) 
     expect(mockRes.status).toHaveBeenCalledWith(500)
   }) 
 
@@ -328,7 +333,8 @@ describe("updating prices for a deleted book", async() => {
             "price": 349.99
           }
         ]
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -344,7 +350,7 @@ describe("updating prices for a deleted book", async() => {
   })
 
   it("should respond with a status 500", async() => {
-    await updateBookPrices(mockReq, mockRes, prisma) 
+    await updateBookPrices(mockReq, mockRes) 
     expect(mockRes.status).toHaveBeenCalledWith(500)
   }) 
 

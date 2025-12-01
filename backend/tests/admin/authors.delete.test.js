@@ -97,7 +97,8 @@ describe('deleting an author with valid parameters', () => {
     mockReq = {
       params: {
         "id": newAuthor.id
-      }
+      },
+      prisma: prisma
     };
 
     mockRes = {
@@ -115,7 +116,7 @@ describe('deleting an author with valid parameters', () => {
   });
 
   it("should return status 200 and mark the author as deleted", async() => {
-    await deleteAuthor(mockReq, mockRes, prisma);
+    await deleteAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200);
   })
 
@@ -299,7 +300,8 @@ describe('deleting an author with invalid parameters', () => {
     mockReq = {
       params: {
         "id": "thisisanid"
-      }
+      },
+      prisma: prisma
     };
 
     mockRes = {
@@ -317,7 +319,7 @@ describe('deleting an author with invalid parameters', () => {
   });
 
   it("should return status 500", async() => {
-    await deleteAuthor(mockReq, mockRes, prisma);
+    await deleteAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 

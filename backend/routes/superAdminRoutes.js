@@ -34,9 +34,10 @@ router.get('/admins', async (req, res) => {
   }
 });
 
-export async function addAdmin (req, res, prismaTestClient = null) {
+export async function addAdmin (req, res) {
   try {
-    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    const prismaClient = req.prisma || prisma;
 
     const inputs = {
       "firstName": req.body.firstName,
@@ -83,9 +84,10 @@ export async function addAdmin (req, res, prismaTestClient = null) {
 }
 router.post('/admin', addAdmin);
 
-export async function updateAdmin(req, res, prismaTestClient = null) {
+export async function updateAdmin(req, res) {
   try {
-    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    const prismaClient = req.prisma || prisma;
 
     const inputs = {
       "id": req.params.id,
@@ -140,9 +142,10 @@ export async function updateAdmin(req, res, prismaTestClient = null) {
 router.patch('/api/admin/:id', updateAdmin);
 
 
-export async function deleteAdmin(req, res, prismaTestClient = null) {
+export async function deleteAdmin(req, res) {
   try {
-    const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
+    const prismaClient = req.prisma || prisma;
 
     const inputs = {
       "id": parseInt(req.params.id)

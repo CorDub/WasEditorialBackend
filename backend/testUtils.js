@@ -1,4 +1,4 @@
-import { validateInput } from "validations.js"
+import { validateInput } from "./validations.js"
 import crypto from 'crypto';
 import { execSync } from "node:child_process";
 
@@ -21,6 +21,7 @@ export async function createAuthor(
     password = "ThisIsValidPassword71!",
     font_size = 1.0,
     reset_password_code = null,
+    createdAt = new Date()
   } = {}
 ) {
   const uniqueFirstName = first_name === null ? `Juan${crypto.randomUUID()}` : first_name;
@@ -45,6 +46,7 @@ export async function createAuthor(
       password: password,
       font_size: font_size,
       reset_password_code: reset_password_code,
+      createdAt : createdAt
     }
   });
 
@@ -56,7 +58,8 @@ export async function createCategory(
   {
     type = null, 
     management_min = 180, 
-    isDeleted = false
+    isDeleted = false,
+    createdAt = new Date()
   } = {}
 ) {
   const finalType = type === null ? `catType_${crypto.randomUUID()}` : type;
@@ -65,7 +68,8 @@ export async function createCategory(
     data: {
       type: finalType,
       management_min: management_min,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      createdAt : createdAt
     }
   });
 
@@ -77,7 +81,8 @@ export async function createBook(
   userList,
   {
     title = null, 
-    isDeleted = false
+    isDeleted = false,
+    createdAt = new Date()
   } = {}
 ) {
   const validUserList = []
@@ -97,7 +102,8 @@ export async function createBook(
       users: {
         connect: validUserList
       },
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      createdAt : createdAt
     }
   })
 
@@ -114,6 +120,7 @@ export async function createBookstore(
     contact_name = "",
     contact_phone = "",
     contact_email = "",
+    createdAt = new Date()
   } = {}
 ) {
   const uniqueName = name === null ? `name_${crypto.randomUUID()}` : name
@@ -127,6 +134,7 @@ export async function createBookstore(
       contact_name: contact_name,
       contact_phone: contact_phone,
       contact_email: contact_email,
+      createdAt : createdAt
     }
   })
 
@@ -142,7 +150,8 @@ export async function createInventory(
     current = 1000,
     returns = 0,
     givenToAuthor = 0,
-    isDeleted = false
+    isDeleted = false,
+    createdAt = new Date()
   } = {}
 ) {
   const newInventory = await prisma.inventory.create({
@@ -153,7 +162,8 @@ export async function createInventory(
       current: current,
       isDeleted: isDeleted,
       returns: returns,
-      givenToAuthor: givenToAuthor
+      givenToAuthor: givenToAuthor,
+      createdAt : createdAt
     }
   })
 
@@ -180,7 +190,8 @@ export async function createPayment (
       status: status,
       isDeleted: isDeleted,
       createdAt: createdAt,
-      updatedAt: updatedAt
+      updatedAt: updatedAt,
+      createdAt : createdAt
     }
   })
 
@@ -194,7 +205,8 @@ export async function createSale(
   {
     quantity = 10, 
     isDeleted = false, 
-    date = new Date()
+    date = new Date(),
+    createdAt = new Date()
   } = {}
 ) {
   const validPaymentIdList = []
@@ -215,7 +227,8 @@ export async function createSale(
       },
       quantity: quantity,
       isDeleted: isDeleted,
-      date: date
+      date: date,
+      createdAt : createdAt
     }
   })
 
@@ -231,7 +244,8 @@ export async function createKindleSale(
     quantityEbook = 100, 
     quantityPod = 100, 
     regalias = 1000,
-    isDeleted = false
+    isDeleted = false,
+    createdAt = new Date()
   } = {}
 ) {
   const validDatePay = datePay == null ? new Date() : datePay;
@@ -259,7 +273,8 @@ export async function createKindleSale(
       dateCut: validDateCut,
       datePay: validDatePay,
       regalias: regalias,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      createdAt : createdAt
     }
   })
 
@@ -273,7 +288,8 @@ export async function createImpression(
     quantity = 1000, 
     isDeleted=false, 
     note=null, 
-    date=new Date()
+    date=new Date(),
+    createdAt = new Date()
   } = {}
 ) {
   const newImpression = await prisma.impression.create({
@@ -282,7 +298,8 @@ export async function createImpression(
       quantity: quantity,
       isDeleted: isDeleted,
       note: note,
-      date: date
+      date: date,
+      createdAt : createdAt
     }
   })
 
@@ -294,12 +311,14 @@ export async function createTransfer(
   fromInventoryId,
   {
     toInventoryId=null,
+    quantity=100,
     type="send",
     note=null,
     deliveryDate=null,
     place=null,
     person=null,
-    isDeleted=false
+    isDeleted=false,
+    createdAt=new Date()
   } = {}
 ) {
   const newTransfer = await prisma.transfer.create({
@@ -312,7 +331,8 @@ export async function createTransfer(
       deliveryDate: deliveryDate,
       place: place,
       person: person,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      createdAt : createdAt
     }
   });
 
@@ -326,7 +346,8 @@ export async function createCost(
   {
     amount = 100,
     note = null,
-    isDeleted = false
+    isDeleted = false,
+    createdAt = new Date()
   } = {}
 ) {
   const newCost = await prisma.cost.create({
@@ -335,7 +356,8 @@ export async function createCost(
       bookId: bookId,
       amount: amount,
       note: note,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
+      createdAt : createdAt
     }
   })
 

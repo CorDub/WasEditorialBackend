@@ -64,7 +64,8 @@ describe("deleting a book with valid parameters", async() => {
     mockReq = {
       params: {
         "id": newBook.id
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -74,7 +75,7 @@ describe("deleting a book with valid parameters", async() => {
   })
 
   it("should return a status 200", async() => {
-    await deleteBook(mockReq, mockRes, prisma) 
+    await deleteBook(mockReq, mockRes) 
     expect(mockRes.status).toHaveBeenCalledWith(200)
   })
 

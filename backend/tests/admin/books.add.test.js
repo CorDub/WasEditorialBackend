@@ -49,7 +49,8 @@ describe("adding a valid book", () => {
         "isbn": "9786075987412",
         "quantity": 1000,
         "authors": [author1.id, author2.id],
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -117,7 +118,8 @@ describe("adding an invalid book", () => {
         "isbn": "9786075987411",
         "quantity": 1000,
         "authors": [152, 13],
-      }
+      },
+      prisma: prisma
     }; 
 
     mockRes = {
@@ -187,7 +189,7 @@ describe("adding a duplicate book", async() => {
   })
 
   it("should return status 500", async() => {
-    await addBook(mockReq, mockRes, prisma);
+    await addBook(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 

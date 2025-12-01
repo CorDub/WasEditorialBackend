@@ -54,7 +54,8 @@ describe("updating an admin with valid parameters", () => {
         "lastName": 'Admin',
         "email": "updated.admin@gmail.com",
         "role": "admin"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -66,7 +67,7 @@ describe("updating an admin with valid parameters", () => {
   let updatedAdmin;
   
   it("should return status 200", async() => {
-    await updateAdmin(mockReq, mockRes, prisma);
+    await updateAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200) 
   })
 
@@ -107,7 +108,8 @@ describe("updating an admin with invalid parameters", () => {
         "lastName": [],
         "email": "thiissupposedtobeanemail",
         "role": "admin"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -125,7 +127,7 @@ describe("updating an admin with invalid parameters", () => {
   });
 
   it("should return status 500", async() => {
-    await updateAdmin(mockReq, mockRes, prisma);
+    await updateAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -159,7 +161,8 @@ describe("updating a deleted admin", () => {
         "lastName": 'Admin',
         "email": "updated.admin@gmail.com",
         "role": "admin"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -175,7 +178,7 @@ describe("updating a deleted admin", () => {
   })
 
   it("should return status 500 and message", async() => {
-    await updateAdmin(mockReq, mockRes, prisma);
+    await updateAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.json).toHaveBeenCalledWith(
       expect.objectContaining({

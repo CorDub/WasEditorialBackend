@@ -35,10 +35,14 @@ afterAll(async() => {
 
 // GETTING 
 describe("getting all valid authors", () => {
-  let mockRes, deletedAuthor, jsonResponse;
+  let mockReq, mockRes, deletedAuthor, jsonResponse;
 
   beforeAll(async() => {
     deletedAuthor = await createAuthor(prisma, {isDeleted: true})
+
+    mockReq = {
+      prisma: prisma
+    }
 
     mockRes = {
       json: vi.fn(),
@@ -47,7 +51,7 @@ describe("getting all valid authors", () => {
   })
 
   it("should return a list of all valid authors", async() => {
-    await getAuthors({}, mockRes, prisma);
+    await getAuthors(mockReq, mockRes);
     jsonResponse = mockRes.json.mock.calls[0][0]
     expect(Array.isArray(jsonResponse)).toBe(true);
   })

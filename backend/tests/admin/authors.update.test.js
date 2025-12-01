@@ -74,7 +74,8 @@ describe("updating an author with valid parameters", () => {
         "phone": "5561356226",
         "birthday": "22121988",
         "categoryId": "1"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -86,7 +87,7 @@ describe("updating an author with valid parameters", () => {
   let updatedAuthor;
   
   it("should return status 200", async() => {
-    await updateAuthor(mockReq, mockRes, prisma);
+    await updateAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200) 
   })
 
@@ -120,7 +121,8 @@ describe("updating an author with invalid parameters", () => {
         "lastName": [],
         "email": "thiissupposedtobeanemail",
         "role": "author"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -138,7 +140,7 @@ describe("updating an author with invalid parameters", () => {
   });
 
   it("should return status 500", async() => {
-    await updateAuthor(mockReq, mockRes, prisma);
+    await updateAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -173,7 +175,8 @@ describe("updating a deleted author", () => {
         "lastName": 'Author',
         "email": "updated.author@gmail.com",
         "role": "author"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -189,7 +192,7 @@ describe("updating a deleted author", () => {
   })
 
   it("should return status 500", async() => {
-    await updateAuthor(mockReq, mockRes, prisma);
+    await updateAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 

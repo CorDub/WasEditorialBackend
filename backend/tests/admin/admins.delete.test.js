@@ -47,7 +47,8 @@ describe('deleting an admin with valid parameters', () => {
     mockReq = {
       params: {
         "id": newAdmin.id
-      }
+      },
+      prisma: prisma
     };
 
     mockRes = {
@@ -59,7 +60,7 @@ describe('deleting an admin with valid parameters', () => {
   let deletedAdmin;
 
   it("should return status 200 and mark the admin as deleted", async() => {
-    await deleteAdmin(mockReq, mockRes, prisma);
+    await deleteAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(200);
   })
 
@@ -84,7 +85,8 @@ describe('deleting an admin with invalid parameters', () => {
     mockReq = {
       params: {
         "id": "thisisanid"
-      }
+      },
+      prisma: prisma
     };
 
     mockRes = {
@@ -100,7 +102,7 @@ describe('deleting an admin with invalid parameters', () => {
   });
 
   it("should return status 500", async() => {
-    await deleteAdmin(mockReq, mockRes, prisma);
+    await deleteAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 

@@ -36,8 +36,12 @@ afterAll(async() => {
 
 //GETTING
 describe("getting all valid books", () => {
-  let mockRes, deletedBook, jsonResponse;
+  let mockReq, mockRes, deletedBook, jsonResponse;
   beforeAll(async() => {
+
+    mockReq = {
+      prisma: prisma
+    }
 
     mockRes = {
       json: vi.fn(),
@@ -46,7 +50,7 @@ describe("getting all valid books", () => {
   })
 
   it("should return a list of all valid books", async() => {
-    await getBooks({}, mockRes, prisma);
+    await getBooks(mockReq, mockRes);
     jsonResponse = mockRes.json.mock.calls[0][0]
     expect(Array.isArray(jsonResponse)).toBe(true);
   })
@@ -59,9 +63,13 @@ describe("getting all valid books", () => {
 
 
 describe("getting all existing book titles", () => {
-  let mockRes, deletedBook, jsonResponse;
+  let mockReq, mockRes, deletedBook, jsonResponse;
 
   beforeAll(async() => {
+    mockReq = {
+      prisma: prisma
+    }
+
     mockRes = {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
@@ -69,7 +77,7 @@ describe("getting all existing book titles", () => {
   })
 
   it("should return a list of all valid book titles", async() => {
-    await getExistingBookTitles({}, mockRes, prisma);
+    await getExistingBookTitles(mockReq, mockRes);
     jsonResponse = mockRes.json.mock.calls[0][0]
     expect(Array.isArray(jsonResponse)).toBe(true);
   })

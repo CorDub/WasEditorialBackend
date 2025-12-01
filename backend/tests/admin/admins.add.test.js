@@ -42,7 +42,8 @@ describe("adding a valid admin", () => {
       "lastName": "Newadmin2",
       "email": "iama.newadmin2@gmail.com",
       "role": "admin"
-    }
+    },
+    prisma: prisma
   }
 
   const mockRes = {
@@ -54,7 +55,7 @@ describe("adding a valid admin", () => {
 
   it(`should return status 201 and
     return an object with firstName, lastName and email,`, async() => {
-    await addAdmin(mockReq, mockRes, prisma);
+    await addAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       "firstName": "Iama",
@@ -99,7 +100,8 @@ describe("adding an invalid admin", () => {
       "firstName": "Neotu",
       "email": "neotu.newadmingmail.com",
       "role": "admin"
-    }
+    },
+    prisma: prisma
   }
 
   mockRes = {
@@ -110,7 +112,7 @@ describe("adding an invalid admin", () => {
   const mute = vi.spyOn(console, "error").mockImplementation(() => {});
 
   it("should return status 500", async() => {
-    await addAdmin(mockReq, mockRes, prisma);
+    await addAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -149,7 +151,8 @@ describe("adding a duplicate admin (already a user)", () => {
         "lastName": "Newadmin",
         "email": "iama.newadmin@gmail.com",
         "role": "admin"
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -165,7 +168,7 @@ describe("adding a duplicate admin (already a user)", () => {
   let notAddedAdmin;
 
   it("should return status 409 and return an object with firstName, lastName and email", async() => {
-    await addAdmin(mockReq, mockRes, prisma);
+    await addAdmin(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(409);
   })
 

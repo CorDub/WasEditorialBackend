@@ -45,7 +45,8 @@ describe("adding a valid author", () => {
       "phone": "5561356226",
       "birthday": "22121988",
       "category": "1"
-    }
+    },
+    prisma: prisma
   }
 
   const mockRes= {
@@ -56,7 +57,7 @@ describe("adding a valid author", () => {
   let createdAuthor;
 
   it("should return status 201 and return json with firstName, lastName and email", async() => {
-    await addAuthor(mockReq, mockRes, prisma);
+    await addAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       "firstName": "Yesi Deeba",
@@ -106,7 +107,8 @@ describe("adding an invalid author", () => {
       "firstName": "Yes Deeba",
       "lastName": 'Amanewautho Ureh',
       "email": "yesi.amanewauthorgmail.com"
-    }
+    },
+    prisma: prisma
   }
 
   mockRes = {
@@ -117,7 +119,7 @@ describe("adding an invalid author", () => {
   mute = vi.spyOn(console, "error").mockImplementation(() => {});
 
   it("should return status 500", async() => {
-    await addAuthor(mockReq, mockRes, prisma);
+    await addAuthor(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 
@@ -167,7 +169,8 @@ describe("adding a duplicate author (already a user)", () => {
         "phone": "5561356226",
         "birthday": "22121988",
         "category": "1"
-      }
+      }, 
+      prisma: prisma
     }
 
     mockRes = {
@@ -179,7 +182,7 @@ describe("adding a duplicate author (already a user)", () => {
   let notAddedAuthor;
 
   it("should return status 500", async() => {
-    await addAuthor(mockReq, mockRes, prisma);
+    await addAuthor(mockReq, mockRes);
   })
 
   it("should not create an author", async() => {

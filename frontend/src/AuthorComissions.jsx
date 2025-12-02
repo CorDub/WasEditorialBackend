@@ -170,31 +170,6 @@ function AuthorCommissions() {
           <TableBookstores
             salesByPayments={salesByPayments}
             activeMonth={activeMonth}/>
-          {/* {isDemandPaymentPossible === "available" && (
-            <div className="author-commissions-solicitar-pago"
-              onClick={() => setModalOpen(true)}>Solicitar Pago</div>
-          )}
-          {isDemandPaymentPossible === "currentMonth" && (
-            null
-          )}
-          {isDemandPaymentPossible === "noVentas" && (
-            null
-          )}
-          {isDemandPaymentPossible === "negativeAmount" && (
-            null
-          )}
-          {isDemandPaymentPossible === "tooEarlyInTheNextMonth" && (
-            <div className="author-commissions-solicitar-pago-unavailable"
-              onMouseEnter={() => setDemandPaymentTooltipPossible(true)}
-              onMouseLeave={() => setDemandPaymentTooltipPossible(false)}>Solicitar Pago
-            </div>
-          )}
-          {isDemandPaymentPossible === "solicited" && (
-            <div className="author-commissions-solicitar-pago-unavailable">Pago solicitado</div>
-          )}
-          {isDemandPaymentPossible === "paid" && (
-            <div className="author-commissions-solicitar-pago-paid">Pagado</div>
-          )} */}
         </div>
       </div>
       {isModalOpen && <Modal

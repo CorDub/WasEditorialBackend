@@ -22,8 +22,6 @@ const router = express.Router();
 
 export async function getAuthors(req, res) {
   try {
-    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
-    // console.log("prismaClient", process.env.DATABASE_URL);
     const prismaClient = req.prisma || prisma;
 
     const users = await prismaClient.user.findMany({
@@ -252,7 +250,7 @@ export async function addMultipleAuthors(req, res) {
           sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         switch (true) {
           case error.toString().includes("Missing first name or last name"):
             errors.push({"line": i + 1, "error": "Faltó el nombre o appellido."})
@@ -374,11 +372,14 @@ export async function deleteAuthor(req, res) {
 }
 router.delete('/user/:id', deleteAuthor);
 
+
+
 //Categories routes
 
 export async function getCategories(req, res) {
   try {
-    const categories = await prisma.category.findMany({where: {isDeleted: false}});
+    const prismaClient = req.prisma || req
+    const categories = await prismaClient.category.findMany({where: {isDeleted: false}});
     res.status(201).json(categories);
   } catch(error) {
     console.error("Error in the get categories route:", error);
@@ -387,9 +388,12 @@ export async function getCategories(req, res) {
 }
 router.get('/categories', getCategories);
 
+
+
 export async function getCategoryTypes(req, res) {
   try {
-    const categories_type = await prisma.category.findMany({
+    const prismaClient = req.prisma || req
+    const categories_type = await prismaClient.category.findMany({
       where: {
         isDeleted: false
       },
@@ -406,6 +410,8 @@ export async function getCategoryTypes(req, res) {
 }
 router.get('/categories-type', getCategoryTypes);
 
+
+
 export async function getImpactedUsers(req, res) {
   try {
     const inputs = {
@@ -413,7 +419,9 @@ export async function getImpactedUsers(req, res) {
     }
     validateInputs(inputs);
 
-    const category = await prisma.category.findUnique({
+    const prismaClient = req.prisma || req
+
+    const category = await prismaClient.category.findUnique({
       where: {
         id: inputs.id
       },
@@ -430,23 +438,25 @@ export async function getImpactedUsers(req, res) {
 }
 router.get('/categoryImpactedUsers/:id', getImpactedUsers)
 
+
+
 export async function deleteCategory(req, res) {
   try {
     const inputs = {
       "id": parseInt(req.params.id),
       "categoryId": parseInt(req.body.selectedCategory)
     }
-    console.log("inputs", inputs);
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || req
+
+    await prismaClient.$transaction(async (tx) => {
       if (inputs.categoryId !== 0) {
         const impactedUsers = await tx.user.findMany({
           where: {
             categoryId: inputs.id
           }
         });
-        console.log("impactedUsers.length", impactedUsers.length);
 
         for (const user of impactedUsers) {
           if (!user.isDeleted) {
@@ -471,6 +481,8 @@ export async function deleteCategory(req, res) {
 }
 router.delete('/category/:id', deleteCategory)
 
+
+
 export async function addCategory(req, res) {
   try {
     const inputs = {
@@ -479,7 +491,9 @@ export async function addCategory(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || req
+
+    await prismaClient.$transaction(async (tx) => {
       const existing = await tx.category.findUnique({
         where: {
           type: inputs.categoryType
@@ -488,7 +502,7 @@ export async function addCategory(req, res) {
 
       if (existing) {
         if (existing.isDeleted === false) {
-          console.log("This category already exists")
+          console.error("This category already exists")
           res.status(500).json({message: "Esta categoria ya existe"})
           return;
         }
@@ -520,16 +534,18 @@ export async function addCategory(req, res) {
     })
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
-      console.log(error)
+      console.error(error)
       res.status(500).json({message: "Uniqueness error - tipo"})
       return;
     }
 
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: 'A server error occured while creating the category'});
   }
 }
 router.post('/category', addCategory);
+
+
 
 export async function updateCategory(req, res) {
   try {
@@ -540,7 +556,9 @@ export async function updateCategory(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || req
+
+    await prismaClient.$transaction(async (tx) => {
       const previousCategory = await tx.category.findUnique({
         where: {id: inputs.id}
       });
@@ -553,12 +571,9 @@ export async function updateCategory(req, res) {
         where: {id: inputs.id},
         data: {
           type: inputs.categoryType,
-          // percentage_royalties: parseInt(regalias),
-          // percentage_management_stores: parseInt(gestionTiendas),
           management_min: inputs.gestionMinima,
         }
       });
-      // await updatePaymentsOnCascade(updatedCategory, previousCategory, tx);
     })
 
     res.status(200)
@@ -573,6 +588,8 @@ export async function updateCategory(req, res) {
   }
 }
 router.patch('/category', updateCategory);
+
+
 
 // Books routes
 
@@ -1044,7 +1061,8 @@ router.patch('/book/:id/prices', updateBookPrices);
 
 export async function getBookstores(req, res) {
   try {
-    const bookstores = await prisma.bookstore.findMany({where: {isDeleted: false}});
+    const prismaClient = req.prisma || prisma
+    const bookstores = await prismaClient.bookstore.findMany({where: {isDeleted: false}});
     res.status(200).json(bookstores);
   } catch(error) {
     console.error("Error in the get bookstores route:", error);
@@ -1053,9 +1071,12 @@ export async function getBookstores(req, res) {
 }
 router.get('/bookstore', getBookstores);
 
+
+
 export async function getExistingBookstoreNames(req, res) {
   try {
-    const existingBookstores = await prisma.bookstore.findMany({
+    const prismaClient = req.prisma || prisma
+    const existingBookstores = await prismaClient.bookstore.findMany({
       where: {
         isDeleted: false
       },
@@ -1077,6 +1098,8 @@ export async function getExistingBookstoreNames(req, res) {
 }
 router.get('/existingBookstores', getExistingBookstoreNames);
 
+
+
 export async function addBookstore(req, res) {
   try {
     const inputs = {
@@ -1089,7 +1112,9 @@ export async function addBookstore(req, res) {
     }
     validateInputs(inputs);
 
-    const new_bookstore =  await prisma.bookstore.create({
+    const prismaClient = req.prisma || prisma
+
+    const new_bookstore =  await prismaClient.bookstore.create({
       data: {
         name: inputs.name,
         deal_percentage: inputs.dealPercentage,
@@ -1108,6 +1133,8 @@ export async function addBookstore(req, res) {
 }
 router.post('/bookstore', addBookstore);
 
+
+
 export async function updateBookstore(req, res) {
   try {
     const inputs = {
@@ -1121,10 +1148,12 @@ export async function updateBookstore(req, res) {
     }
     validateInputs(inputs);
 
-    const existingBookstore = await prisma.bookstore.findUnique({where: {id: inputs.id}});
+    const prismaClient = req.prisma || prisma
+
+    const existingBookstore = await prismaClient.bookstore.findUnique({where: {id: inputs.id}});
     if (existingBookstore.isDeleted) {throw new Error("this bookstore is deleted")};
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const updatedBookstore = await tx.bookstore.update({
         where: {id: inputs.id},
         data: {
@@ -1146,13 +1175,17 @@ export async function updateBookstore(req, res) {
 }
 router.patch('/bookstore/:id', updateBookstore);
 
+
+
 export async function deleteBookstore(req, res) {
   try {
     const inputs = {
       "id": parseInt(req.params.id)
     }
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) => {
       const deletedBookstore = await tx.bookstore.update({where:
         {id: inputs.id},
         data: {
@@ -1175,11 +1208,14 @@ export async function deleteBookstore(req, res) {
 }
 router.delete('/bookstore/:id', deleteBookstore);
 
+
+
 /// Inventories routes
 
 export async function getInventories(req, res) {
   try {
-    const inventories = await prisma.inventory.findMany({
+    const prismaClient = req.prisma || prisma
+    const inventories = await prismaClient.inventory.findMany({
       where: {
         isDeleted: false,
       },
@@ -1246,9 +1282,12 @@ export async function getInventories(req, res) {
 }
 router.get('/inventories', getInventories);
 
+
+
 export async function getInventoryNames(req, res) {
   try {
-    const bookInventoryNames = await prisma.book.findMany({
+    const prismaClient = req.prisma || prisma
+    const bookInventoryNames = await prismaClient.book.findMany({
       where: {
         isDeleted: false
       },
@@ -1258,7 +1297,7 @@ export async function getInventoryNames(req, res) {
       }
     });
     
-    const bookstoreInventoryNames = await prisma.bookstore.findMany({
+    const bookstoreInventoryNames = await prismaClient.bookstore.findMany({
       where: {
         isDeleted: false
       },
@@ -1289,15 +1328,18 @@ export async function getInventoryNames(req, res) {
 
     res.status(200).json(inventoryNames);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({error: "Server error at inventoryNames route"});
   }
 }
 router.get('/inventoryNames', getInventoryNames);
 
+
+
 export async function getInventoriesByBook(req, res) {
   try {
-    const inventories = await prisma.inventory.findMany({
+    const prismaClient = req.prisma || prisma
+    const inventories = await prismaClient.inventory.findMany({
       where: {
         isDeleted: false
       },
@@ -1445,7 +1487,8 @@ export async function getBookInventory(req, res) {
     }
     validateInputs(inputs);
 
-    const thatBookImpressions = await prisma.impression.findMany({
+    const prismaClient = req.prisma || prisma
+    const thatBookImpressions = await prismaClient.impression.findMany({
       where: {
         bookId: inputs.id,
         isDeleted: false
@@ -1463,7 +1506,7 @@ export async function getBookInventory(req, res) {
       }
     })
 
-    const thatBookInventories = await prisma.inventory.findMany({
+    const thatBookInventories = await prismaClient.inventory.findMany({
       where: {
         bookId: inputs.id,
         isDeleted: false
@@ -1585,9 +1628,12 @@ export async function getBookInventory(req, res) {
 }
 router.get('/inventoriesByBook/:id', getBookInventory);
 
+
+
 export async function getInventoriesByBookstore(req, res) {
   try {
-    const inventories = await prisma.inventory.findMany({
+    const prismaClient = req.prisma || prisma
+    const inventories = await prismaClient.inventory.findMany({
       where: {
         isDeleted: false
       },
@@ -1711,13 +1757,16 @@ export async function getInventoriesByBookstore(req, res) {
 }
 router.get('/inventoriesByBookstore', getInventoriesByBookstore);
 
+
+
 export async function getBookstoreInventory(req, res) {
   try {
     const inputs = {
       "id": parseInt(req.params.id),
     }
 
-    const thatBookstoreInventories = await prisma.inventory.findMany({
+    const prismaClient = req.prisma || prisma
+    const thatBookstoreInventories = await prismaClient.inventory.findMany({
       where: {
         bookstoreId: inputs.id,
         isDeleted: false
@@ -1776,7 +1825,7 @@ export async function getBookstoreInventory(req, res) {
       //Impressions for Plataforma Was inventory
       let extraImpressionsOutside = 0;
       if (inputs.id === 1) {
-        const thatBookImpressions = await prisma.impression.findMany({
+        const thatBookImpressions = await prismaClient.impression.findMany({
           where: {
             bookId: inventory.bookId,
             isDeleted: false
@@ -1827,9 +1876,12 @@ export async function getBookstoreInventory(req, res) {
 }
 router.get('/inventoriesByBookstore/:id', getBookstoreInventory)
 
+
+
 export async function getInventoriesCurrentTotals(req, res) {
   try {
-    const currentTotals = await prisma.inventory.groupBy({
+    const prismaClient = req.prisma || prisma
+    const currentTotals = await prismaClient.inventory.groupBy({
       by: ['bookstoreId'],
       where: {
         isDeleted: false
@@ -1841,7 +1893,7 @@ export async function getInventoriesCurrentTotals(req, res) {
 
     const withNames = await Promise.all(
       currentTotals.map(async (group) => {
-        const bookstore = await prisma.bookstore.findUnique({
+        const bookstore = await prismaClient.bookstore.findUnique({
           where: { id: group.bookstoreId },
           select: { name: true }
         });
@@ -1862,6 +1914,8 @@ export async function getInventoriesCurrentTotals(req, res) {
 }
 router.get('/inventoriesCurrentTotals', getInventoriesCurrentTotals);
 
+
+
 export async function updateInventory(req, res) {
   try {
     const inputs = {
@@ -1873,7 +1927,9 @@ export async function updateInventory(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) => {
       const currentInventory = await tx.inventory.findUnique({
         where: {id: inputs.id}
       });
@@ -1934,6 +1990,8 @@ router.patch('/inventory/:id', updateInventory);
 //   }
 // }
 // router.delete('/inventory/:id', deleteInventory);
+
+
 
 /// Sales routes
 
@@ -2358,6 +2416,7 @@ export async function deleteSale(req, res) {
 router.delete('/sale/:id', deleteSale)
 
 
+
 /// Impression routes
 export async function addImpression(req, res) {
   try {
@@ -2369,7 +2428,9 @@ export async function addImpression(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) => {
       const createdImpression = await tx.impression.create({
         data: {
           bookId: inputs.id,
@@ -2412,6 +2473,8 @@ export async function addImpression(req, res) {
 }
 router.post('/impression', addImpression)
 
+
+
 export async function deleteImpression(req, res) {
   try {
     // const impression_id = parseInt(req.params.id);
@@ -2421,8 +2484,9 @@ export async function deleteImpression(req, res) {
       id: parseInt(req.params.id)
     }
     validateInputs(inputs);
+    const prismaClient = req.prisma || prisma
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const updatedImpression = await tx.impression.update({
         where: {id: inputs.id},
         data: {
@@ -2458,9 +2522,10 @@ export async function deleteImpression(req, res) {
 }
 router.delete('/impression/:id', deleteImpression);
 
+
+
 export async function updateImpression(req, res) {
   try {
-    console.log("req", req.body)
     const inputs = {
       id: parseInt(req.params.id),
       quantity: parseInt(req.body.quantity),
@@ -2469,7 +2534,9 @@ export async function updateImpression(req, res) {
       date: new Date(req.body.date),
     }
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) => {
       const currentImpression = await tx.impression.findUnique({ where: {id: inputs.id}});
       const diff = inputs.quantity - currentImpression.quantity;
 
@@ -2530,8 +2597,10 @@ export async function addTransfer(req, res) {
     }
     validateInputs(inputs);
 
+    const prismaClient = req.prisma || prisma
+
     // Start by getting the inventoryFrom
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const currentInventoryFrom = await tx.inventory.findUnique({
         where: {
           id: inputs.inventoryFromId,
@@ -2568,9 +2637,6 @@ export async function addTransfer(req, res) {
               current: currentInventoryFrom.current - inputs.quantity
             }
           });
-
-          console.log("updatedFromInventory givenToAuthor", updatedFromInventory.givenToAuthor)
-          console.log("updatedFromInventory current", updatedFromInventory.current)
         };
 
         res.status(200).json(newTransferToAuthor);
@@ -2670,7 +2736,7 @@ export async function addTransfer(req, res) {
           });
         }
       }
-
+      
     res.status(200).json(newTransfer)
     })
     
@@ -3320,7 +3386,7 @@ export async function updateKindleSale(req, res) {
 
     res.status(200).json({message: "updated kindle sale successfully"})
   } catch(error) {
-    console.log("Server error at updating kindlesales ", error);
+    console.error("Server error at updating kindlesales ", error);
     res.status(500).json({error: "Server error while updating the kindle sale"})
   }
 }
@@ -3344,7 +3410,7 @@ export async function deleteKindleSale(req, res) {
     
     res.status(200).json({message: "successfully deleted the kindle sale"})
   } catch(error) {
-    console.log("error at deleting kindlesales ", error);
+    console.error("error at deleting kindlesales ", error);
     res.status(500).json({error: "Server error while deleting the kindle sale"})
   }
 }
@@ -3414,7 +3480,7 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
   } else if (cascadeType === "bookstores") {
     filter = "bookstoreId"
   } else {
-    console.log("There was an error soft deleting inventories on cascade");
+    console.error("There was an error soft deleting inventories on cascade");
     return;
   }
 

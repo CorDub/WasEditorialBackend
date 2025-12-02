@@ -36,22 +36,24 @@ afterAll(async() => {
 
 
 describe("adding a valid admin", () => {
-  const mockReq = {
-    body: {
-      "firstName": "Iama",
-      "lastName": "Newadmin2",
-      "email": "iama.newadmin2@gmail.com",
-      "role": "admin"
-    },
-    prisma: prisma
-  }
+  let mockReq, mockRes, createdAdmin;
 
-  const mockRes = {
-    json: vi.fn(),
-    status: vi.fn().mockReturnThis()
-  }
+  beforeAll(async() => {
+    mockReq = {
+      body: {
+        "firstName": "Iama",
+        "lastName": "Newadmin2",
+        "email": "iama.newadmin2@gmail.com",
+        "role": "admin"
+      },
+      prisma: prisma
+    }
 
-  let createdAdmin;
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
 
   it(`should return status 201 and
     return an object with firstName, lastName and email,`, async() => {

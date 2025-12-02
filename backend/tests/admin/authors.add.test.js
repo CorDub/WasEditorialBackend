@@ -35,26 +35,28 @@ afterAll(async() => {
 
 // ADDING
 describe("adding a valid author", () => {
-  const mockReq = {
-    body: {
-      "firstName": "Yesi Deeba",
-      "lastName": "Amanewauthor Ureh",
-      "country": "México",
-      "referido": "",
-      "email": "yesi.amanewauthor@gmail.com",
-      "phone": "5561356226",
-      "birthday": "22121988",
-      "category": "1"
-    },
-    prisma: prisma
-  }
+  let mockReq, mockRes, createdAuthor;
 
-  const mockRes= {
-    json: vi.fn(),
-    status: vi.fn().mockReturnThis()
-  }
+  beforeAll(async() => {
+    mockReq = {
+      body: {
+        "firstName": "Yesi Deeba",
+        "lastName": "Amanewauthor Ureh",
+        "country": "México",
+        "referido": "",
+        "email": "yesi.amanewauthor@gmail.com",
+        "phone": "5561356226",
+        "birthday": "22121988",
+        "category": "1"
+      },
+      prisma: prisma
+    }
 
-  let createdAuthor;
+    mockRes= {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
 
   it("should return status 201 and return json with firstName, lastName and email", async() => {
     await addAuthor(mockReq, mockRes);

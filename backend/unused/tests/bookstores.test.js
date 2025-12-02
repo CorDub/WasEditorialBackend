@@ -101,6 +101,8 @@ describe("getting all existing bookstore names", () => {
 })
 
 
+
+//ADDING
 describe("adding a valid bookstore", () => {
   let addedBookstore;
   
@@ -146,6 +148,7 @@ describe("adding a valid bookstore", () => {
     if (addedBookstore) {await deleteFromDB(prisma, addedBookstore, "bookstore")};
   })
 })
+
 
 
 describe("adding an invalid bookstore", () => {

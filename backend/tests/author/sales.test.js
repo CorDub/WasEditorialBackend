@@ -1,38 +1,40 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { 
-  getAuthorSales,
-} from "../../routes/authorRoutes.js";
-import { prisma } from "../../prisma/client.js";
+import { getAuthorSales } from "../../routes/authorRoutes.js";
 import {
+  createCategory,
   createAuthor,
   createBook,
   createBookstore,
   createInventory,
+  createImpression,
   createPayment,
   createSale,
   createKindleSale,
-  deleteFromDB, 
-  createCategory,
+  createCost,
   createTestDB,
-  dropTestDB
+  dropTestDB,
+  deleteFromDB
 } from "../../testUtils.js";
+import { PrismaClient } from '@prisma/client';
+import * as mailer from "../../mailer.js"
 
+let prisma;
+let testDBName;
+let category1;
 
-// import { PrismaClient } from '@prisma/client';
-// let prisma;
-// let testDBName;
+beforeAll(async() => {
+  testDBName = createTestDB();
+  process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
+  prisma = new PrismaClient();
+  await prisma.$connect();
 
-// beforeAll(async() => {
-//   testDBName = createTestDB();
-//   process.env.DATABASE_URL= `postgresql://cordub:ThankGod89!@localhost:5432/${testDBName}`;
-//   prisma = new PrismaClient();
-//   await prisma.$connect();
-// })
+  category1 = await createCategory(prisma);
+})
 
-// afterAll(async() => {
-//   await prisma.$disconnect();
-//   dropTestDB(testDBName);
-// })
+afterAll(async() => {
+  await prisma.$disconnect();
+  dropTestDB(testDBName);
+})
 
 
 describe(`get author sales with valid parameters`, () => {
@@ -75,36 +77,14 @@ describe(`get author sales with valid parameters`, () => {
       query: {
         startDate: new Date("2025-01-01"),
         endDate: new Date("2025-11-04")
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
     }
-  })
-
-  afterAll(async() => {
-    await deleteFromDB(prisma, kindleSale1, "kindleSale")
-    await deleteFromDB(prisma, kindleSale2, "kindleSale")
-    await deleteFromDB(prisma, kindleSale3, "kindleSale")
-    await deleteFromDB(prisma, deletedKindleSale, "kindleSale")
-    await deleteFromDB(prisma, sale1, "sale")
-    await deleteFromDB(prisma, sale2, "sale")
-    await deleteFromDB(prisma, sale3, "sale")
-    await deleteFromDB(prisma, sale4, "sale")
-    await deleteFromDB(prisma, deletedSale, "sale")
-    await deleteFromDB(prisma, payment1, "payment")
-    await deleteFromDB(prisma, payment2, "payment")
-    await deleteFromDB(prisma, payment3, "payment")
-    await deleteFromDB(prisma, inventory1, "inventory")
-    await deleteFromDB(prisma, inventory2, "inventory")
-    await deleteFromDB(prisma, bookstore1, "bookstore")
-    await deleteFromDB(prisma, bookstore2, "bookstore")
-    await deleteFromDB(prisma, book1, "book")
-    await deleteFromDB(prisma, book2, "book")
-    await deleteFromDB(prisma, author, "author")
-    await deleteFromDB(prisma, category1, "category")
   })
 
   it(`should return a status 200`, async() => {
@@ -156,8 +136,9 @@ describe(`get author sales with valid parameters`, () => {
 })
 
 
+
 describe(`get author sale without being logged in`, async() => {
-  let mockReq, mockRes, jsonRes;
+  let mockReq, mockRes, jsonRes, mute;
   let category1;
   let author;
   let book1, book2;
@@ -196,36 +177,20 @@ describe(`get author sale without being logged in`, async() => {
       query: {
         startDate: new Date("2025-01-01"),
         endDate: new Date("2025-11-04")
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
     }
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {})
   })
 
   afterAll(async() => {
-    await deleteFromDB(prisma, kindleSale1, "kindleSale")
-    await deleteFromDB(prisma, kindleSale2, "kindleSale")
-    await deleteFromDB(prisma, kindleSale3, "kindleSale")
-    await deleteFromDB(prisma, deletedKindleSale, "kindleSale")
-    await deleteFromDB(prisma, sale1, "sale")
-    await deleteFromDB(prisma, sale2, "sale")
-    await deleteFromDB(prisma, sale3, "sale")
-    await deleteFromDB(prisma, sale4, "sale")
-    await deleteFromDB(prisma, deletedSale, "sale")
-    await deleteFromDB(prisma, payment1, "payment")
-    await deleteFromDB(prisma, payment2, "payment")
-    await deleteFromDB(prisma, payment3, "payment")
-    await deleteFromDB(prisma, inventory1, "inventory")
-    await deleteFromDB(prisma, inventory2, "inventory")
-    await deleteFromDB(prisma, bookstore1, "bookstore")
-    await deleteFromDB(prisma, bookstore2, "bookstore")
-    await deleteFromDB(prisma, book1, "book")
-    await deleteFromDB(prisma, book2, "book")
-    await deleteFromDB(prisma, author, "author")
-    await deleteFromDB(prisma, category1, "category")
+    mute.mockRestore()
   })
 
   it(`should return a status 401`, async() => {
@@ -240,8 +205,9 @@ describe(`get author sale without being logged in`, async() => {
 })
 
 
+
 describe(`get author sale with invalid parameters`, async() => {
-  let mockReq, mockRes, jsonRes;
+  let mockReq, mockRes, jsonRes, mute;
   let category1;
   let author;
   let book1, book2;
@@ -280,36 +246,20 @@ describe(`get author sale with invalid parameters`, async() => {
       query: {
         startDate: new Date("2025-10-02"),
         endDate: new Date("2025-09-02")
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
     }
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {})
   })
 
   afterAll(async() => {
-    await deleteFromDB(prisma, kindleSale1, "kindleSale")
-    await deleteFromDB(prisma, kindleSale2, "kindleSale")
-    await deleteFromDB(prisma, kindleSale3, "kindleSale")
-    await deleteFromDB(prisma, deletedKindleSale, "kindleSale")
-    await deleteFromDB(prisma, sale1, "sale")
-    await deleteFromDB(prisma, sale2, "sale")
-    await deleteFromDB(prisma, sale3, "sale")
-    await deleteFromDB(prisma, sale4, "sale")
-    await deleteFromDB(prisma, deletedSale, "sale")
-    await deleteFromDB(prisma, payment1, "payment")
-    await deleteFromDB(prisma, payment2, "payment")
-    await deleteFromDB(prisma, payment3, "payment")
-    await deleteFromDB(prisma, inventory1, "inventory")
-    await deleteFromDB(prisma, inventory2, "inventory")
-    await deleteFromDB(prisma, bookstore1, "bookstore")
-    await deleteFromDB(prisma, bookstore2, "bookstore")
-    await deleteFromDB(prisma, book1, "book")
-    await deleteFromDB(prisma, book2, "book")
-    await deleteFromDB(prisma, author, "author")
-    await deleteFromDB(prisma, category1, "category")
+    mute.mockRestore()
   })
 
   it(`should return a status 400`, async() => {

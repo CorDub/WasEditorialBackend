@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, it, beforeAll, afterAll } from "vitest";
-import { getMonthlySalesByPayments } from "../../routes/authorRoutes.js";
+// import { getMonthlySalesByPayments } from "../../routes/authorRoutes.js";
 import { 
   getKindleSales, 
   addKindleSale,
@@ -40,25 +40,26 @@ import {
 // })
 
 
-describe("getting monthly sales by payments", async() => {
-  const mockReq = {
-    "session": {
-      "user_id": 152
-    }
-  };
-  const mockRes = {
-    json: vi.fn(),
-    status: vi.fn().mockReturnThis()
-  }
+// describe("getting monthly sales by payments", async() => {
+//   const mockReq = {
+//     "session": {
+//       "user_id": 152
+//     }
+//   };
+//   const mockRes = {
+//     json: vi.fn(),
+//     status: vi.fn().mockReturnThis()
+//   }
 
-  it('should return an array of length 13', async() => {
-    await getMonthlySalesByPayments(mockReq, mockRes);
-    expect(mockRes.json).toHaveBeenCalled();
-    const responseData = mockRes.json.mock.calls[0][0];
-    expect(Array.isArray(responseData)).toBe(true);
-    expect(responseData.length).toBe(13);
-  })
-});
+//   it('should return an array of length 13', async() => {
+//     await getMonthlySalesByPayments(mockReq, mockRes);
+//     expect(mockRes.json).toHaveBeenCalled();
+//     const responseData = mockRes.json.mock.calls[0][0];
+//     expect(Array.isArray(responseData)).toBe(true);
+//     expect(responseData.length).toBe(13);
+//   })
+// });
+
 
 describe("getting all valid kindle sales", async() => {
   let mockReq, mockRes, jsonResponse;

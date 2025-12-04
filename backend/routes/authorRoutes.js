@@ -26,6 +26,8 @@ export async function changePassword(req, res) {
     let number = 0;
     let special = 0;
 
+    const prismaClient = req.prisma || prisma
+
     for (const char of password) {
       if (/[A-Z]/.test(char)) {
         upper += 1
@@ -52,14 +54,14 @@ export async function changePassword(req, res) {
       errors.push(12)
     };
 
-    const current_user = await prisma.user.findUnique({where: {id: user_id}});
+    const current_user = await prismaClient.user.findUnique({where: {id: user_id}});
     if (await bcrypt.compare(password, current_user.password)) {
       errors.push(14);
     }
 
     if (errors.length > 0) { return res.status(400).json(errors); } 
 
-    const update = await prisma.user.update({
+    const update = await prismaClient.user.update({
       where: {id: user_id},
       data: {password: await bcrypt.hash(password, 10)}
     });
@@ -81,8 +83,10 @@ export async function getAuthorInventories (req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const prismaClient = req.prisma || prisma
+
     // Fetch all necessary data
-    const data = await prisma.user.findUnique({
+    const data = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
       },
@@ -233,6 +237,8 @@ export async function getAuthorInventories (req, res) {
 }
 router.get('/inventories', getAuthorInventories);
 
+
+
 export async function getAuthorSales (req, res) {
   try {
     // Validate all inputs
@@ -246,8 +252,10 @@ export async function getAuthorSales (req, res) {
       return res.status(400).json({message: "The start date cannot come after the end date"})
     }
 
+    const prismaClient = req.prisma || prisma
+
     // Get data
-    let salesInRange = await prisma.sale.findMany({
+    let salesInRange = await prismaClient.sale.findMany({
       where: {
         payments: {
           some: {
@@ -274,7 +282,7 @@ export async function getAuthorSales (req, res) {
       }
     });
 
-    const kindleSalesInRange = await prisma.kindleSale.findMany({
+    const kindleSalesInRange = await prismaClient.kindleSale.findMany({
       where: {
         payments: {
           some: {
@@ -296,7 +304,7 @@ export async function getAuthorSales (req, res) {
       }
     });
 
-    const author = await prisma.user.findUnique({
+    const author = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
       },
@@ -404,11 +412,13 @@ export async function getMonthlySalesByPayments (req, res) {
       return res.status(401).json({message: "Unauthorized"})
     }
 
+    const prismaClient = req.prisma || prisma
+
     const ltm = new Date();
     ltm.setMonth(ltm.getMonth()-12);
     ltm.setDate(1);
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
       },
@@ -418,7 +428,7 @@ export async function getMonthlySalesByPayments (req, res) {
     })
 
     // Get all existing payments and tied sales for that author
-    const allAuthorPayments = await prisma.payment.findMany({
+    const allAuthorPayments = await prismaClient.payment.findMany({
       where: {
         userId: req.session.user_id,
         createdAt: {
@@ -758,11 +768,14 @@ export async function getMonthlySalesByPayments (req, res) {
 router.get('/monthlySalesByPayments', getMonthlySalesByPayments);
 
 
+
 export async function getAuthorPayments (req, res) {
   try {
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
+
+    const prismaClient = req.prisma || prisma
 
     // Getting our range ready by setting it 12m ago
     const ltm = new Date();
@@ -770,7 +783,7 @@ export async function getAuthorPayments (req, res) {
     ltm.setDate(1);
 
     // Getting all payments from that date to now
-    const allPayments = await prisma.payment.findMany({
+    const allPayments = await prismaClient.payment.findMany({
       where: {
         isDeleted: false,
         userId: req.session.user_id,
@@ -823,7 +836,7 @@ export async function getAuthorPayments (req, res) {
       }
     });
 
-    const userWithCategory = await prisma.user.findUnique({
+    const userWithCategory = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
       },
@@ -899,14 +912,17 @@ export async function getAuthorPayments (req, res) {
 router.get("/payments", getAuthorPayments);
 
 
+
 export async function sendInvoice(req, res) {
   try {
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
 
+    const prismaClient = req.prisma || prisma;
+
     const userID = req.session.user_id;
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
       where: {
         id: userID,
       }
@@ -930,12 +946,12 @@ export async function sendInvoice(req, res) {
       inputs.factura, 
       inputs.constancia, 
       inputs.email);
-    console.log("info", info)
+    
     if (!info.accepted.includes(inputs.email)) {
       throw new Error ({error: "email was not sent successfully"})
     }
 
-    const updatedPayment = await prisma.payment.update({
+    const updatedPayment = await prismaClient.payment.update({
       where: {
         userId_forMonth: {
           userId: userID,
@@ -948,7 +964,7 @@ export async function sendInvoice(req, res) {
     })
     res.status(200).json({message: "invoice sent successfully"})
   } catch (error) {
-    console.log("\n ERROR WHILE SENDING INVOICE \n", error);
+    console.error("\n ERROR WHILE SENDING INVOICE \n", error);
     res.status(500).json({error: "a server error occurred while sending the invoice"})
   }
 }
@@ -958,13 +974,16 @@ router.post("/sendInvoice", upload.fields([
 ]), sendInvoice)
 
 
+
 export async function getCompleteInventory(req, res) {
   try {
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
 
-    const allAuthorInventories = await prisma.inventory.findMany({
+    const prismaClient = req.prisma || prisma
+
+    const allAuthorInventories = await prismaClient.inventory.findMany({
       where: {
         isDeleted: false,
         book: {

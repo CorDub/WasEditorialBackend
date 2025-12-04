@@ -13,11 +13,13 @@ export async function login(req, res) {
     // const { email, password } = req.body;
     const inputs = {
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
     }
     validateInputs(inputs);
 
-    const user = await prisma.user.findUnique({where: {email: inputs.email}});
+    const prismaClient = req.prisma || prisma
+
+    const user = await prismaClient.user.findUnique({where: {email: inputs.email}});
     if (user && user.isDeleted) {
       return res.status(401).send("No tenemos una cuenta registrada con este correo.")
     }
@@ -46,15 +48,18 @@ export async function login(req, res) {
 }
 router.post('/login', login)
 
+
+
 export async function getReset(req, res) {
   try {
-    console.log("reset called")
     const inputs = {
       email: req.body.email
     }
     validateInputs(inputs)
 
-    const user = await prisma.user.findUnique({where: {email: inputs.email,}});
+    const prismaClient = req.prisma || prisma
+
+    const user = await prismaClient.user.findUnique({where: {email: inputs.email,}});
     if (user && user.isDeleted) {
       return res.status(500).json("Error retrieving the user");
     }
@@ -80,10 +85,14 @@ export async function getReset(req, res) {
 }
 router.post('/reset', getReset)
 
+
+
 export async function getUserExtra(req, res) {
   try {
     const user_id = req.session.user_id;
-    const user = await prisma.user.findUnique({where: {id: user_id}});
+    const prismaClient = req.prisma || prisma
+
+    const user = await prismaClient.user.findUnique({where: {id: user_id}});
     if (user && user.isDeleted) {
       return res.status(204).json({message: "No user found"})
     }
@@ -107,6 +116,8 @@ export async function getUserExtra(req, res) {
   }
 }
 router.get('/user_extra', getUserExtra)
+
+
 
 export async function updateUser(req, res) {
   try {
@@ -132,12 +143,14 @@ export async function updateUser(req, res) {
       }
     }
 
-    const targetUser = await prisma.user.findUnique({ where: {id: req.session.user_id}})
+    const prismaClient = req.prisma || prisma
+
+    const targetUser = await prismaClient.user.findUnique({ where: {id: req.session.user_id}})
     if (!targetUser || targetUser.isDeleted) {
       return res.status(500).json({message: "Updated"})
     }
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prismaClient.user.update({
       where: {id: req.session.user_id},
       data: {
         ...fieldToChange
@@ -153,6 +166,8 @@ export async function updateUser(req, res) {
 }
 router.patch('/user', updateUser)
 
+
+
 export async function getConfirmationCode(req, res) {
   try {
     const { confirmation_code, user_id } = req.body;
@@ -165,10 +180,12 @@ export async function getConfirmationCode(req, res) {
       return res.status(500).json({error: "A server error occurred while confirming the code"});
     }
 
-    const matched = await matchConfirmationCode(confirmation_code, user_id);
+    const prismaClient = req.prisma || prisma
+
+    const matched = await matchConfirmationCode(confirmation_code, user_id, prismaClient);
 
     if (matched === true) {
-      const user = await prisma.user.findUnique({where: {id: user_id}});
+      const user = await prismaClient.user.findUnique({where: {id: user_id}});
       if (user.isDeleted) {
         return res.status(500).json({error: "A server error occurred while confirming the code"});
       }
@@ -183,6 +200,8 @@ export async function getConfirmationCode(req, res) {
   }
 }
 router.post('/confirmation_code', getConfirmationCode)
+
+
 
 export async function logout(req, res) {
   try {

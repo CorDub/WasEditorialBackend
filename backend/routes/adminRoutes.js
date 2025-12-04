@@ -2003,7 +2003,9 @@ export async function getSales(req, res) {
     };
     validateInputs(inputs);
 
-    const sales = await prisma.sale.findMany({
+    const prismaClient = req.prisma || prisma
+
+    const sales = await prismaClient.sale.findMany({
       where: {
         isDeleted: false,
         date: {
@@ -2108,6 +2110,7 @@ export async function getSales(req, res) {
 router.get('/sales', getSales);
 
 
+
 export async function addSale(req, res) {
   try {
     const inputs = {
@@ -2118,8 +2121,10 @@ export async function addSale(req, res) {
     }
     validateInputs(inputs);
 
+    const prismaClient = req.prisma || prisma
+
     let createdSale;
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({
         where : {
           bookId_bookstoreId: {
@@ -2222,6 +2227,8 @@ export async function addSale(req, res) {
 }
 router.post('/sale', addSale)
 
+
+
 export async function updateSale(req, res) {
   try {
     const inputs = {
@@ -2233,7 +2240,9 @@ export async function updateSale(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({where : {
         bookId_bookstoreId: {
           bookId : inputs.bookId,
@@ -2278,7 +2287,7 @@ export async function updateSale(req, res) {
       let recipientPayments = []
       if (getForMonth(inputs.date) !== getForMonth(previousSale.date)) {
         for (const user of previousSale.inventory.book.users) {
-          const existingPayment = await prisma.payment.findUnique({
+          const existingPayment = await prismaClient.payment.findUnique({
             where: {
               userId_forMonth: {
                 userId: user.id,
@@ -2288,7 +2297,7 @@ export async function updateSale(req, res) {
           })
 
           if (!existingPayment) {
-            const createdPayment = await prisma.payment.create({
+            const createdPayment = await prismaClient.payment.create({
               data: {
                 userId: user.id,
                 forMonth: getForMonth(inputs.date)
@@ -2299,8 +2308,8 @@ export async function updateSale(req, res) {
           }
 
           if (existingPayment && existingPayment.isDeleted) {
-            const deletedPayment = await prisma.payment.delete({where: {id: existingPayment.id}})
-            const recreatedPayment = await prisma.payment.create({
+            const deletedPayment = await prismaClient.payment.delete({where: {id: existingPayment.id}})
+            const recreatedPayment = await prismaClient.payment.create({
               data: {
                 userId: user.id,
                 forMonth: getForMonth(inputs.date)
@@ -2369,6 +2378,9 @@ export async function updateSale(req, res) {
 }
 router.patch('/sale/:id', updateSale);
 
+
+
+
 export async function deleteSale(req, res) {
   // const sale_id = parseInt(req.params.id);
   // const inventory_id = parseInt(req.query.inventory_id);
@@ -2381,7 +2393,9 @@ export async function deleteSale(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) =>  {
+    const prismaClient = req.prisma || prisma
+
+    await prismaClient.$transaction(async (tx) =>  {
       const deletedSale = await tx.sale.update({where:
         {id: inputs.id},
         data: {
@@ -2756,7 +2770,9 @@ export async function getPayments(req, res) {
     }
     validateInputs(inputs);
 
-    const selectedPayments = await prisma.payment.findMany({
+    const prismaClient = req.prisma || prisma
+
+    const selectedPayments = await prismaClient.payment.findMany({
       where: {
         isDeleted: false,
         status: inputs.status
@@ -2818,7 +2834,7 @@ export async function getPayments(req, res) {
     async function updateAmount(payment) {
       payment.amount = 0;
 
-      const userWithCategory = await prisma.user.findUnique({
+      const userWithCategory = await prismaClient.user.findUnique({
         where: {
           id : payment.userId
         },
@@ -2890,13 +2906,15 @@ export async function markPaymentAsPaid(req, res) {
     }
     validateInputs(inputs);
 
+    const prismaClient = req.prisma || prisma
+
     const now = new Date()
-    const paymentToUpdate = await prisma.payment.findUnique({where: {id: inputs.id}})
+    const paymentToUpdate = await prismaClient.payment.findUnique({where: {id: inputs.id}})
     if (paymentToUpdate && paymentToUpdate.isDeleted) {throw new Error("deleted payment")};
     if (paymentToUpdate && paymentToUpdate.status === "created") {throw new Error("not solicited yet")};
     if (paymentToUpdate && paymentToUpdate.status === "paid") {throw new Error("already paid")};
 
-    const updatedPayment = await prisma.payment.update({
+    const updatedPayment = await prismaClient.payment.update({
       where: {
         id: inputs.id
       },
@@ -2914,11 +2932,15 @@ export async function markPaymentAsPaid(req, res) {
 }
 router.patch('/markAsPaid/:id', markPaymentAsPaid);
 
+
+
 /// Costs routes
 
 export async function getCurrentCosts(req, res) {
   try {
-    const currentCosts = await prisma.cost.findMany({
+    const prismaClient = req.prisma || prisma;
+
+    const currentCosts = await prismaClient.cost.findMany({
       where: {
         isDeleted: false,
         payment: {
@@ -2961,6 +2983,8 @@ export async function getCurrentCosts(req, res) {
 }
 router.get('/currentCosts', getCurrentCosts)
 
+
+
 export async function addCost(req, res) {
   try {
     const inputs = {
@@ -2971,7 +2995,9 @@ export async function addCost(req, res) {
     }
     validateInputs(inputs);
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma;
+
+    await prismaClient.$transaction(async (tx) => {
     // Make sure we got payment Id or Ids
       let paymentIds = [];
       if (!inputs.paymentId) {
@@ -3068,6 +3094,8 @@ export async function addCost(req, res) {
 }
 router.post('/cost', addCost)
 
+
+
 export async function updateCost(req, res) {
   try {
     const inputs = {
@@ -3078,10 +3106,12 @@ export async function updateCost(req, res) {
     }
     validateInputs(inputs);
 
-    const cost = await prisma.cost.findUnique({where: {id: inputs.id}})
+    const prismaClient = req.prisma || prisma;
+
+    const cost = await prismaClient.cost.findUnique({where: {id: inputs.id}})
     if (cost.isDeleted) { throw new Error ("deleted cost") }
 
-    await prisma.$transaction(async (tx) => {
+    await prismaClient.$transaction(async (tx) => {
       const updatedCost = await tx.cost.update({
         where: {
           id: inputs.id
@@ -3102,13 +3132,17 @@ export async function updateCost(req, res) {
 }
 router.patch("/cost/:id", updateCost) 
 
+
+
 export async function deleteCost(req, res) {
   try {
     const inputs = {
       id: parseInt(req.params.id)
     }
 
-    await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma;
+
+    await prismaClient.$transaction(async (tx) => {
       const markedAsDeletedCost = await tx.cost.update({
         where: {
           id: inputs.id
@@ -3140,10 +3174,12 @@ export async function getKindleSales(req, res) {
     }
     validateInputs(inputs)
 
+    const prismaClient = req.prisma || prisma
+
     inputs.startDate.setUTCHours(0, 0, 0, 0);
     inputs.endDate.setUTCHours(23, 59, 59, 999);
 
-    const kindleSales = await prisma.kindleSale.findMany({
+    const kindleSales = await prismaClient.kindleSale.findMany({
       where: {
         isDeleted: false,
         datePay: {
@@ -3223,6 +3259,8 @@ export async function getKindleSales(req, res) {
 }
 router.get('/kindlesales', getKindleSales);
 
+
+
 export async function addKindleSale (req, res) {
   try {
     const inputs = {
@@ -3238,7 +3276,9 @@ export async function addKindleSale (req, res) {
       throw new Error("dateCut later than datePay");
     }
 
-    const createdKindleSaleTransaction = await prisma.$transaction(async (tx) => {
+    const prismaClient = req.prisma || prisma
+
+    const createdKindleSaleTransaction = await prismaClient.$transaction(async (tx) => {
       const bookSold = await tx.book.findUnique({
         where: {
           id: inputs.bookId
@@ -3255,7 +3295,7 @@ export async function addKindleSale (req, res) {
 
       let paymentIds = [];
       for (const author of authorIds) {
-        const payment = await prisma.payment.findUnique({
+        const payment = await tx.payment.findUnique({
           where: {
             userId_forMonth: {
               userId: author,
@@ -3296,11 +3336,13 @@ export async function addKindleSale (req, res) {
     
     res.status(200).json({message: "kindleSale created successfully"})
   } catch(error) {
-    console.log("Server error at kindlesales ", error);
+    console.error("Server error at kindlesales ", error);
     res.status(500).json({error: "Server error while updating the kindle sale"})
   }
 }
 router.post("/kindlesales", addKindleSale);
+
+
 
 export async function updateKindleSale(req, res) {
   try {
@@ -3314,7 +3356,9 @@ export async function updateKindleSale(req, res) {
     }
     validateInputs(inputs)
 
-    const targetSale = await prisma.kindleSale.findUnique({
+    const prismaClient = req.prisma || prisma
+
+    const targetSale = await prismaClient.kindleSale.findUnique({
       where: {
         id: inputs.id
       }, 
@@ -3332,7 +3376,7 @@ export async function updateKindleSale(req, res) {
     let recipientPayments = []
     if (getForMonth(inputs.datePay) !== getForMonth(targetSale.datePay)) {
       for (const user of targetSale.book.users) {
-        const existingPayment = await prisma.payment.findUnique({
+        const existingPayment = await prismaClient.payment.findUnique({
           where: {
             userId_forMonth: {
               userId: user.id,
@@ -3342,7 +3386,7 @@ export async function updateKindleSale(req, res) {
         })
 
         if (!existingPayment) {
-          const createdPayment = await prisma.payment.create({
+          const createdPayment = await prismaClient.payment.create({
             data: {
               userId: user.id,
               forMonth: getForMonth(inputs.datePay)
@@ -3353,8 +3397,8 @@ export async function updateKindleSale(req, res) {
         }
 
         if (existingPayment && existingPayment.isDeleted) {
-          const deletedPayment = await prisma.payment.delete({where: {id: existingPayment.id}})
-          const recreatedPayment = await prisma.payment.create({
+          const deletedPayment = await prismaClient.payment.delete({where: {id: existingPayment.id}})
+          const recreatedPayment = await prismaClient.payment.create({
             data: {
               userId: user.id,
               forMonth: getForMonth(inputs.datePay)
@@ -3368,7 +3412,7 @@ export async function updateKindleSale(req, res) {
       };          
     } 
 
-    const updatedKindleSale = await prisma.kindleSale.update({
+    const updatedKindleSale = await prismaClient.kindleSale.update({
       where: {
         id: inputs.id
       },
@@ -3392,6 +3436,8 @@ export async function updateKindleSale(req, res) {
 }
 router.patch("/kindlesales/:id", updateKindleSale)
 
+
+
 export async function deleteKindleSale(req, res) {
   try {
     const inputs = {
@@ -3399,7 +3445,9 @@ export async function deleteKindleSale(req, res) {
     }
     validateInputs(inputs)
 
-    const deletedKindleSale = await prisma.kindleSale.update({
+    const prismaClient = req.prisma || prisma
+
+    const deletedKindleSale = await prismaClient.kindleSale.update({
       where: {
         id: inputs.id
       },
@@ -3415,6 +3463,8 @@ export async function deleteKindleSale(req, res) {
   }
 }
 router.delete("/kindlesales/:id", deleteKindleSale)
+
+
 
 /// soft delete on cascade
 

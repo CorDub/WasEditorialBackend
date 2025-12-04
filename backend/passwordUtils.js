@@ -25,9 +25,9 @@ export async function setResetPasswordCode(user_id, code) {
   }
 }
 
-export async function matchConfirmationCode(confirmation_code, user_id) {
+export async function matchConfirmationCode(confirmation_code, user_id, prismaClient) {
   try {
-    const user = await prisma.user.findUnique({where:{id: user_id}});
+    const user = await prismaClient.user.findUnique({where:{id: user_id}});
     if (!user || user.isDeleted) {
       throw new Error('No user found.')
     };
@@ -35,7 +35,7 @@ export async function matchConfirmationCode(confirmation_code, user_id) {
     if (
       user.reset_password_code && user.reset_password_code === confirmation_code
     ) {
-      await prisma.user.update({
+      await prismaClient.user.update({
         where: {id: user_id},
         data: {reset_password_code: null},
       });

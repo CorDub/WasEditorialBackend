@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "pretest": "node pretestScript.js",
     "test": "vitest"
   },
   "keywords": [],

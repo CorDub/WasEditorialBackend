@@ -3468,7 +3468,7 @@ router.delete("/kindlesales/:id", deleteKindleSale)
 
 /// soft delete on cascade
 
-async function softDeleteBooksOnCascade(deletedAuthor, tx) {
+export async function softDeleteBooksOnCascade(deletedAuthor, tx) {
   const booksToDelete = await tx.book.findMany({
     where: {
       users: {
@@ -3486,7 +3486,21 @@ async function softDeleteBooksOnCascade(deletedAuthor, tx) {
   let deletedBooksIds = [];
   for (const book of booksToDelete) {
     if (book.users.length > 1) {
-      continue
+      let validAuthorFound = false;
+      for (const user of book.users) {
+        if (!user.isDeleted) {
+          validAuthorFound = true
+          break;
+        }
+      }
+
+      if (validAuthorFound) {continue};
+
+      const deletedBook = await tx.book.update({
+        where: {id: book.id},
+        data: {isDeleted: true}
+      })
+      deletedBooksIds.push(deletedBook.id);
     } else {
       const deletedBook = await tx.book.update({
         where: {id: book.id},
@@ -3499,7 +3513,7 @@ async function softDeleteBooksOnCascade(deletedAuthor, tx) {
   return deletedBooksIds;
 }
 
-async function softDeletePaymentsOnCascade(deletedAuthor, tx) {
+export async function softDeletePaymentsOnCascade(deletedAuthor, tx) {
   const paymentsToDelete = await tx.payment.findMany({
     where: {
       userId: deletedAuthor.id,
@@ -3523,7 +3537,7 @@ async function softDeletePaymentsOnCascade(deletedAuthor, tx) {
   return deletedPaymentsIds;
 }
 
-async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
+export async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
   let filter = '';
   if (cascadeType === "books") {
     filter = "bookId"
@@ -3555,10 +3569,10 @@ async function softDeleteInventoriesOnCascade(IdsList, cascadeType, tx) {
   return deletedInventoriesIds;
 }
 
-async function softDeleteImpressionsOnCascade(deletedBook, tx) {
+export async function softDeleteImpressionsOnCascade(deletedBookId, tx) {
   const impressionsToDelete = await tx.impression.findMany({
     where: {
-      bookId: deletedBook,
+      bookId: deletedBookId,
       isDeleted: false
     },
   });
@@ -3574,7 +3588,7 @@ async function softDeleteImpressionsOnCascade(deletedBook, tx) {
   return deletedImpressionsIds;
 }
 
-async function softDeleteSalesOnCascade(IdsList, tx) {
+export async function softDeleteSalesOnCascade(IdsList, tx) {
   let salesToDelete = [];
 
   for (const id of IdsList) {
@@ -3613,7 +3627,7 @@ async function softDeleteSalesOnCascade(IdsList, tx) {
   );
 }
 
-async function softDeleteKindleSalesOnCascade(deletedBookId, tx) {
+export async function softDeleteKindleSalesOnCascade(deletedBookId, tx) {
   const kindleSalesToDelete = await tx.kindleSale.findMany({
     where: {
       bookId: deletedBookId,
@@ -3637,7 +3651,7 @@ async function softDeleteKindleSalesOnCascade(deletedBookId, tx) {
   return deletedKindleSaleIds;
 }
 
-async function softDeleteCostsOnCascade(deletedBookId, tx) {
+export async function softDeleteCostsOnCascade(deletedBookId, tx) {
   const costsToDelete = await tx.cost.findMany({
     where: {
       bookId: deletedBookId,

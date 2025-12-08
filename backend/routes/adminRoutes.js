@@ -14,6 +14,7 @@ import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
 import { createRandomPassword } from "../passwordUtils.js";
+import { version } from "os";
 
 const upload = multer();
 const router = express.Router();
@@ -2241,6 +2242,7 @@ export async function updateSale(req, res) {
     validateInputs(inputs);
 
     const prismaClient = req.prisma || prisma
+    // console.log("db", process.env.DATABASE_URL)
 
     await prismaClient.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({where : {
@@ -2272,9 +2274,15 @@ export async function updateSale(req, res) {
           payments: true
         }
       });
+
       if (previousSale.isDeleted) {
         res.status(400).json({message: "Esta venta ha sido eliminada"})
         return;
+      }
+
+      let previousSalePayments = []
+      for (const payment of previousSale.payments) {
+        previousSalePayments.push({"id": payment.id})
       }
 
       let quantityUpdate = previousSale.quantity - inputs.quantity;
@@ -2319,14 +2327,61 @@ export async function updateSale(req, res) {
             continue;
           }
 
-          // if (existingPayment 
-          //   && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
-            
-          // }
+          if (existingPayment && !existingPayment.isDeleted && existingPayment.status === "created") {
+            recipientPayments.push({"id": existingPayment.id});
+            continue;
+          }
 
-          recipientPayments.push({"id": existingPayment.id});
+          if (existingPayment 
+            && !existingPayment.isDeleted
+            && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
+
+            let currentForMonthDate = new Date(existingPayment.forMonth + "-01")
+            let nextPaymentDate = new Date(currentForMonthDate)
+            nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+
+            let nextPayment = await prismaClient.payment.findUnique({where: {
+              userId_forMonth: {
+                userId: user.id,
+                forMonth: getForMonth(nextPaymentDate)
+              }
+            }})
+
+            let paymentEncountered = false;
+            while(nextPayment) {
+              if (nextPayment.isDeleted 
+              || nextPayment.status === "solicited"
+              || nextPayment.status === "paid") {
+                nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+                nextPayment = await prismaClient.payment.findUnique({where: {
+                  userId_forMonth: {
+                    userId: user.id,
+                    forMonth: getForMonth(nextPaymentDate)
+                  }
+                }})
+                continue;
+
+              } else {
+                paymentEncountered = true;
+                recipientPayments.push({"id": nextPayment.id})
+                break;
+              }
+            }
+
+            if (!paymentEncountered) {
+              const newPayment = await prismaClient.payment.create({
+                data: {
+                  userId: user.id,
+                  forMonth: getForMonth(nextPaymentDate)
+                }
+              })
+
+              recipientPayments.push({"id": newPayment.id});
+              continue;
+            }
+          }
         };          
-      } 
+      }
 
       const updatedSale = await tx.sale.update({
         where: {id: inputs.id},
@@ -2335,7 +2390,7 @@ export async function updateSale(req, res) {
           quantity: inputs.quantity,
           date: new Date(inputs.date), 
           payments: {
-            set: recipientPayments
+            set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments
           }
         },
         include: {
@@ -3373,6 +3428,11 @@ export async function updateKindleSale(req, res) {
     })
     if (targetSale.isDeleted) { throw new Error ("deleted kindle sale") }
 
+    let previousSalePayments = []
+    for (const payment of targetSale.payments) {
+      previousSalePayments.push({"id": payment.id})
+    }
+
     let recipientPayments = []
     if (getForMonth(inputs.datePay) !== getForMonth(targetSale.datePay)) {
       for (const user of targetSale.book.users) {
@@ -3392,6 +3452,7 @@ export async function updateKindleSale(req, res) {
               forMonth: getForMonth(inputs.datePay)
             }
           })
+
           recipientPayments.push({"id": createdPayment.id})
           continue;
         }
@@ -3408,7 +3469,58 @@ export async function updateKindleSale(req, res) {
           continue;
         }
 
-        recipientPayments.push({"id": existingPayment.id});
+        if (existingPayment && !existingPayment.isDeleted && existingPayment.status === "created") {
+          recipientPayments.push({"id": existingPayment.id});
+          continue;
+        }
+
+        if (existingPayment 
+        && !existingPayment.isDeleted
+        && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
+          let currentForMonthDate = new Date(existingPayment.forMonth + "-01")
+          let nextPaymentDate = new Date(currentForMonthDate)
+          nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+
+          let nextPayment = await prismaClient.payment.findUnique({where: {
+            userId_forMonth: {
+              userId: user.id,
+              forMonth: getForMonth(nextPaymentDate)
+            }
+          }})
+
+          let paymentEncountered = false;
+          while(nextPayment) {
+            if (nextPayment.isDeleted 
+            || nextPayment.status === "solicited"
+            || nextPayment.status === "paid") {
+              nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+              nextPayment = await prismaClient.payment.findUnique({where: {
+                userId_forMonth: {
+                  userId: user.id,
+                  forMonth: getForMonth(nextPaymentDate)
+                }
+              }})
+              continue;
+
+            } else {
+              paymentEncountered = true;
+              recipientPayments.push({"id": nextPayment.id})
+              break;
+            }
+          }
+
+          if (!paymentEncountered) {
+            const newPayment = await prismaClient.payment.create({
+              data: {
+                userId: user.id,
+                forMonth: getForMonth(nextPaymentDate)
+              }
+            })
+
+            recipientPayments.push({"id": newPayment.id});
+            continue;
+          }
+        }
       };          
     } 
 
@@ -3423,7 +3535,7 @@ export async function updateKindleSale(req, res) {
         datePay: inputs.datePay,
         regalias: inputs.regalias,
         payments: {
-          set: recipientPayments
+          set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments 
         }
       }
     })

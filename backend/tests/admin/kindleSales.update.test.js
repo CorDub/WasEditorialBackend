@@ -86,6 +86,7 @@ describe(`updating Kindle sale with valid parameters`, async() => {
 })
 
 
+
 describe(`updating a kindleSale date for a book with multiple authors`, async() => {
   let mockReq, mockRes;
   let newAuthor, newAuthor2, newAuthor3, newAuthor4;
@@ -107,8 +108,8 @@ describe(`updating a kindleSale date for a book with multiple authors`, async() 
     oldPayment = await createPayment(prisma, newAuthor.id, "2025-10")
     oldPayment2 = await createPayment(prisma, newAuthor2.id, "2025-10")
     oldPayment3 = await createPayment(prisma, newAuthor3.id, "2025-10", {isDeleted: true}) 
-    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100})
-    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-06-02"), regalias: 100, isDeleted: true})
+    newKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id, newPayment3.id, newPayment4.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-11-02"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, newBook.id, [newPayment.id, newPayment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-11-02"), regalias: 100, isDeleted: true})
 
 
     mockReq = {
@@ -149,6 +150,7 @@ describe(`updating a kindleSale date for a book with multiple authors`, async() 
       try {
         expect(payment.forMonth).toBe("2025-10");
       } catch(error) {
+        
         console.log(`there was an error with payment ${payment.id}`)
         throw error
       }
@@ -220,13 +222,6 @@ describe('updating a deleted Kindle sale', async() => {
   })
 
   afterAll(async() => {
-    // await deleteFromDB(prisma, newKindleSale, "kindleSale")
-    // await deleteFromDB(prisma, deletedKindleSale, "kindleSale")
-    // await deleteFromDB(prisma, newPayment2, "payment")
-    // await deleteFromDB(prisma, newPayment, "payment")
-    // await deleteFromDB(prisma, newBook, "book")
-    // await deleteFromDB(prisma, newAuthor, "author")
-    // await deleteFromDB(prisma, newAuthor2, "author")
     mute.mockRestore()
   })
 
@@ -240,5 +235,76 @@ describe('updating a deleted Kindle sale', async() => {
     expect(updatedKindleSale.quantityEbook).toBe(10),
     expect(updatedKindleSale.quantityPod).toBe(10),
     expect(updatedKindleSale.regalias).toBe(100)
+  })
+})
+
+
+
+describe(`updating the date of a kindleSale but the payment for that date is unavailable 
+(deleted, paid or solicited)`, async() => {
+  let mockReq, mockRes, res;
+  let author1, author2, author3;
+  let book;
+  let bookstore;
+  let inventory;
+  let payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8;
+  let kindleSale;
+
+  beforeAll(async() => {
+    author1 = await createAuthor(prisma);
+    author2 = await createAuthor(prisma);
+    author3 = await createAuthor(prisma);
+    book = await createBook(prisma, [author1.id, author2.id, author3.id]);
+    bookstore = await createBookstore(prisma);
+    inventory = await createInventory(prisma, book.id, bookstore.id);
+    payment1 = await createPayment(prisma, author1.id, "2025-06", {status: "paid"})
+    payment2 = await createPayment(prisma, author1.id, "2025-07", {status: "solicited"})
+    payment3 = await createPayment(prisma, author1.id, "2025-08", {status: "created"})
+    payment4 = await createPayment(prisma, author2.id, "2025-06", {status: "paid"})
+    payment5 = await createPayment(prisma, author2.id, "2025-07", {status: "paid"})
+    payment6 = await createPayment(prisma, author2.id, "2025-08", {status: "created"})
+    payment7 = await createPayment(prisma, author3.id, "2025-06", {isDeleted: true})
+    payment8 = await createPayment(prisma, author3.id, "2025-07", {status: "solicited"})
+    kindleSale = await createKindleSale(prisma, book.id, [payment2.id, payment5.id, payment8.id], {datePay: new Date("2025-07-04")})
+
+    mockReq = {
+      params: {
+        id: kindleSale.id
+      },
+      body: {
+        quantityEbook: 10,
+        quantityPod: 10,
+        dateCut: new Date("2025-04-04"),
+        datePay: new Date("2025-06-04"),
+        regalias: 100
+      },
+      prisma: prisma
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
+
+  it(`should find the nearest available date 
+  and reassign the kindle sale to this payment`, async() => {
+    await updateKindleSale(mockReq, mockRes);
+    res = await prisma.kindleSale.findUnique({where: {id: kindleSale.id}, include: {payments: true}})
+    expect(res.payments.length).toBe(3)
+  })
+
+  it(`should reassign the sale to the closest created payment status for an author`, async() => {
+    const author1payment = res.payments.find(payment => payment.userId === author1.id)
+    expect(author1payment.id).toBe(payment3.id)
+
+    const author2payment = res.payments.find(payment => payment.userId === author2.id)
+    expect(author2payment.id).toBe(payment6.id)
+  })
+
+  it(`should recreate the payment if the sale is deleted or doesn't exist`, async() => {
+    const author3payment = res.payments.find(payment => payment.userId === author3.id)
+    expect(author3payment.forMonth).toBe("2025-06")
+    expect(author3payment.id).not.toBe(payment7.id)
   })
 })

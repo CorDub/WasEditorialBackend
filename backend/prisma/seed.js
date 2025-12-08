@@ -445,10 +445,10 @@ async function main() {
         saleDate.setMonth(saleDate.getMonth() - monthsAgo);
 
         const saleForMonth = getForMonth(saleDate);
-        const saleForMonthDate = new Date(saleDate);
-        saleForMonthDate.setDate(1);
-        saleForMonthDate.setHours(0, 0, 0 , 0);
-        saleForMonthDate.toISOString();
+        // const saleForMonthDate = new Date(saleDate);
+        // saleForMonthDate.setDate(1);
+        // saleForMonthDate.setHours(0, 0, 0 , 0);
+        // saleForMonthDate.toISOString();
 
         const book = await prisma.book.findUnique({
           where: {
@@ -497,7 +497,7 @@ async function main() {
               data: {
                 userId: author,
                 forMonth: saleForMonth,
-                forMonthDate: saleForMonthDate,
+                // forMonthDate: saleForMonthDate,
                 createdAt: saleDate,
                 // amount: saleAmount
               }
@@ -570,9 +570,9 @@ async function main() {
         dateCut.setMonth(dateCut.getMonth()-2);
         
         const saleForMonth = getForMonth(kindleSaleDate);
-        const saleForMonthDate = new Date(kindleSaleDate);
-        saleForMonthDate.setDate(1);
-        saleForMonthDate.setHours(0, 0, 0, 0);
+        // const saleForMonthDate = new Date(kindleSaleDate);
+        // saleForMonthDate.setDate(1);
+        // saleForMonthDate.setHours(0, 0, 0, 0);
 
         const authorIds = book.users.map(user => user.id)
         let paymentsIds = [];
@@ -591,7 +591,7 @@ async function main() {
               data: {
                 userId: author,
                 forMonth: saleForMonth,
-                forMonthDate: saleForMonthDate.toISOString(),
+                // forMonthDate: saleForMonthDate.toISOString(),
                 createdAt: kindleSaleDate,
               }
             });

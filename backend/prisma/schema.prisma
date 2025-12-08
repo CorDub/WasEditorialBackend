@@ -186,7 +186,6 @@ model Payment {
   sales            Sale[]
   kindleSales      KindleSale[]
   forMonth         String
-  forMonthDate     DateTime?
   dateMarkedAsPaid DateTime?
   status           PaymentStatus @default(created)
   isDeleted        Boolean       @default(false)

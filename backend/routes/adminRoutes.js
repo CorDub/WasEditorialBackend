@@ -14,7 +14,6 @@ import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
 import { createRandomPassword } from "../passwordUtils.js";
-import { version } from "os";
 
 const upload = multer();
 const router = express.Router();
@@ -379,7 +378,7 @@ router.delete('/user/:id', deleteAuthor);
 
 export async function getCategories(req, res) {
   try {
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
     const categories = await prismaClient.category.findMany({where: {isDeleted: false}});
     res.status(201).json(categories);
   } catch(error) {
@@ -393,7 +392,7 @@ router.get('/categories', getCategories);
 
 export async function getCategoryTypes(req, res) {
   try {
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
     const categories_type = await prismaClient.category.findMany({
       where: {
         isDeleted: false
@@ -420,7 +419,7 @@ export async function getImpactedUsers(req, res) {
     }
     validateInputs(inputs);
 
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
 
     const category = await prismaClient.category.findUnique({
       where: {
@@ -449,7 +448,7 @@ export async function deleteCategory(req, res) {
     }
     validateInputs(inputs);
 
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       if (inputs.categoryId !== 0) {
@@ -492,7 +491,7 @@ export async function addCategory(req, res) {
     }
     validateInputs(inputs);
 
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       const existing = await tx.category.findUnique({
@@ -557,7 +556,7 @@ export async function updateCategory(req, res) {
     }
     validateInputs(inputs);
 
-    const prismaClient = req.prisma || req
+    const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       const previousCategory = await tx.category.findUnique({
@@ -659,7 +658,7 @@ router.get('/book', getBooks);
 export async function getExistingBookTitles(req, res) {
   try {
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
     const existingBooks = await prismaClient.book.findMany({
       where: {
         isDeleted: false
@@ -708,7 +707,7 @@ export async function addBook(req, res) {
     })
 
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
     
     await prismaClient.$transaction(async (tx) => {
       const new_book = await tx.book.create({
@@ -771,7 +770,7 @@ export async function addMultipleBooks(req, res) {
     }
 
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
 
     const fileContent = csvfile.buffer.toString('utf-8');
     const lines = fileContent.split("\n");
@@ -928,7 +927,7 @@ export async function deleteBook(req, res) {
     validateInputs(inputs);
 
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
     await prismaClient.$transaction(async (tx) => {
       const deletedBook = await tx.book.update({where:
         {id: inputs.id},
@@ -967,7 +966,7 @@ export async function updateBook(req, res) {
     validateInputs(inputs);
 
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
 
     const authors = req.body.authors;
     const authorsIds = []
@@ -1026,7 +1025,7 @@ export async function updateBookPrices(req, res) {
     }
     validateInputs(inputs);
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || client;
+    const prismaClient = req.prisma || prisma;
 
     const bookWithPricesToUpdate = await prismaClient.book.findUnique({where: {id: inputs.id}});
     if (bookWithPricesToUpdate.isDeleted) {

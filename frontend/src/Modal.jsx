@@ -12,7 +12,7 @@ import AddingImpressionModal from './AddingImpressionModal';
 import EditImpressionModal from './EditImpressionModal';
 import DeleteImpressionModal from './DeleteImpressionModal';
 import AddingTransferModal from './AddingTransferModal';
-import EditTransferModal from './EditTransferModal';
+// import EditTransferModal from './EditTransferModal';
 import DeleteTransferModal from './DeleteTransferModal';
 import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
 import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
@@ -78,7 +78,7 @@ function Modal({
     },
     transfer: {
       adding: AddingTransferModal,
-      edit: EditTransferModal,
+      // edit: EditTransferModal,
       delete: DeleteTransferModal
     },
     transferToAuthor: {

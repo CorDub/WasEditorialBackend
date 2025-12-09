@@ -131,8 +131,8 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
       errorInputs = [errorsQuantityEbook];
     } else {
       errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
-      errorsQuantityEbook = checkForErrors("La cantidad Ebook", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
-      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+      errorsQuantityEbook = checkForErrors("La cantidad Ebook", (quantityEbook + quantityPod), expectationsCantidad, quantityEbookRef, "a");
+      errorsQuantityPod = checkForErrors("La cantidad Pod", (quantityPod + quantityEbook), expectationsCantidad, quantityPodRef, "a");
       errorsDatePay = checkForErrors("La fecha de pago", datePay, expectationsDate, datePayRef, "a");
       errorsDateCut = checkForErrors("La fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
       errorsRegalias = checkForErrors("El número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");

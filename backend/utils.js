@@ -258,3 +258,19 @@ export function getForMonthDate(date) {
   const toUTC = inDateTime.toISOString()
   return toUTC
 }
+
+export function putDateAtNoon(date) {
+  const newDate = new Date(date)
+  newDate.setHours(12)
+  newDate.setMinutes(0)
+  newDate.setSeconds(0)
+  return newDate
+}
+
+export function avoidTimeshift(strDate) {
+  const year = Number(strDate.substring(0,4))
+  const month = Number(strDate.substring(5,7)) - 1
+  const day = Number(strDate.substring(8,10))
+  const res = new Date(Date.UTC(year, month, day, 12, 0, 0))
+  return res
+}

@@ -1,5 +1,5 @@
 import "./DateRange.scss";
-import { convertISOString } from "../../backend/utils";
+import { convertISOString, avoidTimeshift } from "../../backend/utils";
 
 function DateRange({
   startDate,
@@ -14,12 +14,12 @@ function DateRange({
         className="global-input dr-input"
         type="date"
         value={convertISOString(startDate)}
-        onChange={(e) => setStartDate(new Date(e.target.value))}></input>
+        onChange={(e) => setStartDate(avoidTimeshift(e.target.value))}></input>
       <input
         className="global-input dr-input"
         type="date"
         value={convertISOString(endDate)}
-        onChange={(e) => setEndDate(new Date(e.target.value))}></input>
+        onChange={(e) => setEndDate(avoidTimeshift(e.target.value))}></input>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
-import { twelveMonthsAgo, applyFilters } from "../../backend/utils";
+import { twelveMonthsAgo, applyFilters, putDateAtNoon } from "../../backend/utils";
 
 function KindleSalesListPerMonth() {
   useCheckAdmin();
@@ -26,7 +26,7 @@ function KindleSalesListPerMonth() {
   async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
       setLoading(true)
-      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${putDateAtNoon(startDate)}&endDate=${putDateAtNoon(endDate)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

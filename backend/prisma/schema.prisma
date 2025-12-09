@@ -139,8 +139,8 @@ model KindleSale {
   book          Book      @relation(fields: [bookId], references: [id])
   bookId        Int
   payments      Payment[]
-  quantityEbook Int
-  quantityPod   Int
+  quantityEbook Int?
+  quantityPod   Int?
   dateCut       DateTime
   datePay       DateTime
   regalias      Float

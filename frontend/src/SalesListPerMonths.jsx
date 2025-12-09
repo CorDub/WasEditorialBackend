@@ -5,7 +5,7 @@ import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
 import { useEffect } from "react";
-import { twelveMonthsAgo, applyFilters } from "../../backend/utils";
+import { twelveMonthsAgo, applyFilters, putDateAtNoon } from "../../backend/utils";
 
 function SalesListPerMonths() {
   useCheckAdmin();
@@ -33,7 +33,7 @@ function SalesListPerMonths() {
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${putDateAtNoon(startDate)}&endDate=${putDateAtNoon(endDate)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

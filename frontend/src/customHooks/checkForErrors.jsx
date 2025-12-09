@@ -1,4 +1,10 @@
-function checkForErrors(fieldName, fieldValue, fieldExpectations, fieldRef, gender) {
+function checkForErrors(
+  fieldName, 
+  fieldValue, 
+  fieldExpectations, 
+  fieldRef, 
+  gender
+) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

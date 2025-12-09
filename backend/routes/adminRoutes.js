@@ -3317,6 +3317,7 @@ router.get('/kindlesales', getKindleSales);
 
 export async function addKindleSale (req, res) {
   try {
+    console.log("datePay before transform", req.body.datePay)
     const inputs = {
       "bookId": parseInt(req.body.book),
       "quantityEbook": parseInt(req.body.quantityEbook),
@@ -3328,6 +3329,9 @@ export async function addKindleSale (req, res) {
     validateInputs(inputs);
     if (inputs.dateCut >= inputs.datePay) {
       throw new Error("dateCut later than datePay");
+    }
+    if ((inputs.quantityEbook + inputs.quantityPod) <= 0) {
+      throw new Error("quantityEbook or quantityPod has to be positive");
     }
 
     const prismaClient = req.prisma || prisma
@@ -3409,6 +3413,12 @@ export async function updateKindleSale(req, res) {
       regalias: parseFloat(req.body.regalias)
     }
     validateInputs(inputs)
+    if (inputs.dateCut >= inputs.datePay) {
+      throw new Error("dateCut later than datePay");
+    }
+    if ((inputs.quantityEbook + inputs.quantityPod) <= 0) {
+      throw new Error("quantityEbook or quantityPod has to be positive");
+    }
 
     const prismaClient = req.prisma || prisma
 

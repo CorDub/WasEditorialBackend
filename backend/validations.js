@@ -85,12 +85,10 @@ export function validateInput(inputName, inputValue) {
       ["range", "positive"]
     ],
     "quantityEbook": [
-      ["presence", "not empty"],
       ["type", "number"],
       ["range", "positive"]
     ],
     "quantityPod": [
-      ["presence", "not empty"],
       ["type", "number"],
       ["range", "positive"]
     ],

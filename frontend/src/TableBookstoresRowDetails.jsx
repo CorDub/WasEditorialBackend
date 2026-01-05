@@ -35,13 +35,13 @@ function TableBookstoresRowDetails({monthlySalesData}) {
                 ? "-"
                 : formatNumber(bookstore.price)}
             </div>
-            <div className="tbr-name">
+            {/* <div className="tbr-name">
               {bookstore.name === "Kindle"
                 ? "-"
                 : !bookstore.isComissions 
                   ? bookstore.deal_percentage+"%" 
                   : "-"}
-            </div>
+            </div> */}
             <div className="tbr-name">
               {bookstore.name === "Kindle" 
                 ? "-"

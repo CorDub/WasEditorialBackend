@@ -792,6 +792,7 @@ export async function getAuthorPayments (req, res) {
         }
       },
       select: {
+        id: true,
         forMonth: true, 
         isDeleted: true,
         status: true,
@@ -932,11 +933,23 @@ export async function sendInvoice(req, res) {
       month: req.body.month,
       monthOriginal: req.body.monthOriginal,
       amount: parseFloat(req.body.amount),
-      email: req.body.correo,
+      email: user.email,
       factura: req.files.factura[0],
       constancia: req.files.constancia[0]
     }
     validateInputs(inputs)
+
+    const payment = await prismaClient.payment.findUnique({
+      where: {
+        userId_forMonth: {
+          userId: user.id,
+          forMonth: inputs.monthOriginal
+        }
+      }
+    })
+    if (!payment || payment.status === "solicited" || payment.status === "paid") {
+      throw new Error ({error: "invalid payment"})
+    }
 
     const name = user.first_name + " " + user.last_name;
     const info = await sendEmailWithInvoice(

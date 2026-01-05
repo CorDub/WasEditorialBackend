@@ -1,7 +1,7 @@
 import './ShowInventories.scss';
 import { useRef, useEffect, useState } from "react";
 import useCheckUser from './customHooks/useCheckUser';
-import { changeDateFormat, convertISOString } from '../../backend/utils';
+import { changeDateFormat } from '../../backend/utils';
 
 function ShowInventories({
     inventories,
@@ -144,7 +144,7 @@ function ShowInventories({
           //   declareActive(totalRef, 'total', setTotalInventoryOpen),
           //   setExclusions("")}}
           >
-          <p className="author-inventory-label">Nuevas impresiónes</p>
+          <p className="author-inventory-label">Nuevas impresiones</p>
           <p className="author-inventory-number">{inventories.summary.impressions || 0}</p>
         </div>
         {!showTotal && 
@@ -165,7 +165,7 @@ function ShowInventories({
             </>
           )}
         <div className="author-inventory-line ail-bold">
-          <p className="author-inventory-label">Copias imprimidas totales</p>
+          <p className="author-inventory-label">Copias impresas totales</p>
           <p className="author-inventory-label">{(inventories.summary.impressions + inventories.summary.initial) || 0}</p>
         </div>
         <div className="author-inventory-line"
@@ -197,15 +197,7 @@ function ShowInventories({
           <p className="author-inventory-number">{inventories.summary.total || 0}</p>
         </div>
 
-        <div className="author-inventory-line ail-repartition"
-          ref={bookstoreRef}
-          // onClick={() => {
-          //   declareActive(bookstoreRef, "bookstore", setAuthorBookstoreInventoryOpen),
-          //   setExclusions('allButWas')}}
-          >
-          <p className="author-inventory-label">Inventario disponible en librerías</p>
-          <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
-        </div>
+        
         <div className="author-inventory-line ail-repartition"
           ref={wasRef}
           // onClick={() => {
@@ -215,6 +207,15 @@ function ShowInventories({
           >
           <p className="author-inventory-label">Libros disponibles en bodega Was</p>
           <p className="author-inventory-number">{inventories.summary.was || 0}</p>
+        </div>
+        <div className="author-inventory-line ail-repartition"
+          ref={bookstoreRef}
+          // onClick={() => {
+          //   declareActive(bookstoreRef, "bookstore", setAuthorBookstoreInventoryOpen),
+          //   setExclusions('allButWas')}}
+          >
+          <p className="author-inventory-label">Inventario disponible en librerías</p>
+          <p className="author-inventory-number">{inventories.summary.bookstores || 0}</p>
         </div>
         {isWasPerCountryOpen && Object.entries(inventories.summary.wasPerCountry).map((country, index) => (
           <div

@@ -1922,7 +1922,7 @@ export async function updateInventory(req, res) {
       id: parseInt(req.params.id),
       bookId: parseInt(req.body.book),
       bookstoreId: parseInt(req.body.bookstore),
-      inicial: parseInt(req.body.initial),
+      inicial: parseInt(req.body.inicial),
       price: parseFloat(req.body.price)
     }
     validateInputs(inputs);

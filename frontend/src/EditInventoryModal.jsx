@@ -22,6 +22,8 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
   // const disponibleRef = useRef();
   const priceRef = useRef();
 
+  console.log("clickedRow", clickedRow)
+
   let bookTitlesList = []
   for (const book of existingBooks) {
     bookTitlesList.push(book.title)
@@ -154,12 +156,12 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     //   length: 100,
     //   value: bookTitlesList
     // };
-    const expectationsBookstore = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: bookstoreNamesList
-    };
+    // const expectationsBookstore = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   length: 50,
+    //   value: bookstoreNamesList
+    // };
     const expectationsInicial = {
       type: "number",
       presence: "not empty",
@@ -172,13 +174,13 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     };
 
     // const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-    const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, 'a');
+    // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, 'a');
     // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsInicial = checkForErrors("La cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef, "a");
     // const errorsDisponible = checkForErrors("La cantidad disponible", parseInt(inicial), expectationsInicial, inicialRef, "a");
     // const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
     const errorsPrice = checkForErrors("El precio", price, expectationsPrice, priceRef, "o");
-    const errorInputs = [errorsBookstore, errorsInicial, errorsPrice];
+    const errorInputs = [errorsInicial, errorsPrice];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -212,9 +214,9 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         body: JSON.stringify({
           book: bookId,
           bookstore: bookstoreId,
-          inicial: parseInt(inicial),
+          inicial: inicial,
           // disponible: disponible,
-          price: parseFloat(price)
+          price: price
         }),
       });
 
@@ -247,7 +249,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <p>*Campos obligatorios</p>
       </div>
       <form className="global-form">
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Librería *</label>
           <select onChange={(e) => dropDownChange(e, "Bookstore")}
             className="select-global" ref={bookstoreRef}>
@@ -255,7 +257,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
               <option key={index} value={bookstore.title}>{bookstore.name}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Inventario inicial *</label>
           <input type="text" placeholder="Cantidad inicial de libros"

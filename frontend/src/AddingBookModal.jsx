@@ -234,7 +234,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       addErrorClass(inputPrice);
     }
 
-    if (isNaN(parseInt(isbn))) {
+    if (isNaN(parseInt(isbn)) && isbn !== "") {
       newErrorList.push(41);
       addErrorClass(inputIsbn);
     };

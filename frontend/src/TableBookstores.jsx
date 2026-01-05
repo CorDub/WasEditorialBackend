@@ -32,9 +32,9 @@ function TableBookstores({salesByPayments, activeMonth}) {
         <div className="table-bookstore-header-name tbhn-first">Libro</div>
         <div className="table-bookstore-header-name">Vendidos</div>
         <div className="table-bookstore-header-name">Precio de venta</div>
-        <div className="table-bookstore-header-name">% de comisión
+        {/* <div className="table-bookstore-header-name">% de comisión
           <div className="trdh-subtitle">de la librería</div>
-        </div>
+        </div> */}
         <div className="table-bookstore-header-name">Comisión
           <div className="trdh-subtitle">de la librería</div>
         </div>

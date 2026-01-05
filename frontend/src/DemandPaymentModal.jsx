@@ -1,8 +1,8 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext } from "react";
 import "./DemandPaymentModal.scss";
-import UserContext from "./UserContext";
-import { useEffect } from "react";
-import checkForErrors from "./customHooks/checkForErrors";
+// import UserContext from "./UserContext";
+// import { useEffect } from "react";
+// import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
 function DemandPaymentModal({closeModal, paymentInfo}) {
@@ -11,20 +11,19 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   const max_size = 5*1024*1024
   const [errorFactura, setErrorFactura] = useState("");
   const [errorConstancia, setErrorConstancia] = useState("");
-  const [correo, setCorreo] = useState("");
+  // const [correo, setCorreo] = useState("");
   const baseURL = import.meta.env.VITE_API_URL || '';
-  const { user } = useContext(UserContext)
-  const emailRef = useRef();
+  // const { user } = useContext(UserContext)
+  // const emailRef = useRef();
   const [errors, setErrors] = useState([]);
-  const [userExtra, setUserExtra] = useState({});
+  // const [userExtra, setUserExtra] = useState({});
 
-  useEffect(() => {
-    if (user.email) {
-      setCorreo(user.email)
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user.email) {
+  //     setCorreo(user.email)
+  //   }
+  // }, [user])
 
-  console.log("paymentInfo", paymentInfo);
 
   function checkFile(e, type) {
     const file = e.target.files[0];
@@ -67,8 +66,10 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     }
   }
 
+  console.log("paymentInfo", paymentInfo)
+
   async function sendInvoice() {
-    const errors = checkEmailInput();
+    // const errors = checkEmailInput();
     if (errors.length > 0) {
       return;
     } 
@@ -90,7 +91,6 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("month", paymentInfo.month);
       formData.append("monthOriginal", paymentInfo.monthOriginal);
       formData.append("amount", paymentInfo.amount);
-      formData.append("correo", correo);
 
       const response = await fetch(`${baseURL}/api/author/sendInvoice`, {
         method: "POST",
@@ -109,86 +109,60 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     } catch(error) {
       console.log(error)
     }
-
-    // try {
-    //   if (correo !== user.email) {
-    //     updateEmail()
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
   }
 
-  function checkEmailInput() {
-    const errorsList = [];
-    const expectationsEmail = {
-      type: "string",
-      presence: "not empty",
-      validity: "email valid"
-    }
+  // function checkEmailInput() {
+  //   const errorsList = [];
+  //   const expectationsEmail = {
+  //     type: "string",
+  //     presence: "not empty",
+  //     validity: "email valid"
+  //   }
 
-    const errorsEmail = checkForErrors(
-      "El correo", 
-      correo, 
-      expectationsEmail,
-      emailRef,
-      "o");
+  //   const errorsEmail = checkForErrors(
+  //     "El correo", 
+  //     correo, 
+  //     expectationsEmail,
+  //     emailRef,
+  //     "o");
 
-    if (userExtra.email !== correo) {
-      errorsList.push("No hay registro de este correo. Por favor verifique el correo o cambielo en su pagina de perfil.")
-    }
+  //   if (userExtra.email !== correo) {
+  //     errorsList.push("No hay registro de este correo. Por favor verifique el correo o cambielo en su pagina de perfil.")
+  //   }
 
-    if (errorsEmail.length > 0) {
-      errorsList.push(errorsEmail);
-      setErrors(errorsList);
-      return
-    } 
+  //   if (errorsEmail.length > 0) {
+  //     errorsList.push(errorsEmail);
+  //     setErrors(errorsList);
+  //     return
+  //   } 
 
-    setErrors(errorsList)
-    return errorsList;
-  }
+  //   setErrors(errorsList)
+  //   return errorsList;
+  // }
 
-  async function getUserExtra() {
-    try {
-      const response = await fetch(`${baseURL}/api/user/user_extra`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
-      });
-
-      if (response.ok) {
-        const data = await response.json()
-        setUserExtra(data);
-      };
-
-    } catch(error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    getUserExtra()
-  }, [])
-
-  // async function updateEmail() {
+  // async function getUserExtra() {
   //   try {
-  //     const response = await fetch(`${baseURL}/api/user`, {
-  //       method: "PATCH",
+  //     const response = await fetch(`${baseURL}/api/user/user_extra`, {
+  //       method: "GET",
   //       headers: {
   //         "Content-Type": "application/json"
   //       },
-  //       credentials: "include",
-  //       body: JSON.stringify({
-  //         "email": correo
-  //       })
+  //       credentials: "include"
   //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json()
+  //       setUserExtra(data);
+  //     };
 
   //   } catch(error) {
   //     console.log(error)
   //   }
   // }
+
+  // useEffect(() => {
+  //   getUserExtra()
+  // }, [])
 
   return (
     <div className="modal-proper">
@@ -197,9 +171,9 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
           <p>Por favor, usa el uso de CFDI "Gastos Generales"</p>
           <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p>
           <p>-</p>
-          <p>No añade el IVA en la factura.</p>
+          <p>No agregar el IVA en la factura.</p>
           <p>-</p>
-          <p>El pago sera hecho por transferencia y en una sola exhibición.</p>
+          <p>El pago será hecho por transferencia y en una sola exhibición.</p>
         </div>
         <div className="modal-form-upload">
           <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>
@@ -217,14 +191,14 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
             onChange={(e) => checkFile(e, "constancia")}/>
           <div className="modal-form-error">{errorConstancia}</div>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Confirme su correo</label>
           <input className="global-input dempay-title"
             value={correo}
             ref = {emailRef}
             onChange={(e) => setCorreo(e.target.value)}>
           </input>
-        </div>
+        </div> */}
       </div>
       <div className='centering-errors'>
         <ErrorsList errors={errors} setErrors={setErrors}/>

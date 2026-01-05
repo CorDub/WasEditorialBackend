@@ -44,8 +44,6 @@ function BookstoreInventory({
     pageSize: 30
   })
 
-  console.log(data);
-
   const columns = useMemo(() => [
     {
       header: "Acciones",

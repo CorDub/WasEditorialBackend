@@ -83,6 +83,8 @@ function InventoryTotal({
     openModal("adding", book);
   };
 
+  console.log("selectedBookstore", selectedBookstore)
+
   return(
     <div className="total-and-impressions"
       style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
@@ -123,10 +125,12 @@ function InventoryTotal({
           </div>)}
         <div className="inventory-total-details">Inicial: {initialTotal}</div>
         {extraImpressions > 0 && 
-          <div className="inventory-total-details">Nuevas impresiónes: {extraImpressions}</div>}
-        <div className="inventory-total-details">Vendidos: {soldTotal}</div>
+          <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
         {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
-        <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+        <div className="inventory-total-details">Vendidos: {soldTotal}</div>
+        {type === "bookstore" && selectedBookstore === "Plataforma Was" &&
+          <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+        }
         <div className="inventory-total-details">Disponibles: {
           initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
           }</div>

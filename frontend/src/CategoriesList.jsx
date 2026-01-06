@@ -42,8 +42,13 @@ function CategoriesList() {
       }
     },
     {
+      header: "Número",
+      accessorKey: "number"
+    },
+    {
       header: "Tipo",
-      accessorKey: "type"
+      accessorKey: "category_type",
+      Cell: ({ row }) => `${row.original.category_type === "comissions" ? "Comisiones" : "Regalías"}`
     },
     // {
     //   header: "Regalias de venta",
@@ -56,9 +61,19 @@ function CategoriesList() {
     //   Cell: ({ row }) => `${row.original.percentage_management_stores}%`
     // },
     {
+      header: "% regalías para el autor",
+      accessorKey: "percentage_royalties",
+      Cell: ({ row }) => `${row.original.percentage_royalties ? `${row.original.percentage_royalties} %` : "-"}`
+    },
+    {
+      header: "Descuento copia author",
+      accessorKey: "rebate_author",
+      Cell: ({ row }) => `${row.original.rebate_author ? `${row.original.rebate_author} %` : '-'}`
+    },
+    {
       header: "Gestión minima",
       accessorKey: "management_min",
-      Cell: ({ row }) => `$${row.original.management_min}`
+      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
     }
   ], []);
   const table = useMaterialReactTable({
@@ -141,6 +156,7 @@ function CategoriesList() {
 
       if (response.ok === true) {
         const dataCategories = await response.json();
+        console.log("dataCategories", dataCategories)
         setData(dataCategories);
         setLoading(false);
       } else {

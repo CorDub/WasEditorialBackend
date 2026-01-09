@@ -68,8 +68,8 @@ model Book {
   pasta       String?
   isbn        String?      @unique
   users       User[]
-  category    Category?    @relation(fields: [categoryId], references: [id])
-  categoryId  Int?         @default(1)
+  category    Category     @relation(fields: [categoryId], references: [id])
+  categoryId  Int          @default(1)
   inventories Inventory[]
   isDeleted   Boolean      @default(false)
   createdAt   DateTime     @default(now())

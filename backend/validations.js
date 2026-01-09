@@ -278,6 +278,10 @@ export function validateInput(inputName, inputValue) {
   }
 
   for (const check of possibleChecks[inputName]) {
+    if (inputValue === null && check[0] !== "presence") {
+      continue
+    }
+
     switch (check[0]) {
       case "type":
         if (check[1] === "string") {

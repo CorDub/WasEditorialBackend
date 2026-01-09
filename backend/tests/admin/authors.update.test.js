@@ -52,12 +52,10 @@ describe("updating an author with valid parameters", () => {
       data: {
         "first_name": "Yesi Deeba",
         "last_name": "Amanewauthor Ureh",
-        "country": "México",
         "referido": "",
         "email": "yesi.amanewauthor@gmail.com",
         "phone": "5561356226",
         "birthday": "22121988",
-        "categoryId": 1
       }
     })
 
@@ -68,12 +66,10 @@ describe("updating an author with valid parameters", () => {
       body: {
         "firstName": "Updated",
         "lastName": "Author",
-        "country": "México",
         "referido": "",
         "email": "updated.author@gmail.com",
         "phone": "5561356226",
         "birthday": "22121988",
-        "categoryId": "1"
       },
       prisma: prisma
     }

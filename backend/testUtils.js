@@ -10,7 +10,6 @@ export async function createAuthor(
     email = null, 
     role = "author", 
     isDeleted = false,
-    categoryId = 1,
     referido = null,
     phone = null,
     birthday = null,
@@ -35,7 +34,6 @@ export async function createAuthor(
       email: uniqueEmail,
       role: role,
       isDeleted: isDeleted,
-      categoryId: categoryId,
       referido: referido,
       phone: phone,
       birthday: birthday,
@@ -56,18 +54,26 @@ export async function createAuthor(
 export async function createCategory(
   prisma,
   {
-    type = null, 
+    number = 1,
+    category_type = "regalias", 
     management_min = 180, 
+    rebate_author = 5,
+    percentage_royalties = 50,
+    percentage_management_stores = 5,
     isDeleted = false,
     createdAt = new Date()
   } = {}
 ) {
-  const finalType = type === null ? `catType_${crypto.randomUUID()}` : type;
+  // const finalNumber = number === null ? `catType_${crypto.randomUUID()}` : number;
 
   const newCategory = await prisma.category.create({
     data: {
-      type: finalType,
+      number: number,
+      category_type: category_type,
       management_min: management_min,
+      rebate_author: rebate_author,
+      percentage_management_stores: percentage_management_stores,
+      percentage_royalties: percentage_royalties,
       isDeleted: isDeleted,
       createdAt : createdAt
     }
@@ -81,6 +87,7 @@ export async function createBook(
   userList,
   {
     title = null, 
+    categoryId = 1,
     isDeleted = false,
     createdAt = new Date()
   } = {}
@@ -101,6 +108,9 @@ export async function createBook(
       title: uniqueTitle,
       users: {
         connect: validUserList
+      },
+      category: {
+        connect: {"id": categoryId}
       },
       isDeleted: isDeleted,
       createdAt : createdAt

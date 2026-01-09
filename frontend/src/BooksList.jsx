@@ -62,6 +62,10 @@ function BooksList() {
       accessorKey: "isbn"
     },
     {
+      header: "Categoría",
+      accessorKey: "category.number"
+    },
+    {
       header: "Pasta",
       accessorKey: "pasta"
     },

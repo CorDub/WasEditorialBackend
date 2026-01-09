@@ -33,7 +33,6 @@ export async function getAuthors(req, res) {
         id: true,
         first_name: true,
         last_name: true,
-        country: true,
         referido: true,
         email: true,
         phone: true,
@@ -42,14 +41,6 @@ export async function getAuthors(req, res) {
         name_bank_account: true,
         bank: true,
         swift: true,
-        category: {
-          where: {
-            isDeleted: false
-          },
-          select: {
-            type: true
-          }
-        }
       },
       orderBy: [
         {first_name: 'asc'},
@@ -75,12 +66,10 @@ export async function addAuthor(req, res) {
     const inputs = {
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
-      "country": req.body.country,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
       "birthday": req.body.birthday,
-      "category": parseInt(req.body.category)
     }
     validateInputs(inputs);
 
@@ -132,13 +121,11 @@ export async function addAuthor(req, res) {
         data: {
           first_name: inputs.firstName,
           last_name: inputs.lastName,
-          country: inputs.country,
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
           birthday: inputs.birthday,
           password: hashedPassword,
-          categoryId: inputs.category
         },
       });
 
@@ -282,19 +269,17 @@ router.post('/api/author/addMultiples', upload.fields([{name: "archivo", maxCoun
 export async function updateAuthor(req, res) {
   try {
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || prisma;
     const inputs = {
       "id": parseInt(req.params.id),
-      "firstName": req.body.firstName,
-      "lastName": req.body.lastName,
-      "country": req.body.country,
+      "firstName": req.body.first_name,
+      "lastName": req.body.last_name,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
       "birthday": req.body.birthday,
-      "categoryId": parseInt(req.body.categoryId)
     }
     validateInputs(inputs);
+    const prismaClient = req.prisma || prisma;
 
     await prismaClient.$transaction(async (tx) => {
       const updatedAuthor = await tx.user.update({
@@ -302,19 +287,10 @@ export async function updateAuthor(req, res) {
         data: {
           first_name: inputs.firstName,
           last_name: inputs.lastName,
-          country: inputs.country,
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
           birthday: inputs.birthday,
-          category: {
-            connect: {
-              id: inputs.categoryId
-            }
-          }
-        },
-        include: {
-          category: true
         }
       });
 
@@ -485,18 +461,27 @@ router.delete('/category/:id', deleteCategory)
 
 export async function addCategory(req, res) {
   try {
-    const inputs = {
-      "categoryType": req.body.tipo,
-      "gestionMinima": parseFloat(req.body.gestionMinima)
+    let inputs = {
+      number: parseInt(req.body.number),
+      categoryType: req.body.type,
     }
     validateInputs(inputs);
+
+    if (inputs.categoryType === "comissions") {
+      inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
+      inputs.rebate = parseFloat(req.body.rebate);
+    } else if (inputs.categoryType === "regalias") {
+      inputs.regalias = parseFloat(req.body.regalias);
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+    }
+    validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       const existing = await tx.category.findUnique({
         where: {
-          type: inputs.categoryType
+          number: inputs.number
         }
       });
 
@@ -507,35 +492,78 @@ export async function addCategory(req, res) {
           return;
         }
 
-        const exhumedUser = await tx.user.update({
-          where: {id: existing.id},
-          data: {
-            type: inputs.categoryType,
-            // percentage_royalties: parseFloat(regalias),
-            // percentage_management_stores: parseFloat(gestionTiendas),
-            management_min: inputs.gestionMinima,
-            isDeleted: false
-          }
-        });
-        res.status(201).json({name: exhumedUser.type});
+        // const exhumedUser = await tx.user.update({
+        //   where: {id: existing.id},
+        //   data: {
+        //     type: inputs.categoryType,
+        //     // percentage_royalties: parseFloat(regalias),
+        //     // percentage_management_stores: parseFloat(gestionTiendas),
+        //     management_min: inputs.gestionMinima,
+        //     isDeleted: false
+        //   }
+        // });
+        // res.status(201).json({name: exhumedUser.type});
+
+        let exhumedCategory;
+        if (inputs.categoryType === "comissions") {
+          exhumedCategory = await tx.category.update({
+            where: {
+              id: existing.id
+            },
+            data: {
+              number: inputs.number,
+              category_type: inputs.categoryType,
+              percentage_management_stores: inputs.gestionTiendas,
+              rebate_author: inputs.rebate,
+              isDeleted: false
+            }
+          })
+        } else if (inputs.categoryType === "regalias") {
+          exhumedCategory = await tx.category.update({
+            where: {
+              id: existing.id
+            },
+            data: {
+              number: inputs.number,
+              category_type: inputs.categoryType,
+              management_min: inputs.gestionMinima,
+              percentage_royalties: inputs.regalias,
+              isDeleted: false
+            }
+          })
+        }
+        
+        res.status(201).json({name: exhumedCategory.number})
         return;
       }
 
-      const new_category =  await tx.category.create({
-        data: {
-          type: inputs.categoryType,
-          // percentage_royalties: parseFloat(regalias),
-          // percentage_management_stores: parseFloat(gestionTiendas),
-          management_min: inputs.gestionMinima,
-        },
-      });
+      let new_category;
+      if (inputs.categoryType === "comissions") {
+        new_category =  await tx.category.create({
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_management_stores: inputs.gestionTiendas,
+            rebate_author: inputs.rebate_author,
+          },
+        });
+      } else if (inputs.categoryType === "regalias") {
+        new_category =  await tx.category.create({
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_royalties: inputs.regalias,
+            management_min: inputs.gestionMinima,
+          },
+        });
+      }
 
-      res.status(201).json({name: new_category.type});
+      res.status(201).json({name: new_category.number});
     })
   } catch(error) {
-    if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`number`)"))) {
       console.error(error)
-      res.status(500).json({message: "Uniqueness error - tipo"})
+      res.status(500).json({message: "Uniqueness error - number"})
       return;
     }
 
@@ -549,12 +577,21 @@ router.post('/category', addCategory);
 
 export async function updateCategory(req, res) {
   try {
-    const inputs =  {
-      id: parseInt(req.params.id),
-      categoryType: req.body.tipo,
-      gestionMinima: parseFloat(req.body.gestionMinima)
+    let inputs = {
+      id: parseInt(req.body.id),
+      number: parseInt(req.body.number),
+      categoryType: req.body.type,
     }
     validateInputs(inputs);
+
+    if (inputs.categoryType === "comissions") {
+      inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
+      inputs.rebate = parseFloat(req.body.rebate);
+    } else if (inputs.categoryType === "regalias") {
+      inputs.regalias = parseFloat(req.body.regalias);
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+    }
+    validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 
@@ -567,16 +604,41 @@ export async function updateCategory(req, res) {
         throw new Error("this category is deleted")
       }
 
-      const updatedCategory = await tx.category.update({
-        where: {id: inputs.id},
-        data: {
-          type: inputs.categoryType,
-          management_min: inputs.gestionMinima,
-        }
-      });
+      let updatedCategory;
+      if (inputs.categoryType === "comissions") {
+        updatedCategory = await tx.category.update({
+          where: {
+            id: previousCategory.id
+          },
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_management_stores: inputs.gestionTiendas,
+            rebate_author: inputs.rebate,
+            management_min: null,
+            percentage_royalties: null,
+            isDeleted: false
+          }
+        })
+      } else if (inputs.categoryType === "regalias") {
+        updatedCategory = await tx.category.update({
+          where: {
+            id: previousCategory.id
+          },
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            management_min: inputs.gestionMinima,
+            percentage_royalties: inputs.regalias,
+            percentage_management_stores: null,
+            rebate_author: null,
+            isDeleted: false
+          }
+        })
+      }
     })
 
-    res.status(200)
+    res.status(200).json("Successfully updated the category")
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
       res.status(500).json({message: "Uniqueness error - tipo"})
@@ -620,6 +682,11 @@ export async function getBooks(req, res) {
             },
             bookstoreId: true,
             price: true
+          }
+        },
+        category: {
+          select: {
+            number: true
           }
         }
       },
@@ -692,7 +759,8 @@ export async function addBook(req, res) {
       "pasta": req.body.pasta,
       "price": parseFloat(req.body.price),
       "isbn": req.body.isbn,
-      "quantity": parseInt(req.body.quantity)
+      "quantity": parseInt(req.body.quantity),
+      "categoryId": parseInt(req.body.category)
     }
     validateInputs(inputs)
 
@@ -718,6 +786,9 @@ export async function addBook(req, res) {
           users: {
             connect: authorsIds,
           },
+          category: {
+            connect: {"id": inputs.categoryId}
+          }
         }
       });
 
@@ -962,6 +1033,7 @@ export async function updateBook(req, res) {
       "title": req.body.title,
       "pasta": req.body.pasta,
       "isbn": req.body.isbn,
+      "categoryId": parseInt(req.body.category)
     }
     validateInputs(inputs);
 
@@ -1002,6 +1074,9 @@ export async function updateBook(req, res) {
           isbn: inputs.isbn,
           users: {
             set: authorsIds,
+          },
+          category: {
+            connect: {"id": inputs.categoryId}
           }
         }
       });

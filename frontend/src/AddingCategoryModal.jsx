@@ -1,16 +1,45 @@
 import { useState } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import AddingCategoryError from './AddingCategoryError';
+import { useEffect } from 'react';
 
 function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
-  const [tipo, setTipo] = useState('');
-  // const [regalias, setRegalias] = useState('');
-  // const [gestionTiendas, setGestionTiendas] = useState('');
-  const [gestionMinima, setGestionMinima] = useState('');
+  // const [tipo, setTipo] = useState('');
+  const [regalias, setRegalias] = useState('');
+  const [gestionTiendas, setGestionTiendas] = useState(null);
+  const [gestionMinima, setGestionMinima] = useState(null);
   const [errorList, setErrorList] = useState([]);
+  const [type, setType] = useState(null);
+  const [number, setNumber] = useState(null);
+  const [rebate, setRebate] = useState(null);
+
+  async function fetchCategories() {
+    try {
+      const response = await fetch(`${baseURL}/api/admin/categories`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: "include"
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data);
+        setNumber(data.length + 1);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   async function sendToServer() {
     try {
@@ -21,26 +50,27 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
         },
         credentials: "include",
         body: JSON.stringify({
-          tipo: tipo,
+          number: number,
+          type: type,
           gestionMinima: gestionMinima,
-          // regalias: regalias,
-          // gestionTiendas: gestionTiendas,
-          
+          regalias: regalias,
+          gestionTiendas: gestionTiendas,
+          rebate: rebate
         }),
       });
 
       if (response.ok === false) {
         const error = await response.json();
-        if (error.message === "Uniqueness error - tipo") {
+        if (error.message === "Uniqueness error - number") {
           checkForErrors(13);
           return;
         }
 
-        const alertMessage = `No se pudó crear una nueva categoría ${tipo}.`;
+        const alertMessage = `No se pudó crear una nueva categoría número ${number}.`;
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
 
-        const alertMessage = `Una nueva categoria ${tipo} ha sido creado.`;
+        const alertMessage = `Una nueva categoria número ${number} ha sido creada.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -57,11 +87,18 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
 
   function checkForErrors(serverError) {
     let newErrorList = [];
-    const inputTipo = document.getElementById("adding-category-type");
-    // const inputRegalias = document.getElementById("adding-category-regalias");
-    // const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
+    // const inputNumber = document.getElementById("adding-category-number");
+    const inputType = document.getElementById("adding-category-type");
+    const inputRegalias = document.getElementById("adding-category-regalias");
+    const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
     const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
-    let inputList = [inputTipo, inputGestionMinima];
+    const inputRebate = document.getElementById("adding-category-descuento");
+    let inputList = [];
+    if (type === "regalias") {
+      inputList = [inputType, inputRegalias, inputGestionMinima]
+    } else if (type === "comissions") {
+      inputList = [inputType, inputGestionTiendas, inputRebate]
+    }
 
     inputList.forEach((input) => {
       if (input.classList.contains("error-inputs")) {
@@ -69,60 +106,74 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
       }
     });
 
-    if (tipo === "") {
+    if (type === false) {
       newErrorList.push(11);
-      addErrorClass(inputTipo);
-    } else {
-      if (tipo.length > 30) {
-        newErrorList.push(12);
-        addErrorClass(inputTipo)
-      }
-    };
+      addErrorClass(inputType);
+    } 
 
     if (serverError === 13) {
       newErrorList.push(13);
-      addErrorClass(inputTipo);
+      addErrorClass(inputType);
     }
 
-    // if (isNaN(parseFloat(regalias))) {
-    //   newErrorList.push(21);
-    //   addErrorClass(inputRegalias);
-    // };
+    if (type === "regalias") {
+      if (isNaN(parseFloat(regalias))) {
+        newErrorList.push(21);
+        addErrorClass(inputRegalias);
+      };
 
-    // if (regalias === "") {
-    //   newErrorList.push(22);
-    //   addErrorClass(inputRegalias);
-    // };
+      if (regalias === "") {
+        newErrorList.push(22);
+        addErrorClass(inputRegalias);
+      };
 
-    // if (parseFloat(regalias) > 100) {
-    //   newErrorList.push(23);
-    //   addErrorClass(inputRegalias);
-    // }
+      if (parseFloat(regalias) > 100) {
+        newErrorList.push(23);
+        addErrorClass(inputRegalias);
+      }
 
-    // if (isNaN(parseFloat(gestionTiendas))) {
-    //   newErrorList.push(31);
-    //   addErrorClass(inputGestionTiendas);
-    // };
+      if (isNaN(parseFloat(gestionMinima))) {
+        newErrorList.push(41);
+        addErrorClass(inputGestionMinima);
+      };
 
-    // if (gestionTiendas === "") {
-    //   newErrorList.push(32);
-    //   addErrorClass(inputGestionTiendas);
-    // };
+      if (gestionMinima === "") {
+        newErrorList.push(42);
+        addErrorClass(inputGestionMinima);
+      };
+    }
 
-    // if (parseFloat(gestionTiendas) > 100) {
-    //   newErrorList.push(33);
-    //   addErrorClass(inputGestionTiendas);
-    // }
+    if (type === "comissions") {
+      if (isNaN(parseFloat(gestionTiendas))) {
+        newErrorList.push(31);
+        addErrorClass(inputGestionTiendas);
+      };
 
-    if (isNaN(parseFloat(gestionMinima))) {
-      newErrorList.push(41);
-      addErrorClass(inputGestionMinima);
-    };
+      if (gestionTiendas === "") {
+        newErrorList.push(32);
+        addErrorClass(inputGestionTiendas);
+      };
 
-    if (gestionMinima === "") {
-      newErrorList.push(42);
-      addErrorClass(inputGestionMinima);
-    };
+      if (parseFloat(gestionTiendas) > 100) {
+        newErrorList.push(33);
+        addErrorClass(inputGestionTiendas);
+      }
+
+      if (!rebate) {
+        newErrorList.push(51);
+        addErrorClass(inputRebate);
+      }
+
+      if (isNaN(parseFloat(rebate))) {
+        newErrorList.push(52);
+        addErrorClass(inputRebate);
+      }
+
+      if (rebate < 0 || rebate > 100) {
+        newErrorList.push(53);
+        addErrorClass(inputRebate)
+      }
+    }
 
     setErrorList(newErrorList);
     return newErrorList;
@@ -143,25 +194,41 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
       <div className="modal-proper">
       <div className="form-title">
         <p>Nueva categoría</p>
+        <p className="form-subtitle">Número {number}</p>
       </div>
       <div className="campos-obligatorios">
         <p>*Campos obligatorios</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <input type='text' placeholder="Tipo*"
-          className="global-input" id="adding-category-type"
-          onChange={(e) => setTipo(e.target.value)}></input>
-        {/* <input type='text' placeholder="% Regalias de venta*"
-          className="global-input" id="adding-category-regalias"
-          onChange={(e) => setRegalias(e.target.value)}></input>
-        <input type='text' placeholder="% Gestion tiendas*"
-          className="global-input" id="adding-category-gestionTiendas"
-          onChange={(e) => setGestionTiendas(e.target.value)}></input> */}
-        <input type='text' placeholder="Gestion minima*"
-          className="global-input" id="adding-category-gestionMinima"
-          onChange={(e) => setGestionMinima(e.target.value)}></input>
+        <select className="select-global"
+          id="adding-category-type"
+          onChange={(e) => setType(e.target.value)}>
+          <option value="null">Tipo*</option>
+          <option value="regalias">Regalías</option>
+          <option value="comissions">Comisiones</option>
+        </select>
+        {type === "comissions" && (
+          <>
+            <input type='text' placeholder="% Comisión extra de librerías*"
+              className="global-input" id="adding-category-gestionTiendas"
+              onChange={(e) => setGestionTiendas(e.target.value)}></input>
+            <input type='text' placeholder="% Descuento copia de autor*"
+              className="global-input" id="adding-category-descuento"
+              onChange={(e) => setRebate(e.target.value)}></input>
+          </>
+        )}
+        {type === "regalias" && (
+          <>
+            <input type='text' placeholder="Porcentaje para el autor*"
+              className="global-input" id="adding-category-regalias"
+              onChange={(e) => setRegalias(e.target.value)}></input>
+            <input type='text' placeholder="Monto minimo de gestión en WAS*"
+              className="global-input" id="adding-category-gestionMinima"
+              onChange={(e) => setGestionMinima(e.target.value)}></input>
+          </>
+        )}
         <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/>
-        <div className="form-actions">
+        <div className="form-actions-cat">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button type='submit' className="blue-button">Añadir</button>

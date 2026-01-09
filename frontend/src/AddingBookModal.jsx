@@ -21,6 +21,8 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errorList, setErrorList] = useState([]);
+  const [category, setCategory] = useState(null);
+  const [existingCategories, setExistingCategories] = useState([]);
 
   async function fetchUsers() {
     try {
@@ -46,6 +48,29 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     fetchUsers();
   }, [])
 
+  useEffect(() => {
+    async function fetchExistingCategories() {
+      try {
+        const response = await fetch(`${baseURL}/api/admin/categories`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setExistingCategories(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchExistingCategories();
+  }, [])
+
   async function sendToServer(e) {
     e.preventDefault();
 
@@ -62,6 +87,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           price: price,
           isbn: isbn,
           quantity: parseInt(quantity),
+          category: category,
           authors: authors,
         }),
       });
@@ -118,6 +144,10 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       "Autor": {
         "function": authorsChange,
         "element": document.getElementById(`author-select-${input_index}`)
+      },
+      "Category": {
+        "function": setCategory,
+        "element": document.getElementById("category-select")
       }
     }
 
@@ -178,13 +208,14 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     const inputPrice = document.getElementById('adding-book-price');
     const inputIsbn = document.getElementById('adding-book-isbn');
     const inputQuantity = document.getElementById('adding-book-quantity');
+    const inputCategory = document.getElementById('category-select');
     const inputAuthors = [];
     authors.map((author, index) => {
       inputAuthors.push(document.getElementById(`author-select-${index}`));
     });
 
     const inputsList = [inputTitle, inputPasta, inputPrice,
-      inputIsbn, inputQuantity, inputAuthors];
+      inputIsbn, inputQuantity, inputAuthors, inputCategory];
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
@@ -254,6 +285,11 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       addErrorClass(inputQuantity);
     };
 
+    if (isNaN(parseInt(category))) {
+      newErrorList.push(71);
+      addErrorClass(inputCategory);
+    }
+
     authors.map((author, index) => {
       if (author === null) {
         newErrorList.push(51);
@@ -314,6 +350,14 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         <input type='text' placeholder="Precio*"
           className="global-input" id="adding-book-price"
           onChange={(e) => setPrice(e.target.value)}></input>
+        <select onChange={(e) => dropDownChange(e, "Category")}
+          className="select-global"
+          id="category-select">
+          <option value="null">Selecciona categoría</option>
+          {existingCategories && existingCategories.map((category, index) => (
+            <option value={category.number} key={index}>{category.number}</option>
+          )) }
+        </select>
         <input type='text' placeholder="ISBN"
           className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>

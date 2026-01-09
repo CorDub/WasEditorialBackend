@@ -30,7 +30,6 @@ async function main() {
 
     const cat1 = await prisma.category.create({
       data: {
-        type: "1",
         number: 1,
         category_type: "comissions",
         percentage_management_stores: 5,
@@ -41,11 +40,9 @@ async function main() {
 
     const cat2 = await prisma.category.create({
       data: {
-        type: "2",
         number: 2,
         category_type: "regalias",
         percentage_royalties: 20,
-        percentage_management_stores: 55,
         management_min: 150.00,
         createdAt: twelveMonthsAgo
       }
@@ -53,7 +50,6 @@ async function main() {
 
     const cat3 = await prisma.category.create({
       data: {
-        type: "3",
         number: 3,
         category_type: "comissions",
         percentage_management_stores: 5,
@@ -69,12 +65,9 @@ async function main() {
         data: {
           first_name: author.first_name,
           last_name: author.last_name,
-          country: "México",
-          categoryId: 1,
           createdAt: twelveMonthsAgo
         }
       })
-      console.log(createdAuthor.first_name);
     };
 
     await Promise.all(authors.map(author => addAuthorFromDB(author)));
@@ -97,6 +90,7 @@ async function main() {
             users: {
               connect: authorsIndexes,
             },
+            categoryId: 1,
             createdAt: twelveMonthsAgo
           }
         })
@@ -141,7 +135,6 @@ async function main() {
       data: {
         first_name: "Administrator",
         last_name: "McLibro",
-        country: "México",
         email: "Imake@books.com",
         password: await bcrypt.hash("bookboi", 10),
         role: Role.superadmin,
@@ -153,7 +146,6 @@ async function main() {
       data: {
         first_name: "Subadmin",
         last_name: "Pedro",
-        country: "México",
         email: "yessir@gmail.com",
         password: await bcrypt.hash("bookboi2", 10),
         role: Role.admin,
@@ -165,7 +157,6 @@ async function main() {
       data: {
         first_name: "Juan",
         last_name: "AdminWasEditorial",
-        country: "México",
         email: "JuanAdmin@waseditorial.com",
         password: await bcrypt.hash("PruebaAdmin1", 10),
         role: Role.superadmin,
@@ -177,7 +168,6 @@ async function main() {
       data: {
         first_name: "Rebeca",
         last_name: "AdminWasEditorial",
-        country: "México",
         email: "RebecaAdmin@waseditorial.com",
         password: await bcrypt.hash("PruebaAdmin2", 10),
         role: Role.superadmin,
@@ -189,7 +179,6 @@ async function main() {
       data: {
         first_name: "Juan",
         last_name: "AutorWasEditorial",
-        country: "México",
         email: "JuanAutor@waseditorial.com",
         categoryId: 1,
         password: await bcrypt.hash("PruebaAutor1", 10),
@@ -202,7 +191,6 @@ async function main() {
       data: {
         first_name: "Rebeca",
         last_name: "AutorWasEditorial",
-        country: "México",
         email: "RebecaAutor@waseditorial.com",
         categoryId: 1,
         password: await bcrypt.hash("PruebaAutor2", 10),
@@ -215,7 +203,6 @@ async function main() {
       data: {
         first_name: "Autorino",
         last_name: "Adorno",
-        country: "México",
         email: "adorno@gmail.com",
         categoryId: 1,
         password: await bcrypt.hash("bookboi3", 10),
@@ -228,7 +215,6 @@ async function main() {
       data: {
         first_name: "Corentin",
         last_name: "Dubois",
-        country: "Francia",
         email: "corentindubois22@gmail.com",
         categoryId: 1,
         password: await bcrypt.hash("bookboi4", 10),
@@ -362,7 +348,6 @@ async function main() {
             where: {id: inventory.id},
             data: {
               current: remainingQuantity - randQuantToMove
-              // initial: inventory.initial - randQuantToMove
             }
           });
 
@@ -449,10 +434,6 @@ async function main() {
         saleDate.setMonth(saleDate.getMonth() - monthsAgo);
 
         const saleForMonth = getForMonth(saleDate);
-        // const saleForMonthDate = new Date(saleDate);
-        // saleForMonthDate.setDate(1);
-        // saleForMonthDate.setHours(0, 0, 0 , 0);
-        // saleForMonthDate.toISOString();
 
         const book = await prisma.book.findUnique({
           where: {
@@ -470,22 +451,6 @@ async function main() {
         const authorIds = book.users.map(user => user.id)
         let paymentsIds = [];
         for (const author of authorIds) {
-          const userWithCategory = await prisma.user.findUnique({
-            where: {
-              id: author
-            },
-            include: {
-              category: true
-            }
-          })
-
-          // const saleAmount = calculateAuthorRevenue(
-          //   inventory.bookstore.comissions,
-          //   inventory.price,
-          //   userWithCategory.category.management_min,
-          //   inventory.bookstore.deal_percentage,
-          //   randQuantToSell
-          // )
 
           const existingPayment = await prisma.payment.findUnique({
             where: {
@@ -501,24 +466,13 @@ async function main() {
               data: {
                 userId: author,
                 forMonth: saleForMonth,
-                // forMonthDate: saleForMonthDate,
                 createdAt: saleDate,
-                // amount: saleAmount
               }
             });
 
             paymentsIds.push({"id": createdPayment.id})
             continue;
           }
-
-          // const updatedPayment = await prisma.payment.update({
-          //   where: {
-          //     id: existingPayment.id
-          //   },
-          //   data: {
-          //     amount: existingPayment.amount + saleAmount
-          //   }
-          // })
 
           paymentsIds.push({"id": existingPayment.id})
         }
@@ -574,9 +528,6 @@ async function main() {
         dateCut.setMonth(dateCut.getMonth()-2);
         
         const saleForMonth = getForMonth(kindleSaleDate);
-        // const saleForMonthDate = new Date(kindleSaleDate);
-        // saleForMonthDate.setDate(1);
-        // saleForMonthDate.setHours(0, 0, 0, 0);
 
         const authorIds = book.users.map(user => user.id)
         let paymentsIds = [];
@@ -595,7 +546,6 @@ async function main() {
               data: {
                 userId: author,
                 forMonth: saleForMonth,
-                // forMonthDate: saleForMonthDate.toISOString(),
                 createdAt: kindleSaleDate,
               }
             });
@@ -617,255 +567,12 @@ async function main() {
             quantityPod: randQuantPod,
             dateCut: dateCut,
             datePay: kindleSaleDate, 
-            regalias: ((randQuantToSell + randQuantPod) * 399.99),
+            regalias: ((randQuantToSell + randQuantPod) * 299.99),
             createdAt: kindleSaleDate,
           }
         })
       };
     }
-
-    /// Create more fake sales specifically for the test author in the last month
-    // const now = new Date();
-    // const lastThirtyDays = new Date(now.setDate(now.getDate()-30));
-    // console.log("LAST THRIRTY DAYS", lastThirtyDays);
-
-    // const testAuthor = await prisma.user.findUnique({
-    //   where: {
-    //     id: 148
-    //   },
-    //   include: {
-    //     category: true
-    //   }
-    // })
-
-    // const testAuthorInventories = await prisma.inventory.findMany({
-    //   where: {
-    //     book: {
-    //       users: {
-    //         some: {
-    //           id: 148
-    //         }
-    //       }
-    //     }
-    //   }
-    // });
-
-    // console.log(" TEST AUTHOR INVENTORIES LENGTH", testAuthorInventories.length);
-
-    // let counter = 0;
-    // for (const inventory of testAuthorInventories) {
-    //   let current = inventory.current;
-
-    //   for (let i = 0; i < 5; i++) {
-    //     const randQuant = Math.floor(Math.random() * 20);
-    //     const saleDate = new Date(lastThirtyDays);
-
-    //     const randDate = Math.floor(Math.random() * 30)
-    //     saleDate.setDate(saleDate.getDate() + randDate);
-    //     const saleForMonth = getForMonth(saleDate)
-
-    //     if (inventory === testAuthorInventories[0]) {
-    //       console.log("SALE DATE", saleDate);
-    //       console.log("CURRENT", current);
-    //       console.log("INVENTORY ID", inventory.id);
-    //     };
-
-    //     if (randQuant > 0 && current > randQuant) {
-    //       const saleAmount = calculateAuthorRevenue(
-    //         inventory.comissions,
-    //         inventory.price,
-    //         testAuthor.category.management_min,
-    //         testAuthor.category.percentage_management_stores,
-    //         randQuant
-    //       )
-
-    //       const existingPayment = await prisma.payment.findUnique({
-    //         where: {
-    //           userId_forMonth: {
-    //             userId: 152,
-    //             forMonth: saleForMonth
-    //           },
-    //         }
-    //       });
-
-    //       let createdSale;
-    //       if (existingPayment) {
-    //         createdSale = await prisma.sale.create({
-    //           data: {
-    //             inventoryId: inventory.id,
-    //             paymentId: existingPayment.id,
-    //             quantity: randQuant,
-    //             createdAt: saleDate,
-    //           }
-    //         })
-
-    //         const updatedPayment = await prisma.payment.update({
-    //           where: {
-    //             id: existingPayment.id
-    //           },
-    //           data: {
-    //             amount: existingPayment.amount + saleAmount
-    //           }
-    //         })
-    //       } else {
-    //         const createdPayment = await prisma.payment.create({
-    //           data: {
-    //             userId: testAuthor.id,
-    //             amount: saleAmount,
-    //             forMonth: saleForMonth,
-    //             createdAt: saleDate
-    //           }
-    //         });
-
-    //         createdSale = await prisma.sale.create({
-    //           data: {
-    //             inventoryId: inventory.id,
-    //             paymentId: createdPayment.id,
-    //             quantity: randQuant,
-    //             createdAt: saleDate,
-    //           }
-    //         })
-    //       }
-          
-    //       counter += 1;
-    //       current -= randQuant;
-
-    //       if (createdSale) {
-    //         const updtInv = await prisma.inventory.update({
-    //           where: {
-    //             id: inventory.id
-    //           },
-    //           data: {
-    //             current: current
-    //           }
-    //         })
-    //         if (inventory === testAuthorInventories[0]) {
-    //           console.log('UPDT INV CURRENT', updtInv.current);
-    //           console.log("------------------------------");
-    //         };
-    //       }
-    //     }
-    //   }
-    // }
-    // console.log(`${counter} SALES CREATED IN THE LAST THIRTY DAYS`);
-
-
-
-
-    
-    // Create fake payments
-
-    // let monthlySalesByAuthor = [];
-
-    // /// First get every author
-    // const allAuthors =  await prisma.user.findMany({
-    //   where: {
-    //     isDeleted: false,
-    //     role: Role.author
-    //   }
-    // })
-
-    // ///Then get all sales for each author
-    // for (const author of allAuthors) {
-    //   let salesByMonths = {};
-    //   const data = await prisma.sale.findMany({
-    //     where: {
-    //       inventory: {
-    //         book: {
-    //           users: {
-    //             some: {
-    //               id: author.id
-    //             }
-    //           }
-    //         }
-    //       },
-    //       isDeleted: false,
-    //     },
-    //     select: {
-    //       id: true,
-    //       quantity: true,
-    //       createdAt: true,
-    //       inventory: {
-    //         select: {
-    //           price: true,
-    //           bookId: true,
-    //           bookstore: {
-    //             select: {
-    //               comissions: true
-    //             }
-    //           }
-    //         }
-    //       }
-    //     },
-    //     orderBy: {
-    //       createdAt: 'desc'
-    //     }
-    //   });
-
-    //   const userCategory = await prisma.category.findUnique({
-    //     where: {
-    //       id: author.categoryId
-    //     }
-    //   });
-
-    //   /// Then group them by month
-    //   for (const sale of data) {
-    //     const numberOfAuthors = await prisma.book.findUnique({
-    //       where: {
-    //         id: sale.inventory.bookId
-    //       },
-    //       select: {
-    //         _count: {
-    //           select: {users: true}
-    //         }
-    //       }
-    //     });
-
-    //     if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
-    //       salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
-    //         sale.inventory.bookstore.comissions 
-    //           ? (sale.inventory.price 
-    //             - userCategory.management_min) 
-    //             * sale.quantity 
-    //             / numberOfAuthors._count.users
-    //           : sale.inventory.price
-    //             * sale.quantity
-    //             * (userCategory.percentage_management_stores / 100)
-    //             * (userCategory.percentage_royalties / 100)
-    //             / numberOfAuthors._count.users
-    //       )
-    //     } else {
-    //       salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
-    //         sale.inventory.bookstore.comissions 
-    //           ? (sale.inventory.price 
-    //             - userCategory.management_min)
-    //             * sale.quantity 
-    //             / numberOfAuthors._count.users
-    //           : sale.inventory.price
-    //             * sale.quantity
-    //             * (userCategory.percentage_management_stores / 100)
-    //             * (userCategory.percentage_royalties / 100)
-    //             / numberOfAuthors._count.users
-    //       )
-    //     }
-    //   }
-
-    //   // Make that a list
-    //   const salesByMonthsList = Object.entries(salesByMonths);
-
-    //   // Create a new payment for each month
-    //   for (const month of salesByMonthsList) {
-    //     const newPayment = await prisma.payment.create({
-    //       data: {
-    //         userId: author.id,
-    //         amount: month[1],
-    //         forMonth: month[0],
-    //         createdAt: new Date(month[0]+'-25')
-    //       }
-    //     })
-    //   }
-    // }
-
   } catch (error) {
     console.error("Error somewhere", error);
   }

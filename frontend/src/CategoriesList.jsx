@@ -50,31 +50,26 @@ function CategoriesList() {
       accessorKey: "category_type",
       Cell: ({ row }) => `${row.original.category_type === "comissions" ? "Comisiones" : "Regalías"}`
     },
-    // {
-    //   header: "Regalias de venta",
-    //   accessorKey: "percentage_royalties",
-    //   Cell: ({ row }) => `${row.original.percentage_royalties}%`
-    // },
-    // {
-    //   header: "Gestión tiendas",
-    //   accessorKey: "percentage_management_stores",
-    //   Cell: ({ row }) => `${row.original.percentage_management_stores}%`
-    // },
     {
-      header: "% regalías para el autor",
+      header: "Porcentaje para el autor",
       accessorKey: "percentage_royalties",
       Cell: ({ row }) => `${row.original.percentage_royalties ? `${row.original.percentage_royalties} %` : "-"}`
     },
     {
-      header: "Descuento copia author",
+      header: "Monto mínimo de gestión en WAS",
+      accessorKey: "management_min",
+      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
+    },
+    {
+      header: "Descuento copia de autor",
       accessorKey: "rebate_author",
       Cell: ({ row }) => `${row.original.rebate_author ? `${row.original.rebate_author} %` : '-'}`
     },
     {
-      header: "Gestión minima",
-      accessorKey: "management_min",
-      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
-    }
+      header: "Comisión extra de librerías",
+      accessorKey: "percentage_management_stores",
+      Cell: ({ row }) => `${row.original.percentage_management_stores ? `${row.original.percentage_management_stores} %` : '-'}`
+    },
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -156,7 +151,6 @@ function CategoriesList() {
 
       if (response.ok === true) {
         const dataCategories = await response.json();
-        console.log("dataCategories", dataCategories)
         setData(dataCategories);
         setLoading(false);
       } else {

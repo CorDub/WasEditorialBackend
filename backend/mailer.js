@@ -1,21 +1,39 @@
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 import { setResetPasswordCode } from './passwordUtils.js';
 import { prisma } from "./prisma/client.js"
+import { Resend } from "resend";
 
-var transport = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: "e8e5d7d660317a",
-    pass: "8e6e2b6f11ca69"
+const resend = new Resend(process.env.RESEND_KEY);
+
+// var transport = nodemailer.createTransport({
+//   host: "sandbox.smtp.mailtrap.io",
+//   port: 2525,
+//   auth: {
+//     user: "e8e5d7d660317a",
+//     pass: "8e6e2b6f11ca69"
+//   }
+// });
+
+async function sendEmail({ to, subject, text, attachments }) {
+  if (process.env.NODE_ENV !== "production") {
+    return ("test environment - no email sent")
   }
-});
+
+  return;
+
+  return resend.emails.send({
+    from: '"WAS Editorial" <no-reply@waseditorial.com>',
+    to: to,
+    subject,
+    text,
+    attachments,
+  });
+}
 
 export async function sendSetPasswordMail(email, name, password) {
   try {
     const user = await prisma.user.findUnique({where: {email: email}});
-    const info = await transport.sendMail({
-      from: '"Was TEST" <no-reply@wastest.com>',
+    await sendEmail({
       to: email,
       subject: 'Codigo de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
@@ -26,7 +44,6 @@ export async function sendSetPasswordMail(email, name, password) {
 
       No comparte esta contraseña con otras personas. Was Editorial y sus empleadores nunca se la pidieran.`
     });
-    console.log("Email sent:", info.messageId);
   } catch(error) {
     console.log("Error while trying to send the password email:", error);
   }
@@ -36,8 +53,7 @@ export async function sendResetPasswordMail(to, name) {
   try {
     const codigo = Math.floor(Math.random()* 900000 + 100000);
     const user = await prisma.user.findUnique({where: {email: to}});
-    const info = await transport.sendMail({
-      from: '"Was TEST" <no-reply@wastest.com>',
+    await sendEmail({
       to,
       subject: 'Codigo de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
@@ -47,7 +63,6 @@ export async function sendResetPasswordMail(to, name) {
       No comparte este codigo con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.
       Ese codigo estará valido 24 horas.`
     });
-    console.log("Email sent:", info.messageId);
 
     setResetPasswordCode(user.id, codigo);
 
@@ -64,9 +79,8 @@ export async function sendEmailWithInvoice(name, month, amount, factura, constan
       "image/png": ".png"
     }
 
-    const info = await transport.sendMail({
-      from: '"Was TEST" <no-reply@wastest.com>',
-      to: "example@test.was.com",
+    await sendEmail({
+      to: "corentindubois22@gmail.com",
       subject: `Nueva factura de ${name} para el mes de ${month}`,
       text: `Hola, \n
       Eso es un correo automatico mandado por el sitio web de Was Editorial.
@@ -76,17 +90,15 @@ export async function sendEmailWithInvoice(name, month, amount, factura, constan
         {
           filename: `Factura ${name} - ${month} - ${amount}${mimeToExtension[factura.mimetype]}`,
           content: factura.buffer,
-          contentType: factura.mimetype
+          // contentType: factura.mimetype
         },
         {
           filename: `Constancia ${name}${mimeToExtension[constancia.mimetype]}`,
           content: constancia.buffer,
-          contentType: factura.mimetype
+          // contentType: factura.mimetype
         }
       ]
     })
-
-    return info
   } catch(error) {
     console.error('Error sending the invoice email:', error);
   }

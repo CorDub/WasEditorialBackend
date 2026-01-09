@@ -231,7 +231,6 @@ async function main() {
         deal_percentage: 30,
         createdAt: twelveMonthsAgo,
         color: "#4E5981",
-        comissions: true
       }
     })
 
@@ -256,7 +255,6 @@ async function main() {
         contact_email: "jlwotton17@mercadolibre.co.mx",
         createdAt: twelveMonthsAgo,
         color: "#ffe600",
-        comissions: true
       }
     })
 

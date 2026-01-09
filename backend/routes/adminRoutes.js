@@ -271,8 +271,8 @@ export async function updateAuthor(req, res) {
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
     const inputs = {
       "id": parseInt(req.params.id),
-      "firstName": req.body.first_name,
-      "lastName": req.body.last_name,
+      "firstName": req.body.firstName,
+      "lastName": req.body.lastName,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
@@ -3799,11 +3799,6 @@ export async function softDeleteSalesOnCascade(IdsList, tx) {
           select: {
             bookId: true,
             price: true,
-            bookstore: {
-              select: {
-                comissions: true
-              }
-            }
           }
         }
       }

@@ -366,25 +366,25 @@ router.get('/categories', getCategories);
 
 
 
-export async function getCategoryTypes(req, res) {
-  try {
-    const prismaClient = req.prisma || prisma
-    const categories_type = await prismaClient.category.findMany({
-      where: {
-        isDeleted: false
-      },
-      select: {
-        id: true,
-        type: true
-      }
-    });
-    res.status(200).json(categories_type);
-  } catch(error) {
-    console.error("Error in the get categories-type route:", error);
-    res.status(500).json({error: "A server error occurred while fetching categories-type"});
-  }
-}
-router.get('/categories-type', getCategoryTypes);
+// export async function getCategoryTypes(req, res) {
+//   try {
+//     const prismaClient = req.prisma || prisma
+//     const categories_type = await prismaClient.category.findMany({
+//       where: {
+//         isDeleted: false
+//       },
+//       select: {
+//         id: true,
+//         type: true
+//       }
+//     });
+//     res.status(200).json(categories_type);
+//   } catch(error) {
+//     console.error("Error in the get categories-type route:", error);
+//     res.status(500).json({error: "A server error occurred while fetching categories-type"});
+//   }
+// }
+// router.get('/categories-type', getCategoryTypes);
 
 
 
@@ -1180,7 +1180,6 @@ export async function addBookstore(req, res) {
     const inputs = {
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
-      "comissions": req.body.comissions === "true" ? true : false,
       "contactName": req.body.contactName,
       "phone": req.body.contactPhone,
       "email": req.body.contactEmail
@@ -1193,7 +1192,6 @@ export async function addBookstore(req, res) {
       data: {
         name: inputs.name,
         deal_percentage: inputs.dealPercentage,
-        comissions: inputs.comissions,
         contact_name: inputs.contactName,
         contact_phone: inputs.phone,
         contact_email: inputs.email,
@@ -1216,7 +1214,6 @@ export async function updateBookstore(req, res) {
       "id": parseInt(req.params.id),
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
-      "comissions": req.body.comissions === "true" ? true : false,
       "contactName": req.body.contactName,
       "phone" : req.body.contactPhone,
       "email": req.body.contactEmail
@@ -1233,7 +1230,6 @@ export async function updateBookstore(req, res) {
         where: {id: inputs.id},
         data: {
           name: inputs.name,
-          comissions: inputs.comissions,
           deal_percentage: inputs.dealPercentage,
           contact_name: inputs.contactName,
           contact_phone: inputs.phone,

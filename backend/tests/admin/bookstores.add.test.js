@@ -48,7 +48,6 @@ describe("adding a valid bookstore", () => {
       body: {
         "name": "New Bookstore",
         "dealPercentage": "50",
-        "comissions": "true",
         "contactName": "Bookstore Owner",
         "contactPhone": "5544809021",
         "contactEmail": "bookstore.owner@gmail.com",
@@ -78,7 +77,6 @@ describe("adding a valid bookstore", () => {
   it("should have correct data", async() => {
     expect(addedBookstore.name).toBe("New Bookstore");
     expect(addedBookstore.deal_percentage).toBe(50);
-    expect(addedBookstore.comissions).toBe(true);
     expect(addedBookstore.contact_name).toBe("Bookstore Owner");
     expect(addedBookstore.contact_phone).toBe("5544809021");
     expect(addedBookstore.contact_email).toBe("bookstore.owner@gmail.com");

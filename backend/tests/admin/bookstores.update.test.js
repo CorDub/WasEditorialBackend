@@ -54,7 +54,6 @@ describe("updating a bookstore with valid parameters", () => {
       body: {
         "name": "Updated Bookstore",
         "dealPercentage": "50",
-        "comissions": "false",
         "contactName": "Bookstore Owner Updated",
         "contactPhone": "5544809021",
         "contactEmail": "bookstore.owner@gmail.com",
@@ -78,7 +77,6 @@ describe("updating a bookstore with valid parameters", () => {
     expect(updatedBookstore).toBeTruthy();
     expect(updatedBookstore.name).toBe("Updated Bookstore");
     expect(updatedBookstore.deal_percentage).toBe(50);
-    expect(updatedBookstore.comissions).toBe(false);
     expect(updatedBookstore.contact_name).toBe("Bookstore Owner Updated");
     expect(updatedBookstore.contact_phone).toBe("5544809021");
     expect(updatedBookstore.contact_email).toBe("bookstore.owner@gmail.com");
@@ -101,7 +99,6 @@ describe("updating a bookstore with invalid parameters", async() => {
       body: {
         "name": "",
         "dealPercentage": "cinquanta",
-        "comissions": "not true",
         "contactName": 15240,
         "contactPhone": "5544809021215485",
         "contactEmail": "bookstore.owner@gmailcom",
@@ -149,7 +146,6 @@ describe("updating a deleted bookstore", async() => {
       body: {
         "name": "Updated Bookstore",
         "dealPercentage": "50",
-        "comissions": "false",
         "contactName": "Bookstore Owner Updated",
         "contactPhone": "5544809021",
         "contactEmail": "bookstore.owner@gmail.com",

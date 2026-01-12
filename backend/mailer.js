@@ -3,7 +3,7 @@ import { setResetPasswordCode } from './passwordUtils.js';
 import { prisma } from "./prisma/client.js"
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // var transport = nodemailer.createTransport({
 //   host: "sandbox.smtp.mailtrap.io",
@@ -15,15 +15,24 @@ const resend = new Resend(process.env.RESEND_KEY);
 // });
 
 async function sendEmail({ to, subject, text, attachments }) {
-  if (process.env.NODE_ENV !== "production") {
+  // if (process.env.NODE_ENV !== "production") {
+  //   return ("test environment - no email sent")
+  // }
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("no email sent for test")
     return ("test environment - no email sent")
   }
 
-  return;
+  const isStaging = process.env.NODE_ENV === "staging"
+
+  const finalTo = isStaging
+    ? process.env.STAGING_EMAIL_REDIRECT
+    : to
 
   return resend.emails.send({
     from: '"WAS Editorial" <no-reply@waseditorial.com>',
-    to: to,
+    to: finalTo,
     subject,
     text,
     attachments,
@@ -32,10 +41,10 @@ async function sendEmail({ to, subject, text, attachments }) {
 
 export async function sendSetPasswordMail(email, name, password) {
   try {
-    const user = await prisma.user.findUnique({where: {email: email}});
+    // const user = await prisma.user.findUnique({where: {email: email}});
     await sendEmail({
       to: email,
-      subject: 'Codigo de confirmación para su cuenta de Was Editorial',
+      subject: 'Código de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
       Su cuenta de Was Editorial ha sido creada. Encontrará la contraseña aqui:
       ${password}
@@ -55,9 +64,9 @@ export async function sendResetPasswordMail(to, name) {
     const user = await prisma.user.findUnique({where: {email: to}});
     await sendEmail({
       to,
-      subject: 'Codigo de confirmación para su cuenta de Was Editorial',
+      subject: 'Código de confirmación para su cuenta de Was Editorial',
       text: `Hola ${name}, \n
-      Por favor ingrese el siguiente codigo de confirmación en la pagina de Was:\n
+      Por favor ingrese el siguiente código de confirmación en la pagina de Was:\n
       ${codigo}
       \n
       No comparte este codigo con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.

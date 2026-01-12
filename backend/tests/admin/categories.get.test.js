@@ -34,7 +34,7 @@ beforeAll(async() => {
   bookstore1 = await createBookstore(prisma)
   bookstore2 = await createBookstore(prisma)
   deletedBookstore = await createBookstore(prisma, {isDeleted: true});
-  deletedCategory = await createCategory(prisma, {isDeleted: true});
+  deletedCategory = await createCategory(prisma, {number: 2, isDeleted: true});
 })
 
 afterAll(async() => {
@@ -75,31 +75,31 @@ describe("getting all valid categories", () => {
 
 
 
-describe("getting all valid category types", () => {
-  let mockReq, mockRes, jsonResponse;
+// describe("getting all valid category types", () => {
+//   let mockReq, mockRes, jsonResponse;
 
-  beforeAll(async() => {
-    mockReq = {
-      prisma: prisma
-    }
+//   beforeAll(async() => {
+//     mockReq = {
+//       prisma: prisma
+//     }
 
-    mockRes = {
-      json: vi.fn(),
-      status: vi.fn().mockReturnThis()
-    }
-  })
+//     mockRes = {
+//       json: vi.fn(),
+//       status: vi.fn().mockReturnThis()
+//     }
+//   })
 
-  it("should return a list of all valid category types", async() => {
-    await getCategoryTypes(mockReq, mockRes);
-    jsonResponse = mockRes.json.mock.calls[0][0]
-    expect(Array.isArray(jsonResponse)).toBe(true);
-  })
+//   it("should return a list of all valid category types", async() => {
+//     await getCategoryTypes(mockReq, mockRes);
+//     jsonResponse = mockRes.json.mock.calls[0][0]
+//     expect(Array.isArray(jsonResponse)).toBe(true);
+//   })
 
-  it("should only return ids and types", async() => {
-    expect(Object.keys(jsonResponse[0])).toStrictEqual(["id", "type"]);
-  })
+//   it("should only return ids and types", async() => {
+//     expect(Object.keys(jsonResponse[0])).toStrictEqual(["id", "type"]);
+//   })
 
-  it("should not contain deleted categories", async() => {
-    expect(jsonResponse.includes(deletedCategory)).toBeFalsy()
-  })
-})
+//   it("should not contain deleted categories", async() => {
+//     expect(jsonResponse.includes(deletedCategory)).toBeFalsy()
+//   })
+// })

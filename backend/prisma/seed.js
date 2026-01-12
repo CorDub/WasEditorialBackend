@@ -180,7 +180,6 @@ async function main() {
         first_name: "Juan",
         last_name: "AutorWasEditorial",
         email: "JuanAutor@waseditorial.com",
-        categoryId: 1,
         password: await bcrypt.hash("PruebaAutor1", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo
@@ -192,7 +191,6 @@ async function main() {
         first_name: "Rebeca",
         last_name: "AutorWasEditorial",
         email: "RebecaAutor@waseditorial.com",
-        categoryId: 1,
         password: await bcrypt.hash("PruebaAutor2", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo
@@ -204,7 +202,6 @@ async function main() {
         first_name: "Autorino",
         last_name: "Adorno",
         email: "adorno@gmail.com",
-        categoryId: 1,
         password: await bcrypt.hash("bookboi3", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo
@@ -216,7 +213,6 @@ async function main() {
         first_name: "Corentin",
         last_name: "Dubois",
         email: "corentindubois22@gmail.com",
-        categoryId: 1,
         password: await bcrypt.hash("bookboi4", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo

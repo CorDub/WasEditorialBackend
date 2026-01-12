@@ -56,8 +56,6 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   payments            Payment[]
-  Category            Category? @relation(fields: [categoryId], references: [id])
-  categoryId          Int?
 
   @@unique([first_name, last_name])
 }
@@ -91,7 +89,6 @@ model Category {
   isDeleted                    Boolean      @default(false)
   createdAt                    DateTime     @default(now())
   updatedAt                    DateTime     @updatedAt
-  User                         User[]
 }
 
 model Bookstore {

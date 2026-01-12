@@ -388,7 +388,7 @@ router.get('/categories', getCategories);
 
 
 
-export async function getImpactedUsers(req, res) {
+export async function getImpactedBooks(req, res) {
   try {
     const inputs = {
       "id": parseInt(req.params.id)
@@ -402,17 +402,17 @@ export async function getImpactedUsers(req, res) {
         id: inputs.id
       },
       select: {
-        users: true
+        books: true
       }
     })
 
-    res.status(200).json({numImpactedUsers: category.users.length})
+    res.status(200).json({numImpactedUsers: category.books.length})
   } catch (error) {
     console.error("Error in the get Impacted Users route:", error);
     res.status(500).json({error: "A server error occurred while fetching number of impacted users"})
   }
 }
-router.get('/categoryImpactedUsers/:id', getImpactedUsers)
+router.get('/categoryImpactedBooks/:id', getImpactedBooks)
 
 
 
@@ -426,22 +426,41 @@ export async function deleteCategory(req, res) {
 
     const prismaClient = req.prisma || prisma
 
+    // await prismaClient.$transaction(async (tx) => {
+    //   if (inputs.categoryId !== 0) {
+    //     const impactedUsers = await tx.user.findMany({
+    //       where: {
+    //         categoryId: inputs.id
+    //       }
+    //     });
+
+    //     for (const user of impactedUsers) {
+    //       if (!user.isDeleted) {
+    //         await tx.user.update({where: {id: user.id}, data: {categoryId: inputs.categoryId}})
+    //       } else {
+    //         await tx.user.update({where: {id: user.id}, data: {categoryId: null}})
+    //       }
+    //     };
+    //   };
+
+    //   const deletedCategory = await tx.category.update({
+    //     where: {id: inputs.id},
+    //     data: {isDeleted: true}
+    //   });
+    // })
+
     await prismaClient.$transaction(async (tx) => {
       if (inputs.categoryId !== 0) {
-        const impactedUsers = await tx.user.findMany({
+        const impactedBooks = await tx.book.findMany({
           where: {
             categoryId: inputs.id
           }
         });
 
-        for (const user of impactedUsers) {
-          if (!user.isDeleted) {
-            await tx.user.update({where: {id: user.id}, data: {categoryId: inputs.categoryId}})
-          } else {
-            await tx.user.update({where: {id: user.id}, data: {categoryId: null}})
-          }
-        };
-      };
+        for (const book of impactedBooks) {
+          await tx.book.update({where: {id: book.id}, data: {categoryId: inputs.categoryId}})
+        }
+      }
 
       const deletedCategory = await tx.category.update({
         where: {id: inputs.id},
@@ -578,7 +597,7 @@ router.post('/category', addCategory);
 export async function updateCategory(req, res) {
   try {
     let inputs = {
-      id: parseInt(req.body.id),
+      id: parseInt(req.params.id),
       number: parseInt(req.body.number),
       categoryType: req.body.type,
     }

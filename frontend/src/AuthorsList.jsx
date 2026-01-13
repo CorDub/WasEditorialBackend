@@ -56,11 +56,6 @@ function AuthorsList() {
       accessorKey: "last_name"
     },
     {
-      header: "Pais",
-      size: 50,
-      accessorKey: "country"
-    },
-    {
       header: "Categoria",
       size: 50,
       accessorFn: (row) => row.category?.type || ''

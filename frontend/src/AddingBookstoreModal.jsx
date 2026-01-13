@@ -9,14 +9,12 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
 
   const [name, setName] = useState('');
   const [dealPercentage, setDealPercentage] = useState('');
-  const [comissions, setComissions] = useState(false);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [errors, setErrors] = useState([]);
   const nameRef = useRef();
   const dealPercentageRef = useRef();
-  const comissionsRef = useRef();
   const contactNameRef = useRef();
   const contactPhoneRef = useRef();
   const contactEmailRef = useRef();
@@ -32,7 +30,6 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         body: JSON.stringify({
           name: name,
           dealPercentage: dealPercentage,
-          comissions: comissions,
           contactName: contactName,
           contactPhone: contactPhone,
           contactEmail: contactEmail,
@@ -122,13 +119,13 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           className="global-input" id="adding-bookstore-dealPercentage"
           ref={dealPercentageRef}
           onChange={(e) => setDealPercentage(e.target.value)}></input>
-        <select className="select-global"
+        {/* <select className="select-global"
           ref={comissionsRef}
           onChange={(e) => setComissions(e.target.value === "true")}>
           <option value="null">Comisiones o regalías*</option>
           <option value="false">Regalías</option>
           <option value="true">Comisiones</option>
-        </select>
+        </select> */}
         <input type='text' placeholder="Nombre del contacto"
           className="global-input" id="adding-bookstore-contactName"
           ref={contactNameRef}

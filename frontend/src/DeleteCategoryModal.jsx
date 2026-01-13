@@ -38,7 +38,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
   async function checkImpactedUsers() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/categoryImpactedUsers/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/categoryImpactedBooks/${clickedRow.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -48,7 +48,6 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setImpactedUsers(data.numImpactedUsers);
       } 
 
@@ -93,7 +92,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
           ?
           <div className="delmod-confirm-other">
             <div className="dco-text">
-              <p>{`Quedan ${impactedUsers} autores en la categoría ${clickedRow.type}.`}</p> 
+              <p>{`Quedan ${impactedUsers} libros en la categoría ${clickedRow.type}.`}</p> 
               <p>¿A que categoría quiere asignarlos?</p>
             </div>
             <select className="select-global"

@@ -89,9 +89,9 @@ function AuthorCommissions() {
       if (response.ok) {
         const data = await response.json();
         sessionStorage.setItem("authorPayments", JSON.stringify(data));
-        console.log("cache storage");
-        console.log("data", data)
-        console.log("data[0]", data[0])
+        // console.log("cache storage");
+        // console.log("data", data)
+        // console.log("data[0]", data[0])
         setPayments(data);
         setPaymentInfo(data[0]);
         setForceRender(false);

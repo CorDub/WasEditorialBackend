@@ -34,8 +34,8 @@ beforeAll(async() => {
   bookstore1 = await createBookstore(prisma)
   bookstore2 = await createBookstore(prisma)
   deletedBookstore = await createBookstore(prisma, {isDeleted: true});
-  deletedCategory = await createCategory(prisma, {isDeleted: true});
-  newCategory = await createCategory(prisma);
+  deletedCategory = await createCategory(prisma, {number: 2, isDeleted: true});
+  newCategory = await createCategory(prisma, {number: 3});
 })
 
 afterAll(async() => {
@@ -54,8 +54,10 @@ describe("updating a category with valid parameters", () => {
           "id": newCategory.id
         },
         body: {
-          "tipo": "Updated Omega Premium",
+          "number": 3,
+          "type": "regalias",
           "gestionMinima": 200.25,
+          "regalias": 20
         },
         prisma: prisma
       }
@@ -79,8 +81,9 @@ describe("updating a category with valid parameters", () => {
           id: newCategory.id
         }
       });
-      expect(updatedCategory.type).toBe("Updated Omega Premium");
+      expect(updatedCategory.number).toBe(3);
       expect(updatedCategory.management_min).toBe(200.25);
+      expect(updatedCategory.percentage_royalties).toBe(20);
     })
 })
 
@@ -124,7 +127,7 @@ describe("updating a category with invalid parameters", () => {
           id: category1.id
         }
       });
-      expect(updatedCategory.type).toBe(category1.type);
+      expect(updatedCategory.number).toBe(category1.number);
       expect(updatedCategory.management_min).toBe(category1.management_min);
     })
 })
@@ -140,8 +143,10 @@ describe("updating a deleted category", () => {
           "id": deletedCategory.id
         },
         body: {
-          "tipo": "Updated Omega Premium",
-          "gestionMinima": [],
+          "number": 5,
+          "type": "regalias",
+          "gestionMinima": 200.25,
+          "regalias": 20
         },
         prisma: prisma
       }
@@ -167,7 +172,7 @@ describe("updating a deleted category", () => {
           id: deletedCategory.id
         }
       });
-      expect(notUpdatedCategory.type).toBe(deletedCategory.type);
+      expect(notUpdatedCategory.number).toBe(deletedCategory.number);
       expect(notUpdatedCategory.management_min).toBe(deletedCategory.management_min);
     })
 })

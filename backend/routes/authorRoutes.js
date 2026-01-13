@@ -5,6 +5,7 @@ import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { 
   calculateAuthorRevenue, 
+  calculateAuthorRevenue2,
   generateMonthKeysForRange, 
   getForMonth, 
   twelveMonthsAgo,
@@ -271,7 +272,11 @@ export async function getAuthorSales (req, res) {
       include: {
         inventory: {
           include: {
-            book: true,
+            book: {
+              include: {
+                category: true
+              }
+            },
             bookstore: true
           }
         },
@@ -304,20 +309,11 @@ export async function getAuthorSales (req, res) {
       }
     });
 
-    const author = await prismaClient.user.findUnique({
-      where: {
-        id: req.session.user_id
-      },
-      select: {
-        category: {
-          select: {
-            percentage_management_stores: true,
-            percentage_royalties: true,
-            management_min: true
-          }
-        }
-      }
-    });
+    // const author = await prismaClient.user.findUnique({
+    //   where: {
+    //     id: req.session.user_id
+    //   }
+    // });
 
     //Format data
     let totalSales = 0;
@@ -328,11 +324,21 @@ export async function getAuthorSales (req, res) {
 
     //Start with sales
     for (const sale of salesInRange) {
-      const saleValue = calculateAuthorRevenue(
-        sale.inventory.bookstore.comissions,
+      // const saleValue = calculateAuthorRevenue(
+      //   sale.inventory.bookstore.comissions,
+      //   sale.inventory.price,
+      //   author.category.management_min,
+      //   sale.inventory.bookstore.deal_percentage,
+      //   sale.quantity
+      // )
+      const saleValue = calculateAuthorRevenue2(
+        sale.inventory.book.category.category_type,
         sale.inventory.price,
-        author.category.management_min,
         sale.inventory.bookstore.deal_percentage,
+        sale.inventory.book.category.percentage_royalties,
+        sale.inventory.book.category.rebate_author,
+        sale.inventory.book.category.percentage_management_stores,
+        sale.inventory.book.category.management_min,
         sale.quantity
       )
 
@@ -421,9 +427,6 @@ export async function getMonthlySalesByPayments (req, res) {
     const user = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
-      },
-      include: {
-        category: true
       }
     })
 
@@ -447,13 +450,21 @@ export async function getMonthlySalesByPayments (req, res) {
                 bookstore: {
                   select: {
                     name: true,
-                    comissions: true,
                     deal_percentage: true
                   }
                 },
                 book: {
                   select: {
-                    title: true
+                    title: true,
+                    category: {
+                      select: {
+                        category_type: true,
+                        percentage_royalties: true,
+                        rebate_author: true,
+                        percentage_management_stores: true,
+                        management_min: true,
+                      }
+                    }
                   }
                 },
                 price: true
@@ -523,7 +534,7 @@ export async function getMonthlySalesByPayments (req, res) {
               "name": sale.inventory.bookstore.name,
               "quantity": sale.quantity,
               "price": sale.inventory.price,
-              "isComissions": sale.inventory.bookstore.comissions,
+              "isComissions": sale.inventory.book.category_type === "comissions" ? true : false,
               "deal_percentage": sale.inventory.bookstore.deal_percentage,
               "comissions": sale.inventory.bookstore.comissions 
                 ? user.category.management_min
@@ -805,12 +816,26 @@ export async function getAuthorPayments (req, res) {
               select: {
                 bookstore: {
                   select: {
-                    comissions: true,
                     deal_percentage: true
                   }
                 },
                 bookstoreId: true,
-                price: true
+                price: true,
+                book: {
+                  select: {
+                    category: {
+                      select: {
+                        id: true,
+                        category_type: true,
+                        percentage_royalties: true,
+                        rebate_author: true,
+                        percentage_management_stores: true,
+                        management_min: true,
+                      }
+                    }
+                  }
+                },
+                bookId: true
               }
             }
           }
@@ -840,9 +865,6 @@ export async function getAuthorPayments (req, res) {
     const userWithCategory = await prismaClient.user.findUnique({
       where: {
         id: req.session.user_id
-      },
-      include: {
-        category: true
       }
     })
 
@@ -856,11 +878,21 @@ export async function getAuthorPayments (req, res) {
           for (const sale of payment.sales) {
             if (sale.isDeleted) {continue}
 
-            payment.amount += calculateAuthorRevenue(
-              sale.inventory.bookstore.comissions,
+            // payment.amount += calculateAuthorRevenue(
+            //   sale.inventory.bookstore.comissions,
+            //   sale.inventory.price,
+            //   userWithCategory.category.management_min,
+            //   sale.inventory.bookstore.deal_percentage,
+            //   sale.quantity
+            // )
+            payment.amout += calculateAuthorRevenue2(
+              sale.inventory.book.category.category_type,
               sale.inventory.price,
-              userWithCategory.category.management_min,
               sale.inventory.bookstore.deal_percentage,
+              sale.inventory.book.category.percentage_royalties,
+              sale.inventory.book.category.rebate_author,
+              sale.inventory.book.category.percentage_management_stores,
+              sale.inventory.book.category.management_min,
               sale.quantity
             )
           }

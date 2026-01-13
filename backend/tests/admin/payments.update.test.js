@@ -46,8 +46,8 @@ describe(`marking a solicited payment as paid`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 2});
+    newCategory2 = await createCategory(prisma, {number: 3});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
@@ -129,8 +129,8 @@ describe(`marking a deleted payment as paid`, async() => {
   let mute;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 4});
+    newCategory2 = await createCategory(prisma, {number: 5});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
@@ -214,8 +214,8 @@ describe(`marking a created payment as paid`, async() => {
   let deletedPayment, mute;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 6});
+    newCategory2 = await createCategory(prisma, {number: 7});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
@@ -299,8 +299,8 @@ describe(`marking an already paid payment as paid`, async() => {
   let deletedPayment, mute;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 8});
+    newCategory2 = await createCategory(prisma, {number: 9});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])

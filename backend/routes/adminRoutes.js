@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { 
   calculateAuthorRevenue, 
+  calculateAuthorRevenue2,
   getForMonth, 
   twelveMonthsAgo, 
   generateMonthKeysForRange,
@@ -33,7 +34,6 @@ export async function getAuthors(req, res) {
         id: true,
         first_name: true,
         last_name: true,
-        country: true,
         referido: true,
         email: true,
         phone: true,
@@ -42,14 +42,6 @@ export async function getAuthors(req, res) {
         name_bank_account: true,
         bank: true,
         swift: true,
-        category: {
-          where: {
-            isDeleted: false
-          },
-          select: {
-            type: true
-          }
-        }
       },
       orderBy: [
         {first_name: 'asc'},
@@ -75,12 +67,10 @@ export async function addAuthor(req, res) {
     const inputs = {
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
-      "country": req.body.country,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
       "birthday": req.body.birthday,
-      "category": parseInt(req.body.category)
     }
     validateInputs(inputs);
 
@@ -132,13 +122,11 @@ export async function addAuthor(req, res) {
         data: {
           first_name: inputs.firstName,
           last_name: inputs.lastName,
-          country: inputs.country,
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
           birthday: inputs.birthday,
           password: hashedPassword,
-          categoryId: inputs.category
         },
       });
 
@@ -282,19 +270,17 @@ router.post('/api/author/addMultiples', upload.fields([{name: "archivo", maxCoun
 export async function updateAuthor(req, res) {
   try {
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
-    const prismaClient = req.prisma || prisma;
     const inputs = {
       "id": parseInt(req.params.id),
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
-      "country": req.body.country,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
       "birthday": req.body.birthday,
-      "categoryId": parseInt(req.body.categoryId)
     }
     validateInputs(inputs);
+    const prismaClient = req.prisma || prisma;
 
     await prismaClient.$transaction(async (tx) => {
       const updatedAuthor = await tx.user.update({
@@ -302,19 +288,10 @@ export async function updateAuthor(req, res) {
         data: {
           first_name: inputs.firstName,
           last_name: inputs.lastName,
-          country: inputs.country,
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
           birthday: inputs.birthday,
-          category: {
-            connect: {
-              id: inputs.categoryId
-            }
-          }
-        },
-        include: {
-          category: true
         }
       });
 
@@ -390,29 +367,29 @@ router.get('/categories', getCategories);
 
 
 
-export async function getCategoryTypes(req, res) {
-  try {
-    const prismaClient = req.prisma || prisma
-    const categories_type = await prismaClient.category.findMany({
-      where: {
-        isDeleted: false
-      },
-      select: {
-        id: true,
-        type: true
-      }
-    });
-    res.status(200).json(categories_type);
-  } catch(error) {
-    console.error("Error in the get categories-type route:", error);
-    res.status(500).json({error: "A server error occurred while fetching categories-type"});
-  }
-}
-router.get('/categories-type', getCategoryTypes);
+// export async function getCategoryTypes(req, res) {
+//   try {
+//     const prismaClient = req.prisma || prisma
+//     const categories_type = await prismaClient.category.findMany({
+//       where: {
+//         isDeleted: false
+//       },
+//       select: {
+//         id: true,
+//         type: true
+//       }
+//     });
+//     res.status(200).json(categories_type);
+//   } catch(error) {
+//     console.error("Error in the get categories-type route:", error);
+//     res.status(500).json({error: "A server error occurred while fetching categories-type"});
+//   }
+// }
+// router.get('/categories-type', getCategoryTypes);
 
 
 
-export async function getImpactedUsers(req, res) {
+export async function getImpactedBooks(req, res) {
   try {
     const inputs = {
       "id": parseInt(req.params.id)
@@ -426,17 +403,17 @@ export async function getImpactedUsers(req, res) {
         id: inputs.id
       },
       select: {
-        users: true
+        books: true
       }
     })
 
-    res.status(200).json({numImpactedUsers: category.users.length})
+    res.status(200).json({numImpactedUsers: category.books.length})
   } catch (error) {
     console.error("Error in the get Impacted Users route:", error);
     res.status(500).json({error: "A server error occurred while fetching number of impacted users"})
   }
 }
-router.get('/categoryImpactedUsers/:id', getImpactedUsers)
+router.get('/categoryImpactedBooks/:id', getImpactedBooks)
 
 
 
@@ -450,22 +427,41 @@ export async function deleteCategory(req, res) {
 
     const prismaClient = req.prisma || prisma
 
+    // await prismaClient.$transaction(async (tx) => {
+    //   if (inputs.categoryId !== 0) {
+    //     const impactedUsers = await tx.user.findMany({
+    //       where: {
+    //         categoryId: inputs.id
+    //       }
+    //     });
+
+    //     for (const user of impactedUsers) {
+    //       if (!user.isDeleted) {
+    //         await tx.user.update({where: {id: user.id}, data: {categoryId: inputs.categoryId}})
+    //       } else {
+    //         await tx.user.update({where: {id: user.id}, data: {categoryId: null}})
+    //       }
+    //     };
+    //   };
+
+    //   const deletedCategory = await tx.category.update({
+    //     where: {id: inputs.id},
+    //     data: {isDeleted: true}
+    //   });
+    // })
+
     await prismaClient.$transaction(async (tx) => {
       if (inputs.categoryId !== 0) {
-        const impactedUsers = await tx.user.findMany({
+        const impactedBooks = await tx.book.findMany({
           where: {
             categoryId: inputs.id
           }
         });
 
-        for (const user of impactedUsers) {
-          if (!user.isDeleted) {
-            await tx.user.update({where: {id: user.id}, data: {categoryId: inputs.categoryId}})
-          } else {
-            await tx.user.update({where: {id: user.id}, data: {categoryId: null}})
-          }
-        };
-      };
+        for (const book of impactedBooks) {
+          await tx.book.update({where: {id: book.id}, data: {categoryId: inputs.categoryId}})
+        }
+      }
 
       const deletedCategory = await tx.category.update({
         where: {id: inputs.id},
@@ -485,18 +481,27 @@ router.delete('/category/:id', deleteCategory)
 
 export async function addCategory(req, res) {
   try {
-    const inputs = {
-      "categoryType": req.body.tipo,
-      "gestionMinima": parseFloat(req.body.gestionMinima)
+    let inputs = {
+      number: parseInt(req.body.number),
+      categoryType: req.body.type,
     }
     validateInputs(inputs);
+
+    if (inputs.categoryType === "comissions") {
+      inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
+      inputs.rebate = parseFloat(req.body.rebate);
+    } else if (inputs.categoryType === "regalias") {
+      inputs.regaliasPercent = parseFloat(req.body.regalias);
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+    }
+    validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       const existing = await tx.category.findUnique({
         where: {
-          type: inputs.categoryType
+          number: inputs.number
         }
       });
 
@@ -507,35 +512,78 @@ export async function addCategory(req, res) {
           return;
         }
 
-        const exhumedUser = await tx.user.update({
-          where: {id: existing.id},
-          data: {
-            type: inputs.categoryType,
-            // percentage_royalties: parseFloat(regalias),
-            // percentage_management_stores: parseFloat(gestionTiendas),
-            management_min: inputs.gestionMinima,
-            isDeleted: false
-          }
-        });
-        res.status(201).json({name: exhumedUser.type});
+        // const exhumedUser = await tx.user.update({
+        //   where: {id: existing.id},
+        //   data: {
+        //     type: inputs.categoryType,
+        //     // percentage_royalties: parseFloat(regalias),
+        //     // percentage_management_stores: parseFloat(gestionTiendas),
+        //     management_min: inputs.gestionMinima,
+        //     isDeleted: false
+        //   }
+        // });
+        // res.status(201).json({name: exhumedUser.type});
+
+        let exhumedCategory;
+        if (inputs.categoryType === "comissions") {
+          exhumedCategory = await tx.category.update({
+            where: {
+              id: existing.id
+            },
+            data: {
+              number: inputs.number,
+              category_type: inputs.categoryType,
+              percentage_management_stores: inputs.gestionTiendas,
+              rebate_author: inputs.rebate,
+              isDeleted: false
+            }
+          })
+        } else if (inputs.categoryType === "regalias") {
+          exhumedCategory = await tx.category.update({
+            where: {
+              id: existing.id
+            },
+            data: {
+              number: inputs.number,
+              category_type: inputs.categoryType,
+              management_min: inputs.gestionMinima,
+              percentage_royalties: inputs.regaliasPercent,
+              isDeleted: false
+            }
+          })
+        }
+        
+        res.status(201).json({name: exhumedCategory.number})
         return;
       }
 
-      const new_category =  await tx.category.create({
-        data: {
-          type: inputs.categoryType,
-          // percentage_royalties: parseFloat(regalias),
-          // percentage_management_stores: parseFloat(gestionTiendas),
-          management_min: inputs.gestionMinima,
-        },
-      });
+      let new_category;
+      if (inputs.categoryType === "comissions") {
+        new_category =  await tx.category.create({
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_management_stores: inputs.gestionTiendas,
+            rebate_author: inputs.rebate_author,
+          },
+        });
+      } else if (inputs.categoryType === "regalias") {
+        new_category =  await tx.category.create({
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_royalties: inputs.regaliasPercent,
+            management_min: inputs.gestionMinima,
+          },
+        });
+      }
 
-      res.status(201).json({name: new_category.type});
+      res.status(201).json({name: new_category.number});
     })
   } catch(error) {
-    if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
+    if (String(error).includes(("Unique constraint failed on the fields: (`number`)"))) {
       console.error(error)
-      res.status(500).json({message: "Uniqueness error - tipo"})
+      res.status(500).json({message: "Uniqueness error - number"})
       return;
     }
 
@@ -549,12 +597,21 @@ router.post('/category', addCategory);
 
 export async function updateCategory(req, res) {
   try {
-    const inputs =  {
+    let inputs = {
       id: parseInt(req.params.id),
-      categoryType: req.body.tipo,
-      gestionMinima: parseFloat(req.body.gestionMinima)
+      number: parseInt(req.body.number),
+      categoryType: req.body.type,
     }
     validateInputs(inputs);
+
+    if (inputs.categoryType === "comissions") {
+      inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
+      inputs.rebate = parseFloat(req.body.rebate);
+    } else if (inputs.categoryType === "regalias") {
+      inputs.regaliasPercent = parseFloat(req.body.regalias);
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+    }
+    validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 
@@ -567,16 +624,41 @@ export async function updateCategory(req, res) {
         throw new Error("this category is deleted")
       }
 
-      const updatedCategory = await tx.category.update({
-        where: {id: inputs.id},
-        data: {
-          type: inputs.categoryType,
-          management_min: inputs.gestionMinima,
-        }
-      });
+      let updatedCategory;
+      if (inputs.categoryType === "comissions") {
+        updatedCategory = await tx.category.update({
+          where: {
+            id: previousCategory.id
+          },
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            percentage_management_stores: inputs.gestionTiendas,
+            rebate_author: inputs.rebate,
+            management_min: null,
+            percentage_royalties: null,
+            isDeleted: false
+          }
+        })
+      } else if (inputs.categoryType === "regalias") {
+        updatedCategory = await tx.category.update({
+          where: {
+            id: previousCategory.id
+          },
+          data: {
+            number: inputs.number,
+            category_type: inputs.categoryType,
+            management_min: inputs.gestionMinima,
+            percentage_royalties: inputs.regaliasPercent,
+            percentage_management_stores: null,
+            rebate_author: null,
+            isDeleted: false
+          }
+        })
+      }
     })
 
-    res.status(200)
+    res.status(200).json("Successfully updated the category")
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`type`)"))) {
       res.status(500).json({message: "Uniqueness error - tipo"})
@@ -620,6 +702,11 @@ export async function getBooks(req, res) {
             },
             bookstoreId: true,
             price: true
+          }
+        },
+        category: {
+          select: {
+            number: true
           }
         }
       },
@@ -692,7 +779,8 @@ export async function addBook(req, res) {
       "pasta": req.body.pasta,
       "price": parseFloat(req.body.price),
       "isbn": req.body.isbn,
-      "quantity": parseInt(req.body.quantity)
+      "quantity": parseInt(req.body.quantity),
+      "categoryId": parseInt(req.body.category)
     }
     validateInputs(inputs)
 
@@ -718,6 +806,9 @@ export async function addBook(req, res) {
           users: {
             connect: authorsIds,
           },
+          category: {
+            connect: {"id": inputs.categoryId}
+          }
         }
       });
 
@@ -962,6 +1053,7 @@ export async function updateBook(req, res) {
       "title": req.body.title,
       "pasta": req.body.pasta,
       "isbn": req.body.isbn,
+      "categoryId": parseInt(req.body.category)
     }
     validateInputs(inputs);
 
@@ -1002,6 +1094,9 @@ export async function updateBook(req, res) {
           isbn: inputs.isbn,
           users: {
             set: authorsIds,
+          },
+          category: {
+            connect: {"id": inputs.categoryId}
           }
         }
       });
@@ -1105,7 +1200,6 @@ export async function addBookstore(req, res) {
     const inputs = {
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
-      "comissions": req.body.comissions === "true" ? true : false,
       "contactName": req.body.contactName,
       "phone": req.body.contactPhone,
       "email": req.body.contactEmail
@@ -1118,7 +1212,6 @@ export async function addBookstore(req, res) {
       data: {
         name: inputs.name,
         deal_percentage: inputs.dealPercentage,
-        comissions: inputs.comissions,
         contact_name: inputs.contactName,
         contact_phone: inputs.phone,
         contact_email: inputs.email,
@@ -1141,7 +1234,6 @@ export async function updateBookstore(req, res) {
       "id": parseInt(req.params.id),
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
-      "comissions": req.body.comissions === "true" ? true : false,
       "contactName": req.body.contactName,
       "phone" : req.body.contactPhone,
       "email": req.body.contactEmail
@@ -1158,7 +1250,6 @@ export async function updateBookstore(req, res) {
         where: {id: inputs.id},
         data: {
           name: inputs.name,
-          comissions: inputs.comissions,
           deal_percentage: inputs.dealPercentage,
           contact_name: inputs.contactName,
           contact_phone: inputs.phone,
@@ -2854,10 +2945,24 @@ export async function getPayments(req, res) {
               select: {
                 id: true,
                 price: true,
+                book: {
+                  select: {
+                    id: true,
+                    category: {
+                      select: {
+                        id: true,
+                        category_type: true,
+                        percentage_royalties: true,
+                        rebate_author: true,
+                        percentage_management_stores: true,
+                        management_min: true,
+                      }
+                    }
+                  }
+                },
                 bookstore: {
                   select: {
                     id: true,
-                    comissions: true,
                     deal_percentage: true
                   }
                 }
@@ -2891,21 +2996,31 @@ export async function getPayments(req, res) {
       const userWithCategory = await prismaClient.user.findUnique({
         where: {
           id : payment.userId
-        },
-        include: {
-          category: true
         }
       })
 
       async function updateSales(payment) {
         if (payment.sales.length > 0) {
           for (const sale of payment.sales) {
+            // if (sale.isDeleted === false) {
+            //   payment.amount += calculateAuthorRevenue(
+            //     sale.inventory.bookstore.comissions,
+            //     sale.inventory.price,
+            //     userWithCategory.category.management_min,
+            //     sale.inventory.bookstore.deal_percentage,
+            //     sale.quantity
+            //   )
+            // }
+
             if (sale.isDeleted === false) {
-              payment.amount += calculateAuthorRevenue(
-                sale.inventory.bookstore.comissions,
+              payment.amout += calculateAuthorRevenue2(
+                sale.inventory.book.category.category_type,
                 sale.inventory.price,
-                userWithCategory.category.management_min,
                 sale.inventory.bookstore.deal_percentage,
+                sale.inventory.book.category.percentage_royalties,
+                sale.inventory.book.category.rebate_author,
+                sale.inventory.book.category.percentage_management_stores,
+                sale.inventory.book.category.management_min,
                 sale.quantity
               )
             }
@@ -3324,7 +3439,7 @@ export async function addKindleSale (req, res) {
       "quantityPod": parseInt(req.body.quantityPod),
       "dateCut": new Date(req.body.dateCut),
       "datePay": new Date(req.body.datePay),
-      "regalias": parseFloat(req.body.regalias),
+      "regaliasKindle": parseFloat(req.body.regalias),
     }
     validateInputs(inputs);
     if (inputs.dateCut >= inputs.datePay) {
@@ -3385,7 +3500,7 @@ export async function addKindleSale (req, res) {
           quantityPod: inputs.quantityPod,
           dateCut: inputs.dateCut,
           datePay: inputs.datePay,
-          regalias: inputs.regalias
+          regalias: inputs.regaliasKindle
         }
       });
 
@@ -3410,7 +3525,7 @@ export async function updateKindleSale(req, res) {
       quantityPod: parseInt(req.body.quantityPod),
       dateCut: new Date(req.body.dateCut),
       datePay: new Date(req.body.datePay),
-      regalias: parseFloat(req.body.regalias)
+      regaliasKindle: parseFloat(req.body.regalias)
     }
     validateInputs(inputs)
     if (inputs.dateCut >= inputs.datePay) {
@@ -3542,7 +3657,7 @@ export async function updateKindleSale(req, res) {
         quantityPod: inputs.quantityPod,
         dateCut: inputs.dateCut,
         datePay: inputs.datePay,
-        regalias: inputs.regalias,
+        regalias: inputs.regaliasKindle,
         payments: {
           set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments 
         }
@@ -3724,11 +3839,6 @@ export async function softDeleteSalesOnCascade(IdsList, tx) {
           select: {
             bookId: true,
             price: true,
-            bookstore: {
-              select: {
-                comissions: true
-              }
-            }
           }
         }
       }

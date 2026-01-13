@@ -48,8 +48,8 @@ describe(`getting all valid solicited payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, {managment_min: 180});
-    newCategory2 = await createCategory(prisma, {management_min: 150});
+    newCategory = await createCategory(prisma, {number: 2, managment_min: 180});
+    newCategory2 = await createCategory(prisma, {number: 3, management_min: 150});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
@@ -158,8 +158,8 @@ describe(`getting all valid created payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 4});
+    newCategory2 = await createCategory(prisma, {number: 5});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
@@ -261,8 +261,8 @@ describe(`getting all valid paid payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 6});
+    newCategory2 = await createCategory(prisma, {number: 7});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])

@@ -8,33 +8,32 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   const [name, setName] = useState(clickedRow.name);
   const [dealPercentage, setDealPercentage] = useState(clickedRow.deal_percentage);
-  const [comissions, setComissions] = useState(clickedRow.comissions);
   const [contactName, setContactName] = useState(clickedRow.contact_name);
   const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
   const [errorList, setErrorList] = useState([]);
-  const [comissionsDisplay, setComissionsDisplay] = useState([]);
+  // const [comissionsDisplay, setComissionsDisplay] = useState([]);
 
-  useEffect(() => {
-    let possibleComissions = [true, false]
-    for (let i = 0; i < possibleComissions.length; i++) {
-      if (possibleComissions[i] === clickedRow.comissions) {
-        possibleComissions.splice(i, 1);
-      } 
-    }
-    possibleComissions.splice(0, 0, clickedRow.comissions);
+  // useEffect(() => {
+  //   let possibleComissions = [true, false]
+  //   for (let i = 0; i < possibleComissions.length; i++) {
+  //     if (possibleComissions[i] === clickedRow.comissions) {
+  //       possibleComissions.splice(i, 1);
+  //     } 
+  //   }
+  //   possibleComissions.splice(0, 0, clickedRow.comissions);
 
-    let siono = [];
-    for (const poss of possibleComissions) {
-      if (poss === true) {
-        siono.push("Comisiónes")
-      } else if (poss === false) {
-        siono.push("Regalias")
-      }
-    }
+  //   let siono = [];
+  //   for (const poss of possibleComissions) {
+  //     if (poss === true) {
+  //       siono.push("Comisiónes")
+  //     } else if (poss === false) {
+  //       siono.push("Regalias")
+  //     }
+  //   }
 
-    setComissionsDisplay(siono);
-  }, [clickedRow.comissions])
+  //   setComissionsDisplay(siono);
+  // }, [clickedRow.comissions])
 
   async function sendToServer() {
     try {
@@ -47,7 +46,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         body: JSON.stringify({
           name: name,
           dealPercentage: dealPercentage,
-          comissions: comissions,
           contactName: contactName,
           contactPhone: contactPhone,
           contactEmail: contactEmail,
@@ -77,7 +75,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     let newErrorList = [];
     const inputName = document.getElementById("adding-bookstore-name");
     const inputDealPercentage = document.getElementById("adding-bookstore-dealPercentage");
-    const inputComissions = document.getElementById("adding-bookstore-comissions");
     const inputContactName = document.getElementById("adding-bookstore-contactName");
     const inputContactPhone = document.getElementById("adding-bookstore-contactPhone");
     const inputContactEmail = document.getElementById("adding-bookstore-contactEmail");
@@ -108,13 +105,13 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     sendToServer();
   }
 
-  function convertComissionsValue(e) {
-    if (e.target.value === "Sí") {
-      setComissions(true)
-    } else {
-      setComissions(false)
-    }
-  }
+  // function convertComissionsValue(e) {
+  //   if (e.target.value === "Sí") {
+  //     setComissions(true)
+  //   } else {
+  //     setComissions(false)
+  //   }
+  // }
 
   return (
     <div className="modal-overlay">
@@ -139,7 +136,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               className="global-input" id="adding-bookstore-dealPercentage"
               onChange={(e) => setDealPercentage(e.target.value)}></input>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Comisiones o regalias *</label>
           <select className="select-global"
             id="adding-bookstore-comissions"
@@ -148,7 +145,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               <option key={index} value={comission}>{comission}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Nombre del contacto</label>
           <input type='text' placeholder="Nombre del contacto" value={contactName}

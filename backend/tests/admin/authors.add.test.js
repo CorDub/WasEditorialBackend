@@ -42,12 +42,10 @@ describe("adding a valid author", () => {
       body: {
         "firstName": "Yesi Deeba",
         "lastName": "Amanewauthor Ureh",
-        "country": "México",
         "referido": "",
         "email": "yesi.amanewauthor@gmail.com",
         "phone": "5561356226",
         "birthday": "22121988",
-        "category": "1"
       },
       prisma: prisma
     }
@@ -81,11 +79,9 @@ describe("adding a valid author", () => {
     expect(createdAuthor.first_name).toBe("Yesi Deeba");
     expect(createdAuthor.last_name).toBe("Amanewauthor Ureh");
     expect(createdAuthor.email).toBe("yesi.amanewauthor@gmail.com");
-    expect(createdAuthor.country).toBe("México");
     expect(createdAuthor.referido).toBe("");
     expect(createdAuthor.phone).toBe("5561356226");
-    expect(createdAuthor.birthday).toBe("22121988");
-    expect(createdAuthor.categoryId).toBe(1);
+    expect(createdAuthor.birthday).toBe("22121988");;
     expect(createdAuthor.role).toBe("author");
   })
 

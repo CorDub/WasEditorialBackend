@@ -20,6 +20,34 @@ export function calculateAuthorRevenue(
     return res
 }
 
+export function calculateAuthorRevenue2(
+  category_type,
+  price,
+  deal_percentage, 
+  percentage_royalties,
+  rebate_author,
+  percentage_management_stores,
+  management_min,
+  quantity,
+  saleToAuthor,
+) {
+  let res = 0;
+  if (category_type === "comissions") {
+    const percentTotal = deal_percentage + percentage_management_stores;
+    const remaining = price * (percentTotal / 100)
+    const gestionWas = price * (50/100)
+    if (gestionWas < management_min) { gestionWas = management_min }
+    const finalReturn = remaining - gestionWas
+    res = finalReturn * quantity
+
+  } else if (category_type === "regalias") {
+    const remaining = price * (percentage_royalties / 100)
+    res = remaining * quantity
+  }
+
+  return res;
+}
+
 export function roundToSecondDecimal(float) {
   return Number(float.toFixed(2))
 }

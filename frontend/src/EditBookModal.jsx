@@ -19,6 +19,10 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   const [y, setY] = useState(null);
   const [errorList, setErrorList] = useState([]);
   const [pastaDisplay, setPastaDisplay] = useState([]);
+  const [category, setCategory] = useState(clickedRow.categoryId);
+  const [existingCategories, setExistingCategories] = useState([]);
+
+  console.log("clickedRow", clickedRow)
 
   useEffect(() => {
     let possiblePasta = ["Blanda", "Dura"]
@@ -55,6 +59,29 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
     fetchUsers();
   }, [])
 
+  useEffect(() => {
+    async function fetchExistingCategories() {
+      try {
+        const response = await fetch(`${baseURL}/api/admin/categories`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json()
+          setExistingCategories(data)
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchExistingCategories();
+  }, [])
+
   function authorsChange(index, event) {
     const authorsNew = [...authors];
     authorsNew[index] = JSON.parse(event.target.value);
@@ -82,6 +109,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           pasta: pasta,
           isbn: isbn,
           authors: authors,
+          category: category
         })
       });
 
@@ -124,12 +152,13 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
     const inputTitle = document.getElementById('adding-book-title');
     const inputPasta = document.getElementById('pasta-select');
     const inputIsbn = document.getElementById('adding-book-isbn');
+    const inputCategory = document.getElementById('category-select');
     const inputAuthors = [];
     authors.map((author, index) => {
       inputAuthors.push(document.getElementById(`author-select-${index}`));
     });
 
-    const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors];
+    const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors, inputCategory];
 
     inputsList.forEach((input) => {
       if (input !== inputAuthors) {
@@ -163,6 +192,11 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
       newErrorList.push(22);
       addErrorClass(inputPasta);
     };
+
+    if (isNaN(parseInt(category))) {
+      newErrorList.push(71);
+      addErrorClass(inputCategory);
+    }
 
     authors.map((authorTop, index) => {
       if (authorTop === null) {
@@ -205,6 +239,10 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
       "Autor": {
         "function": authorsChange,
         "element": document.getElementById(`author-select-${input_index}`)
+      },
+      "Category": {
+        "function": setCategory,
+        "element": document.getElementById("category-select")
       }
     }
 
@@ -260,6 +298,17 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
               {pastaDisplay.map((pasta, index) => (
                 <option key={index} value={pasta}>{pasta}</option>
               ))}
+            </select>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Categoría</label>
+            <select onChange={(e) => dropDownChange(e, "Category")}
+              value={category}
+              className="select-global"
+              id="category-select">
+              {existingCategories && existingCategories.map((category, index) => (
+                <option value={category.id} key={index}>{category.number}</option>
+              )) }
             </select>
           </div>
           <div className="modal-form-line">

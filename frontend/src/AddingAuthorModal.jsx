@@ -8,7 +8,6 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [country, setCountry] = useState(null);
   const [referido, setReferido] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -16,51 +15,21 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-  const [category, setCategory] = useState(null);
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
   const firstNameRef = useRef();
   const lastNameRef = useRef();
-  const countryRef = useRef();
   const referidoRef = useRef();
   const emailRef = useRef();
   const phoneRef = useRef();
   const dayRef = useRef();
   const monthRef = useRef();
   const yearRef = useRef();
-  const categoryRef = useRef();
   const [errors, setErrors] = useState([]);
-  const [categories, setCategories] = useState(null);
 
   useEffect(() => { 
     setBirthday(day.padStart(2, "0") + month.padStart(2, "0") + year)
   }, [day, month, year])
 
   async function sendToServer() {
-    const cat = await categories.find(cat => cat.type === category);
-
     try {
       const response = await fetch(`${baseURL}/api/admin/user`, {
         method: "POST",
@@ -71,12 +40,10 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         body: JSON.stringify({
           firstName: firstName,
           lastName: lastName,
-          country: country,
           referido: referido,
           email: email,
           phone: phone,
           birthday: birthday,
-          category: cat.id
         }),
       });
 
@@ -101,30 +68,30 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     }
   }
 
-  function dropDownChange(e, input_name) {
-    const inputs = {
-      "Category": {
-        "function": setCategory,
-        "element": document.getElementById("category-select")
-      },
-      "Country": {
-        "function": setCountry,
-        "element": document.getElementById("country-select")
-      }
-    }
+  // function dropDownChange(e, input_name) {
+  //   const inputs = {
+  //     "Category": {
+  //       "function": setCategory,
+  //       "element": document.getElementById("category-select")
+  //     },
+  //     "Country": {
+  //       "function": setCountry,
+  //       "element": document.getElementById("country-select")
+  //     }
+  //   }
 
-    if (e.target.value === "null") {
-      inputs[input_name]["function"](null);
-      if (inputs[input_name]["element"].classList.contains("selected") === true) {
-        inputs[input_name]["element"].classList.remove("selected")
-      };
-    } else {
-      inputs[input_name]["function"](e.target.value);
-      if (inputs[input_name]["element"].classList.contains("selected") === false) {
-        inputs[input_name]["element"].classList.add("selected")
-      };
-    };
-  }
+  //   if (e.target.value === "null") {
+  //     inputs[input_name]["function"](null);
+  //     if (inputs[input_name]["element"].classList.contains("selected") === true) {
+  //       inputs[input_name]["element"].classList.remove("selected")
+  //     };
+  //   } else {
+  //     inputs[input_name]["function"](e.target.value);
+  //     if (inputs[input_name]["element"].classList.contains("selected") === false) {
+  //       inputs[input_name]["element"].classList.add("selected")
+  //     };
+  //   };
+  // }
 
   function checkForServerErrors(serverError) {
     function addErrorClass(input_name) {
@@ -178,11 +145,11 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       presence: "not empty",
       length: 50
     }
-    const countryExpectations = {
-      type: "string",
-      presence: "not empty",
-      value: countries
-    }
+    // const countryExpectations = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   value: countries
+    // }
     const emailExpectations = {
       type: "string",
       presence: "not empty",
@@ -211,33 +178,31 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       presence: "not empty",
       validity: "phone valid"
     }
-    const categoryExpectations = {
-      type: "string",
-      presence: "not empty",
-      value: categories.map(cat => cat.type)
-    };
+    // const categoryExpectations = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   value: categories.map(cat => cat.type)
+    // };
 
     const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
-    const errorsCountry = checkForErrors("El país", country, countryExpectations, countryRef, "o")
+    // const errorsCountry = checkForErrors("El país", country, countryExpectations, countryRef, "o")
     const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
     const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
     const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
     const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
     const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
     const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
-    const errorsCategory = checkForErrors("La categoría", category, categoryExpectations, categoryRef, "a")
+    // const errorsCategory = checkForErrors("La categoría", category, categoryExpectations, categoryRef, "a")
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
-      errorsCountry,
       errorsEmail, 
       errorsPhone,
       errorsReferido,
       errorsBirthdayDay,
       errorsBirthdayMonth,
       errorsBirthdayYear,
-      errorsCategory
     ]
 
     for (const errorInput of errorInputs) {
@@ -250,31 +215,31 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     return errorsList
   }
 
-  async function fetchCategoryTypes() {
-    try {
-      const response = await fetch(`${baseURL}/api/admin/categories-type`, {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
-      });
+  // async function fetchCategoryTypes() {
+  //   try {
+  //     const response = await fetch(`${baseURL}/api/admin/categories-type`, {
+  //       method: 'GET',
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       credentials: "include"
+  //     });
 
-      if (response.ok === true) {
-        const dataCategories = await response.json();
-        setCategories(dataCategories);
-      } else {
-        console.log("There was an error fetching categories:", response.status);
-      };
+  //     if (response.ok === true) {
+  //       const dataCategories = await response.json();
+  //       setCategories(dataCategories);
+  //     } else {
+  //       console.log("There was an error fetching categories:", response.status);
+  //     };
 
-    } catch(error) {
-      console.error("Error while fetching categories:", error);
-    }
-  }
+  //   } catch(error) {
+  //     console.error("Error while fetching categories:", error);
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchCategoryTypes()
-  }, [])
+  // useEffect(() => {
+  //   fetchCategoryTypes()
+  // }, [])
 
   return (
     <div className="modal-overlay">
@@ -294,7 +259,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           className="global-input" id="adding-author-last-name"
           ref={lastNameRef}
           onChange={(e) => setLastName(e.target.value)}></input>
-        <select className="select-global"
+        {/* <select className="select-global"
           id="country-select"
           ref={countryRef}
           onChange={(e) => dropDownChange(e, "Country")} >
@@ -302,7 +267,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           {countries.map((country, index) => (
             <option key={index} value={country}>{country}</option>
           ))}
-        </select>
+        </select> */}
         <input type='text' placeholder="Referido"
           className="global-input" id="adding-author-referido"
           ref={referidoRef}
@@ -332,14 +297,14 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
               onChange={(e) => setYear(e.target.value)}></input>
           </div>
         </div>
-        <select className="select-global" id="category-select"
+        {/* <select className="select-global" id="category-select"
           ref={categoryRef}
           onChange={(e) => dropDownChange(e, "Category")}>
           <option value="null">Categoría</option>
           {categories && categories.map((category, index) => (
             <option key={index} value={category.type}>{category.type}</option>
           ))}
-        </select>
+        </select> */}
         {/* <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/> */}
         <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="form-actions">

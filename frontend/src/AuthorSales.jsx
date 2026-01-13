@@ -26,7 +26,7 @@ function AuthorSales() {
   const [alertType, setAlertType] = useState("");
 
   function processMonthlyData(sales, bookId = 'total') {
-    // console.log("sales in processMonthly data", sales)
+    console.log("sales in processMonthly data", sales)
     const monthlySales = {};
     // if (!sales || sales.length === 0) return;
     if (sales && sales.length > 0 ) {
@@ -55,20 +55,27 @@ function AuthorSales() {
       }
 
       const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
-      let counter = 0;
-      for (let i = 0; i < monthKeysInRange.length; i++) {
-        if (sortedData[counter] === undefined || monthKeysInRange[i] !== sortedData[counter].month) {
-          const monthToInsert = {
-            "month": monthKeysInRange[i],
-            "quantity": 0,
-            "value": 0
-          }
-          sortedData.splice(i, 0, monthToInsert)
-        } else {
-          counter += 1
-        }
-      }
-      setMonthlyData(sortedData);
+      // let counter = 0;
+      // for (let i = 0; i < monthKeysInRange.length; i++) {
+      //   if (sortedData[counter] === undefined || monthKeysInRange[i] !== sortedData[counter].month) {
+      //     const monthToInsert = {
+      //       "month": monthKeysInRange[i],
+      //       "quantity": 0,
+      //       "value": 0
+      //     }
+      //     sortedData.splice(i, 0, monthToInsert)
+      //   } else {
+      //     counter += 1
+      //   }
+      // }
+      const finalData = monthKeysInRange.map(monthKey => {
+        return monthlySales[monthKey] ?? {
+          month: monthKey,
+          quantity: 0,
+          value: 0
+        };
+      });
+      setMonthlyData(finalData);
     } else {
       const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
       let sortedData = []

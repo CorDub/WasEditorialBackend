@@ -56,7 +56,8 @@ describe('updating a book with valid parameters', () => {
         "title": "Updated title",
         "pasta": "Dura",
         "isbn": null,
-        "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
+        "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}],
+        "category": category1.id
       },
       prisma: prisma
     }; 

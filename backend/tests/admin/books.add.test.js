@@ -49,6 +49,7 @@ describe("adding a valid book", () => {
         "isbn": "9786075987412",
         "quantity": 1000,
         "authors": [author1.id, author2.id],
+        "category": category1.id
       },
       prisma: prisma
     }; 

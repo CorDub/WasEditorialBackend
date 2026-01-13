@@ -132,16 +132,22 @@ export function validateInput(inputName, inputValue) {
     ],
     "categoryType": [
       ['presence', 'not empty'],
-      ['type', 'string']
+      ['type', 'string'],
+      ['value', ["comissions", "regalias"]]
     ],
     "categoryId": [
       ['presence', 'not empty'],
       ['type', 'number']
     ],
     "gestionMinima": [
-      ["presence", "not empty"],
-      ["type", "number"]
+      ["type", "number"],
+      ["range", "positive"],
     ], 
+    "gestionTiendas": [
+      ["type", "number or null"],
+      ["range", "positive"],
+      ["maximum", 100]
+    ],
     "date": [
       ["type", "datetime"],
       ["timerange", "no future"]
@@ -156,10 +162,10 @@ export function validateInput(inputName, inputValue) {
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
-    "regalias": [
+    "regaliasKindle": [
       ['presence', 'not empty'],
       ['type', 'number'],
-      ['range', 'positive']
+      ['range', "positive"],
     ],
     "paymentId": [
       ['type', 'number or null'],
@@ -257,10 +263,29 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ["type", "file"],
       ["size", 5*1024*1024]
+    ], 
+    "number": [
+      ['presence', "not empty"],
+      ["type", "number"],
+      ["range", "positive"]
+    ],
+    "rebate": [
+      ["type", "number"],
+      ["range", "positive"],
+      ["maximum", 100]
+    ],
+    "regaliasPercent": [
+      ["type", "number"],
+      ["minimum", 0],
+      ["maximum", 100]
     ]
   }
 
   for (const check of possibleChecks[inputName]) {
+    if (inputValue === null && check[0] !== "presence") {
+      continue
+    }
+
     switch (check[0]) {
       case "type":
         if (check[1] === "string") {

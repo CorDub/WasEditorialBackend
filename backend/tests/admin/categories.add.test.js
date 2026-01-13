@@ -34,8 +34,8 @@ beforeAll(async() => {
   bookstore1 = await createBookstore(prisma)
   bookstore2 = await createBookstore(prisma)
   deletedBookstore = await createBookstore(prisma, {isDeleted: true});
-  deletedCategory = await createCategory(prisma, {isDeleted: true});
-  previouslyAddedCategory = await createCategory(prisma, {type: "Omega Premium2", management_min: 180.25})
+  deletedCategory = await createCategory(prisma, {number: 2, isDeleted: true});
+  previouslyAddedCategory = await createCategory(prisma, {number: 3, management_min: 180.25})
 })
 
 afterAll(async() => {
@@ -52,8 +52,10 @@ describe("adding a valid category", () => {
   beforeAll(async() => {
     mockReq = {
       body: {
-        "tipo": "Omega Premium",
+        "number": 4,
+        "type": "regalias",
         "gestionMinima": "180.25",
+        "regalias": "20"
       }, 
       prisma: prisma
     }; 
@@ -68,18 +70,18 @@ describe("adding a valid category", () => {
     addedCategory = await addCategory(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
-      "name": "Omega Premium",
+      "name": 4,
     })
   })
 
   it("should create the category in the database with the correct data", async() => {
     addedCategory = await prisma.category.findUnique({
       where: {
-        type: "Omega Premium"
+        number: 4
       }
     })
     expect(addedCategory).toBeTruthy();
-    expect(addedCategory.type).toBe("Omega Premium");
+    expect(addedCategory.number).toBe(4);
     expect(addedCategory.management_min).toBe(180.25);
   })
 })
@@ -91,7 +93,7 @@ describe("adding an invalid category", () => {
   beforeAll(async() => {
     mockReq = {
       body: {
-        "tipo": "Omega Premium",
+        "number": 6,
         "gestionMinima": "",
       }, 
       prisma: prisma
@@ -115,7 +117,7 @@ describe("adding an invalid category", () => {
   it("should not create a new category", async() => {
     notAddedCategory = await prisma.category.findUnique({
       where: {
-        type: "Omega Premium"
+        number: 6
       }
     })
     expect(notAddedCategory).toBeFalsy;
@@ -124,13 +126,15 @@ describe("adding an invalid category", () => {
 
 
 describe("adding a duplicate category", () => {
-  let mockReq, mockRes, previouslyAddedCategory, mute;
+  let mockReq, mockRes, mute;
 
   beforeAll(async() => {
     mockReq = {
       body: {
-        "tipo": "Omega Premium2",
+        "number": 4,
+        "type": "regalias",
         "gestionMinima": "180.25",
+        "regalias": "20"
       },
       prisma: prisma
     }; 
@@ -151,7 +155,7 @@ describe("adding a duplicate category", () => {
   it("should not create a new category", async() => {
     const premiumCategories = await prisma.category.findMany({
       where: {
-        type: "Omega Premium"
+        number: 4
       }
     })
     expect(premiumCategories.length).toBe(1);

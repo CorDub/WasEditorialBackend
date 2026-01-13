@@ -45,8 +45,8 @@ describe('getting all valid current costs', async() => {
   let deletedPayment, newCost2, deletedCost, costFromDeletedPayment, createdPayment2;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma);
-    newCategory2 = await createCategory(prisma);
+    newCategory = await createCategory(prisma, {number: 2});
+    newCategory2 = await createCategory(prisma, {number: 3});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
     newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])

@@ -52,11 +52,6 @@ function BookstoresList() {
       Cell: ({ row }) => row.original.deal_percentage != null ? `${row.original.deal_percentage}%` : ""
     },
     {
-      header: "Comisiones o regalias",
-      accessorKey: "comissions",
-      Cell: ({row}) => row.original.comissions ? "Comisiones" : "Regalías"
-    },
-    {
       header: "Nombre del contacto",
       accessorKey: "contact_name"
     },

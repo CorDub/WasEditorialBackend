@@ -30,11 +30,15 @@ enum PaymentStatus {
   paid
 }
 
+enum CategoryType {
+  comissions
+  regalias
+}
+
 model User {
   id                  Int       @id @default(autoincrement())
   first_name          String
   last_name           String
-  country             String    @default("México")
   referido            String?
   email               String?   @unique
   phone               String?
@@ -44,8 +48,6 @@ model User {
   bank                String?
   swift               String?
   password            String?
-  category            Category? @relation(fields: [categoryId], references: [id])
-  categoryId          Int?      @default(1)
   books               Book[]
   role                Role      @default(author)
   reset_password_code Int?
@@ -64,6 +66,8 @@ model Book {
   pasta       String?
   isbn        String?      @unique
   users       User[]
+  category    Category     @relation(fields: [categoryId], references: [id])
+  categoryId  Int          @default(1)
   inventories Inventory[]
   isDeleted   Boolean      @default(false)
   createdAt   DateTime     @default(now())
@@ -74,22 +78,23 @@ model Book {
 }
 
 model Category {
-  id                           Int      @id @default(autoincrement())
-  type                         String   @unique
+  id                           Int          @id @default(autoincrement())
+  number                       Int          @unique
+  category_type                CategoryType @default(comissions)
   percentage_royalties         Float?
+  rebate_author                Float?
   percentage_management_stores Float?
-  management_min               Float
-  users                        User[]
-  isDeleted                    Boolean  @default(false)
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
+  management_min               Float?
+  books                        Book[]
+  isDeleted                    Boolean      @default(false)
+  createdAt                    DateTime     @default(now())
+  updatedAt                    DateTime     @updatedAt
 }
 
 model Bookstore {
   id              Int         @id @default(autoincrement())
   name            String      @unique
   deal_percentage Float?
-  comissions      Boolean     @default(false)
   contact_name    String?
   contact_phone   String?
   contact_email   String?

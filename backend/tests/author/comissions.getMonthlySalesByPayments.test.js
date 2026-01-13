@@ -54,7 +54,7 @@ describe(`getting all valid monthly sales by payments`, () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-11-04"));
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 3, management_min: 100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])

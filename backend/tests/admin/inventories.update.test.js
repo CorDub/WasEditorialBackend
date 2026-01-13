@@ -90,7 +90,7 @@ describe("updating an inventory with valid parameters", async() => {
       body: {
         book: newBook2.id,
         bookstore: newBookstore2.id,
-        initial: 1200,
+        inicial: 1200,
         price: 459.99
       },
       prisma: prisma
@@ -157,7 +157,7 @@ describe("updating an inventory with valid parameters", async() => {
       body: {
         book: newBook2.id,
         bookstore: newBookstore3.id,
-        initial: 4000,
+        inicial: 4000,
         price: 459.99
       },
       prisma: prisma

@@ -51,7 +51,7 @@ describe(`sending invoice with valid parameters`, async() => {
     vi.useFakeTimers()
     vi.setSystemTime("2025-11-04")
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 1, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -167,7 +167,7 @@ describe(`sending invoice but the email fails`, async() => {
     vi.useFakeTimers()
     vi.setSystemTime('2025-11-04')
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 2, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -285,7 +285,7 @@ describe(`sending invoice but wrong file type`, async() => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2025-11-04"))
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 3, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -396,7 +396,7 @@ describe(`sending invoice but the file is too big`, async() => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2025-11-04"))
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 4, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -506,7 +506,7 @@ describe(`sending invoice but the payment is already solicited`, () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2025-11-04"))
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 5, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -616,7 +616,7 @@ describe(`sending invoice but the payment is already paid`, () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2025-11-04"))
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 6, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -726,7 +726,7 @@ describe(`sending invoice but the payment doesn't exist`, () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date("2025-11-04"))
 
-    category1 = await createCategory(prisma, {management_min:100})
+    category1 = await createCategory(prisma, {number: 7, management_min:100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])

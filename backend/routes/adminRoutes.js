@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { 
   calculateAuthorRevenue, 
+  calculateAuthorRevenue2,
   getForMonth, 
   twelveMonthsAgo, 
   generateMonthKeysForRange,
@@ -490,7 +491,7 @@ export async function addCategory(req, res) {
       inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
       inputs.rebate = parseFloat(req.body.rebate);
     } else if (inputs.categoryType === "regalias") {
-      inputs.regalias = parseFloat(req.body.regalias);
+      inputs.regaliasPercent = parseFloat(req.body.regalias);
       inputs.gestionMinima = parseFloat(req.body.gestionMinima);
     }
     validateInputs(inputs)
@@ -546,7 +547,7 @@ export async function addCategory(req, res) {
               number: inputs.number,
               category_type: inputs.categoryType,
               management_min: inputs.gestionMinima,
-              percentage_royalties: inputs.regalias,
+              percentage_royalties: inputs.regaliasPercent,
               isDeleted: false
             }
           })
@@ -571,7 +572,7 @@ export async function addCategory(req, res) {
           data: {
             number: inputs.number,
             category_type: inputs.categoryType,
-            percentage_royalties: inputs.regalias,
+            percentage_royalties: inputs.regaliasPercent,
             management_min: inputs.gestionMinima,
           },
         });
@@ -607,7 +608,7 @@ export async function updateCategory(req, res) {
       inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
       inputs.rebate = parseFloat(req.body.rebate);
     } else if (inputs.categoryType === "regalias") {
-      inputs.regalias = parseFloat(req.body.regalias);
+      inputs.regaliasPercent = parseFloat(req.body.regalias);
       inputs.gestionMinima = parseFloat(req.body.gestionMinima);
     }
     validateInputs(inputs)
@@ -648,7 +649,7 @@ export async function updateCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             management_min: inputs.gestionMinima,
-            percentage_royalties: inputs.regalias,
+            percentage_royalties: inputs.regaliasPercent,
             percentage_management_stores: null,
             rebate_author: null,
             isDeleted: false
@@ -2944,10 +2945,24 @@ export async function getPayments(req, res) {
               select: {
                 id: true,
                 price: true,
+                book: {
+                  select: {
+                    id: true,
+                    category: {
+                      select: {
+                        id: true,
+                        category_type: true,
+                        percentage_royalties: true,
+                        rebate_author: true,
+                        percentage_management_stores: true,
+                        management_min: true,
+                      }
+                    }
+                  }
+                },
                 bookstore: {
                   select: {
                     id: true,
-                    comissions: true,
                     deal_percentage: true
                   }
                 }
@@ -2981,21 +2996,31 @@ export async function getPayments(req, res) {
       const userWithCategory = await prismaClient.user.findUnique({
         where: {
           id : payment.userId
-        },
-        include: {
-          category: true
         }
       })
 
       async function updateSales(payment) {
         if (payment.sales.length > 0) {
           for (const sale of payment.sales) {
+            // if (sale.isDeleted === false) {
+            //   payment.amount += calculateAuthorRevenue(
+            //     sale.inventory.bookstore.comissions,
+            //     sale.inventory.price,
+            //     userWithCategory.category.management_min,
+            //     sale.inventory.bookstore.deal_percentage,
+            //     sale.quantity
+            //   )
+            // }
+
             if (sale.isDeleted === false) {
-              payment.amount += calculateAuthorRevenue(
-                sale.inventory.bookstore.comissions,
+              payment.amout += calculateAuthorRevenue2(
+                sale.inventory.book.category.category_type,
                 sale.inventory.price,
-                userWithCategory.category.management_min,
                 sale.inventory.bookstore.deal_percentage,
+                sale.inventory.book.category.percentage_royalties,
+                sale.inventory.book.category.rebate_author,
+                sale.inventory.book.category.percentage_management_stores,
+                sale.inventory.book.category.management_min,
                 sale.quantity
               )
             }
@@ -3414,7 +3439,7 @@ export async function addKindleSale (req, res) {
       "quantityPod": parseInt(req.body.quantityPod),
       "dateCut": new Date(req.body.dateCut),
       "datePay": new Date(req.body.datePay),
-      "regalias": parseFloat(req.body.regalias),
+      "regaliasKindle": parseFloat(req.body.regalias),
     }
     validateInputs(inputs);
     if (inputs.dateCut >= inputs.datePay) {
@@ -3475,7 +3500,7 @@ export async function addKindleSale (req, res) {
           quantityPod: inputs.quantityPod,
           dateCut: inputs.dateCut,
           datePay: inputs.datePay,
-          regalias: inputs.regalias
+          regalias: inputs.regaliasKindle
         }
       });
 
@@ -3500,7 +3525,7 @@ export async function updateKindleSale(req, res) {
       quantityPod: parseInt(req.body.quantityPod),
       dateCut: new Date(req.body.dateCut),
       datePay: new Date(req.body.datePay),
-      regalias: parseFloat(req.body.regalias)
+      regaliasKindle: parseFloat(req.body.regalias)
     }
     validateInputs(inputs)
     if (inputs.dateCut >= inputs.datePay) {
@@ -3632,7 +3657,7 @@ export async function updateKindleSale(req, res) {
         quantityPod: inputs.quantityPod,
         dateCut: inputs.dateCut,
         datePay: inputs.datePay,
-        regalias: inputs.regalias,
+        regalias: inputs.regaliasKindle,
         payments: {
           set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments 
         }

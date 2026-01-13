@@ -20,7 +20,7 @@ export function calculateAuthorRevenue(
     return res
 }
 
-function calculateAuthorRevenue2(
+export function calculateAuthorRevenue2(
   category_type,
   price,
   deal_percentage, 

@@ -93,8 +93,8 @@ test("validates minimum correctly", () => {
 })
 
 test("validates range correctly", () => {
-  expect(validateInput("regalias", 100.52)).toStrictEqual([]);
-  expect(validateInput("regalias", -2563.21)).toStrictEqual([['regalias', -2563.21, "range"]])
+  expect(validateInput("amount", 100.52)).toStrictEqual([]);
+  expect(validateInput("amount", -2563.21)).toStrictEqual([['amount', -2563.21, "range"]])
 })
 
 test("validates clabe format correctly", () => {

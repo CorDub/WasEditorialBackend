@@ -162,11 +162,10 @@ export function validateInput(inputName, inputValue) {
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
-    "regalias": [
+    "regaliasKindle": [
       ['presence', 'not empty'],
       ['type', 'number'],
-      ['range', 'positive'],
-      ['maximum', 100]
+      ['range', "positive"],
     ],
     "paymentId": [
       ['type', 'number or null'],
@@ -273,6 +272,11 @@ export function validateInput(inputName, inputValue) {
     "rebate": [
       ["type", "number"],
       ["range", "positive"],
+      ["maximum", 100]
+    ],
+    "regaliasPercent": [
+      ["type", "number"],
+      ["minimum", 0],
       ["maximum", 100]
     ]
   }

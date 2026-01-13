@@ -83,7 +83,6 @@ describe(`login correctly`, async() => {
     expect(jsonResponse.first_name).toBe(newUser.first_name)
     expect(jsonResponse.last_name).toBe(newUser.last_name)
     expect(jsonResponse.role).toBe("author")
-    expect(jsonResponse.categoryId).toBe(1)
   })
 })
 

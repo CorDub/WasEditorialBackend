@@ -49,7 +49,7 @@ describe(`get author sales with valid parameters`, () => {
   let kindleSale1, kindleSale2, kindleSale3, deletedKindleSale;
 
   beforeAll(async() => {
-    category1 = await createCategory(prisma, {management_min: 100})
+    category1 = await createCategory(prisma, {number: 2, management_min: 100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -149,7 +149,7 @@ describe(`get author sale without being logged in`, async() => {
   let kindleSale1, kindleSale2, kindleSale3, deletedKindleSale;
 
   beforeAll(async() => {
-    category1 = await createCategory(prisma, {management_min: 100})
+    category1 = await createCategory(prisma, {number: 3, management_min: 100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
@@ -218,7 +218,7 @@ describe(`get author sale with invalid parameters`, async() => {
   let kindleSale1, kindleSale2, kindleSale3, deletedKindleSale;
 
   beforeAll(async() => {
-    category1 = await createCategory(prisma, {management_min: 100})
+    category1 = await createCategory(prisma, {number: 4, management_min: 100})
     author = await createAuthor(prisma, {categoryId: category1.id})
     book1 = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])

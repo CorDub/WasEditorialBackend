@@ -51,6 +51,7 @@ describe("adding a valid cost without paymentId", () => {
       body: {
         "amount": "50.25",
         "note": "Costos adicionales de impresion",
+        "date": "2025-11-04",
         "bookId": newBook.id
       },
       prisma: prisma
@@ -97,6 +98,7 @@ describe("adding a valid cost without paymentId", () => {
       try {
         expect(cost.amount).toBe(50.25)
         expect(cost.note).toBe("Costos adicionales de impresion")
+        expect(cost.date.toISOString().slice(0, 10)).toBe("2025-11-04")
         expect(cost.bookId).toBe(newBook.id)
       } catch(error) {
         console.log(`error at cost with id ${cost.id}`)
@@ -123,6 +125,7 @@ describe(`adding a valid cost with paymentId`, async() => {
       body: {
         "paymentId": newPayment.id,
         "amount": "50.25",
+        "date": "2025-11-04",
         "note": "Costos adicionales de impresion",
         "bookId": newBook.id
       },
@@ -164,6 +167,7 @@ describe(`adding a valid cost with paymentId`, async() => {
       try {
         expect(cost.amount).toBe(50.25)
         expect(cost.note).toBe("Costos adicionales de impresion")
+        expect(cost.date.toISOString().slice(0, 10)).toBe("2025-11-04")
         expect(cost.bookId).toBe(newBook.id)
       } catch(error) {
         console.log(`error at cost with id ${cost.id}`)

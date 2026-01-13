@@ -14,6 +14,8 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [errors, setErrors] = useState([]);
     const [selectedBookId, setSelectedBookId] = useState('');
     const bookRef = useRef();
+    const [date, setDate] = useState(null);
+    const dateRef = useRef();
 
     async function fetchExistingBooks() {
         try {
@@ -62,11 +64,15 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             presence: "not empty",
             length: 240
         }
+        const expectationsDate = {
+            type: "datetime",
+        }
 
         const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
         const errorsBook = checkForErrors("El libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
-        const errorInputs = [errorsAmount, errorsNote, errorsBook];
+        const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDate];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -89,6 +95,7 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 body: JSON.stringify({
                     paymentId: clickedRow ? clickedRow.id : null,
                     amount: amount,
+                    date: date,
                     note: note,
                     bookId: selectedBookId
                 })
@@ -128,6 +135,11 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                     placeholder="Monto*"
                     ref={amountRef}
                     onChange={(e) => setAmount(parseFloat(e.target.value))}/>
+                <input type='date'
+                    className="global-input"
+                    placeholder="Fecha*"
+                    ref={dateRef}
+                    onChange={(e) => setDate(e.target.value)} />
                 <input type='text'
                     className="global-input"
                     placeholder="Nota para el autor"

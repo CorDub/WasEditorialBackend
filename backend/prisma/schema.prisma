@@ -207,6 +207,7 @@ model Cost {
   book      Book     @relation(fields: [bookId], references: [id])
   bookId    Int
   note      String?
+  date      DateTime @default(now())
   amount    Float
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())

@@ -55,6 +55,7 @@ describe(`updating a cost with valid parameters`, async() => {
       body: {
         amount: 100.25,
         note: "newCosy",
+        date: "2025-11-04",
         bookId: newBook.id
       },
       prisma: prisma
@@ -75,6 +76,7 @@ describe(`updating a cost with valid parameters`, async() => {
     const updatedCost = await prisma.cost.findUnique({where: {id: newCost.id}})
     expect(updatedCost.amount).toBe(100.25)
     expect(updatedCost.note).toBe("newCosy")
+    expect(updatedCost.date.toISOString().slice(0, 10)).toBe("2025-11-04")
   })
 })
 
@@ -97,6 +99,7 @@ describe(`updating a cost with invalid parameters`, async() => {
       body: {
         amount: "cien venticinco",
         note: "newCosy",
+        date: "2025-11-04",
         bookId: newBook.id
       },
       prisma: prisma
@@ -123,6 +126,7 @@ describe(`updating a cost with invalid parameters`, async() => {
     const updatedCost = await prisma.cost.findUnique({where: {id: newCost.id}})
     expect(updatedCost.amount).toBe(50.25)
     expect(updatedCost.note).toBe("newCost")
+    expect(updatedCost.date.toISOString().slice(0, 10)).not.toBe("2025-11-04")
   })
 })
 
@@ -146,6 +150,7 @@ describe(`updating a deleted cost`, async() => {
       body: {
         amount: 100.25,
         note: "newCosy",
+        date: "2025-11-04",
         bookId: newBook.id
       },
       prisma: prisma
@@ -172,5 +177,6 @@ describe(`updating a deleted cost`, async() => {
     const updatedCost = await prisma.cost.findUnique({where: {id: newCost.id}})
     expect(updatedCost.amount).toBe(50.25)
     expect(updatedCost.note).toBe("newCost")
+    expect(updatedCost.date.toISOString().slice(0, 10)).not.toBe("2025-11-04")
   })
 })

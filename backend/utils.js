@@ -144,7 +144,11 @@ export function changeDateFormat(date, format='normal') {
     return fullMonths[date.substring(5,7)];
   } else if (format === "fullDate") {
     return date.substring(8,10) + " " + months[date.substring(5,7)] + " " + date.substring(0,4);
-  }
+  } else if (format === "yearFirst") {
+    return date.substring(0,4) + "-" + date.substring(5,7) + "-" + date.substring(8,10);
+  } else if (format === "dayFirst") {
+    return date.substring(8, 10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
+  } 
 
   return months[date.substring(5,7)] + " " + date.substring(0,4);
 }

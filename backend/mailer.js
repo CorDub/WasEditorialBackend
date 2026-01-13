@@ -31,7 +31,7 @@ async function sendEmail({ to, subject, text, attachments }) {
     : to
 
   return resend.emails.send({
-    from: '"WAS Editorial" <no-reply@waseditorial.com>',
+    from: '"WAS Editorial" <no-reply@plataformawas.xyz>',
     to: finalTo,
     subject,
     text,

@@ -3122,6 +3122,7 @@ export async function getCurrentCosts(req, res) {
         paymentId: true,
         note: true,
         amount: true,
+        date: true,
         payment: {
           select: {
             forMonth: true,
@@ -3160,6 +3161,7 @@ export async function addCost(req, res) {
       "paymentId": req.body.paymentId ? parseInt(req.body.paymentId) : null,
       "amount": parseFloat(req.body.amount),
       "note": req.body.note,
+      "date": new Date(req.body.date),
       "bookId": parseInt(req.body.bookId),
     }
     validateInputs(inputs);
@@ -3247,6 +3249,7 @@ export async function addCost(req, res) {
           data: {
             paymentId: paymentId,
             amount: inputs.amount,
+            date: inputs.date,
             bookId: inputs.bookId,
             note: inputs.note
           }
@@ -3270,6 +3273,7 @@ export async function updateCost(req, res) {
     const inputs = {
       id: parseInt(req.params.id),
       amount: parseFloat(req.body.amount),
+      date: new Date(req.body.date),
       note: req.body.note,
       bookId: parseInt(req.body.bookId)
     }
@@ -3288,6 +3292,7 @@ export async function updateCost(req, res) {
         data: {
           amount: inputs.amount,
           note: inputs.note,
+          date: inputs.date,
           bookId: inputs.bookId
         }
       })

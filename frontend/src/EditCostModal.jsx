@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ErrorsList from './ErrorsList';
 import checkForErrors from './customHooks/checkForErrors';
 import useCheckAdmin from './customHooks/useCheckAdmin';
+import { changeDateFormat } from "../../backend/utils.js";
 
 function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     useCheckAdmin();
@@ -14,6 +15,8 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [existingBooks, setExistingBooks] = useState([]);
     const [selectedBookId, setSelectedBookId] = useState(clickedRow.bookId);
     const bookRef = useRef();
+    const [date, setDate] = useState(changeDateFormat(clickedRow.date, "yearFirst"));
+    const dateRef = useRef();
 
     async function fetchExistingBooks() {
         try {
@@ -61,12 +64,16 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             type: "string",
             presence: "not empty",
             length: 240
-        }
+        };
+        const expectationsDate = {
+            type: "datetime",
+        };
 
         const errorsAmount = checkForErrors("El monto", parseFloat(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
         const errorsBook = checkForErrors("El libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
-        const errorInputs = [errorsAmount, errorsNote, errorsBook];
+        const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDate];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -89,6 +96,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 body: JSON.stringify({
                     amount: parseFloat(amount),
                     note: note,
+                    date: date,
                     bookId: selectedBookId
                 })
             });
@@ -131,6 +139,15 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                         ref={amountRef}
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}/>
+                </div>
+                <div className="modal-form-line">
+                    <label className="modal-form-label">Date *</label>
+                    <input type="date"
+                        className="global-input"
+                        placeholder="Fecha"
+                        ref={dateRef}
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}/>
                 </div>
                 <div className="modal-form-line">
                     <label className="modal-form-label">Nota</label>

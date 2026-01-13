@@ -7,6 +7,7 @@ import Alert from "./Alert";
 import TableActions from "./TableActions";
 import LoadingWheel from "./LoadingWheel";
 import Modal from "./Modal";
+import { changeDateFormat } from "../../backend/utils.js";
 
 function CostsLists() {
     useCheckAdmin();
@@ -54,8 +55,11 @@ function CostsLists() {
             )
         },
         {
-            header: "Mes",
-            accessorKey: "payment.forMonth" 
+            header: "Fecha",
+            accessorKey: "date",
+            Cell: ({row}) => (
+                <div>{changeDateFormat(row.original.date, "dayFirst")}</div>
+            )
         },
         {
             header: "Nota",

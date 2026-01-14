@@ -259,8 +259,8 @@ describe('updating prices for a book with invalid data', async() => {
     newBook = await createBook(prisma, [newAuthor.id]);
     bookstore1 = await createBookstore(prisma);
     bookstore2 = await createBookstore(prisma);
-    inventory1 = await createInventory(prisma, newBook.id, bookstore1.id, {initial: 1000, current: 1000});
-    inventory2 = await createInventory(prisma, newBook.id, bookstore2.id, {initial: 1000, current: 1000});
+    inventory1 = await createInventory(prisma, newBook.id, bookstore1.id, {initial: 1000, current: 1000, price: 499.99});
+    inventory2 = await createInventory(prisma, newBook.id, bookstore2.id, {initial: 1000, current: 1000, price: 499.99});
 
     mockReq = {
       params: {
@@ -316,8 +316,8 @@ describe("updating prices for a deleted book", async() => {
     newBook = await createBook(prisma, [newAuthor.id], {isDeleted: true});
     bookstore1 = await createBookstore(prisma);
     bookstore2 = await createBookstore(prisma);
-    inventory1 = await createInventory(prisma, newBook.id, bookstore1.id, {initial: 1000, current: 1000});
-    inventory2 = await createInventory(prisma, newBook.id, bookstore2.id, {initial: 1000, current: 1000});
+    inventory1 = await createInventory(prisma, newBook.id, bookstore1.id, {initial: 1000, current: 1000, price: 499.99});
+    inventory2 = await createInventory(prisma, newBook.id, bookstore2.id, {initial: 1000, current: 1000, price: 499.99});
 
     mockReq = {
       params: {

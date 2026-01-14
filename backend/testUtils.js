@@ -58,7 +58,7 @@ export async function createCategory(
     category_type = "regalias", 
     management_min = 180, 
     rebate_author = 5,
-    percentage_royalties = 50,
+    percentage_royalties = 20,
     percentage_management_stores = 5,
     isDeleted = false,
     createdAt = new Date()
@@ -129,7 +129,7 @@ export async function createBookstore(
     contact_name = "",
     contact_phone = "",
     contact_email = "",
-    createdAt = new Date()
+    createdAt = new Date(),
   } = {}
 ) {
   const uniqueName = name === null ? `name_${crypto.randomUUID()}` : name
@@ -157,6 +157,7 @@ export async function createInventory(
     initial = 1000, 
     current = 1000,
     returns = 0,
+    price = 379,
     givenToAuthor = 0,
     isDeleted = false,
     createdAt = new Date()
@@ -171,7 +172,8 @@ export async function createInventory(
       isDeleted: isDeleted,
       returns: returns,
       givenToAuthor: givenToAuthor,
-      createdAt : createdAt
+      createdAt : createdAt,
+      price: price
     }
   })
 
@@ -354,6 +356,7 @@ export async function createCost(
   {
     amount = 100,
     note = null,
+    date = new Date(),
     isDeleted = false,
     createdAt = new Date()
   } = {}
@@ -364,6 +367,7 @@ export async function createCost(
       bookId: bookId,
       amount: amount,
       note: note,
+      date: date,
       isDeleted: isDeleted,
       createdAt : createdAt
     }

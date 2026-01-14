@@ -5,7 +5,6 @@ import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { 
   calculateAuthorRevenue, 
-  calculateAuthorRevenue2,
   generateMonthKeysForRange, 
   getForMonth, 
   twelveMonthsAgo,
@@ -331,7 +330,7 @@ export async function getAuthorSales (req, res) {
       //   sale.inventory.bookstore.deal_percentage,
       //   sale.quantity
       // )
-      const saleValue = calculateAuthorRevenue2(
+      const saleValue = calculateAuthorRevenue(
         sale.inventory.book.category.category_type,
         sale.inventory.price,
         sale.inventory.bookstore.deal_percentage,
@@ -885,7 +884,7 @@ export async function getAuthorPayments (req, res) {
             //   sale.inventory.bookstore.deal_percentage,
             //   sale.quantity
             // )
-            payment.amout += calculateAuthorRevenue2(
+            payment.amout += calculateAuthorRevenue(
               sale.inventory.book.category.category_type,
               sale.inventory.price,
               sale.inventory.bookstore.deal_percentage,

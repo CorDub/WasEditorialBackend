@@ -1,48 +1,53 @@
 import { validateInput } from './validations.js';
 
+// export function calculateAuthorRevenue(
+//   onComission, 
+//   price, 
+//   management, 
+//   storeCutPercent, 
+//   quantity) {
+//     let res = 0;
+//     if (onComission) {
+//       res = ((price - management) * quantity)
+//     } else {
+//       res = ((price - (price * storeCutPercent / 100)) * quantity)
+//     }
+
+//     if (res < 0.001) {
+//       res = 0
+//     }
+
+//     return res
+// }
+
 export function calculateAuthorRevenue(
-  onComission, 
-  price, 
-  management, 
-  storeCutPercent, 
-  quantity) {
-    let res = 0;
-    if (onComission) {
-      res = ((price - management) * quantity)
-    } else {
-      res = ((price - (price * storeCutPercent / 100)) * quantity)
-    }
-
-    if (res < 0.001) {
-      res = 0
-    }
-
-    return res
-}
-
-export function calculateAuthorRevenue2(
   category_type,
   price,
-  deal_percentage, 
+  deal_percentage,
+  bookstoreId,
   percentage_royalties,
   rebate_author,
   percentage_management_stores,
   management_min,
   quantity,
-  saleToAuthor,
 ) {
   let res = 0;
   if (category_type === "comissions") {
-    const percentTotal = deal_percentage + percentage_management_stores;
-    const remaining = price * (percentTotal / 100)
-    const gestionWas = price * (50/100)
-    if (gestionWas < management_min) { gestionWas = management_min }
-    const finalReturn = remaining - gestionWas
-    res = finalReturn * quantity
-
+    if (bookstoreId !== 1) {
+      const percentTotal = deal_percentage + percentage_management_stores;
+      const remaining = price - (price * (percentTotal / 100))
+      res = Number((remaining * quantity).toFixed(2))
+    } else {
+      let gestionWas = price * (deal_percentage / 100)
+      if (gestionWas < management_min) {
+        gestionWas = management_min
+      }
+      const finalReturn = price - gestionWas
+      res = Number((finalReturn * quantity).toFixed(2))
+    }
   } else if (category_type === "regalias") {
     const remaining = price * (percentage_royalties / 100)
-    res = remaining * quantity
+    res = Number((remaining * quantity).toFixed(2))
   }
 
   return res;

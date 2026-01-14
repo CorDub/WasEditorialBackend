@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { calculateAuthorRevenue, getForMonth } from '../utils.js';
+import { getForMonth } from '../utils.js';
 // import authors from "./authors.json" assert {type: 'json'};
 // import books from "./books.json" assert {type: 'json'}
 
@@ -33,7 +33,9 @@ async function main() {
         number: 1,
         category_type: "comissions",
         percentage_management_stores: 5,
-        rebate_author: 50,
+        management_min: 180,
+        // percentage_royalties: 20,
+        // rebate_author: 50,
         createdAt: twelveMonthsAgo
       }
     })
@@ -43,7 +45,9 @@ async function main() {
         number: 2,
         category_type: "regalias",
         percentage_royalties: 20,
-        management_min: 150.00,
+        // percentage_management_stores: 5,
+        // management_min: 150.00,
+        rebate_author: 20,
         createdAt: twelveMonthsAgo
       }
     })
@@ -53,7 +57,8 @@ async function main() {
         number: 3,
         category_type: "comissions",
         percentage_management_stores: 5,
-        rebate_author: 50,
+        // rebate_author: 50,
+        management_min: 150,
         createdAt: twelveMonthsAgo
       }
     })

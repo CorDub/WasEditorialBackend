@@ -108,15 +108,16 @@ describe(`getting all valid monthly sales by payments`, () => {
   })
 
   it(`should return the total for each month, taking into account sales, kindleSales and costs, 
-  and excluding deleted and out of range sales`, async() => {
+  and excluding deleted and out of range sales; Kindle sales should not contribute to total 
+  quantity of sales, just final amount.`, async() => {
     expect(jsonRes[1].sales.length).toBe(2)
     expect(jsonRes[1].costs.length).toBe(1)
-    expect(jsonRes[1].totalQuantity).toBe(30)
+    expect(jsonRes[1].totalQuantity).toBe(20)
     expect(jsonRes[1].totalValue).toBe(2653)
 
     expect(jsonRes[2].sales.length).toBe(2)
     expect(jsonRes[2].costs.length).toBe(1)
-    expect(jsonRes[2].totalQuantity).toBe(20)
+    expect(jsonRes[2].totalQuantity).toBe(10)
     expect(Number(jsonRes[2].totalValue.toFixed(2))).toBe(1895)
   })
 

@@ -646,11 +646,11 @@ export async function getMonthlySalesByPayments (req, res) {
               "datePay": kindleSale.datePay,
               "regalias": kindleSale.regalias
             }],
-            "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+            // "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
             "totalTitleValue": kindleSale.regalias
           })
 
-          paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
+          // paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
           paymentSales.totalValue += kindleSale.regalias;
           continue;
         }
@@ -668,7 +668,7 @@ export async function getMonthlySalesByPayments (req, res) {
               if (bookstore.name === "Kindle") {
                   bookstore.quantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
                   bookstore.regalias += kindleSale.regalias;
-                  entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+                  // entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
                   entry.totalTitleValue += kindleSale.regalias;
                   existingBookstore = true;
               }
@@ -688,7 +688,7 @@ export async function getMonthlySalesByPayments (req, res) {
               })
 
               // and we update total quantity and value for the entry
-              entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
+              // entry.totalTitleQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod);
               entry.totalTitleValue += kindleSale.regalias
             }
             existingBook = true;
@@ -708,12 +708,12 @@ export async function getMonthlySalesByPayments (req, res) {
               "datePay": kindleSale.datePay,
               "regalias": kindleSale.regalias
             }],
-            "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
+            // "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
             "totalTitleValue": kindleSale.regalias
           })
         }
 
-        paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
+        // paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
         paymentSales.totalValue += kindleSale.regalias
       }
       

@@ -605,10 +605,10 @@ export async function updateCategory(req, res) {
 
     if (inputs.categoryType === "comissions") {
       inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
-      inputs.rebate = parseFloat(req.body.rebate);
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
     } else if (inputs.categoryType === "regalias") {
       inputs.regaliasPercent = parseFloat(req.body.regalias);
-      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+      inputs.rebate = parseFloat(req.body.rebate);
     }
     validateInputs(inputs)
 
@@ -633,8 +633,8 @@ export async function updateCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             percentage_management_stores: inputs.gestionTiendas,
-            rebate_author: inputs.rebate,
-            management_min: null,
+            rebate_author: null,
+            management_min: inputs.gestionMinima,
             percentage_royalties: null,
             isDeleted: false
           }
@@ -647,10 +647,10 @@ export async function updateCategory(req, res) {
           data: {
             number: inputs.number,
             category_type: inputs.categoryType,
-            management_min: inputs.gestionMinima,
+            management_min: null,
             percentage_royalties: inputs.regaliasPercent,
             percentage_management_stores: null,
-            rebate_author: null,
+            rebate_author: inputs.rebate,
             isDeleted: false
           }
         })

@@ -67,9 +67,9 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     const inputRebate = document.getElementById("adding-category-descuento");
     let inputList = [];
     if (type === "regalias") {
-      inputList = [inputType, inputRegalias, inputGestionMinima]
+      inputList = [inputType, inputRegalias, inputRebate]
     } else if (type === "comissions") {
-      inputList = [inputType, inputGestionTiendas, inputRebate]
+      inputList = [inputType, inputGestionTiendas, inputGestionMinima]
     }
 
     inputList.forEach((input) => {
@@ -212,11 +212,12 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
                 className="global-input" id="adding-category-gestionTiendas"
                 onChange={(e) => setGestionTiendas(e.target.value)}></input>
             </div>
+
             <div className="modal-form-line">
-              <label className="modal-form-label">Descuento copía de autor (%) *</label>
-              <input type="text" placeholder="% Descuento copía de autor" value={rebate}
-                className="global-input" id="adding-category-descuento"
-                onChange={(e) => setRebate(e.target.value)}></input>
+              <label className="modal-form-label">Gestión minima ($) *</label>
+              <input type='text' placeholder="Gestion minima" value={gestionMinima}
+                className="global-input" id="adding-category-gestionMinima"
+                onChange={(e) => setGestionMinima(e.target.value)}></input>
             </div>
           </>
         )}
@@ -228,12 +229,12 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
                 className="global-input" id="adding-category-regalias"
                 onChange={(e) => setRegalias(e.target.value)}></input>
             </div>
-            
+
             <div className="modal-form-line">
-              <label className="modal-form-label">Gestión minima ($) *</label>
-              <input type='text' placeholder="Gestion minima" value={gestionMinima}
-                className="global-input" id="adding-category-gestionMinima"
-                onChange={(e) => setGestionMinima(e.target.value)}></input>
+              <label className="modal-form-label">Descuento copía de autor (%) *</label>
+              <input type="text" placeholder="% Descuento copía de autor" value={rebate}
+                className="global-input" id="adding-category-descuento"
+                onChange={(e) => setRebate(e.target.value)}></input>
             </div>
           </>
         )}

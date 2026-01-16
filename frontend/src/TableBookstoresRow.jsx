@@ -20,8 +20,8 @@ function TableBookstoresRow({monthlySalesData}) {
       <div className="table-row table-row-sales"
         onClick={() => setDetailsOpen(!isDetailsOpen)}>
         <div className="tbr-first tbr-title ">{monthlySalesData.title}</div>
-        <div className="tbr-name">{monthlySalesData.totalTitleQuantity}</div>
-        {/* <div className="tbr-name"></div> */}
+        {/* <div className="tbr-name">{monthlySalesData.totalTitleQuantity}</div> */}
+        <div className="tbr-name"></div>
         <div className="tbr-name"></div>
         <div className="tbr-name"></div>
         <div className="tbr-name"></div>

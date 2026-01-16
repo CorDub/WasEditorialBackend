@@ -5,6 +5,7 @@ import { useState } from "react";
 
 function TableBookstoresRowDetails({monthlySalesData}) {
   const [isKindleDetailsOpen, toggleKindleDetailsOpen] = useState(false);
+  console.log("monthlySalesData", monthlySalesData)
 
   function openKindleDetails(bookstoreName) {
     if (bookstoreName !== "Kindle") {
@@ -55,7 +56,7 @@ function TableBookstoresRowDetails({monthlySalesData}) {
             <div className="tbr-name">
               {bookstore.name === "Kindle"
                 ? formatNumber(bookstore.regalias)
-                : formatNumber(bookstore.quantity * bookstore.ganancia)}
+                : formatNumber(Math.round(bookstore.quantity * (bookstore.ganancia * 100)) / 100)}
             </div>
           </div>
           {bookstore.name === "Kindle" && (

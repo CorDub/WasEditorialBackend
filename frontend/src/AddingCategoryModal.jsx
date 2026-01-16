@@ -95,9 +95,9 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
     const inputRebate = document.getElementById("adding-category-descuento");
     let inputList = [];
     if (type === "regalias") {
-      inputList = [inputType, inputRegalias, inputGestionMinima]
+      inputList = [inputType, inputRegalias, inputRebate]
     } else if (type === "comissions") {
-      inputList = [inputType, inputGestionTiendas, inputRebate]
+      inputList = [inputType, inputGestionTiendas, inputGestionMinima]
     }
 
     inputList.forEach((input) => {
@@ -212,9 +212,9 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
             <input type='text' placeholder="% Comisión extra de librerías*"
               className="global-input" id="adding-category-gestionTiendas"
               onChange={(e) => setGestionTiendas(e.target.value)}></input>
-            <input type='text' placeholder="% Descuento copia de autor*"
-              className="global-input" id="adding-category-descuento"
-              onChange={(e) => setRebate(e.target.value)}></input>
+            <input type='text' placeholder="Monto minimo de gestión en WAS*"
+              className="global-input" id="adding-category-gestionMinima"
+              onChange={(e) => setGestionMinima(e.target.value)}></input>
           </>
         )}
         {type === "regalias" && (
@@ -222,9 +222,9 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
             <input type='text' placeholder="Porcentaje para el autor*"
               className="global-input" id="adding-category-regalias"
               onChange={(e) => setRegalias(e.target.value)}></input>
-            <input type='text' placeholder="Monto minimo de gestión en WAS*"
-              className="global-input" id="adding-category-gestionMinima"
-              onChange={(e) => setGestionMinima(e.target.value)}></input>
+            <input type='text' placeholder="% Descuento copia de autor*"
+              className="global-input" id="adding-category-descuento"
+              onChange={(e) => setRebate(e.target.value)}></input>
           </>
         )}
         <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/>

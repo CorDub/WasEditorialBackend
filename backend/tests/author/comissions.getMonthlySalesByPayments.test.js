@@ -40,7 +40,7 @@ afterAll(async() => {
 
 describe(`getting all valid monthly sales by payments`, () => {
   let mockReq, mockRes, jsonRes;
-  let category1;
+  let category1, category2;
   let author;
   let book1, book2;
   let bookstore1, bookstore2;
@@ -54,12 +54,13 @@ describe(`getting all valid monthly sales by payments`, () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-11-04"));
 
-    category1 = await createCategory(prisma, {number: 3, management_min: 100})
-    author = await createAuthor(prisma, {categoryId: category1.id})
-    book1 = await createBook(prisma, [author.id])
-    book2 = await createBook(prisma, [author.id])
-    bookstore1 = await createBookstore(prisma)
-    bookstore2 = await createBookstore(prisma, {comissions: true})
+    category1 = await createCategory(prisma, {number: 3, category_type: "comissions"})
+    category2 = await createCategory(prisma, {number: 4, category_type: "regalias"})
+    author = await createAuthor(prisma)
+    book1 = await createBook(prisma, [author.id], {categoryId: category1.id})
+    book2 = await createBook(prisma, [author.id], {categoryId: category2.id})
+    bookstore1 = await createBookstore(prisma, {deal_percentage: 50})
+    bookstore2 = await createBookstore(prisma, {deal_percentage: 30})
     inventory1 = await createInventory(prisma, book1.id, bookstore1.id, {initial: 100, current: 70})
     inventory2 = await createInventory(prisma, book2.id, bookstore2.id, {initial: 100, current: 90})
     payment1 = await createPayment(prisma, author.id, "2025-10")
@@ -74,9 +75,9 @@ describe(`getting all valid monthly sales by payments`, () => {
     kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-09-02"), regalias: 100})
     kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2023-10-02"), regalias: 100})
     deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100, isDeleted: true})
-    cost1 = await createCost(prisma, payment1.id, book1.id, {amoutn: 100})
-    cost2 = await createCost(prisma, payment2.id, book2.id, {amoutn: 100})
-    cost3 = await createCost(prisma, payment1.id, book1.id, {amoutn: 100, isDeleted: true})
+    cost1 = await createCost(prisma, payment1.id, book1.id, {amount: 100})
+    cost2 = await createCost(prisma, payment2.id, book2.id, {amount: 100})
+    cost3 = await createCost(prisma, payment1.id, book1.id, {amount: 100, isDeleted: true})
 
     mockReq = {
       session: {
@@ -111,12 +112,12 @@ describe(`getting all valid monthly sales by payments`, () => {
     expect(jsonRes[1].sales.length).toBe(2)
     expect(jsonRes[1].costs.length).toBe(1)
     expect(jsonRes[1].totalQuantity).toBe(30)
-    expect(jsonRes[1].totalValue).toBe(7499.83)
+    expect(jsonRes[1].totalValue).toBe(2653)
 
     expect(jsonRes[2].sales.length).toBe(2)
     expect(jsonRes[2].costs.length).toBe(1)
     expect(jsonRes[2].totalQuantity).toBe(20)
-    expect(Number(jsonRes[2].totalValue.toFixed(2))).toBe(3499.93)
+    expect(Number(jsonRes[2].totalValue.toFixed(2))).toBe(1895)
   })
 
   it(`should pad months with no sales with empty data`, async() => {

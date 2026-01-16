@@ -54,7 +54,7 @@ describe("adding a valid category", () => {
       body: {
         "number": 4,
         "type": "regalias",
-        "gestionMinima": "180.25",
+        "rebate": "50",
         "regalias": "20"
       }, 
       prisma: prisma
@@ -82,7 +82,8 @@ describe("adding a valid category", () => {
     })
     expect(addedCategory).toBeTruthy();
     expect(addedCategory.number).toBe(4);
-    expect(addedCategory.management_min).toBe(180.25);
+    expect(addedCategory.percentage_royalties).toBe(20);
+    expect(addedCategory.rebate_author).toBe(50)
   })
 })
 
@@ -133,7 +134,7 @@ describe("adding a duplicate category", () => {
       body: {
         "number": 4,
         "type": "regalias",
-        "gestionMinima": "180.25",
+        "rebate": "50",
         "regalias": "20"
       },
       prisma: prisma

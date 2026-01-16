@@ -487,11 +487,11 @@ export async function addCategory(req, res) {
     validateInputs(inputs);
 
     if (inputs.categoryType === "comissions") {
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
       inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
-      inputs.rebate = parseFloat(req.body.rebate);
     } else if (inputs.categoryType === "regalias") {
       inputs.regaliasPercent = parseFloat(req.body.regalias);
-      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+      inputs.rebate = parseFloat(req.body.rebate);
     }
     validateInputs(inputs)
 
@@ -533,7 +533,7 @@ export async function addCategory(req, res) {
               number: inputs.number,
               category_type: inputs.categoryType,
               percentage_management_stores: inputs.gestionTiendas,
-              rebate_author: inputs.rebate,
+              management_min: inputs.gestionMinima,
               isDeleted: false
             }
           })
@@ -545,7 +545,7 @@ export async function addCategory(req, res) {
             data: {
               number: inputs.number,
               category_type: inputs.categoryType,
-              management_min: inputs.gestionMinima,
+              rebate_author: inputs.rebate,
               percentage_royalties: inputs.regaliasPercent,
               isDeleted: false
             }
@@ -563,7 +563,7 @@ export async function addCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             percentage_management_stores: inputs.gestionTiendas,
-            rebate_author: inputs.rebate_author,
+            management_min: inputs.gestionMinima,
           },
         });
       } else if (inputs.categoryType === "regalias") {
@@ -572,7 +572,7 @@ export async function addCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             percentage_royalties: inputs.regaliasPercent,
-            management_min: inputs.gestionMinima,
+            rebate_author: inputs.rebate,
           },
         });
       }

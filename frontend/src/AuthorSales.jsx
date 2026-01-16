@@ -26,7 +26,6 @@ function AuthorSales() {
   const [alertType, setAlertType] = useState("");
 
   function processMonthlyData(sales, bookId = 'total') {
-    console.log("sales in processMonthly data", sales)
     const monthlySales = {};
     // if (!sales || sales.length === 0) return;
     if (sales && sales.length > 0 ) {

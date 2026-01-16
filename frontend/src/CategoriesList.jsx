@@ -56,14 +56,14 @@ function CategoriesList() {
       Cell: ({ row }) => `${row.original.percentage_royalties ? `${row.original.percentage_royalties} %` : "-"}`
     },
     {
-      header: "Monto mínimo de gestión en WAS",
-      accessorKey: "management_min",
-      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
-    },
-    {
       header: "Descuento copia de autor",
       accessorKey: "rebate_author",
       Cell: ({ row }) => `${row.original.rebate_author ? `${row.original.rebate_author} %` : '-'}`
+    },
+    {
+      header: "Monto mínimo de gestión en WAS",
+      accessorKey: "management_min",
+      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
     },
     {
       header: "Comisión extra de librerías",

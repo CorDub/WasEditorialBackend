@@ -23,6 +23,7 @@ import { PrismaClient } from '@prisma/client';
 let prisma;
 let testDBName;
 let category1;
+let wasBookstore;
 
 beforeAll(async() => {
   testDBName = createTestDB();
@@ -31,6 +32,7 @@ beforeAll(async() => {
   await prisma.$connect();
 
   category1 = await createCategory(prisma);
+  wasBookstore = await createBookstore(prisma, {deal_percentage: 50});
 })
 
 afterAll(async() => {
@@ -48,11 +50,11 @@ describe(`getting all valid solicited payments`, async() => {
   let deletedPayment;
 
   beforeAll(async() => {
-    newCategory = await createCategory(prisma, {number: 2, managment_min: 180});
-    newCategory2 = await createCategory(prisma, {number: 3, management_min: 150});
+    newCategory = await createCategory(prisma, {number: 2, managment_min: 180, category_type: "comissions"});
+    newCategory2 = await createCategory(prisma, {number: 3, management_min: 150, category_type: "regalias"});
     newAuthor = await createAuthor(prisma, {categoryId: newCategory2.id})
     newAuthor2 = await createAuthor(prisma, {categoryId: newCategory.id})
-    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id])
+    newBook = await createBook(prisma, [newAuthor.id, newAuthor2.id], {categoryId: newCategory.id})
     newBookstore = await createBookstore(prisma)
     newBookstoreComissions = await createBookstore(prisma, {comissions: true})
     newInventory = await createInventory(prisma, newBook.id, newBookstore.id, {initial: 1000, current: 900})
@@ -140,12 +142,12 @@ describe(`getting all valid solicited payments`, async() => {
     }
   })
 
-  it(`should properly add sales and kindle sales and deduce costs`, async() => {
-    specificPayment = jsonResponse.find(element => element.id === newPayment.id)
-    expect(specificPayment.amount).toBe(105097.6)
-    specificPayment2 = jsonResponse.find(element => element.id === newPayment2.id)
-    expect(specificPayment2.amount).toBe(102197.6)
-  })
+  // it(`should properly add sales and kindle sales and deduce costs`, async() => {
+  //   specificPayment = jsonResponse.find(element => element.id === newPayment.id)
+  //   expect(specificPayment.amount).toBe(105097.6)
+  //   specificPayment2 = jsonResponse.find(element => element.id === newPayment2.id)
+  //   expect(specificPayment2.amount).toBe(102197.6)
+  // })
 })
 
 
@@ -351,5 +353,74 @@ describe(`getting all valid paid payments`, async() => {
         throw new Error("nope")
       }
     }
+  })
+})
+
+
+
+describe(`making sure the correct revenue associated to payments is returned`, () => {
+  let mockReq, mockRes, jsonResponse;
+  let catComissions, catRegalias;
+  let author1, author2;
+  let book1, book2;
+  let otherBookstore;
+  let inventory1, inventory2, inventory3, inventory4;
+  let payment1, payment2;
+  let sale1, sale2, sale3, sale4, deletedSale;
+  let kindleSale1, kindleSale2, deletedKindleSale;
+  let cost, cost2;
+
+  beforeAll(async() => {
+    catComissions = await createCategory(prisma, {number: 10, category_type: "comissions"})
+    catRegalias = await createCategory(prisma, {number: 11, category_type: "regalias"})
+    author1 = await createAuthor(prisma)
+    author2 = await createAuthor(prisma)
+    book1 = await createBook(prisma, [author1.id, author2.id], {categoryId: catComissions.id})
+    book2 = await createBook(prisma, [author1.id], {categoryId: catRegalias.id})
+    otherBookstore = await createBookstore(prisma, {deal_percentage: 30})
+    inventory1 = await createInventory(prisma, book1.id, wasBookstore.id, {price: 300})
+    inventory2 = await createInventory(prisma, book1.id, otherBookstore.id)
+    inventory3 = await createInventory(prisma, book2.id, wasBookstore.id, {price: 300})
+    inventory4 = await createInventory(prisma, book2.id, otherBookstore.id, {price: 300})
+    payment1 = await createPayment(prisma, author1.id, "2025-11", {status: "solicited"})
+    payment2 = await createPayment(prisma, author2.id, "2025-11", {status: "solicited"})
+
+    sale1 = await createSale(prisma, inventory1.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-11-04")})
+    sale2 = await createSale(prisma, inventory2.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-11-04")})
+    sale3 = await createSale(prisma, inventory3.id, [payment1.id], {quantity: 10, date: new Date("2025-11-04")})
+    sale4 = await createSale(prisma, inventory4.id, [payment1.id], {quantity: 10, date: new Date("2025-11-04")})
+    deletedSale = await createSale(prisma, inventory1.id, [payment1.id], {quantity: 10, isDeleted: true, date: new Date("2025-11-04")})
+
+    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id, payment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-11-04"), regalias: 100})
+    kindleSale2 = await createKindleSale(prisma, book1.id, [payment1.id, payment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-11-04"), regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id, payment2.id], {quantityEbook: 10, quantityPod: 10, datePay: new Date("2025-11-04"), regalias: 100, isDeleted: true})
+    
+    cost = await createCost(prisma, payment1.id, book1.id, {amount: 100, date: new Date("2025-11-04")}); 
+    cost2 = await createCost(prisma, payment2.id, book1.id, {amount: 100, date: new Date("2025-11-04")});
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+
+    mockReq = {
+      query: {
+        status: "solicited"
+      },
+      prisma: prisma
+    }
+  })
+
+  it(`should return the correct amount of payments`, async() => {
+    await getPayments(mockReq, mockRes);
+    jsonResponse = mockRes.json.mock.calls[0][0]
+    expect(jsonResponse.length).toBe(2)
+  })
+
+  it(`should return the correct amount for each payment`, async() => {
+    const specificPayment = jsonResponse.find(element => element.id === payment1.id)
+    expect(specificPayment.amount).toBe(4963.5)
+    const specificPayment2 = jsonResponse.find(element => element.id === payment2.id)
+    expect(specificPayment2.amount).toBe(3763.5)
   })
 })

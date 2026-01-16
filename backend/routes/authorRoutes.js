@@ -5,12 +5,13 @@ import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
 import { 
   calculateAuthorRevenue, 
-  calculateAuthorRevenue2,
+  calculateBookstoreComission,
   generateMonthKeysForRange, 
   getForMonth, 
   twelveMonthsAgo,
   validateInputs,
 } from "../utils.js";
+import { verify } from "node:crypto";
 
 const upload = multer();
 const router = express.Router();
@@ -309,12 +310,6 @@ export async function getAuthorSales (req, res) {
       }
     });
 
-    // const author = await prismaClient.user.findUnique({
-    //   where: {
-    //     id: req.session.user_id
-    //   }
-    // });
-
     //Format data
     let totalSales = 0;
     let totalValue = 0;
@@ -324,17 +319,11 @@ export async function getAuthorSales (req, res) {
 
     //Start with sales
     for (const sale of salesInRange) {
-      // const saleValue = calculateAuthorRevenue(
-      //   sale.inventory.bookstore.comissions,
-      //   sale.inventory.price,
-      //   author.category.management_min,
-      //   sale.inventory.bookstore.deal_percentage,
-      //   sale.quantity
-      // )
-      const saleValue = calculateAuthorRevenue2(
+      const saleValue = calculateAuthorRevenue(
         sale.inventory.book.category.category_type,
         sale.inventory.price,
         sale.inventory.bookstore.deal_percentage,
+        sale.inventory.bookstoreId,
         sale.inventory.book.category.percentage_royalties,
         sale.inventory.book.category.rebate_author,
         sale.inventory.book.category.percentage_management_stores,
@@ -424,12 +413,6 @@ export async function getMonthlySalesByPayments (req, res) {
     ltm.setMonth(ltm.getMonth()-12);
     ltm.setDate(1);
 
-    const user = await prismaClient.user.findUnique({
-      where: {
-        id: req.session.user_id
-      }
-    })
-
     // Get all existing payments and tied sales for that author
     const allAuthorPayments = await prismaClient.payment.findMany({
       where: {
@@ -449,6 +432,7 @@ export async function getMonthlySalesByPayments (req, res) {
               select: {
                 bookstore: {
                   select: {
+                    id: true,
                     name: true,
                     deal_percentage: true
                   }
@@ -524,6 +508,29 @@ export async function getMonthlySalesByPayments (req, res) {
         if (sale.isDeleted === true) {
           continue;
         }
+
+        const saleBookstoreComission = calculateBookstoreComission(
+          sale.inventory.book.category.category_type,
+          sale.inventory.price,
+          sale.inventory.bookstore.deal_percentage,
+          sale.inventory.bookstore.id,
+          sale.inventory.book.category.percentage_royalties,
+          sale.inventory.book.category.percentage_management_stores,
+          sale.inventory.book.category.management_min
+        )
+        const saleAuthorGanancia = sale.inventory.price - saleBookstoreComission
+
+        const saleValue = calculateAuthorRevenue(
+          sale.inventory.book.category.category_type,
+          sale.inventory.price,
+          sale.inventory.bookstore.deal_percentage,
+          sale.inventory.bookstore.id,
+          sale.inventory.book.category.percentage_royalties,
+          sale.inventory.book.category.rebate_author,
+          sale.inventory.book.category.percentage_management_stores,
+          sale.inventory.book.category.management_min,
+          sale.quantity
+        )
         
         /// if we have nothing in the array we start it so that we can go through it 
         /// with a for loop later on
@@ -536,28 +543,15 @@ export async function getMonthlySalesByPayments (req, res) {
               "price": sale.inventory.price,
               "isComissions": sale.inventory.book.category_type === "comissions" ? true : false,
               "deal_percentage": sale.inventory.bookstore.deal_percentage,
-              "comissions": sale.inventory.bookstore.comissions 
-                ? user.category.management_min
-                : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-              "ganancia": sale.inventory.bookstore.comissions
-                ? sale.inventory.price - user.category.management_min
-                : sale.inventory.price - sale.inventory.price 
-                  * (sale.inventory.bookstore.deal_percentage / 100)
+              "comissions": saleBookstoreComission,
+              "ganancia": saleAuthorGanancia,
             }],
             "totalTitleQuantity": sale.quantity,
-            "totalTitleValue": sale.inventory.bookstore.comissions
-              ? sale.quantity * (sale.inventory.price - user.category.management_min)
-              : sale.quantity * 
-                (sale.inventory.price - sale.inventory.price 
-                  * (sale.inventory.bookstore.deal_percentage / 100))
+            "totalTitleValue": saleValue
           })
 
           paymentSales.totalQuantity += sale.quantity
-          paymentSales.totalValue += sale.inventory.bookstore.comissions
-            ? sale.quantity * (sale.inventory.price - user.category.management_min)
-            : sale.quantity * 
-              (sale.inventory.price - sale.inventory.price 
-                * (sale.inventory.bookstore.deal_percentage / 100))
+          paymentSales.totalValue += saleValue
           continue;
         }
 
@@ -574,11 +568,7 @@ export async function getMonthlySalesByPayments (req, res) {
               if (bookstore.name === sale.inventory.bookstore.name) {
                   bookstore.quantity += sale.quantity;
                   entry.totalTitleQuantity += sale.quantity;
-                  entry.totalTitleValue += sale.inventory.bookstore.comissions
-                    ? sale.quantity * (sale.inventory.price - user.category.management_min)
-                    : sale.quantity * 
-                      (sale.inventory.price - sale.inventory.price 
-                        * (sale.inventory.bookstore.deal_percentage / 100))
+                  entry.totalTitleValue += saleValue 
                   existingBookstore = true;
               }
             }
@@ -589,24 +579,15 @@ export async function getMonthlySalesByPayments (req, res) {
                 "name": sale.inventory.bookstore.name,
                 "quantity": sale.quantity,
                 "price": sale.inventory.price,
-                "isComissions": sale.inventory.bookstore.comissions,
+                "isComissions": sale.inventory.book.category_type === "comissions" ? true : false,
                 "deal_percentage": sale.inventory.bookstore.deal_percentage,
-                "comissions": sale.inventory.bookstore.comissions 
-                  ? user.category.management_min
-                  : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-                "ganancia": sale.inventory.bookstore.comissions
-                  ? sale.inventory.price - user.category.management_min
-                  : sale.inventory.price - sale.inventory.price 
-                    * (sale.inventory.bookstore.deal_percentage / 100)
+                "comissions": saleBookstoreComission,
+                "ganancia": saleAuthorGanancia
               })
 
               // and we update total quantity and value for the entry
               entry.totalTitleQuantity += sale.quantity;
-              entry.totalTitleValue += sale.inventory.bookstore.comissions
-                ? sale.quantity * (sale.inventory.price - user.category.management_min)
-                : sale.quantity * 
-                  (sale.inventory.price - sale.inventory.price 
-                    * (sale.inventory.bookstore.deal_percentage / 100))
+              entry.totalValue += saleValue
             }
           
             existingBook = true;
@@ -621,32 +602,19 @@ export async function getMonthlySalesByPayments (req, res) {
               "name": sale.inventory.bookstore.name,
               "quantity": sale.quantity,
               "price": sale.inventory.price,
-              "isComissions": sale.inventory.bookstore.comissions,
+              "isComissions": sale.inventory.book.category_type === "comissions" ? true : false,
               "deal_percentage": sale.inventory.bookstore.deal_percentage,
-              "comissions": sale.inventory.bookstore.comissions 
-                ? user.category.management_min
-                : sale.inventory.price * (sale.inventory.bookstore.deal_percentage / 100),
-              "ganancia": sale.inventory.bookstore.comissions
-                ? sale.inventory.price - user.category.management_min
-                : sale.inventory.price - sale.inventory.price 
-                  * (sale.inventory.bookstore.deal_percentage / 100)
+              "comissions": saleBookstoreComission,
+              "ganancia": saleAuthorGanancia
             }],
             "totalTitleQuantity": sale.quantity,
-            "totalTitleValue": sale.inventory.bookstore.comissions
-              ? sale.quantity * (sale.inventory.price - user.category.management_min)
-              : sale.quantity * 
-                (sale.inventory.price - sale.inventory.price 
-                  * (sale.inventory.bookstore.deal_percentage / 100))
+            "totalTitleValue": saleValue
           })
         }
 
         // and update totalQuantity and totalValue
         paymentSales.totalQuantity += sale.quantity
-        paymentSales.totalValue += sale.inventory.bookstore.comissions
-          ? sale.quantity * (sale.inventory.price - user.category.management_min)
-          : sale.quantity * 
-            (sale.inventory.price - sale.inventory.price 
-              * (sale.inventory.bookstore.deal_percentage / 100))
+        paymentSales.totalValue += saleValue
       }
 
       //Now we're adding the costs 
@@ -862,12 +830,6 @@ export async function getAuthorPayments (req, res) {
       }
     });
 
-    const userWithCategory = await prismaClient.user.findUnique({
-      where: {
-        id: req.session.user_id
-      }
-    })
-
     let filteredAuthorPayments = new Map();
     for (const payment of allPayments) {
       const forMonthDate = new Date(payment.forMonth + "-01")
@@ -878,17 +840,11 @@ export async function getAuthorPayments (req, res) {
           for (const sale of payment.sales) {
             if (sale.isDeleted) {continue}
 
-            // payment.amount += calculateAuthorRevenue(
-            //   sale.inventory.bookstore.comissions,
-            //   sale.inventory.price,
-            //   userWithCategory.category.management_min,
-            //   sale.inventory.bookstore.deal_percentage,
-            //   sale.quantity
-            // )
-            payment.amout += calculateAuthorRevenue2(
+            payment.amount += calculateAuthorRevenue(
               sale.inventory.book.category.category_type,
               sale.inventory.price,
               sale.inventory.bookstore.deal_percentage,
+              sale.inventory.bookstoreId,
               sale.inventory.book.category.percentage_royalties,
               sale.inventory.book.category.rebate_author,
               sale.inventory.book.category.percentage_management_stores,

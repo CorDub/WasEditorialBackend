@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { sendSetPasswordMail } from './../mailer.js';
 import { 
   calculateAuthorRevenue, 
-  calculateAuthorRevenue2,
   getForMonth, 
   twelveMonthsAgo, 
   generateMonthKeysForRange,
@@ -488,11 +487,11 @@ export async function addCategory(req, res) {
     validateInputs(inputs);
 
     if (inputs.categoryType === "comissions") {
+      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
       inputs.gestionTiendas = parseFloat(req.body.gestionTiendas);
-      inputs.rebate = parseFloat(req.body.rebate);
     } else if (inputs.categoryType === "regalias") {
       inputs.regaliasPercent = parseFloat(req.body.regalias);
-      inputs.gestionMinima = parseFloat(req.body.gestionMinima);
+      inputs.rebate = parseFloat(req.body.rebate);
     }
     validateInputs(inputs)
 
@@ -534,7 +533,7 @@ export async function addCategory(req, res) {
               number: inputs.number,
               category_type: inputs.categoryType,
               percentage_management_stores: inputs.gestionTiendas,
-              rebate_author: inputs.rebate,
+              management_min: inputs.gestionMinima,
               isDeleted: false
             }
           })
@@ -546,7 +545,7 @@ export async function addCategory(req, res) {
             data: {
               number: inputs.number,
               category_type: inputs.categoryType,
-              management_min: inputs.gestionMinima,
+              rebate_author: inputs.rebate,
               percentage_royalties: inputs.regaliasPercent,
               isDeleted: false
             }
@@ -564,7 +563,7 @@ export async function addCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             percentage_management_stores: inputs.gestionTiendas,
-            rebate_author: inputs.rebate_author,
+            management_min: inputs.gestionMinima,
           },
         });
       } else if (inputs.categoryType === "regalias") {
@@ -573,7 +572,7 @@ export async function addCategory(req, res) {
             number: inputs.number,
             category_type: inputs.categoryType,
             percentage_royalties: inputs.regaliasPercent,
-            management_min: inputs.gestionMinima,
+            rebate_author: inputs.rebate,
           },
         });
       }
@@ -2993,36 +2992,23 @@ export async function getPayments(req, res) {
     async function updateAmount(payment) {
       payment.amount = 0;
 
-      const userWithCategory = await prismaClient.user.findUnique({
-        where: {
-          id : payment.userId
-        }
-      })
-
       async function updateSales(payment) {
         if (payment.sales.length > 0) {
           for (const sale of payment.sales) {
-            // if (sale.isDeleted === false) {
-            //   payment.amount += calculateAuthorRevenue(
-            //     sale.inventory.bookstore.comissions,
-            //     sale.inventory.price,
-            //     userWithCategory.category.management_min,
-            //     sale.inventory.bookstore.deal_percentage,
-            //     sale.quantity
-            //   )
-            // }
 
             if (sale.isDeleted === false) {
-              payment.amout += calculateAuthorRevenue2(
+              const res = calculateAuthorRevenue(
                 sale.inventory.book.category.category_type,
                 sale.inventory.price,
                 sale.inventory.bookstore.deal_percentage,
+                sale.inventory.bookstore.id,
                 sale.inventory.book.category.percentage_royalties,
                 sale.inventory.book.category.rebate_author,
                 sale.inventory.book.category.percentage_management_stores,
                 sale.inventory.book.category.management_min,
                 sale.quantity
               )
+              payment.amount += res
             }
           }
         };
@@ -3191,7 +3177,7 @@ export async function addCost(req, res) {
             where: {
               userId_forMonth: {
                 userId: user.id,
-                forMonth: getForMonth(new Date())
+                forMonth: getForMonth(inputs.date)
               },
             }
           })
@@ -3200,7 +3186,7 @@ export async function addCost(req, res) {
             const newPayment = await tx.payment.create({
               data: {
                 userId: user.id,
-                forMonth: getForMonth(new Date())
+                forMonth: getForMonth(inputs.date)
               }
             })
             paymentIds.push(newPayment.id)
@@ -3228,7 +3214,7 @@ export async function addCost(req, res) {
             const resetPayment = await tx.payment.create({
               data: {
                 userId: user.id,
-                forMonth: getForMonth(new Date())
+                forMonth: getForMonth(inputs.date)
               }
             })
             paymentIds.push(resetPayment.id)
@@ -3437,7 +3423,6 @@ router.get('/kindlesales', getKindleSales);
 
 export async function addKindleSale (req, res) {
   try {
-    console.log("datePay before transform", req.body.datePay)
     const inputs = {
       "bookId": parseInt(req.body.book),
       "quantityEbook": parseInt(req.body.quantityEbook),

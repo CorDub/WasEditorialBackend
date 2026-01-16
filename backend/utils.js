@@ -1,48 +1,83 @@
 import { validateInput } from './validations.js';
 
 export function calculateAuthorRevenue(
-  onComission, 
-  price, 
-  management, 
-  storeCutPercent, 
-  quantity) {
-    let res = 0;
-    if (onComission) {
-      res = ((price - management) * quantity)
-    } else {
-      res = ((price - (price * storeCutPercent / 100)) * quantity)
-    }
-
-    if (res < 0.001) {
-      res = 0
-    }
-
-    return res
-}
-
-export function calculateAuthorRevenue2(
   category_type,
   price,
-  deal_percentage, 
+  deal_percentage,
+  bookstoreId,
   percentage_royalties,
   rebate_author,
   percentage_management_stores,
   management_min,
   quantity,
-  saleToAuthor,
 ) {
   let res = 0;
+  const priceInCents = price * 100
+
   if (category_type === "comissions") {
-    const percentTotal = deal_percentage + percentage_management_stores;
-    const remaining = price * (percentTotal / 100)
-    const gestionWas = price * (50/100)
-    if (gestionWas < management_min) { gestionWas = management_min }
-    const finalReturn = remaining - gestionWas
-    res = finalReturn * quantity
+    if (bookstoreId !== 1) {
+      const percentTotal = deal_percentage + percentage_management_stores;
+      const remaining = priceInCents - (priceInCents * (percentTotal / 100))
+      const totalInCents = Math.round(remaining * quantity)
+      const total  = totalInCents / 100
+      // res = Number((remaining * quantity).toFixed(2))
+      res = total
+    } else {
+      let gestionWas = priceInCents * (deal_percentage / 100)
+      const managementMinInCents = management_min * 100
+      if (gestionWas < managementMinInCents) {
+        gestionWas = managementMinInCents
+      }
+      const finalReturn = priceInCents - gestionWas
+      const totalInCents = Math.round(finalReturn * quantity)
+      const total  = totalInCents / 100
+      // res = Number((finalReturn * quantity).toFixed(2))
+      res = total
+    }
+  } else if (category_type === "regalias") {
+    const remaining = priceInCents * (percentage_royalties / 100)
+    const totalInCents = Math.round(remaining * quantity)
+    const total  = totalInCents / 100
+    // res = Number((remaining * quantity).toFixed(2))
+    res = total
+  }
+
+  return res;
+}
+
+export function calculateBookstoreComission(
+  category_type,
+  price,
+  deal_percentage,
+  bookstoreId,
+  percentage_royalties,
+  percentage_management_stores,
+  management_min
+) {
+  let res = 0;
+  const priceInCents = price * 100
+
+  if (category_type === "comissions") {
+    if (bookstoreId !== 1) {
+      const percentTotal = deal_percentage + percentage_management_stores;
+      const bookstoreCom = (priceInCents * (percentTotal / 100))
+      // res = Number(bookstoreCom.toFixed(2))
+      res = bookstoreCom / 100
+    } else {
+      let gestionWas = (priceInCents * (deal_percentage / 100))
+      const managementMinInCents = management_min * 100
+      if (gestionWas < managementMinInCents) {
+        gestionWas = managementMinInCents
+      }
+      // res = Number(gestionWas.toFixed(2))
+      res = gestionWas / 100
+    }
 
   } else if (category_type === "regalias") {
-    const remaining = price * (percentage_royalties / 100)
-    res = remaining * quantity
+    const percentageBookstore = (100 - percentage_royalties)
+    const remaining = (priceInCents * (percentageBookstore / 100))
+    // res = Number(remaining.toFixed(2))
+    res = remaining / 100
   }
 
   return res;

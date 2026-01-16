@@ -45,7 +45,7 @@ afterAll(async() => {
 
 
 // UPDATING
-describe("updating a category with valid parameters", () => {
+describe("updating a category with valid parameters - type regalias", () => {
   let mockReq, mockRes;
   
     beforeAll(async() => {
@@ -57,7 +57,9 @@ describe("updating a category with valid parameters", () => {
           "number": 3,
           "type": "regalias",
           "gestionMinima": 200.25,
-          "regalias": 20
+          "regalias": 20,
+          "rebate": 50,
+          "gestionTiendas": 5
         },
         prisma: prisma
       }
@@ -82,8 +84,54 @@ describe("updating a category with valid parameters", () => {
         }
       });
       expect(updatedCategory.number).toBe(3);
-      expect(updatedCategory.management_min).toBe(200.25);
+      expect(updatedCategory.rebate_author).toBe(50);
       expect(updatedCategory.percentage_royalties).toBe(20);
+    })
+})
+
+
+
+describe("updating a category with valid parameters - type comissions", () => {
+  let mockReq, mockRes;
+  
+    beforeAll(async() => {
+      mockReq = {
+        params: {
+          "id": newCategory.id
+        },
+        body: {
+          "number": 3,
+          "type": "comissions",
+          "gestionMinima": 200.25,
+          "regalias": 20,
+          "rebate": 50,
+          "gestionTiendas": 5
+        },
+        prisma: prisma
+      }
+  
+      mockRes = {
+        json: vi.fn(),
+        status: vi.fn().mockReturnThis()
+      }
+    })
+  
+    let updatedCategory;
+    
+    it("should return status 200", async() => {
+      await updateCategory(mockReq, mockRes);
+      expect(mockRes.status).toHaveBeenCalledWith(200) 
+    })
+  
+    it("should update the category in the database correctly", async() => {
+      updatedCategory = await prisma.category.findUnique({
+        where: {
+          id: newCategory.id
+        }
+      });
+      expect(updatedCategory.number).toBe(3);
+      expect(updatedCategory.percentage_management_stores).toBe(5);
+      expect(updatedCategory.management_min).toBe(200.25);
     })
 })
 

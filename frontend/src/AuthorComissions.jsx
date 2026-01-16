@@ -133,7 +133,6 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const salesByPayments = await response.json();
-        console.log(salesByPayments)
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {

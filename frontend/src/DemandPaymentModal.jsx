@@ -4,6 +4,7 @@ import "./DemandPaymentModal.scss";
 // import { useEffect } from "react";
 // import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import formatNumber from "./customHooks/formatNumber.jsx";
 
 function DemandPaymentModal({closeModal, paymentInfo}) {
   const [factura, setFactura] = useState(null);
@@ -23,7 +24,6 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   //     setCorreo(user.email)
   //   }
   // }, [user])
-
 
   function checkFile(e, type) {
     const file = e.target.files[0];
@@ -66,13 +66,11 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     }
   }
 
-  console.log("paymentInfo", paymentInfo)
-
   async function sendInvoice() {
     // const errors = checkEmailInput();
     if (errors.length > 0) {
       return;
-    } 
+    }
 
     if (!factura || !constancia ) {
       if (!factura) {
@@ -120,8 +118,8 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   //   }
 
   //   const errorsEmail = checkForErrors(
-  //     "El correo", 
-  //     correo, 
+  //     "El correo",
+  //     correo,
   //     expectationsEmail,
   //     emailRef,
   //     "o");
@@ -134,7 +132,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   //     errorsList.push(errorsEmail);
   //     setErrors(errorsList);
   //     return
-  //   } 
+  //   }
 
   //   setErrors(errorsList)
   //   return errorsList;
@@ -168,12 +166,19 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     <div className="modal-proper">
       <div className="modal-stuff-to-add">
         <div className="dempay-adicional-info">
-          <p>Por favor, usa el uso de CFDI "Gastos Generales"</p>
-          <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p>
+          <p className="dempay-bold">Datos requeridos en la factura</p>
+          <p>Uso de CFDI: Gastos Generales</p>
+          <p>Concepto: Regalías</p>
+          <p>Código: 82111702</p>
+          {/* <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p> */}
           <p>-</p>
           <p>No agregar el IVA en la factura.</p>
           <p>-</p>
           <p>El pago será hecho por transferencia y en una sola exhibición.</p>
+        </div>
+        <div className="modal-payment-amount">
+          <p>Importe:</p>
+          <p>{paymentInfo.month} - {formatNumber(paymentInfo.amount)}</p>
         </div>
         <div className="modal-form-upload">
           <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>

@@ -30,7 +30,7 @@ let newAuthor;
 let newBook, newBook2, newBook3, newBook4, newBook5, deletedBook;
 let newImpression, newImpression2, newImpression3, deletedImpression, newImpression4, newImpression5, newImpression6, newImpression7;
 let wasBookstore, newBookstore, newBookstore2, newBookstore3, newBookstore4, deletedBookstore;
-let deletedInventory, newInventory, newInventory2, newInventory3, newInventory4, newInventory5, newInventory6, newInventory7, originalInventory; 
+let deletedInventory, newInventory, newInventory2, newInventory3, newInventory4, newInventory5, newInventory6, newInventory7, originalInventory;
 let newPayment;
 let deletedSale, newSale1, newSale2, newSale3, newSale4;
 
@@ -61,7 +61,7 @@ beforeAll(async() => {
   newImpression7 = await createImpression(prisma, newBook5.id, {quantity: 1000});
   deletedImpression = await createImpression(prisma, newBook.id, {quantity: 100, isDeleted: true});
 
-  wasBookstore = await createBookstore(prisma, {name: "Plataforma Was"});
+  wasBookstore = await createBookstore(prisma, {name: "WAS Editorial"});
   newBookstore = await createBookstore(prisma);
   newBookstore2 = await createBookstore(prisma);
   newBookstore3 = await createBookstore(prisma);
@@ -123,7 +123,7 @@ describe("getting all valid inventories", () => {
     expect(jsonResponse.includes(deletedInventory)).toBeFalsy()
   })
 
-  it(`should return an object with id, bookId, book, bookstoreId, bookstore, country, price, 
+  it(`should return an object with id, bookId, book, bookstoreId, bookstore, country, price,
   initial, current, returns, givenToAuthor, sales and totalSales, `, async() => {
     const expected = [
         "id",
@@ -149,7 +149,7 @@ describe("getting all valid inventories", () => {
       }
     }
   })
-  
+
   it(`should return book title and bookstore name`, async() => {
     for (const element of jsonResponse) {
       try {
@@ -162,7 +162,7 @@ describe("getting all valid inventories", () => {
     }
   })
 
-  it(`should return valid impressions tied to the book 
+  it(`should return valid impressions tied to the book
   with id, quantity, note and createdAt`, async() => {
     for (const element of jsonResponse) {
       try {
@@ -177,7 +177,7 @@ describe("getting all valid inventories", () => {
           }
         }
       } catch(error) {
-        console.log(`error at element ${element.id}, book: ${element.book.title}, 
+        console.log(`error at element ${element.id}, book: ${element.book.title},
           bookstore: ${element.bookstore.name}`, error);
         console.log("element.book.impressions", element.book.impressions);
         throw error;
@@ -260,7 +260,7 @@ describe("getting all valid inventory names", async() => {
     const deletedBookName = {name: deletedBook.title, type: "book", id: deletedBook.id}
     const deletedBookstoreName = {name: deletedBookstore.name, type: "bookstore", id: deletedBookstore.id}
     expect(jsonResponse.includes(deletedBookName)).toBeFalsy()
-    expect(jsonResponse.includes(deletedBookstoreName)).toBeFalsy() 
+    expect(jsonResponse.includes(deletedBookstoreName)).toBeFalsy()
   })
 
   it(`should return an object with keys name, type and id`, async() => {
@@ -319,7 +319,7 @@ describe("getting all valid inventories by book", async() => {
 
   it("should not contain deleted inventories objects", async() => {
     const deletedInventoryObject = jsonResponse.find(element => element.id === deletedInventory.bookId)
-    expect(deletedInventoryObject).toBeFalsy() 
+    expect(deletedInventoryObject).toBeFalsy()
   })
 
   it(`should return an object with keys id, type, name, initial, sold,
@@ -379,7 +379,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
   })
 
   it(`should return a valid payload object with keys sortedRelevantInventories,
-    name, id, currentTotal, initialTotal, returnsTotal, givenToAuthorTotal, 
+    name, id, currentTotal, initialTotal, returnsTotal, givenToAuthorTotal,
     soldTotal and thatBookImpressions`, async() => {
       const expected = ['sortedRelevantInventories', 'name', 'id', 'currentTotal', 'initialTotal',
         'returnsTotal', 'givenToAuthorTotal', 'soldTotal', 'thatBookImpressions']
@@ -388,7 +388,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
 
   it("should not contain deleted inventories objects", async() => {
     const deletedInventoryObject = jsonResponse.sortedRelevantInventories.find(element => element.id === deletedInventory.id)
-    expect(deletedInventoryObject).toBeFalsy() 
+    expect(deletedInventoryObject).toBeFalsy()
   })
 
   it(`should correctly return relevant inventories details`, async() => {
@@ -407,7 +407,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
     const deletedSortedRelevantInventory = jsonResponse.sortedRelevantInventories.find(element => element.id === deletedInventory.id)
     expect(deletedSortedRelevantInventory).toBeFalsy();
   })
-  
+
   it(`sortedRelevantInventories should return total sales, not counting deleted`, async() => {
     const relevantInventory = jsonResponse.sortedRelevantInventories.find(element => element.id === newInventory.id);
     expect(Object.keys(relevantInventory)).toContain("totalSales");
@@ -443,7 +443,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
     expect(impression).toBeFalsy();
   })
 
-  it(`the impression data should return id, quantity, note, isDeleted, 
+  it(`the impression data should return id, quantity, note, isDeleted,
     createdAt and date`, async() => {
     const expected = ['id','quantity','note','isDeleted','createdAt','date'];
     const impressions = jsonResponse.thatBookImpressions;
@@ -457,7 +457,7 @@ describe("getting a specific book inventory with valid parameters", async() => {
       }
     }
   })
-  
+
   it(`the impression data should be correct`, async() => {
     expect(jsonResponse.thatBookImpressions.length).toBe(3);
     const firstImpressionData = jsonResponse.thatBookImpressions.find(element => element.id === newImpression.id)
@@ -503,7 +503,7 @@ describe("getting a specific inventory with invalid parameters", async() => {
 
 describe("getting all valid inventories by bookstore", async() => {
   let mockRes, mockReq, jsonResponse
-  
+
   beforeAll(async() => {
     mockReq = {
       prisma: prisma
@@ -527,7 +527,7 @@ describe("getting all valid inventories by bookstore", async() => {
 
   // it("should not contain deleted inventories objects", async() => {
   //   const deletedInventoryObject = jsonResponse.find(element => element.id === deletedInventory.bookstoreId)
-  //   expect(deletedInventoryObject).toBeFalsy() 
+  //   expect(deletedInventoryObject).toBeFalsy()
   // })
 
   it(`should return an object with keys id, type, name, initial, sold,
@@ -580,7 +580,7 @@ describe("getting a specific bookstore inventory with valid parameters", async()
   })
 
   it(`should return a valid payload object with keys sortedRelevantInventories,
-    name, id, currentTotal, initialTotal, returnsTotal, givenToAuthorTotal, 
+    name, id, currentTotal, initialTotal, returnsTotal, givenToAuthorTotal,
     soldTotal and thatBookImpressions`, async() => {
       const expected = ['sortedRelevantInventories', 'name', 'id', 'currentTotal', 'initialTotal',
         'returnsTotal', 'givenToAuthorTotal', 'soldTotal', 'extraImpressionsTotal']
@@ -603,7 +603,7 @@ describe("getting a specific bookstore inventory with valid parameters", async()
     const deletedSortedRelevantInventory = jsonResponse.sortedRelevantInventories.find(element => element.id === deletedInventory.id)
     expect(deletedSortedRelevantInventory).toBeFalsy();
   })
-  
+
   it(`sortedRelevantInventories should return total sales per inventory, not counting deleted`, async() => {
     const relevantInventory = jsonResponse.sortedRelevantInventories.find(element => element.id === newInventory.id);
     expect(Object.keys(relevantInventory)).toContain("totalSales");

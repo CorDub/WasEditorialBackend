@@ -13,7 +13,7 @@ export async function login(req, res) {
     // const { email, password } = req.body;
     const inputs = {
       email: req.body.email,
-      password: req.body.password                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+      password: req.body.password
     }
     validateInputs(inputs);
 
@@ -34,7 +34,7 @@ export async function login(req, res) {
         first_name: user.first_name,
         last_name: user.last_name,
         referido: user.referido,
-        categoryId: user.categoryId,
+        // categoryId: user.categoryId,
         role: user.role,
         font_size: user.font_size
       }
@@ -65,7 +65,7 @@ export async function getReset(req, res) {
     }
     if (!user) {
       return res.status(500).json("Error retrieving the user");
-    } 
+    }
 
     await sendResetPasswordMail(inputs.email, user.first_name)
     const user_send = {
@@ -137,7 +137,7 @@ export async function updateUser(req, res) {
       } else {
         errors = validateInput(field[0], field[1])
       }
-      
+
       if (errors.length > 0) {
         throw new Error (`invalid input ${errors[0]}`)
       }

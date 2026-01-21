@@ -111,7 +111,7 @@ function InventoryTotal({
                 onClick={openAddingModal}
                 onMouseEnter={() => setAddingImpressionTooltipHovered(true)}
                 onMouseLeave={() => setAddingImpressionTooltipHovered(false)}/>
-              {isAddingImpressionTooltipHovered 
+              {isAddingImpressionTooltipHovered
                 && (
                   <div className="tooltip-adding-impression">
                     Añadir impresión
@@ -124,17 +124,17 @@ function InventoryTotal({
             </div>
           </div>)}
         <div className="inventory-total-details">Inicial: {initialTotal}</div>
-        {extraImpressions > 0 && 
+        {extraImpressions > 0 &&
           <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
         {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
         <div className="inventory-total-details">Vendidos: {soldTotal}</div>
-        {type === "bookstore" && selectedBookstore === "Plataforma Was" &&
+        {type === "bookstore" && selectedBookstore === "WAS Editorial" &&
           <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
         }
         <div className="inventory-total-details">Disponibles: {
           initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
           }</div>
-        <div className="bookstore-progress-return">  
+        <div className="bookstore-progress-return">
           <FontAwesomeIcon
             icon={faCircleXmark}
             className="inventory-back-button"

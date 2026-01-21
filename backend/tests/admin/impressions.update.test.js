@@ -33,7 +33,7 @@ beforeAll(async() => {
   newAuthor = await createAuthor(prisma);
   newBook = await createBook(prisma, [newAuthor.id]);
   newBook2 = await createBook(prisma, [newAuthor.id]);
-  bodegaWasBookstore = await createBookstore(prisma, {name: "Plataforma Was"});
+  bodegaWasBookstore = await createBookstore(prisma, {name: "WAS Editorial"});
   bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current:3000});
   inventory2 = await createInventory(prisma, newBook2.id, 1, {initial: 1000, current:500});
 })
@@ -57,7 +57,7 @@ describe(`updating an impression with valid parameters`, async() => {
         id: newImpression.id
       },
       body: {
-        quantity: 500, 
+        quantity: 500,
         book_id: newBook.id,
         note: "this is an updated note",
         date: new Date("2025-11-01")
@@ -93,7 +93,7 @@ describe(`updating an impression with valid parameters`, async() => {
         bookstore: true
       }
     })
-    expect(updatedWasInventory.bookstore.name).toBe("Plataforma Was");
+    expect(updatedWasInventory.bookstore.name).toBe("WAS Editorial");
     expect(updatedWasInventory.current).toBe(2500);
   })
 })
@@ -112,7 +112,7 @@ describe(`updating an impression with invalid parameters`, async() => {
         id: newImpression.id
       },
       body: {
-        quantity: "quinientos", 
+        quantity: "quinientos",
         book_id: newBook.id,
         note: 25301,
         date: new Date("2026-11-01")

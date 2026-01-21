@@ -51,7 +51,7 @@ describe(`adding an impression with valid parameters`, async() => {
   beforeAll(async() => {
     mockReq = {
       body: {
-        quantity: 1000, 
+        quantity: 1000,
         id: newBook.id,
         note: "this is a note",
         date: new Date("2025-11-04")
@@ -88,7 +88,7 @@ describe(`adding an impression with valid parameters`, async() => {
         bookstore: true
       }
     })
-    expect(updatedWasInventory.bookstore.name).toBe("Plataforma Was");
+    expect(updatedWasInventory.bookstore.name).toBe("WAS Editorial");
     expect(updatedWasInventory.current).toBe(1500);
   })
 })
@@ -102,7 +102,7 @@ describe(`adding an impression with invalid parameters`, async() => {
   beforeAll(async() => {
     mockReq = {
       body: {
-        quantity: "mil", 
+        quantity: "mil",
         id: newBook2.id,
         note: 2908,
         date: new Date("2026-11-04")
@@ -139,7 +139,7 @@ describe(`adding an impression with invalid parameters`, async() => {
         bookstore: true
       }
     })
-    expect(updatedWasInventory.bookstore.name).toBe("Plataforma Was");
+    expect(updatedWasInventory.bookstore.name).toBe("WAS Editorial");
     expect(updatedWasInventory.current).toBe(500);
   })
 })

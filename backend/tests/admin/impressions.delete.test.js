@@ -32,7 +32,7 @@ beforeAll(async() => {
   category1 = await createCategory(prisma);
   newAuthor = await createAuthor(prisma);
   newBook = await createBook(prisma, [newAuthor.id]);
-  bodegaWas = await createBookstore(prisma, {name: "Plataforma Was"});
+  bodegaWas = await createBookstore(prisma, {name: "WAS Editorial"});
   bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current: 3000});
   newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is a note", date: new Date('2025-11-04')})
 })
@@ -83,7 +83,7 @@ describe(`deleting an impression with valid parameters`, async() => {
         bookstore: true
       }
     })
-    expect(updatedWasInventory.bookstore.name).toBe("Plataforma Was");
+    expect(updatedWasInventory.bookstore.name).toBe("WAS Editorial");
     expect(updatedWasInventory.current).toBe(2000);
   })
 })

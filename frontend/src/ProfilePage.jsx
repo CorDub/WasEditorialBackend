@@ -12,6 +12,7 @@ import ErrorsList from "./ErrorsList";
 import ProfilePageSlider from "./ProfilePageSlider";
 import ProfilePageBankDetails from "./ProfilePageBankDetails";
 import ProfilePageBirthday from "./ProfilePageBirthday";
+import ProfilePagePhone from "./ProfilePagePhone";
 
 function ProfilePage() {
   useCheckUser();
@@ -19,30 +20,6 @@ function ProfilePage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const [forceRender, setForceRender] = useState(false);
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
   const [errors, setErrors] = useState([])
   const [extraInfo, setExtraInfo] = useState(null)
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -96,7 +73,7 @@ function ProfilePage() {
             setForceRender={setForceRender}
             setErrors={setErrors}
             preferredFontSize={user.font_size}/>
-          <ProfilePageLine
+          {/* <ProfilePageLine
             icon={faPhone}
             title={"Téléfono"}
             field={"phone"}
@@ -106,8 +83,19 @@ function ProfilePage() {
             forceRender={forceRender}
             setForceRender={setForceRender}
             setErrors={setErrors}
+            preferredFontSize={user.font_size}/> */}
+          <ProfilePagePhone
+            icon={faPhone}
+            title={'Teléfono'}
+            field={"phone"}
+            value={user.phone}
+            setAlertMessage={setAlertMessage}
+            setAlertType={setAlertType}
+            forceRender={forceRender}
+            setForceRender={setForceRender}
+            setErrors={setErrors}
             preferredFontSize={user.font_size}/>
-          <ProfilePageDropDown
+          {/* <ProfilePageDropDown
             icon={faEarthAmericas}
             title={"País"}
             field={"country"}
@@ -118,7 +106,7 @@ function ProfilePage() {
             forceRender={forceRender}
             setForceRender={setForceRender}
             setErrors={setErrors}
-            preferredFontSize={user.font_size}/>
+            preferredFontSize={user.font_size}/> */}
           <ProfilePageBirthday
             value={extraInfo && extraInfo.birthday}
             preferredFontSize={user.font_size}
@@ -127,7 +115,7 @@ function ProfilePage() {
             forceRender={forceRender}
             setForceRender={setForceRender}
             setErrors={setErrors}/>
-          <ProfilePageSlider
+          {/* <ProfilePageSlider
             icon={faFont}
             title={"Tamaño de las letras"}
             value={user.font_size}
@@ -135,7 +123,7 @@ function ProfilePage() {
             setAlertType={setAlertType}
             forceRender={forceRender}
             setForceRender={setForceRender}
-            preferredFontSize={user.font_size}/>
+            preferredFontSize={user.font_size}/> */}
           <ProfilePageBankDetails
             preferredFontSize={user.font_size}
             accountNumber={extraInfo && extraInfo.clabe}

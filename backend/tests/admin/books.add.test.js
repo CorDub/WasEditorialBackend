@@ -25,7 +25,7 @@ beforeAll(async() => {
   category1 = await createCategory(prisma);
   author1 = await createAuthor(prisma);
   author2 = await createAuthor(prisma);
-  wasBookstore = await createBookstore(prisma, {name: "Plataforma Was"});
+  wasBookstore = await createBookstore(prisma, {name: "WAS Editorial"});
 })
 
 afterAll(async() => {
@@ -52,7 +52,7 @@ describe("adding a valid book", () => {
         "category": category1.id
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -97,7 +97,7 @@ describe("adding a valid book", () => {
     });
     expect(addedInventory).toBeTruthy();
     expect(addedInventory.length).toBe(1);
-    expect(addedInventory[0].bookstore.name).toBe("Plataforma Was")
+    expect(addedInventory[0].bookstore.name).toBe("WAS Editorial")
     expect(addedInventory[0].initial).toBe(1000);
     expect(addedInventory[0].current).toBe(1000);
     expect(addedInventory[0].bookstoreId).toBe(1);
@@ -121,7 +121,7 @@ describe("adding an invalid book", () => {
         "authors": [152, 13],
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -179,7 +179,7 @@ describe("adding a duplicate book", async() => {
         "quantity": 1000,
         "authors": [author1.id, author2.id],
       }
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),

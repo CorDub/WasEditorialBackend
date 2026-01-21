@@ -162,7 +162,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     soFar[input_index]["quantity"] = e.target.value;
 
     if (transferType === "return") {
-      soFar[input_index]["name"] = 'Plataforma Was';
+      soFar[input_index]["name"] = 'WAS Editorial';
       soFar[input_index]["bookstoreId"] = 1;
       // soFar[input_index]["country"] = "México";
       soFar[input_index]["fecha"] = new Date()
@@ -352,7 +352,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         {transferType === "send" ? (
           <>
           {bookstoresToTransfer.map((bookstore, index) => (
-            <div 
+            <div
               key={index}
               className="centered-entrega">
               <select
@@ -389,8 +389,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                     </option>
                 ))}
               </select> */}
-              <input 
-                type="date" 
+              <input
+                type="date"
                 className="global-input"
                 id={`fecha-${index}`}
                 onChange={(e) => updateFecha(e, index)}>

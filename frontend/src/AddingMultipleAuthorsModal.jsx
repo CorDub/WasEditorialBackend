@@ -60,12 +60,13 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
             <p className="mulauth-line">Las columnas deben estar en el siguiente orden:</p>
           </div>
           <div className="mulauth-line">
-            <p className="mulauth-line">Nombre*</p>
-            <p className="mulauth-line">Apellido*</p>
-            <p className="mulauth-line">País</p>
-            <p className="mulauth-line">Categoria</p>
-            <p className="mulauth-line">Correo</p>
-            <p className="mulauth-line">Teléfono</p>
+            <p className="mulauth-line mulauth-mandatory">Nombre(s)*</p>
+            <p className="mulauth-line mulauth-mandatory">Apellido(s)*</p>
+            {/* <p className="mulauth-line">País</p>
+            <p className="mulauth-line">Categoria</p> */}
+            <p className="mulauth-line mulauth-mandatory">Correo*</p>
+            <p className="mulauth-line mulauth-mandatory">Teléfono*</p>
+            <p className="mulauth-line">(10 números sin espacio / empezando con 00 + prefijo de país para números internacionales)</p>
             <p className="mulauth-line">Fecha de nacimiento (ddmmaaaa - no separadores)</p>
             <p className="mulauth-line">CLABE</p>
             <p className="mulauth-line">Nombre del titular</p>
@@ -74,13 +75,13 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
             <p className="mulauth-line">Referido</p>
           </div>
           <div className="mulauth-bottom-instrucciones">
-            <p className="mulauth-line">*mandatorios</p>
+            <p className="mulauth-line mulauth-mandatory">*mandatorios</p>
           </div>
-          
+
         </div>
         <div className="modal-form-upload">
           <label className="modal-form-label">Archivo CSV</label>
-          <input 
+          <input
             type='file'
             className="modal-form-file"
             accept=".csv"

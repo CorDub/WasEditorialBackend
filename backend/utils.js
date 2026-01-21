@@ -117,14 +117,14 @@ export function generateMonthKeysForRange(startDate, endDate) {
   if (start.substring(0,4) === end.substring(0,4)) {
     numMonthsInRange = Number(end.substring(5,7)) - Number(start.substring(5,7));
   } else {
-    numMonthsInRange = Number(end.substring(5,7)) 
+    numMonthsInRange = Number(end.substring(5,7))
       + (Number(end.substring(0,4)) - Number(start.substring(0,4))) * 12
       - Number(start.substring(5,7))
   }
 
   let monthKeysInRange = []
   for (let i = 0; i <= numMonthsInRange; i++) {
-    const month = (Number(start.substring(5,7)) + i) - (12 * Math.trunc((Number(start.substring(5,7)) + i -1)/12)) 
+    const month = (Number(start.substring(5,7)) + i) - (12 * Math.trunc((Number(start.substring(5,7)) + i -1)/12))
     const year = Number(start.substring(0,4)) + (Math.trunc((Number(start.substring(5,7)) + i - 1) / 12))
     const monthKey = String(year) + "-" + String(month).padStart(2, "0");
     monthKeysInRange.push(monthKey)
@@ -142,6 +142,21 @@ export function twelveMonthsAgo() {
   return result;
 }
 
+export function localISODateTwelveMonthsAgo() {
+  const d = new Date();          // local now
+  d.setMonth(d.getMonth() - 12); // local month arithmetic
+  d.setHours(0, 0, 0, 0);        // normalize to start of local day
+
+  const pad = n => String(n).padStart(2, "0");
+
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+export function toLocalISODate(date) {
+  const pad = n => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export function changeDateFormat(date, format='normal') {
   const months = {
       "01": "Ene",
@@ -157,7 +172,7 @@ export function changeDateFormat(date, format='normal') {
       "11": "Nov",
       "12": "Dic"
     }
-  
+
     const fullMonths = {
       "01": "Enero",
       "02": "Febrero",
@@ -183,7 +198,7 @@ export function changeDateFormat(date, format='normal') {
     return date.substring(0,4) + "-" + date.substring(5,7) + "-" + date.substring(8,10);
   } else if (format === "dayFirst") {
     return date.substring(8, 10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
-  } 
+  }
 
   return months[date.substring(5,7)] + " " + date.substring(0,4);
 }
@@ -252,7 +267,7 @@ export function applyFilters(data, filters, type) {
       filteredResults.push(sale)
     }
   }
-  
+
   return filteredResults
 }
 
@@ -261,7 +276,7 @@ export function getAuthorString(userList) {
   for (let i = 0; i < userList.length; i++) {
     authorString += userList[i].first_name + " " + userList[i].last_name
     if (i < userList.length - 1) {
-      userList.authorsString += ", ";
+      authorString += ", ";
     }
   }
   return authorString

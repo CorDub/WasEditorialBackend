@@ -1,12 +1,19 @@
 import "./DateRange.scss";
-import { convertISOString, avoidTimeshift } from "../../backend/utils";
+import { useEffect } from "react";
+import { convertISOString, avoidTimeshift, toLocalISODate } from "../../backend/utils";
 
 function DateRange({
   startDate,
   setStartDate,
-  endDate, 
+  endDate,
   setEndDate
 }) {
+
+  // useEffect(() => {
+  //   console.log("end date", endDate)
+  //   console.log(typeof endDate)
+  //   console.log("isodlocal", toLocalISODate(endDate))
+  // }, [endDate])
 
   return(
     <div className="date-range">

@@ -5,12 +5,14 @@ import TableCostsDetails from "./TableCostsDetails";
 
 function TableCosts({costs, totalCosts, setTotalCosts}) {
     const [isTotalCostsDetailsOpen, setTotalCostsDetailsOpen] = useState(false);
-    
-    useEffect(() => {
-        let totalCosts = 0;
-        costs.map(cost => totalCosts += cost.amount);
-        setTotalCosts(totalCosts);
-    }, [costs])
+
+    // useEffect(() => {
+    //     let totalCosts = 0;
+    //     costs.map(cost => totalCosts += cost.amount);
+    //     setTotalCosts(totalCosts);
+    // }, [costs])
+
+    console.log("totalCosts", totalCosts)
 
     return(
         <div className="table-costs"
@@ -19,7 +21,7 @@ function TableCosts({costs, totalCosts, setTotalCosts}) {
                 <div className="table-costs-title">Costos adicionales</div>
                 <div className="table-costs-amount">- {formatNumber(totalCosts)}</div>
             </div>
-            {isTotalCostsDetailsOpen && 
+            {isTotalCostsDetailsOpen &&
                 <TableCostsDetails costs={costs}/>}
         </div>
     )

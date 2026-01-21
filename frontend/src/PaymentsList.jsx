@@ -15,6 +15,7 @@ function PaymentsList() {
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
   const [chosenPaymentStatus, setChosenPaymentStatus] = useState("solicited");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
@@ -92,6 +93,11 @@ function PaymentsList() {
     enablePagination: true,
     enableFullScreenToggle: false,
     enableRowVirtualization: false,
+    renderTopToolbarCustomActions: () => (
+      <div className="table-add-button" style={{marginLeft:"0.5rem"}}>
+        <div><span style={{fontWeight: "bold"}}>Total: </span>{formatNumber(total)}</div>
+      </div>
+    ),
     initialState: {
       density: 'compact',
     },
@@ -157,7 +163,7 @@ function PaymentsList() {
         setModalAction("edit");
         setModalType("payment");
         break;
-      case 'editCost' : 
+      case 'editCost' :
         setModalAction("edit");
         setModalType("cost");
         break;
@@ -197,7 +203,9 @@ function PaymentsList() {
 
       if (response.ok) {
         const data = await response.json();
-        setData(data);
+        console.log("data", data)
+        setData(data.selectedPayments);
+        setTotal(data.totalAmount);
         setLoading(false);
       }
     } catch (error) {
@@ -237,7 +245,7 @@ function PaymentsList() {
         </select>
         {/* <div>Añadir un costo addicional solamente se puede hacer con un pago que todavía no esta solicitado</div> */}
       </div>
-      
+
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction}
         clickedRow={clickedRow} closeModal={closeModal}
         globalFilter={globalFilter} />}

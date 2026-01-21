@@ -39,7 +39,7 @@ function AddingImpressionModal({
       range: "positive"
     }
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-    
+
     const expectationsDate = {
       type: "datetime",
       presence: "not empty",
@@ -52,7 +52,7 @@ function AddingImpressionModal({
       length: 255
     }
     const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
-    
+
     const errorInputs = [errorsQuantity, errorsDate, errorsNote];
 
     for (const errorInput of errorInputs) {
@@ -107,8 +107,8 @@ function AddingImpressionModal({
         <p>Nueva impression</p>
       </div>
       <div className="campos-obligatorios-new-impressions">
-        <p>Nuevas impresiónes se suman a los libros disponibles 
-          en el inventario de la Plataforma Was.</p>
+        <p>Nuevas impresiónes se suman a los libros disponibles
+          en el inventario de WAS Editorial.</p>
       </div>
       <form className="global-form">
         <input
@@ -117,7 +117,7 @@ function AddingImpressionModal({
           className="global-input"
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}></input>
-        <input 
+        <input
           type="date"
           placeholder="Fecha"
           className="global-input"

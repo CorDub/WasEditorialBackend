@@ -3,12 +3,12 @@ import crypto from 'crypto';
 import { execSync } from "node:child_process";
 
 export async function createAuthor(
-  prisma, 
-  { 
-    first_name = null, 
-    last_name = null, 
-    email = null, 
-    role = "author", 
+  prisma,
+  {
+    first_name = null,
+    last_name = null,
+    email = null,
+    role = "author",
     isDeleted = false,
     referido = null,
     phone = null,
@@ -55,8 +55,8 @@ export async function createCategory(
   prisma,
   {
     number = 1,
-    category_type = "regalias", 
-    management_min = 180, 
+    category_type = "regalias",
+    management_min = 180,
     rebate_author = 5,
     percentage_royalties = 20,
     percentage_management_stores = 5,
@@ -83,12 +83,13 @@ export async function createCategory(
 }
 
 export async function createBook(
-  prisma, 
+  prisma,
   userList,
   {
-    title = null, 
+    title = null,
     categoryId = 1,
     isDeleted = false,
+    mainAuthor = userList[0],
     createdAt = new Date()
   } = {}
 ) {
@@ -98,7 +99,7 @@ export async function createBook(
 
     if (!element || validateInput("id", element).length > 0) {
       console.log("incorrect user list - you didn't send Ids")
-      return; 
+      return;
     }
   }
   const uniqueTitle = title === null ? `title_${crypto.randomUUID()}` : title;
@@ -109,6 +110,7 @@ export async function createBook(
       users: {
         connect: validUserList
       },
+      mainAuthor: mainAuthor,
       category: {
         connect: {"id": categoryId}
       },
@@ -121,7 +123,7 @@ export async function createBook(
 }
 
 export async function createBookstore(
-  prisma,  
+  prisma,
   {
     name = null,
     isDeleted = false,
@@ -133,7 +135,7 @@ export async function createBookstore(
   } = {}
 ) {
   const uniqueName = name === null ? `name_${crypto.randomUUID()}` : name
-  
+
   const newBookstore = await prisma.bookstore.create({
     data: {
       name: uniqueName,
@@ -150,11 +152,11 @@ export async function createBookstore(
 }
 
 export async function createInventory(
-  prisma, 
-  bookId, 
+  prisma,
+  bookId,
   bookstoreId,
   {
-    initial = 1000, 
+    initial = 1000,
     current = 1000,
     returns = 0,
     price = 379,
@@ -181,11 +183,11 @@ export async function createInventory(
 }
 
 export async function createPayment (
-  prisma, 
-  userId, 
+  prisma,
+  userId,
   forMonth,
   {
-    dateMarkedAsPaid = null, 
+    dateMarkedAsPaid = null,
     status = "created",
     isDeleted = false,
     createdAt = new Date(),
@@ -209,12 +211,12 @@ export async function createPayment (
 }
 
 export async function createSale(
-  prisma, 
-  inventoryId, 
-  paymentsIdList, 
+  prisma,
+  inventoryId,
+  paymentsIdList,
   {
-    quantity = 10, 
-    isDeleted = false, 
+    quantity = 10,
+    isDeleted = false,
     date = new Date(),
     createdAt = new Date()
   } = {}
@@ -225,7 +227,7 @@ export async function createSale(
 
     if (!element || validateInput("id", element).length > 0) {
       console.log("incorrect payments id list - you didn't pass payment IDs")
-      return; 
+      return;
     }
   }
 
@@ -246,13 +248,13 @@ export async function createSale(
 }
 
 export async function createKindleSale(
-  prisma, 
-  bookId, 
-  paymentsIdList, 
+  prisma,
+  bookId,
+  paymentsIdList,
   {
     datePay = null,
-    quantityEbook = 100, 
-    quantityPod = 100, 
+    quantityEbook = 100,
+    quantityPod = 100,
     regalias = 1000,
     isDeleted = false,
     createdAt = new Date()
@@ -268,7 +270,7 @@ export async function createKindleSale(
 
     if (!element || validateInput("id", element).length > 0) {
       console.log("incorrect payments id list - you didn't pass Ids")
-      return; 
+      return;
     }
   }
 
@@ -292,12 +294,12 @@ export async function createKindleSale(
 }
 
 export async function createImpression(
-  prisma, 
-  bookId, 
+  prisma,
+  bookId,
   {
-    quantity = 1000, 
-    isDeleted=false, 
-    note=null, 
+    quantity = 1000,
+    isDeleted=false,
+    note=null,
     date=new Date(),
     createdAt = new Date()
   } = {}
@@ -350,9 +352,9 @@ export async function createTransfer(
 }
 
 export async function createCost(
-  prisma, 
-  paymentId, 
-  bookId, 
+  prisma,
+  paymentId,
+  bookId,
   {
     amount = 100,
     note = null,
@@ -374,7 +376,7 @@ export async function createCost(
   })
 
   return newCost
-} 
+}
 
 export async function deleteFromDB(prisma, element, type) {
   if (!element) {

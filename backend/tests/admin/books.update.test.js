@@ -26,7 +26,7 @@ beforeAll(async() => {
   category1 = await createCategory(prisma);
   author1 = await createAuthor(prisma);
   author2 = await createAuthor(prisma);
-  wasBookstore = await createBookstore(prisma, {name: "Plataforma Was"});
+  wasBookstore = await createBookstore(prisma, {name: "WAS Editorial"});
 })
 
 afterAll(async() => {
@@ -60,7 +60,7 @@ describe('updating a book with valid parameters', () => {
         "category": category1.id
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -78,7 +78,7 @@ describe('updating a book with valid parameters', () => {
       where: {
         id: newBook.id
       },
-      select:{  
+      select:{
         title: true,
         pasta: true,
         isbn: true,
@@ -119,7 +119,7 @@ describe("updating a book with invalid parameters", () => {
         "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -150,7 +150,7 @@ describe("updating a book with invalid parameters", () => {
 describe("updating a deleted book", async() => {
   let newAuthor, deletedBook, addedInventory, addedImpression, mockReq, mockRes, mute;
   let notUpdatedBook;
-
+s
   beforeAll(async() => {
     newAuthor = await createAuthor(prisma);
     deletedBook = await createBook(prisma, [newAuthor.id], {isDeleted: true})
@@ -169,7 +169,7 @@ describe("updating a deleted book", async() => {
         "authors": [{"id": newAuthor.id}, {"id": 1}, {"id": 2}]
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -200,7 +200,7 @@ describe("updating a deleted book", async() => {
 describe("updating prices for a given book", async() => {
   let mockReq, mockRes, newAuthor, newBook, bookstore1, bookstore2, inventory1, inventory2;
   let updatedInventory1, updatedInventory2;
-  
+
   beforeAll(async() => {
     newAuthor = await createAuthor(prisma);
     newBook = await createBook(prisma, [newAuthor.id]);
@@ -218,7 +218,7 @@ describe("updating prices for a given book", async() => {
           {
             "inventoryId": inventory1.id,
             "price": 299.99
-          }, 
+          },
           {
             "inventoryId": inventory2.id,
             "price": 349.99
@@ -226,7 +226,7 @@ describe("updating prices for a given book", async() => {
         ]
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -235,9 +235,9 @@ describe("updating prices for a given book", async() => {
   })
 
   it("should respond with a status 200", async() => {
-    await updateBookPrices(mockReq, mockRes) 
+    await updateBookPrices(mockReq, mockRes)
     expect(mockRes.status).toHaveBeenCalledWith(200)
-  }) 
+  })
 
   it("should update the price for all inventories in the database", async() => {
     updatedInventory1 = await prisma.inventory.findUnique({where: {id: inventory1.id}});
@@ -253,7 +253,7 @@ describe('updating prices for a book with invalid data', async() => {
   let mockReq, mockRes, mute;
   let newAuthor, newBook, bookstore1, bookstore2, inventory1, inventory2;
   let notUpdatedInventory1, notUpdatedInventory2;
-  
+
   beforeAll(async() => {
     newAuthor = await createAuthor(prisma);
     newBook = await createBook(prisma, [newAuthor.id]);
@@ -271,7 +271,7 @@ describe('updating prices for a book with invalid data', async() => {
           {
             "inventoryId": inventory1.id,
             "price": "dos cientos noventa y nueve pesos"
-          }, 
+          },
           {
             "inventoryId": inventory2.id,
             "price": -349.99
@@ -279,7 +279,7 @@ describe('updating prices for a book with invalid data', async() => {
         ]
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -292,9 +292,9 @@ describe('updating prices for a book with invalid data', async() => {
   afterAll(async() => {mute.mockRestore()})
 
   it("should respond with a status 500", async() => {
-    await updateBookPrices(mockReq, mockRes) 
+    await updateBookPrices(mockReq, mockRes)
     expect(mockRes.status).toHaveBeenCalledWith(500)
-  }) 
+  })
 
   it("should not update the price for all inventories in the database", async() => {
     notUpdatedInventory1 = await prisma.inventory.findUnique({where: {id: inventory1.id}});
@@ -310,7 +310,7 @@ describe("updating prices for a deleted book", async() => {
   let mockReq, mockRes, mute;
   let newAuthor, newBook, bookstore1, bookstore2, inventory1, inventory2;
   let notUpdatedInventory1, notUpdatedInventory2;
-  
+
   beforeAll(async() => {
     newAuthor = await createAuthor(prisma);
     newBook = await createBook(prisma, [newAuthor.id], {isDeleted: true});
@@ -328,7 +328,7 @@ describe("updating prices for a deleted book", async() => {
           {
             "inventoryId": inventory1.id,
             "price": 249.99
-          }, 
+          },
           {
             "inventoryId": inventory2.id,
             "price": 349.99
@@ -336,7 +336,7 @@ describe("updating prices for a deleted book", async() => {
         ]
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -351,9 +351,9 @@ describe("updating prices for a deleted book", async() => {
   })
 
   it("should respond with a status 500", async() => {
-    await updateBookPrices(mockReq, mockRes) 
+    await updateBookPrices(mockReq, mockRes)
     expect(mockRes.status).toHaveBeenCalledWith(500)
-  }) 
+  })
 
   it("should not update the price for all inventories in the database", async() => {
     notUpdatedInventory1 = await prisma.inventory.findUnique({where: {id: inventory1.id}});

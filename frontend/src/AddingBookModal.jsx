@@ -367,6 +367,9 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           className="global-input"
           id="adding-book-quantity"
           onChange={(e) => setQuantity(e.target.value)}></input>
+        {authors.length > 1 && (
+          <div className="autor-principal">El autor principal es el primero en la lista</div>
+        )}
         {authors.map((author, index) => (
           <div key={index} className="book-edit-author-dropdown">
             <select onChange={(e) =>dropDownChange(e, "Autor", index)} className="select-global"

@@ -3,11 +3,11 @@ import bcrypt from 'bcrypt';
 import { prisma } from "../prisma/client.js"
 import multer from "multer";
 import { sendEmailWithInvoice } from "../mailer.js";
-import { 
-  calculateAuthorRevenue, 
+import {
+  calculateAuthorRevenue,
   calculateBookstoreComission,
-  generateMonthKeysForRange, 
-  getForMonth, 
+  generateMonthKeysForRange,
+  getForMonth,
   twelveMonthsAgo,
   validateInputs,
 } from "../utils.js";
@@ -61,7 +61,7 @@ export async function changePassword(req, res) {
       errors.push(14);
     }
 
-    if (errors.length > 0) { return res.status(400).json(errors); } 
+    if (errors.length > 0) { return res.status(400).json(errors); }
 
     const update = await prismaClient.user.update({
       where: {id: user_id},
@@ -186,7 +186,7 @@ export async function getAuthorInventories (req, res) {
             date: impression.date
           })
           break;
-        } 
+        }
       }
 
       if (book.impressions.length > 1) {
@@ -255,6 +255,10 @@ export async function getAuthorSales (req, res) {
     }
 
     const prismaClient = req.prisma || prisma
+
+    console.log("-------------")
+    inputs.endDate.setUTCHours(23,59,59,999);
+    console.log("endDate after", inputs.endDate);
 
     // Get data
     let salesInRange = await prismaClient.sale.findMany({
@@ -333,7 +337,7 @@ export async function getAuthorSales (req, res) {
 
       totalSales += sale.quantity
       totalValue += saleValue
-      
+
       if (salesByBook.has(sale.inventory.book.title)) {
         const targetedBook = salesByBook.get(sale.inventory.book.title)
         targetedBook.quantity += sale.quantity
@@ -344,7 +348,7 @@ export async function getAuthorSales (req, res) {
           "title": sale.inventory.book.title,
           "quantity": sale.quantity,
           "value": saleValue,
-        }) 
+        })
       }
 
       sales.push({
@@ -372,7 +376,7 @@ export async function getAuthorSales (req, res) {
           "title": kindleSale.book.title,
           "quantity": kindleSale.quantityPod + kindleSale.quantityEbook,
           "value": kindleSale.regalias,
-        }) 
+        })
       }
 
       sales.push({
@@ -497,9 +501,9 @@ export async function getMonthlySalesByPayments (req, res) {
     let monthlySales = [];
     for (const payment of filteredAuthorPayments) {
       let paymentSales = {
-        "forMonth": payment.forMonth, 
-        "sales": [], 
-        "totalQuantity": 0, 
+        "forMonth": payment.forMonth,
+        "sales": [],
+        "totalQuantity": 0,
         "totalValue": 0,
         "costs": [],
       }
@@ -531,8 +535,8 @@ export async function getMonthlySalesByPayments (req, res) {
           sale.inventory.book.category.management_min,
           sale.quantity
         )
-        
-        /// if we have nothing in the array we start it so that we can go through it 
+
+        /// if we have nothing in the array we start it so that we can go through it
         /// with a for loop later on
         if (paymentSales.sales.length === 0) {
           paymentSales.sales.push({
@@ -568,7 +572,7 @@ export async function getMonthlySalesByPayments (req, res) {
               if (bookstore.name === sale.inventory.bookstore.name) {
                   bookstore.quantity += sale.quantity;
                   entry.totalTitleQuantity += sale.quantity;
-                  entry.totalTitleValue += saleValue 
+                  entry.totalTitleValue += saleValue;
                   existingBookstore = true;
               }
             }
@@ -584,12 +588,11 @@ export async function getMonthlySalesByPayments (req, res) {
                 "comissions": saleBookstoreComission,
                 "ganancia": saleAuthorGanancia
               })
-
-              // and we update total quantity and value for the entry
+              // and we update total quantity and value for the entr
               entry.totalTitleQuantity += sale.quantity;
-              entry.totalValue += saleValue
+              entry.totalTitleValue += saleValue
             }
-          
+
             existingBook = true;
           }
         }
@@ -617,7 +620,7 @@ export async function getMonthlySalesByPayments (req, res) {
         paymentSales.totalValue += saleValue
       }
 
-      //Now we're adding the costs 
+      //Now we're adding the costs
       for (const cost of payment.costs) {
         if (cost.isDeleted === false) {
           paymentSales.costs.push({"amount": cost.amount, "note": cost.note})
@@ -625,7 +628,7 @@ export async function getMonthlySalesByPayments (req, res) {
         }
       }
 
-      //Now we're adding the kindle sales 
+      //Now we're adding the kindle sales
       for (const kindleSale of payment.kindleSales) {
         if (kindleSale.isDeleted === true) {
           continue;
@@ -716,7 +719,7 @@ export async function getMonthlySalesByPayments (req, res) {
         // paymentSales.totalQuantity += (kindleSale.quantityEbook + kindleSale.quantityPod)
         paymentSales.totalValue += kindleSale.regalias
       }
-      
+
       monthlySales.push(paymentSales);
     }
 
@@ -740,7 +743,7 @@ export async function getMonthlySalesByPayments (req, res) {
 
     res.status(200).json(paddedMonthlySales);
   } catch (error) {
-    console.log('error fetching monthly sales by payments', error) 
+    console.log('error fetching monthly sales by payments', error)
     res.status(500).json({error: 'Internal server error'});
   }
 }
@@ -772,7 +775,7 @@ export async function getAuthorPayments (req, res) {
       },
       select: {
         id: true,
-        forMonth: true, 
+        forMonth: true,
         isDeleted: true,
         status: true,
         sales: {
@@ -940,17 +943,17 @@ export async function sendInvoice(req, res) {
     }
 
     const name = user.first_name + " " + user.last_name;
-    const info = await sendEmailWithInvoice(
-      name, 
-      inputs.month, 
-      inputs.amount, 
-      inputs.factura, 
-      inputs.constancia, 
+    await sendEmailWithInvoice(
+      name,
+      inputs.month,
+      inputs.amount,
+      inputs.factura,
+      inputs.constancia,
       inputs.email);
-    
-    if (!info.accepted.includes(inputs.email)) {
-      throw new Error ({error: "email was not sent successfully"})
-    }
+
+    // if (!info.accepted.includes(inputs.email)) {
+    //   throw new Error ({error: "email was not sent successfully"})
+    // }
 
     const updatedPayment = await prismaClient.payment.update({
       where: {
@@ -1034,7 +1037,7 @@ export async function getCompleteInventory(req, res) {
       inventoriesWithSales.push({
         book: {
           id: inventory.book.id,
-          title: inventory.book.title 
+          title: inventory.book.title
         },
         bookstore: {
           id: inventory.bookstore.id,
@@ -1047,7 +1050,7 @@ export async function getCompleteInventory(req, res) {
         sold: totalSold
       })
     }
-    
+
     res.status(200).json(inventoriesWithSales);
   } catch (error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);

@@ -34,7 +34,7 @@ export default function OverlappingHorizontalGraphLines2({
   // const numberReturnsRef = useRef();
   const numberCurrentRef = useRef();
   const currentReturnsRef = useRef();
-  const [spanValue, setSpanValue] = useState("incl."); 
+  const [spanValue, setSpanValue] = useState("incl.");
   const [adjustedCurrent, setAdjustedCurrent] = useState(0);
 
   useLayoutEffect(() => {
@@ -94,7 +94,7 @@ export default function OverlappingHorizontalGraphLines2({
         }
 
         let finalLength = length < min ? min + length : length;
-        
+
         firstLengths.push([
           [lines[i][0]], finalLength + 8
         ])
@@ -142,9 +142,9 @@ export default function OverlappingHorizontalGraphLines2({
     let newLengths = [];
     for (let i = 0; i < actualLines.length; i++) {
       if (i === 0) {
-        newLengths.push([[actualLines[i][0]], actualLines[i][1]]) 
+        newLengths.push([[actualLines[i][0]], actualLines[i][1]])
         continue;
-      } 
+      }
 
       if (i === actualLines.length -1) {
         // const min = actualLines[i][1] - currentNumWidth;
@@ -192,7 +192,7 @@ export default function OverlappingHorizontalGraphLines2({
     }
 
     setLengths(objectNewLengths);
-  } 
+  }
 
   function returnLengths() {
     if (triggerResize && returns > 0) {return}
@@ -202,10 +202,10 @@ export default function OverlappingHorizontalGraphLines2({
   function adjustForReturns() {
     let res = "";
     let adjustedCurrent = 0;
-    if (scope === "bookstore"  && title === "Plataforma Was") {
+    if (scope === "bookstore"  && title === "WAS Editorial") {
       res = " + "
-      adjustedCurrent -= returns 
-    } else if (scope === "bookstore" && title !== "Plataforma Was") {
+      adjustedCurrent -= returns
+    } else if (scope === "bookstore" && title !== "WAS Editorial") {
       res = " - "
       adjustedCurrent += returns
     } else {
@@ -272,7 +272,7 @@ export default function OverlappingHorizontalGraphLines2({
                 ref={numberCurrentRef}>
                 <div className="ohgl-current-number"
                   ref={currentReturnsRef}>
-                  {returns > 0 
+                  {returns > 0
                     ? current + adjustedCurrent
                     : current
                   }

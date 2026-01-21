@@ -129,7 +129,7 @@ function LoginPage() {
         <LoadingWheel />)}
       <div className="login-forpas">
         <Link to="/forgotten-password"
-          className="login-forgotten-password">¿Olvidó su contraseña?
+          className="login-forgotten-password">¿Primera visita o olvidó su contraseña?
         </Link>
       </div>
       <Alert message={alertMessage} type={alertType} setAlertMessage={setAlertMessage}

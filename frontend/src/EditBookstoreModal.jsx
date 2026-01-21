@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import AddingBookstoreErrorList from "./AddingBookstoreErrorList";
+import { countryCallingCodes } from "../countryCodes";
 
 function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -9,34 +10,60 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [name, setName] = useState(clickedRow.name);
   const [dealPercentage, setDealPercentage] = useState(clickedRow.deal_percentage);
   const [contactName, setContactName] = useState(clickedRow.contact_name);
-  const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
+  const [contactPhone, setContactPhone] = useState("");
+  const [phonePrefix, setPhonePrefix] = useState('+52');
+  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
   const [errorList, setErrorList] = useState([]);
-  // const [comissionsDisplay, setComissionsDisplay] = useState([]);
+  const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
 
-  // useEffect(() => {
-  //   let possibleComissions = [true, false]
-  //   for (let i = 0; i < possibleComissions.length; i++) {
-  //     if (possibleComissions[i] === clickedRow.comissions) {
-  //       possibleComissions.splice(i, 1);
-  //     } 
-  //   }
-  //   possibleComissions.splice(0, 0, clickedRow.comissions);
+  useEffect(() => {
+    setFullPhoneNumber(phonePrefix + contactPhone)
+  }, [contactPhone, phonePrefix])
 
-  //   let siono = [];
-  //   for (const poss of possibleComissions) {
-  //     if (poss === true) {
-  //       siono.push("Comisiónes")
-  //     } else if (poss === false) {
-  //       siono.push("Regalias")
-  //     }
-  //   }
+  // Get the prefix and sort the list based on this
+  useEffect(() => {
+    if (clickedRow.contact_phone) {
+      // get the code
+      const codeLength = clickedRow.contact_phone.length - 10;
+      const prefix = clickedRow.contact_phone.substring(0, codeLength);
+      const phoneNumber = clickedRow.contact_phone.substring(codeLength, clickedRow.contact_phone.length);
 
-  //   setComissionsDisplay(siono);
-  // }, [clickedRow.comissions])
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === prefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === prefix) { continue }
+        sortedCountryCodeList.push(country)
+      }
+
+      // set everything
+      setPhonePrefix(prefix)
+      setContactPhone(phoneNumber)
+      setSortedCountryCodes(sortedCountryCodeList)
+    } else {
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === phonePrefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === phonePrefix) { continue }
+        sortedCountryCodeList.push(country)
+      }
+
+      // set everything
+      setSortedCountryCodes(sortedCountryCodeList)
+    }
+  }, [clickedRow.contact_phone])
 
   async function sendToServer() {
     try {
+      console.log("fullPhoneNumber", fullPhoneNumber);
       const response = await fetch(`${baseURL}/api/admin/bookstore/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
@@ -47,7 +74,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
           name: name,
           dealPercentage: dealPercentage,
           contactName: contactName,
-          contactPhone: contactPhone,
+          contactPhone: fullPhoneNumber,
           contactEmail: contactEmail,
         })
       });
@@ -105,14 +132,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     sendToServer();
   }
 
-  // function convertComissionsValue(e) {
-  //   if (e.target.value === "Sí") {
-  //     setComissions(true)
-  //   } else {
-  //     setComissions(false)
-  //   }
-  // }
-
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
@@ -136,16 +155,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               className="global-input" id="adding-bookstore-dealPercentage"
               onChange={(e) => setDealPercentage(e.target.value)}></input>
         </div>
-        {/* <div className="modal-form-line">
-          <label className="modal-form-label">Comisiones o regalias *</label>
-          <select className="select-global"
-            id="adding-bookstore-comissions"
-            onChange={(e) => convertComissionsValue(e)}>
-            {comissionsDisplay.map((comission, index) => (
-              <option key={index} value={comission}>{comission}</option>
-            ))}
-          </select>
-        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Nombre del contacto</label>
           <input type='text' placeholder="Nombre del contacto" value={contactName}
@@ -153,10 +162,22 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
             onChange={(e) => setContactName(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Teléfono</label>
-          <input type='text' placeholder="Teléfono" value={contactPhone}
-            className="global-input" id="adding-bookstore-contactPhone"
-            onChange={(e) => setContactPhone(e.target.value)}></input>
+          <label className="modal-form-label">Teléfono*</label>
+          <div className="modal-phone">
+            <select className="select-phone"
+              onChange={(e) => setPhonePrefix(e.target.value)}>
+              {sortedCountryCodes.map((country, index) => (
+                <option key={index} value={country.code}>{country.iso3} {country.code}</option>
+              ))}
+            </select>
+            <input type='text'
+              className="input-phone" id="adding-bookstore-contactPhone"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              value={contactPhone}
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+              onChange={(e) => setContactPhone(e.target.value)}></input>
+          </div>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Correo</label>

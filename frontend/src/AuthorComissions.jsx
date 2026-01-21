@@ -34,15 +34,15 @@ function AuthorCommissions() {
       if (paymentInfo.status === "solicited") {
         setDemandPaymentPossible("solicited");
         return;
-      } 
+      }
       if (paymentInfo.status === "paid") {
         setDemandPaymentPossible("paid");
         return;
-      } 
+      }
       if (paymentInfo.status === "noVentas") {
         setDemandPaymentPossible("noVentas");
         return;
-      } 
+      }
       if (paymentInfo.amount < 0) {
         setDemandPaymentPossible("negativeAmount");
         return;
@@ -158,7 +158,7 @@ function AuthorCommissions() {
             payments={payments}
             preferredFontSize={user.font_size}
             setPaymentInfo={setPaymentInfo}/>
-          <DemandPaymentButton 
+          <DemandPaymentButton
             paymentInfo={paymentInfo}
             setModalOpen={setModalOpen}
             salesByPayments={salesByPayments}

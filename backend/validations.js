@@ -6,7 +6,7 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ["type", "string"],
       ["length", 50]
-    ], 
+    ],
     "lastName": [
       ["presence", "not empty"],
       ["type", "string"],
@@ -40,7 +40,13 @@ export function validateInput(inputName, inputValue) {
   ]]
     ],
     "email": [
+      ["presence", "not empty"],
       ["type", "string"],
+      ["format", "email"],
+      ["length", 255]
+    ],
+    "emailBookstore": [
+      ["type", "string or null"],
       ["format", "email"],
       ["length", 255]
     ],
@@ -54,8 +60,13 @@ export function validateInput(inputName, inputValue) {
       ["length", 255]
     ],
     "phone": [
+      ["presence", "not empty"],
       ["type", "string"],
       ["format", 'phone']
+    ],
+    "phoneBookstore": [
+      ["type", "string or null"],
+      ["format", "phone"]
     ],
     "category": [
       ["type", "number"],
@@ -142,7 +153,7 @@ export function validateInput(inputName, inputValue) {
     "gestionMinima": [
       ["type", "number"],
       ["range", "positive"],
-    ], 
+    ],
     "gestionTiendas": [
       ["type", "number or null"],
       ["range", "positive"],
@@ -169,7 +180,7 @@ export function validateInput(inputName, inputValue) {
     ],
     "paymentId": [
       ['type', 'number or null'],
-    ], 
+    ],
     "amount": [
       ['presence', 'not empty'],
       ['type', 'number'],
@@ -245,7 +256,7 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ['type', "string"],
       ["length", 25]
-    ], 
+    ],
     "month": [
       ["type", "string"],
       ["type", "string"],
@@ -263,7 +274,7 @@ export function validateInput(inputName, inputValue) {
       ["presence", "not empty"],
       ["type", "file"],
       ["size", 5*1024*1024]
-    ], 
+    ],
     "number": [
       ['presence', "not empty"],
       ["type", "number"],
@@ -362,16 +373,16 @@ export function validateInput(inputName, inputValue) {
         }
       break;
 
-      case "presence": 
+      case "presence":
         if (check[1] === "not empty") {
-          if (inputValue === "" 
+          if (inputValue === ""
             || inputValue === null
             || inputValue === undefined
           ) {
             errors.push([inputName, inputValue, "presence"]);
             return errors
           }
-        } 
+        }
       break;
 
       case "length":
@@ -390,7 +401,7 @@ export function validateInput(inputName, inputValue) {
 
       case "format":
         if (check[1] === "email") {
-          if (inputValue === "") {
+          if (inputValue === "" || inputValue === null || inputValue === undefined) {
             continue;
           }
 
@@ -402,11 +413,11 @@ export function validateInput(inputName, inputValue) {
         }
 
         if (check[1] === "phone") {
-          if (inputValue === "") {
+          if (inputValue === "" || inputValue === null || inputValue === undefined) {
             continue;
           }
 
-          const validPhoneRegex = /^(?:00\d{14,15}|\d{10})$/;
+          const validPhoneRegex = /^\+[1-9]\d{10,14}$/;
           if (!validPhoneRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
             return errors
@@ -507,10 +518,10 @@ export function validateInput(inputName, inputValue) {
             errors.push([inputName, inputValue, "range"])
             return errors
           }
-        } 
+        }
       break;
 
-      case "size": 
+      case "size":
         if (inputValue?.size > check[1]) {
           errors.push([inputName, inputValue, "size"])
           return errors

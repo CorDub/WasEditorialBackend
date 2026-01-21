@@ -95,6 +95,7 @@ async function main() {
             users: {
               connect: authorsIndexes,
             },
+            mainAuthor: authorsIndexes[0].id,
             categoryId: 1,
             createdAt: twelveMonthsAgo
           }
@@ -228,7 +229,7 @@ async function main() {
 
     await prisma.bookstore.create({
       data: {
-        name: "Plataforma Was",
+        name: "WAS Editorial",
         deal_percentage: 30,
         createdAt: twelveMonthsAgo,
         color: "#4E5981",
@@ -400,7 +401,8 @@ async function main() {
           data: {
             users: {
               connect: { id: user.id }
-            }
+            },
+            mainAuthor: user.id
           }
         });
       }
@@ -525,7 +527,7 @@ async function main() {
         kindleSaleDate.setMonth(kindleSaleDate.getMonth() - monthsAgo);
         let dateCut = new Date(kindleSaleDate);
         dateCut.setMonth(dateCut.getMonth()-2);
-        
+
         const saleForMonth = getForMonth(kindleSaleDate);
 
         const authorIds = book.users.map(user => user.id)
@@ -565,7 +567,7 @@ async function main() {
             quantityEbook: randQuantToSell,
             quantityPod: randQuantPod,
             dateCut: dateCut,
-            datePay: kindleSaleDate, 
+            datePay: kindleSaleDate,
             regalias: ((randQuantToSell + randQuantPod) * 299.99),
             createdAt: kindleSaleDate,
           }

@@ -70,7 +70,7 @@ function InventoriesList() {
       )
     },
     {
-      header: "Copias",
+      header: "Enviados",
       size: 100,
       accessorKey: "initial",
       Cell: ({row}) => {
@@ -97,8 +97,8 @@ function InventoriesList() {
       size: 100,
       accessorKey: "returns",
       Cell: ({row}) => (
-        // <div>{row.original.id === 1 
-        //       ? `+ ${row.original.returns}` 
+        // <div>{row.original.id === 1
+        //       ? `+ ${row.original.returns}`
         //       : `- ${row.original.returns}`}</div>
         <div>{row.original.returns === 0 ? 0 : row.original.id === 1 && row.original.type === "bookstore" ? `+ ${row.original.returns}` : `- ${row.original.returns}`}</div>
       )
@@ -114,7 +114,7 @@ function InventoriesList() {
       Cell: ({row}) => (
         row.original.type === "book" ?
           <div>{row.original.initial + row.original.extraImpressions - row.original.sold - row.original.givenToAuthor}</div> :
-          <div>{row.original.id === 1 ? 
+          <div>{row.original.id === 1 ?
             row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:
             row.original.initial - row.original.sold - row.original.returns - row.original.givenToAuthor}</div>
       )
@@ -138,7 +138,7 @@ function InventoriesList() {
           onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
             Inventarios por libro</div>
       </div>
-      
+
     ),
     initialState: {
       density: 'compact',
@@ -225,7 +225,7 @@ function InventoriesList() {
           setSpecificBookOpen(true);
         }
       }
-      
+
     } catch (error) {
       console.log(error)
     }
@@ -336,17 +336,17 @@ function InventoriesList() {
           globalFilter={globalFilter} />} */}
       {isLoading && <LoadingWheel />}
       {data
-        && !isLoading 
-        && !isSpecificBookstoreOpen 
+        && !isLoading
+        && !isSpecificBookstoreOpen
         && <MaterialReactTable table={table} />}
-      {specificBookstore 
-        && isSpecificBookstoreOpen 
-        && <BookstoreInventory 
+      {specificBookstore
+        && isSpecificBookstoreOpen
+        && <BookstoreInventory
           specificBookstore={specificBookstore}
           setSpecificBookstoreOpen={setSpecificBookstoreOpen}/> }
-      {specificBook 
-        && isSpecificBookOpen 
-        && <BookInventory 
+      {specificBook
+        && isSpecificBookOpen
+        && <BookInventory
           specificBook={specificBook}
           setSpecificBookOpen={setSpecificBookOpen}/> }
       <Alert message={alertMessage} type={alertType}

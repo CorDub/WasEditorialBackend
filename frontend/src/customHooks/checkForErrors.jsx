@@ -1,14 +1,14 @@
 function checkForErrors(
-  fieldName, 
-  fieldValue, 
-  fieldExpectations, 
-  fieldRef, 
+  fieldName,
+  fieldValue,
+  fieldExpectations,
+  fieldRef,
   gender
 ) {
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const validPhoneRegex = /^(?:00\d{14,15}|\d{10})$/;
+  const validPhoneRegex = /^\+[1-9]\d{10,14}$/;
   const validClabeRegex = /^\d{18}$/;
   const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
   const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;

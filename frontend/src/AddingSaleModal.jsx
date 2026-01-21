@@ -93,7 +93,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         if (!filteredList.includes(bookstore)) {
           setBookstore("");
         }
-      } 
+      }
 
     } else if (type === "Bookstore") {
       setBookstore(parseInt(value))
@@ -111,7 +111,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           for (const book of existingBooks) {
             if (inventory.bookId === book.id) {
               filteredList.push(book)
-            } 
+            }
           }
         }
         setExistingBooks(filteredList);
@@ -237,6 +237,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }
 
   async function sendToServer() {
+    console.log("date", date)
+    console.log("date ISOString", date.toISOString())
+    console.log("date from isostring", new Date(date.toISOString()))
     try {
       const response = await fetch(`${baseURL}/api/admin/sale`, {
         method: "POST",
@@ -308,7 +311,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         }
         <input type="text" placeholder="Cantidad vendida*" className="global-input"
           ref={quantityRef} onChange={(e) => setQuantity(parseInt(e.target.value))}></input>
-        <input 
+        <input
             type="date"
             placeholder="Fecha"
             className="global-input"

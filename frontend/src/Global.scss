@@ -130,6 +130,8 @@ a {
   z-index: 2000;
   background-color: #E2E2E2;
   width: 30%;
+  max-height: 90%;
+  overflow-y: auto;
   border-radius: 15px;
   padding: 1rem;
 }
@@ -187,6 +189,21 @@ a {
 
 .birthday-year {
   width: 50% !important;
+}
+
+.modal-payment-amount {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-payment-amount p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.modal-phone {
+  display: flex;
+  width: 70%
 }
 
 /// Form
@@ -301,6 +318,16 @@ a {
   font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
+.input-phone {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.4rem;
+  margin-bottom: 0.5rem;
+  width: 62%;
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
+}
+
 .global-input:focus-visible {
   outline: none;
   box-shadow: 1px 1px 1px grey inset;
@@ -323,6 +350,17 @@ a {
 
 .selected {
   color: black;
+}
+
+.select-phone {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.2rem;
+  margin-bottom: 0.5rem;
+  width: 38%;
+  color: grey;
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 /// Errors

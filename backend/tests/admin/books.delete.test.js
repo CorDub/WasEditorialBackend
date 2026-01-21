@@ -32,7 +32,7 @@ beforeAll(async() => {
   category1 = await createCategory(prisma);
   author1 = await createAuthor(prisma);
   author2 = await createAuthor(prisma);
-  wasBookstore = await createBookstore(prisma, {name: "Plataforma Was"});
+  wasBookstore = await createBookstore(prisma, {name: "WAS Editorial"});
 })
 
 afterAll(async() => {
@@ -66,7 +66,7 @@ describe("deleting a book with valid parameters", async() => {
         "id": newBook.id
       },
       prisma: prisma
-    }; 
+    };
 
     mockRes = {
       json: vi.fn(),
@@ -75,7 +75,7 @@ describe("deleting a book with valid parameters", async() => {
   })
 
   it("should return a status 200", async() => {
-    await deleteBook(mockReq, mockRes) 
+    await deleteBook(mockReq, mockRes)
     expect(mockRes.status).toHaveBeenCalledWith(200)
   })
 

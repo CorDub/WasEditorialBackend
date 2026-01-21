@@ -1,13 +1,13 @@
 import { Role } from "@prisma/client";
 import express from "express";
 import bcrypt from 'bcrypt';
-import { sendSetPasswordMail } from './../mailer.js';
-import { 
-  calculateAuthorRevenue, 
-  getForMonth, 
-  twelveMonthsAgo, 
+import { sendSetPasswordMail, sendWelcomeMail } from './../mailer.js';
+import {
+  calculateAuthorRevenue,
+  getForMonth,
+  twelveMonthsAgo,
   generateMonthKeysForRange,
-  getAuthorString 
+  getAuthorString
 } from './../utils.js';
 import { prisma } from "../prisma/client.js";
 import multer from "multer";
@@ -60,7 +60,6 @@ router.get('/users', getAuthors);
 
 export async function addAuthor(req, res) {
   try {
-    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient
     const prismaClient = req.prisma || prisma;
 
     const inputs = {
@@ -133,7 +132,8 @@ export async function addAuthor(req, res) {
         firstName: new_author.first_name,
         lastName: new_author.last_name,
         email: new_author.email});
-      sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
+      // sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
+      sendWelcomeMail(inputs.email, inputs.firstName);
     })
 
   } catch(error) {
@@ -169,19 +169,20 @@ export async function addMultipleAuthors(req, res) {
     for (let i = 0; i < lines.length; i++) {
       try {
         const fields = lines[i].split(",");
+
         const inputs = {
           firstName: fields[0],
           lastName: fields[1],
-          country: fields[2],
-          categoryId: parseInt(fields[3]),
-          email: fields[4],
-          phone: fields[5],
-          birthday: fields[6],
-          clabe: fields[7],
-          name_bank_account: fields[8],
-          bank: fields[9],
-          swift: fields[10],
-          referido: fields[11]
+          // country: fields[2],
+          // categoryId: parseInt(fields[3]),
+          email: fields[2],
+          phone: fields[3],
+          birthday: fields[4],
+          clabe: fields[5],
+          name_bank_account: fields[6],
+          bank: fields[7],
+          swift: fields[8],
+          referido: fields[9]
         }
         validateInputs(inputs);
 
@@ -219,22 +220,23 @@ export async function addMultipleAuthors(req, res) {
           data: {
             first_name: fields[0],
             last_name: fields[1],
-            country: fields[2],
-            categoryId: parseInt(fields[3]),
-            email: fields[4],
-            phone: fields[5],
-            birthday: fields[6],
-            clabe: fields[7],
-            name_bank_account: fields[8],
-            bank: fields[9],
-            swift: fields[10],
+            // country: fields[2],
+            // categoryId: parseInt(fields[3]),
+            email: fields[2],
+            phone: fields[3],
+            birthday: fields[4],
+            clabe: fields[5],
+            name_bank_account: fields[6],
+            bank: fields[7],
+            swift: fields[8],
             password: hashedPassword,
-            referido: fields[11]
+            referido: fields[9]
           }
         })
 
         if (addedAuthor) {
-          sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
+          // sendSetPasswordMail(addedAuthor.email, addedAuthor.first_name, password);
+          sendWelcomeMail(addedAuthor.email, addedAuthor.first_name);
         }
       } catch (error) {
         console.error(error)
@@ -253,7 +255,7 @@ export async function addMultipleAuthors(req, res) {
             break;
           default:
             errors.push({"line": i + 1, "error": error})
-        }   
+        }
       }
     }
 
@@ -268,11 +270,10 @@ router.post('/api/author/addMultiples', upload.fields([{name: "archivo", maxCoun
 
 export async function updateAuthor(req, res) {
   try {
-    // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
     const inputs = {
       "id": parseInt(req.params.id),
-      "firstName": req.body.firstName,
-      "lastName": req.body.lastName,
+      "firstName": req.body.first_name,
+      "lastName": req.body.last_name,
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
@@ -304,7 +305,7 @@ export async function updateAuthor(req, res) {
   } catch(error) {
     console.error("Server error at the update user route:", error);
     res.status(500).json({error: "There was an issue updating the author"});
-  } 
+  }
 }
 router.patch('/user/:id', updateAuthor);
 
@@ -467,7 +468,7 @@ export async function deleteCategory(req, res) {
         data: {isDeleted: true}
       });
     })
-    
+
     res.status(200).json({message: "La categoria ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -551,7 +552,7 @@ export async function addCategory(req, res) {
             }
           })
         }
-        
+
         res.status(201).json({name: exhumedCategory.number})
         return;
       }
@@ -668,7 +669,7 @@ export async function updateCategory(req, res) {
     res.status(500).json({error: error})
   }
 }
-router.patch('/category', updateCategory);
+router.patch('/category/:id', updateCategory);
 
 
 
@@ -795,7 +796,7 @@ export async function addBook(req, res) {
 
     // const prismaClient = prismaTestClient === null ? prisma : prismaTestClient;
     const prismaClient = req.prisma || prisma;
-    
+
     await prismaClient.$transaction(async (tx) => {
       const new_book = await tx.book.create({
         data: {
@@ -805,6 +806,7 @@ export async function addBook(req, res) {
           users: {
             connect: authorsIds,
           },
+          mainAuthor: authorsIds[0].id,
           category: {
             connect: {"id": inputs.categoryId}
           }
@@ -940,7 +942,8 @@ export async function addMultipleBooks(req, res) {
                   connect: {
                     id: author.id
                   }
-                }
+                },
+                mainAuthor: author.id
               }
             });
 
@@ -995,7 +998,7 @@ export async function addMultipleBooks(req, res) {
           default:
             console.error(error);
             errors.push({"line": i + 1, "error": "Error non identificada - puede ser con la impresión o el inventario"})
-        }   
+        }
       }
     }
 
@@ -1094,6 +1097,7 @@ export async function updateBook(req, res) {
           users: {
             set: authorsIds,
           },
+          mainAuthor: authorsIds[0].id,
           category: {
             connect: {"id": inputs.categoryId}
           }
@@ -1102,7 +1106,7 @@ export async function updateBook(req, res) {
 
       res.status(200).json({message: "Successfully updated book"});
     })
-    
+
   } catch(error) {
     console.error("Server error at the update book route:", error);
     res.status(500).json({error: "There was an issue updating the book"});
@@ -1200,8 +1204,8 @@ export async function addBookstore(req, res) {
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
       "contactName": req.body.contactName,
-      "phone": req.body.contactPhone,
-      "email": req.body.contactEmail
+      "phoneBookstore": req.body.contactPhone,
+      "emailBookstore": req.body.contactEmail
     }
     validateInputs(inputs);
 
@@ -1212,8 +1216,8 @@ export async function addBookstore(req, res) {
         name: inputs.name,
         deal_percentage: inputs.dealPercentage,
         contact_name: inputs.contactName,
-        contact_phone: inputs.phone,
-        contact_email: inputs.email,
+        contact_phone: inputs.phoneBookstore,
+        contact_email: inputs.emailBookstore,
       },
     });
 
@@ -1234,8 +1238,8 @@ export async function updateBookstore(req, res) {
       "name": req.body.name,
       "dealPercentage": parseFloat(req.body.dealPercentage),
       "contactName": req.body.contactName,
-      "phone" : req.body.contactPhone,
-      "email": req.body.contactEmail
+      "phoneBookstore" : req.body.contactPhone,
+      "emailBookstore": req.body.contactEmail
     }
     validateInputs(inputs);
 
@@ -1251,8 +1255,8 @@ export async function updateBookstore(req, res) {
           name: inputs.name,
           deal_percentage: inputs.dealPercentage,
           contact_name: inputs.contactName,
-          contact_phone: inputs.phone,
-          contact_email: inputs.email,
+          contact_phone: inputs.phoneBookstore,
+          contact_email: inputs.emailBookstore,
         }
       });
 
@@ -1386,7 +1390,7 @@ export async function getInventoryNames(req, res) {
         title: true
       }
     });
-    
+
     const bookstoreInventoryNames = await prismaClient.bookstore.findMany({
       where: {
         isDeleted: false
@@ -1500,10 +1504,10 @@ export async function getInventoriesByBook(req, res) {
         if (entry.name === inventory.book.title) {
           continue;
         }
-      } 
+      }
 
       determineExtraImpressions(extraImpressionsByBook);
-      
+
       for (const sale of inventory.sales) {
         if (sale.isDeleted === false) {
           sold += sale.quantity
@@ -1552,7 +1556,7 @@ export async function getInventoriesByBook(req, res) {
       }
     }
 
-    //Adding the extraImpression data for each book 
+    //Adding the extraImpression data for each book
     for (const impression of extraImpressionsByBook) {
       for (const book of inventoriesByBook) {
         if (impression.name === book.name) {
@@ -1668,7 +1672,7 @@ export async function getBookInventory(req, res) {
       for (const transferFrom of inventory.transfersFrom) {
         if (transferFrom.isDeleted === false && transferFrom.toInventoryId) {
           inTiendaTotal -= transferFrom.quantity
-        } 
+        }
       }
       for (const transferTo of inventory.transfersTo) {
         if (transferTo.isDeleted === false) {
@@ -1689,8 +1693,8 @@ export async function getBookInventory(req, res) {
       }
 
       const inventoryComplete = {
-        ...inventory, 
-        totalSales: thisInventorySalesTotal, 
+        ...inventory,
+        totalSales: thisInventorySalesTotal,
         inTienda: inTiendaTotal,
         impressions: thatBookImpressions
       }
@@ -1777,7 +1781,7 @@ export async function getInventoriesByBookstore(req, res) {
         if (inventory.bookstoreId === 1) {
           for (const impression of inventory.book.impressions.slice(1)) {
             if (!impression.isDeleted) {
-              extraImpressions += impression.quantity 
+              extraImpressions += impression.quantity
             }
           }
         }
@@ -1799,7 +1803,7 @@ export async function getInventoriesByBookstore(req, res) {
         if (inventory.bookstoreId === 1) {
           for (const impression of inventory.book.impressions.slice(1)) {
             if (!impression.isDeleted) {
-              extraImpressions += impression.quantity 
+              extraImpressions += impression.quantity
             }
           }
         }
@@ -1819,7 +1823,7 @@ export async function getInventoriesByBookstore(req, res) {
         if (inventory.bookstoreId === 1) {
           for (const impression of inventory.book.impressions.slice(1)) {
             if (!impression.isDeleted) {
-              extraImpressions += impression.quantity 
+              extraImpressions += impression.quantity
             }
           }
         }
@@ -1938,7 +1942,7 @@ export async function getBookstoreInventory(req, res) {
         }
       }
       const inventoryPlusSales = {
-        ...inventory, 
+        ...inventory,
         totalSales: thisInventorySalesTotal,
         extraImpressions: extraImpressionsOutside
       }
@@ -2073,7 +2077,7 @@ router.patch('/inventory/:id', updateInventory);
 
 //       res.status(200).json({message: "El inventario ha sido eliminado con exito."})
 //     })
-    
+
 //   } catch(error) {
 //     console.error(error);
 //     res.status(500).json({error: 'A server error occurred while deleting the inventory'});
@@ -2087,6 +2091,7 @@ router.patch('/inventory/:id', updateInventory);
 
 export async function getSales(req, res) {
   try {
+    console.log("req.query", req.query)
     const inputs = {
       startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
       endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
@@ -2100,7 +2105,7 @@ export async function getSales(req, res) {
         isDeleted: false,
         date: {
           gte: inputs.startDate,
-          lt: inputs.endDate
+          lte: inputs.endDate
         }
       },
       select: {
@@ -2175,12 +2180,12 @@ export async function getSales(req, res) {
             month.bookstores.push(sale.inventory.bookstore.name)
           }
           month.bookstores.sort()
-          
+
           if (!month.books.includes(sale.inventory.book.title)) {
             month.books.push(sale.inventory.book.title)
           }
           month.books.sort()
-          
+
           for (const author of sale.inventory.book.users) {
             if (!month.authors.includes( (author.first_name + " " + author.last_name) )) {
               month.authors.push( (author.first_name + " " + author.last_name) )
@@ -2196,7 +2201,7 @@ export async function getSales(req, res) {
     console.error(error);
     res.status(500).json({error: "Server error at sales route"});
   }
-} 
+}
 router.get('/sales', getSales);
 
 
@@ -2212,6 +2217,9 @@ export async function addSale(req, res) {
     validateInputs(inputs);
 
     const prismaClient = req.prisma || prisma
+
+    console.log("inputs.date", inputs.date);
+    console.log("inputs.date isod", inputs.date.toISOString());
 
     let createdSale;
     await prismaClient.$transaction(async (tx) => {
@@ -2262,6 +2270,10 @@ export async function addSale(req, res) {
           }
         });
 
+        if (existingPayment && !existingPayment.isDeleted) {
+          paymentIds.push({"id": existingPayment.id})
+        }
+
         if (existingPayment && existingPayment.isDeleted) {
           const deletedPayment = await tx.payment.delete({ where: {id: existingPayment.id}})
           const recreatedPayment = await tx.payment.create({
@@ -2282,6 +2294,10 @@ export async function addSale(req, res) {
 
           paymentIds.push({"id": createdPayment.id})
         }
+      }
+
+      if (paymentIds.length === 0) {
+        throw new Error ("This sale has no payments")
       }
 
       createdSale = await tx.sale.create({
@@ -2307,9 +2323,9 @@ export async function addSale(req, res) {
         });
       }
     })
-    
+
     res.status(201).json(createdSale);
-   
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error });
@@ -2421,7 +2437,7 @@ export async function updateSale(req, res) {
             continue;
           }
 
-          if (existingPayment 
+          if (existingPayment
             && !existingPayment.isDeleted
             && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
 
@@ -2438,7 +2454,7 @@ export async function updateSale(req, res) {
 
             let paymentEncountered = false;
             while(nextPayment) {
-              if (nextPayment.isDeleted 
+              if (nextPayment.isDeleted
               || nextPayment.status === "solicited"
               || nextPayment.status === "paid") {
                 nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
@@ -2469,7 +2485,7 @@ export async function updateSale(req, res) {
               continue;
             }
           }
-        };          
+        };
       }
 
       const updatedSale = await tx.sale.update({
@@ -2477,7 +2493,7 @@ export async function updateSale(req, res) {
         data: {
           inventoryId: selectedInventory.id,
           quantity: inputs.quantity,
-          date: new Date(inputs.date), 
+          date: new Date(inputs.date),
           payments: {
             set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments
           }
@@ -2564,7 +2580,7 @@ export async function deleteSale(req, res) {
         });
       }
     })
-    
+
     res.status(200).json({message: "La venta ha sido eliminada con exito."})
   } catch(error) {
     console.error(error);
@@ -2688,7 +2704,7 @@ export async function updateImpression(req, res) {
       id: parseInt(req.params.id),
       quantity: parseInt(req.body.quantity),
       bookId: parseInt(req.body.book_id),
-      note: req.body.note, 
+      note: req.body.note,
       date: new Date(req.body.date),
     }
 
@@ -2728,7 +2744,7 @@ export async function updateImpression(req, res) {
 
       res.status(200).json(updatedImpression);
     })
-    
+
   } catch(error) {
     console.error('\n ERROR WHILE UPDATING THE IMPRESSI0N: \n', error);
     res.status(500).json({error: "A server error occurred while creating the impression"});
@@ -2811,7 +2827,7 @@ export async function addTransfer(req, res) {
           },
         }
       });
-      
+
       if (inputs.type === "return" && (!currentInventoryTo || currentInventoryTo.isDeleted)) {
         throw new Error("arrival inventory doesn't exist");
       }
@@ -2845,7 +2861,7 @@ export async function addTransfer(req, res) {
 
         currentInventoryTo = recoveredInventoryTo;
         created = true;
-      } 
+      }
 
       // 5-Create the actual transfer now that you got the proper inventory To and From
       const newTransfer = await tx.transfer.create({
@@ -2894,15 +2910,15 @@ export async function addTransfer(req, res) {
           });
         }
       }
-      
+
     res.status(200).json(newTransfer)
     })
-    
+
   } catch (error) {
     console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
     res.status(500).json({error: "a server error occurred while creating the transfer"})
   }
-} 
+}
 router.post('/transfer', addTransfer);
 
 
@@ -3033,7 +3049,7 @@ export async function getPayments(req, res) {
           }
         }
       }
-      
+
       await Promise.all([
         updateSales(payment),
         updateKindleSales(payment),
@@ -3044,7 +3060,18 @@ export async function getPayments(req, res) {
     const promises = selectedPayments.map(payment => updateAmount(payment));
     const results = await Promise.all(promises)
 
-    res.status(200).json(selectedPayments);
+    // get a total
+    let totalAmount = 0;
+    for (const payment of selectedPayments) {
+      totalAmount += payment.amount
+    }
+
+    const finalPayload = {
+      totalAmount: totalAmount,
+      selectedPayments: selectedPayments,
+    }
+
+    res.status(200).json(finalPayload);
 
   } catch (error) {
     console.error("\n ERROR FETCHING PAYMENTS \n", error);
@@ -3078,7 +3105,7 @@ export async function markPaymentAsPaid(req, res) {
         dateMarkedAsPaid: now
       }
     })
-    
+
     res.status(200).json({message: "Successfully marked payment as paid"})
   } catch(error) {
     console.error("\n ERROR MARKING PAYMENT AS PAID \n", error);
@@ -3156,7 +3183,8 @@ export async function addCost(req, res) {
 
     await prismaClient.$transaction(async (tx) => {
     // Make sure we got payment Id or Ids
-      let paymentIds = [];
+      // let paymentIds = [];
+      let paymentId;
       if (!inputs.paymentId) {
         const selectedBook = await tx.book.findFirst({
           where: {
@@ -3164,87 +3192,92 @@ export async function addCost(req, res) {
             isDeleted: false
           },
           select: {
-            users: {
-              select: {
-                id: true
-              }
-            }
+            // users: {
+            //   select: {
+            //     id: true
+            //   }
+            // }
+            mainAuthor: true
           }
         })
 
-        for (const user of selectedBook.users) {
-          let userPayment = await tx.payment.findUnique({
+        // for (const user of selectedBook.users) {
+        let userPayment = await tx.payment.findUnique({
+          where: {
+            userId_forMonth: {
+              userId: selectedBook.mainAuthor,
+              forMonth: getForMonth(inputs.date)
+            },
+          }
+        })
+
+        if (!userPayment) {
+          const newPayment = await tx.payment.create({
+            data: {
+              userId: selectedBook.mainAuthor,
+              forMonth: getForMonth(inputs.date)
+            }
+          })
+          paymentId = newPayment.id;
+          // paymentIds.push(newPayment.id)
+        }
+
+        if (userPayment.status !== 'created') {
+          const newPaymentNextMonth = await tx.payment.create({
+            data: {
+              userId: selectedBook.mainAuthor,
+              forMonth: getForMonth(new Date(new Date().setMonth(new Date().getMonth() + 1)))
+            }
+          })
+          paymentId = newPaymentNextMonth.id;
+          // paymentIds.push(newPaymentNextMonth.id)
+          // continue;
+        }
+
+        if (userPayment.isDeleted) {
+          const deletedPayment = await tx.payment.delete({
             where: {
-              userId_forMonth: {
-                userId: user.id,
-                forMonth: getForMonth(inputs.date)
-              },
+              id: userPayment.id
             }
           })
 
-          if (!userPayment) {
-            const newPayment = await tx.payment.create({
-              data: {
-                userId: user.id,
-                forMonth: getForMonth(inputs.date)
-              }
-            })
-            paymentIds.push(newPayment.id)
-            continue;
-          }
-
-          if (userPayment.status !== 'created') {
-            const newPaymentNextMonth = await tx.payment.create({
-              data: {
-                userId: user.id,
-                forMonth: getForMonth(new Date(new Date().setMonth(new Date().getMonth() + 1)))
-              }
-            })
-            paymentIds.push(newPaymentNextMonth.id)
-            continue;
-          }
-
-          if (userPayment.isDeleted) {
-            const deletedPayment = await tx.payment.delete({
-              where: {
-                id: userPayment.id
-              }
-            })
-
-            const resetPayment = await tx.payment.create({
-              data: {
-                userId: user.id,
-                forMonth: getForMonth(inputs.date)
-              }
-            })
-            paymentIds.push(resetPayment.id)
-          }
-
-          if (!userPayment.isDeleted && userPayment.status === "created") {
-            paymentIds.push(userPayment.id);
-            continue;
-          }
+          const resetPayment = await tx.payment.create({
+            data: {
+              userId: selectedBook.mainAuthor,
+              forMonth: getForMonth(inputs.date)
+            }
+          })
+          // paymentIds.push(resetPayment.id)
+          paymentId = resetPayment.id;
         }
+
+        if (!userPayment.isDeleted && userPayment.status === "created") {
+          // paymentIds.push(userPayment.id);
+          // continue;
+          paymentId = userPayment.id;
+        }
+        // }
       } else {
-        paymentIds.push(inputs.paymentId);
+        // paymentIds.push(inputs.paymentId);
+        paymentId = inputs.paymentId;
       }
 
       // get a new cost for each paymentId
-      for (const paymentId of paymentIds) {
-        const createdCost = await tx.cost.create({
-          data: {
-            paymentId: paymentId,
-            amount: inputs.amount,
-            date: inputs.date,
-            bookId: inputs.bookId,
-            note: inputs.note
-          }
-        });
-      }
+      // for (const paymentId of paymentIds) {
+      const createdCost = await tx.cost.create({
+        data: {
+          paymentId: paymentId,
+          amount: inputs.amount,
+          date: inputs.date,
+          bookId: inputs.bookId,
+          note: inputs.note
+        }
+      });
+      // }
 
       res.status(201).json({message: "Cost created successfully"});
     })
-    
+
   } catch (error) {
     console.error("\n ERROR CREATING THE ADDITIONAL COST \n", error);
     res.status(500).json({error:"a server error occurred while creating the cost"})
@@ -3290,7 +3323,7 @@ export async function updateCost(req, res) {
     res.status(500).json({error:"a server error occurred while updating the cost"})
   }
 }
-router.patch("/cost/:id", updateCost) 
+router.patch("/cost/:id", updateCost)
 
 
 
@@ -3395,12 +3428,12 @@ export async function getKindleSales(req, res) {
       for (const month of kindleSalesCompiled) {
         if (getForMonth(kindleSale.datePay) === month.forMonth) {
           month.sales.push(kindleSale);
-          
+
           if (!month.books.includes(kindleSale.book.title)) {
             month.books.push(kindleSale.book.title)
           }
           month.books.sort()
-          
+
           for (const author of kindleSale.book.users) {
             if (!month.authors.includes( (author.first_name + " " + author.last_name) )) {
               month.authors.push( (author.first_name + " " + author.last_name) )
@@ -3496,7 +3529,7 @@ export async function addKindleSale (req, res) {
 
       return createdKindleSale
     });
-    
+
     res.status(200).json({message: "kindleSale created successfully"})
   } catch(error) {
     console.error("Server error at kindlesales ", error);
@@ -3530,7 +3563,7 @@ export async function updateKindleSale(req, res) {
     const targetSale = await prismaClient.kindleSale.findUnique({
       where: {
         id: inputs.id
-      }, 
+      },
       include: {
         book: {
           include: {
@@ -3588,7 +3621,7 @@ export async function updateKindleSale(req, res) {
           continue;
         }
 
-        if (existingPayment 
+        if (existingPayment
         && !existingPayment.isDeleted
         && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
           let currentForMonthDate = new Date(existingPayment.forMonth + "-01")
@@ -3604,7 +3637,7 @@ export async function updateKindleSale(req, res) {
 
           let paymentEncountered = false;
           while(nextPayment) {
-            if (nextPayment.isDeleted 
+            if (nextPayment.isDeleted
             || nextPayment.status === "solicited"
             || nextPayment.status === "paid") {
               nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
@@ -3635,8 +3668,8 @@ export async function updateKindleSale(req, res) {
             continue;
           }
         }
-      };          
-    } 
+      };
+    }
 
     const updatedKindleSale = await prismaClient.kindleSale.update({
       where: {
@@ -3649,7 +3682,7 @@ export async function updateKindleSale(req, res) {
         datePay: inputs.datePay,
         regalias: inputs.regaliasKindle,
         payments: {
-          set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments 
+          set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments
         }
       }
     })
@@ -3681,7 +3714,7 @@ export async function deleteKindleSale(req, res) {
         isDeleted: true
       }
     })
-    
+
     res.status(200).json({message: "successfully deleted the kindle sale"})
   } catch(error) {
     console.error("error at deleting kindlesales ", error);

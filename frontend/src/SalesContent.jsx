@@ -19,6 +19,8 @@ const SalesContent = ({
 
   const selectedBookTitle = salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.title || "";
 
+  console.log("salesBook.salesData", salesData.bookSales)
+
   return (
     <div id="author-sales-content">
       <div id="author-sales-content-left">
@@ -84,7 +86,7 @@ const SalesContent = ({
                   angle={0}
                 />
               </YAxis>
-              <Tooltip 
+              <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     const quantity = payload.find(p => p.name === 'Libros vendidos')?.value ?? 0;

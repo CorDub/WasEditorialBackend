@@ -90,7 +90,7 @@ function BookInventory({
       }
     },
     {
-      header: "Copias",
+      header: "Copías",
       Cell: ({row}) => {
         return (<div>{row.original.inTienda}</div>)
       },

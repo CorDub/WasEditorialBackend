@@ -35,7 +35,7 @@ function ProfilePageBirthday(
     }
   }, [value])
 
-  useEffect(() => { 
+  useEffect(() => {
       setNewValue(day.padStart(2, "0") + month.padStart(2, "0") + year)
     }, [day, month, year])
 
@@ -121,24 +121,24 @@ function ProfilePageBirthday(
       {isEditOpen
         ? <>
             <div className="modal-birthday profile-birthday-line">
-              <input type="text" 
-                placeholder="Día"
+              <input type="text"
+                placeholder="dd"
                 value={day}
-                className="global-input birthday-day no-margin" 
+                className="global-input birthday-day no-margin"
                 maxLength="2"
                 ref={dayRef}
                 onChange={(e) => setDay(e.target.value)}></input>
-              <input type="text" 
-                placeholder="Mes"
+              <input type="text"
+                placeholder="mm"
                 value={month}
-                className="global-input birthday-month no-margin" 
+                className="global-input birthday-month no-margin"
                 maxLength="2"
                 ref={monthRef}
                 onChange={(e) => setMonth(e.target.value)}></input>
-              <input type="text" 
-                placeholder="Año"
+              <input type="text"
+                placeholder="aaaa"
                 value={year}
-                className="global-input birthday-year no-margin" 
+                className="global-input birthday-year no-margin"
                 maxLength="4"
                 ref={yearRef}
                 onChange={(e) => setYear(e.target.value)}></input>

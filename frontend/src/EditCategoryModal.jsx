@@ -15,14 +15,13 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/category`, {
+      const response = await fetch(`${baseURL}/api/admin/category/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           type: type,
           regalias: regalias,
           gestionTiendas: gestionTiendas,
@@ -73,6 +72,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     }
 
     inputList.forEach((input) => {
+      console.log("input", input)
       if (input.classList.contains("error-inputs")) {
         input.classList.remove("error-inputs");
       }
@@ -87,7 +87,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     if (type === false) {
       newErrorList.push(11);
       addErrorClass(inputType);
-    } 
+    }
 
     if (serverError === 13) {
       newErrorList.push(13);
@@ -110,15 +110,20 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         addErrorClass(inputRegalias);
       }
 
-      if (isNaN(parseFloat(gestionMinima))) {
-        newErrorList.push(41);
-        addErrorClass(inputGestionMinima);
-      };
+      if (!rebate) {
+        newErrorList.push(51);
+        addErrorClass(inputRebate);
+      }
 
-      if (gestionMinima === "") {
-        newErrorList.push(42);
-        addErrorClass(inputGestionMinima);
-      };
+      if (isNaN(parseFloat(rebate))) {
+        newErrorList.push(52);
+        addErrorClass(inputRebate);
+      }
+
+      if (rebate < 0 || rebate > 100) {
+        newErrorList.push(53);
+        addErrorClass(inputRebate)
+      }
     }
 
     if (type === "comissions") {
@@ -137,20 +142,15 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         addErrorClass(inputGestionTiendas);
       }
 
-      if (!rebate) {
-        newErrorList.push(51);
-        addErrorClass(inputRebate);
-      }
+      if (isNaN(parseFloat(gestionMinima))) {
+        newErrorList.push(41);
+        addErrorClass(inputGestionMinima);
+      };
 
-      if (isNaN(parseFloat(rebate))) {
-        newErrorList.push(52);
-        addErrorClass(inputRebate);
-      }
-
-      if (rebate < 0 || rebate > 100) {
-        newErrorList.push(53);
-        addErrorClass(inputRebate)
-      }
+      if (gestionMinima === "") {
+        newErrorList.push(42);
+        addErrorClass(inputGestionMinima);
+      };
     }
 
     setErrorList(newErrorList);

@@ -3,6 +3,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 // import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import { countryCallingCodes } from "../countryCodes";
 
 function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -13,6 +14,8 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [referido, setReferido] = useState(clickedRow.referido || "");
   const [email, setEmail] = useState(clickedRow.email || "");
   const [phone, setPhone] = useState(clickedRow.phone || '');
+  const [phonePrefix, setPhonePrefix] = useState('+52');
+  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [birthday, setBirthday] = useState(clickedRow.birthday || '');
   const [day, setDay] = useState(clickedRow.birthday ? clickedRow.birthday.substring(0,2) : '');
   const [month, setMonth] = useState(clickedRow.birthday ? clickedRow.birthday.substring(2,4) : '');
@@ -26,42 +29,57 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const monthRef = useRef();
   const yearRef = useRef();
   const [errors, setErrors] = useState([]);
+  const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
 
-  useEffect(() => { 
+  useEffect(() => {
     setBirthday(day.padStart(2, "0") + month.padStart(2, "0") + year)
   }, [day, month, year])
 
-  // useEffect(() => {
-  //   for (let i = 0; i < countries.length; i++) {
-  //     if (countries[i] === clickedRow.country) {
-  //       countries.splice(i, 1);
-  //     } 
-  //   }
-  //   countries.splice(0, 0, clickedRow.country);
-  //   setCountries(countries);
-  // }, [clickedRow])
+  useEffect(() => {
+    setFullPhoneNumber(phonePrefix + phone)
+  }, [phone, phonePrefix])
 
-  // useEffect(() => {
-  //   let displayedCategories = []
-  //   displayedCategories.push(parseInt(clickedRow.category.type))
-  //   for (let i = 0; i < categories.length; i++) {
-  //     if (parseInt(categories[i].type) === parseInt(clickedRow.category.type)) {
-  //       continue
-  //     } else {
-  //       displayedCategories.push(parseInt(categories[i].type))
-  //     }
-  //   }
-  //   setDisplayedCategories(displayedCategories);
-  // }, [clickedRow, categories])
+  // Get the prefix and sort the list based on this
+  useEffect(() => {
+    if (clickedRow.phone) {
+      // get the code
+      const codeLength = clickedRow.phone.length - 10;
+      const prefix = clickedRow.phone.substring(0, codeLength);
+      const phoneNumber = clickedRow.phone.substring(codeLength, clickedRow.phone.length);
+
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === prefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === prefix) { continue }
+        sortedCountryCodeList.push(country)
+      }
+
+      // set everything
+      setPhonePrefix(prefix)
+      setPhone(phoneNumber)
+      setSortedCountryCodes(sortedCountryCodeList)
+    } else {
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === phonePrefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === phonePrefix) { continue }
+        sortedCountryCodeList.push(country)
+      }
+
+      // set everything
+      setSortedCountryCodes(sortedCountryCodeList)
+    }
+  }, [clickedRow.phone])
 
   async function editAuthor() {
-    // let fullCategory = {};
-    // categories.map((cat) => {
-    //   if (cat.type === category) {
-    //     fullCategory = cat;
-    //     return;
-    //   }
-    // });
     try {
       const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
         method: "PATCH",
@@ -74,7 +92,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           last_name: lastName,
           referido: referido,
           email: email,
-          phone: phone,
+          phone: fullPhoneNumber,
           birthday: birthday,
         })
       });
@@ -98,31 +116,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     }
   }
 
-  // function dropDownChange(e, input_name) {
-  //   const inputs = {
-  //     "Category": {
-  //       "function": setCategory,
-  //       "element": document.getElementById("category-select")
-  //     },
-  //     "Country": {
-  //       "function": setCountry,
-  //       "element": document.getElementById("country-select")
-  //     }
-  //   }
-
-  //   if (e.target.value === "null") {
-  //     inputs[input_name]["function"](null);
-  //     if (inputs[input_name]["element"].classList.contains("selected") === true) {
-  //       inputs[input_name]["element"].classList.remove("selected")
-  //     };
-  //   } else {
-  //     inputs[input_name]["function"](e.target.value);
-  //     if (inputs[input_name]["element"].classList.contains("selected") === false) {
-  //       inputs[input_name]["element"].classList.add("selected")
-  //     };
-  //   };
-  // }
-
   function checkForServerErrors(serverError) {
     function addErrorClass(input_name) {
       if (!input_name.classList.contains("error-inputs")) {
@@ -134,7 +127,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
     const inputEmail = document.getElementById('adding-author-email');
-    if (serverError === "Un autor con el mismo nombre completo ya existe" 
+    if (serverError === "Un autor con el mismo nombre completo ya existe"
       || serverError === "Este usuario ya existe"
     ) {
       errorList.push(serverError);
@@ -163,11 +156,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       presence: "not empty",
       length: 50
     }
-    // const countryExpectations = {
-    //   type: "string",
-    //   presence: "not empty",
-    //   value: countries
-    // }
     const emailExpectations = {
       type: "string",
       validity: "email valid"
@@ -194,26 +182,19 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       type: "number",
       validity: "phone valid"
     }
-    // const categoryExpectations = {
-    //   type: "string",
-    //   presence: "not empty",
-    //   value: categories.map(cat => cat.type)
-    // };
 
     const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
-    // const errorsCountry = checkForErrors("El país", country, countryExpectations, countryRef, "o")
     const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
     const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
     const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
     const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
     const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
     const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
-    // const errorsCategory = checkForErrors("La categoría", category, categoryExpectations, categoryRef, "a")
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
-      errorsEmail, 
+      errorsEmail,
       errorsPhone,
       errorsReferido,
       errorsBirthdayDay,
@@ -230,32 +211,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
     return errorsList
   }
-
-  // async function fetchCategoryTypes() {
-  //     try {
-  //       const response = await fetch(`${baseURL}/api/admin/categories-type`, {
-  //         method: 'GET',
-  //         headers: {
-  //           "Content-Type": "application/json"
-  //         },
-  //         credentials: "include"
-  //       });
-
-  //       if (response.ok === true) {
-  //         const dataCategories = await response.json();
-  //         setCategories(dataCategories);
-  //       } else {
-  //         console.log("There was an error fetching categories:", response.status);
-  //       };
-
-  //     } catch(error) {
-  //       console.error("Error while fetching categories:", error);
-  //     }
-  //   }
-
-  // useEffect(() => {
-  //   fetchCategoryTypes()
-  // }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -278,7 +233,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         <div className="campos-obligatorios">
           <p>*Campos obligatorios</p>
         </div>
-        <form className="global-form">
+        <form className="global-form" style={{marginBottom:"1rem"}}>
           <div className="modal-form-line">
             <label className="modal-form-label">Nombre *</label>
             <input type="text" value={`${firstName}`}
@@ -287,23 +242,12 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               onChange={(e)=>setFirstName(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Apellido *</label>
+            <label className="modal-form-label">Apellido*</label>
             <input type="text" value={`${lastName}`} placeholder="Apellido"
               className="global-input" id="adding-author-last-name"
               ref={lastNameRef}
               onChange={(e)=>setLastName(e.target.value)}></input>
           </div>
-          {/* <div className="modal-form-line">
-            <label className="modal-form-label">País *</label>
-            <select className="select-global"
-              id="country-select"
-              ref={countryRef}
-              onChange={(e) => dropDownChange(e, "Country")} >
-              {countries.map((country, index) => (
-                <option key={index} value={country} placeholder="Pais">{country}</option>
-              ))}
-            </select>
-          </div> */}
           <div className="modal-form-line">
             <label className="modal-form-label">Referido</label>
             <input type="text" value={`${referido || ""}`}
@@ -312,51 +256,52 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               onChange={(e)=>setReferido(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Correo</label>
+            <label className="modal-form-label">Correo*</label>
             <input type="text" value={`${email || ""}`}
               ref={emailRef}
               className="global-input" id="adding-author-email"
               onChange={(e)=>setEmail(e.target.value)}></input>
           </div>
           <div className="modal-form-line">
-            <label className="modal-form-label">Teléfono</label>
-            <input type='text'
-              className="global-input" id="adding-author-teléfono"
-              ref={phoneRef}
-              onChange={(e) => setPhone(e.target.value)}></input>
+            <label className="modal-form-label">Teléfono*</label>
+            <div className="modal-phone">
+              <select className="select-phone"
+                onChange={(e) => setPhonePrefix(e.target.value)}>
+                {sortedCountryCodes.map((country, index) => (
+                  <option key={index} value={country.code}>{country.iso3} {country.code}</option>
+                ))}
+              </select>
+              <input type='text'
+                className="input-phone" id="adding-author-teléfono"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                ref={phoneRef}
+                value={phone}
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+                onChange={(e) => setPhone(e.target.value)}></input>
+            </div>
           </div>
           <div className="modal-form-line">
             <label className="modal-form-label">Fecha de nacimiento</label>
             <div className="modal-birthday">
-              <input type="text" placeholder="Día" 
+              <input type="text" placeholder="dd"
                 className="global-input birthday-day" maxLength="2"
                 ref={dayRef}
                 value={day}
                 onChange={(e) => setDay(e.target.value)}></input>
-              <input type="text" placeholder="Mes" 
+              <input type="text" placeholder="mmm"
                 className="global-input birthday-month" maxLength="2"
                 ref={monthRef}
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}></input>
-              <input type="text" placeholder="Año" 
+              <input type="text" placeholder="aaaa"
                 className="global-input birthday-year" maxLength="4"
                 ref={yearRef}
                 value={year}
                 onChange={(e) => setYear(e.target.value)}></input>
             </div>
           </div>
-          {/* <div className="modal-form-line">
-            <label className="modal-form-label">Categoría</label>
-            <select className="select-global" id="category-select"
-              ref={categoryRef}
-              onChange={(e) => dropDownChange(e, "Category")}>
-              {displayedCategories && displayedCategories.map((cat, index) => (
-                <option key={index} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div> */}
         </form>
-        {/* <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/> */}
         <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="modal-actions">
           <button className='blue-button modal-button'

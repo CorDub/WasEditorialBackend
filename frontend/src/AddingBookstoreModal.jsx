@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import checkForErrors from './customHooks/checkForErrors';
 import ErrorsList from './ErrorsList';
+import { countryCallingCodes } from '../countryCodes';
 
 function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -11,6 +12,8 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const [dealPercentage, setDealPercentage] = useState('');
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [phonePrefix, setPhonePrefix] = useState('+52');
+  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [errors, setErrors] = useState([]);
   const nameRef = useRef();
@@ -18,6 +21,10 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const contactNameRef = useRef();
   const contactPhoneRef = useRef();
   const contactEmailRef = useRef();
+
+  useEffect(() => {
+    setFullPhoneNumber(phonePrefix + contactPhone)
+  }, [contactPhone, phonePrefix])
 
   async function sendToServer() {
     try {
@@ -31,7 +38,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           name: name,
           dealPercentage: dealPercentage,
           contactName: contactName,
-          contactPhone: contactPhone,
+          contactPhone: fullPhoneNumber,
           contactEmail: contactEmail,
         }),
       });
@@ -73,7 +80,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
     const contactEmailExpectations =  {
       validity: "email valid"
     };
-    
+
     const errorsName = checkForErrors("El nombre de la librería", name, nameExpectations, nameRef, 'o');
     const errorsDealPercentage = checkForErrors("El percentage", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
     const errorsContactName = contactName ? checkForErrors("El nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
@@ -119,21 +126,28 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           className="global-input" id="adding-bookstore-dealPercentage"
           ref={dealPercentageRef}
           onChange={(e) => setDealPercentage(e.target.value)}></input>
-        {/* <select className="select-global"
-          ref={comissionsRef}
-          onChange={(e) => setComissions(e.target.value === "true")}>
-          <option value="null">Comisiones o regalías*</option>
-          <option value="false">Regalías</option>
-          <option value="true">Comisiones</option>
-        </select> */}
         <input type='text' placeholder="Nombre del contacto"
           className="global-input" id="adding-bookstore-contactName"
           ref={contactNameRef}
           onChange={(e) => setContactName(e.target.value)}></input>
-        <input type='text' placeholder="Téléfono"
-          className="global-input" id="adding-bookstore-contactPhone"
-          ref={contactPhoneRef}
-          onChange={(e) => setContactPhone(e.target.value)}></input>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Teléfono*</label>
+          <div className="modal-phone">
+            <select className="select-phone"
+              onChange={(e) => setPhonePrefix(e.target.value)}>
+              {countryCallingCodes.map((country, index) => (
+                <option key={index} value={country.code}>{country.iso3} {country.code}</option>
+              ))}
+            </select>
+            <input type='text'
+              className="input-phone" id="adding-author-teléfono"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              ref={contactPhoneRef}
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+              onChange={(e) => setContactPhone(e.target.value)}></input>
+          </div>
+        </div>
         <input type='text' placeholder="Correo"
           className="global-input" id="adding-bookstore-contactEmail"
           ref={contactEmailRef}

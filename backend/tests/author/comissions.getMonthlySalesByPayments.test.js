@@ -16,7 +16,7 @@ import {
   deleteFromDB
 } from "../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
-import * as mailer from "../../mailer.js"
+import * as mailer from "../../mailer.js";
 
 let prisma;
 let testDBName;
@@ -45,7 +45,7 @@ describe(`getting all valid monthly sales by payments`, () => {
   let book1, book2;
   let bookstore1, bookstore2;
   let inventory1, inventory2;
-  let payment1, payment2, payment3; 
+  let payment1, payment2, payment3;
   let sale1, sale2, sale3, sale4, deletedSale;
   let kindleSale1, kindleSale2, kindleSale3, deletedKindleSale;
   let cost1, cost2, cost3;
@@ -79,6 +79,8 @@ describe(`getting all valid monthly sales by payments`, () => {
     cost2 = await createCost(prisma, payment2.id, book2.id, {amount: 100})
     cost3 = await createCost(prisma, payment1.id, book1.id, {amount: 100, isDeleted: true})
 
+    // costs of all authors seems to be counted towards 1 author payment. Check this.
+
     mockReq = {
       session: {
         user_id: author.id
@@ -107,8 +109,8 @@ describe(`getting all valid monthly sales by payments`, () => {
     expect(jsonRes.length).toBe(13)
   })
 
-  it(`should return the total for each month, taking into account sales, kindleSales and costs, 
-  and excluding deleted and out of range sales; Kindle sales should not contribute to total 
+  it(`should return the total for each month, taking into account sales, kindleSales and costs,
+  and excluding deleted and out of range sales; Kindle sales should not contribute to total
   quantity of sales, just final amount.`, async() => {
     expect(jsonRes[1].sales.length).toBe(2)
     expect(jsonRes[1].costs.length).toBe(1)
@@ -143,11 +145,86 @@ describe(`getting all valid monthly sales by payments`, () => {
     expect(jsonRes[11].sales).toStrictEqual([])
     expect(jsonRes[11].costs).toStrictEqual([])
     expect(jsonRes[12].sales).toStrictEqual([])
-    expect(jsonRes[12].costs).toStrictEqual([])    
+    expect(jsonRes[12].costs).toStrictEqual([])
   })
 
   it(`should sort the months in descending order (newer first)`, async() => {
     expect(jsonRes[0].forMonth).toBe("2025-11")
     expect(jsonRes[12].forMonth).toBe("2024-11")
+  })
+})
+
+
+
+describe(`checking values`, () => {
+  let mockReq, mockRes, jsonRes;
+  let category1;
+  let author, author2;
+  let book1;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let payment1, payment2;
+  let sale1, sale2, sale3, sale4;
+  let cost1, cost2;
+
+  beforeAll(async() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-11-04"));
+
+    category1 = await createCategory(prisma, {number: 5, category_type: "regalias"})
+    author = await createAuthor(prisma)
+    author2 = await createAuthor(prisma)
+    book1 = await createBook(prisma, [author.id, author2.id], {categoryId: category1.id})
+    bookstore1 = await createBookstore(prisma, {deal_percentage: 50})
+    bookstore2 = await createBookstore(prisma, {deal_percentage: 30})
+    inventory1 = await createInventory(prisma, book1.id, bookstore1.id, {initial: 100, current: 70})
+    inventory2 = await createInventory(prisma, book1.id, bookstore2.id, {initial: 100, current: 90})
+    payment1 = await createPayment(prisma, author.id, "2025-10")
+    payment2 = await createPayment(prisma, author2.id, "2025-10")
+    sale1 = await createSale(prisma, inventory1.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-10-02")})
+    sale2 = await createSale(prisma, inventory2.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-10-02")})
+    sale3 = await createSale(prisma, inventory1.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-10-02")})
+    sale4 = await createSale(prisma, inventory2.id, [payment1.id, payment2.id], {quantity: 10, date: new Date("2025-10-02")})
+    cost1 = await createCost(prisma, payment1.id, book1.id, {amount: 100})
+    cost2 = await createCost(prisma, payment2.id, book1.id, {amount: 100})
+
+    // costs of all authors seems to be counted towards 1 author payment. Check this.
+
+    mockReq = {
+      session: {
+        user_id: author.id
+      },
+      prisma: prisma,
+      ltm: new Date("2025-11-04")
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
+
+  it(`should return status 200`, async() => {
+    await getMonthlySalesByPayments(mockReq, mockRes)
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+  })
+
+  it(`should return sales grouped by month within last 12 months`, async() => {
+    jsonRes = mockRes.json.mock.calls[0][0]
+    expect(jsonRes.length).toBe(13)
+  })
+
+  it(`should correctly aggregate totalValue across all sales`, async() => {
+    expect(jsonRes[1].sales.length).toBe(1);
+    expect(jsonRes[1].totalQuantity).toBe(40);
+    expect(jsonRes[1].totalValue).toBe(2932);
+  })
+
+  it(`should only count 1 cost per payment, not all costs tied to this book`, async() => {
+    expect(jsonRes[1].costs.length).toBe(1);
   })
 })

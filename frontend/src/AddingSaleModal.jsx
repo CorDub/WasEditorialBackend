@@ -237,9 +237,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }
 
   async function sendToServer() {
-    console.log("date", date)
-    console.log("date ISOString", date.toISOString())
-    console.log("date from isostring", new Date(date.toISOString()))
     try {
       const response = await fetch(`${baseURL}/api/admin/sale`, {
         method: "POST",

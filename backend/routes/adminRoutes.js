@@ -2091,7 +2091,6 @@ router.patch('/inventory/:id', updateInventory);
 
 export async function getSales(req, res) {
   try {
-    console.log("req.query", req.query)
     const inputs = {
       startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
       endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
@@ -2217,9 +2216,6 @@ export async function addSale(req, res) {
     validateInputs(inputs);
 
     const prismaClient = req.prisma || prisma
-
-    console.log("inputs.date", inputs.date);
-    console.log("inputs.date isod", inputs.date.toISOString());
 
     let createdSale;
     await prismaClient.$transaction(async (tx) => {

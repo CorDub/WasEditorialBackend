@@ -141,7 +141,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
             </select>
             <input type='text'
               className="input-phone" id="adding-author-teléfono"
-              inputmode="numeric"
+              inputMode="numeric"
               pattern="[0-9]*"
               ref={contactPhoneRef}
               onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}

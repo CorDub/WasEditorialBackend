@@ -314,6 +314,9 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           <div className="modal-form-line">
             <label className="modal-form-label">ISBN</label>
             <input type='text' value={isbn} placeholder="ISBN"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               className="global-input" id="adding-book-isbn"
               onChange={(e) => setIsbn(e.target.value)}></input>
           </div>

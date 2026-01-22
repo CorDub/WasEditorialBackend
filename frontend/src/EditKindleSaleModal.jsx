@@ -218,6 +218,9 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           <input 
             type="text" 
             placeholder="Cantidad eBook vendida*" 
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             className="global-input"
             value={quantityEbook}
             ref={quantityEbookRef} 
@@ -229,6 +232,9 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             type="text" 
             placeholder="Cantidad pod vendida*" 
             className="global-input"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             value={quantityPod}
             ref={quantityPodRef} 
             onChange={(e) => setQuantityPod(parseInt(e.target.value))}></input>
@@ -256,6 +262,9 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           <input 
             type="text" 
             placeholder="Regalías*" 
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             className="global-input"
             value={regalias}
             ref={regaliasRef} 

@@ -320,6 +320,9 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           <label className="modal-form-label">Cantidad *</label>
           <input type="text" placeholder="Cantidad vendida" className="global-input"
             ref={quantityRef} value={quantity}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             onChange={(e) => setQuantity(e.target.value)}></input>
         </div>
         <div className="modal-form-line">

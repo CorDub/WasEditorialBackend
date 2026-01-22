@@ -105,6 +105,9 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           type='text'
           placeholder="Cantidad"
           className="global-input transfer-quantity"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}>
         </input>

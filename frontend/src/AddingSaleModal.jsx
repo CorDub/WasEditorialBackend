@@ -313,6 +313,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             placeholder="Fecha"
             className="global-input"
             ref={dateRef}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             onChange={(e) => setDate(e.target.value)}
             value={convertISOString(date)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>

@@ -221,7 +221,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
             </select>
             <input type='text'
               className="input-phone" id="adding-author-teléfono"
-              inputmode="numeric"
+              inputMode="numeric"
               pattern="[0-9]*"
               ref={phoneRef}
               onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
@@ -232,15 +232,24 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           <label className="modal-form-label">Fecha de nacimiento</label>
           <div className="modal-birthday">
             <input type="text" placeholder="dd"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               className="global-input birthday-day" maxLength="2"
               ref={dayRef}
               onChange={(e) => setDay(e.target.value)}></input>
             <input type="text" placeholder="mm"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               className="global-input birthday-month" maxLength="2"
               ref={monthRef}
               onChange={(e) => setMonth(e.target.value)}></input>
             <input type="text" placeholder="aaaa"
               className="global-input birthday-year" maxLength="4"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               ref={yearRef}
               onChange={(e) => setYear(e.target.value)}></input>
           </div>

@@ -230,8 +230,14 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
          </>
         }
         <input type="text" placeholder="Cantidad eBook vendida*" className="global-input"
+          inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           ref={quantityEbookRef} onChange={(e) => setQuantityEbook(parseInt(e.target.value))}></input>
         <input type="text" placeholder="Cantidad pod vendida*" className="global-input"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           ref={quantityPodRef} onChange={(e) => setQuantityPod(parseInt(e.target.value))}></input>
         <div className="modal-form-line">
           <label className="modal-form-label">Fecha de corte</label>
@@ -252,6 +258,9 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
             value={convertISOString(datePay)}></input>
         </div>
         <input type="text" placeholder="Regalías*" className="global-input"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           ref={regaliasRef} onChange={(e) => setRegalias(parseInt(e.target.value))}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

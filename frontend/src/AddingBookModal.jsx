@@ -359,11 +359,17 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           )) }
         </select>
         <input type='text' placeholder="ISBN"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           className="global-input" id="adding-book-isbn"
           onChange={(e) => setIsbn(e.target.value)}></input>
         <input
           type='text'
           placeholder='Cantidad inicial imprimida*'
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           className="global-input"
           id="adding-book-quantity"
           onChange={(e) => setQuantity(e.target.value)}></input>

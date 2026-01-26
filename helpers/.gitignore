@@ -1,2 +1,13 @@
 was_database.ipynb
 was_database.csv
+_pycache_/
+.venv/
+authors.json
+books.ipynb
+books.json
+database.py
+finalAuthorList.json
+finalBooksList.json
+WasAutores.csv
+WasAutores.csv.csv:Zone.Identifier
+WasLibros.csv

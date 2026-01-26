@@ -93,7 +93,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           referido: referido,
           email: email,
           phone: fullPhoneNumber,
-          birthday: birthday,
+          birthday: birthday === "0000" ? null : birthday,
         })
       });
 
@@ -157,6 +157,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       length: 50
     }
     const emailExpectations = {
+      presence: "not empty",
       type: "string",
       validity: "email valid"
     }
@@ -179,6 +180,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       minimum: (new Date().getFullYear() - 120)
     }
     const phoneExpectations = {
+      presence: 'not empty',
       type: "number",
       validity: "phone valid"
     }
@@ -188,9 +190,9 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
     const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
     const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
-    const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
-    const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
-    const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
+    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : null;
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : null;
+    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : null;
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
@@ -310,14 +312,14 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
                 onChange={(e) => setYear(e.target.value)}></input>
             </div>
           </div>
+          <ErrorsList errors={errors} setErrors={setErrors} />
+          <div className="modal-actions modal-edit-author">
+            <button className='blue-button modal-button'
+                onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            <button className='blue-button modal-button'
+              onClick={handleSubmit}>Confirmar</button>
+          </div>
         </form>
-        <ErrorsList errors={errors} setErrors={setErrors} />
-        <div className="modal-actions">
-          <button className='blue-button modal-button'
-              onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
-          <button className='blue-button modal-button'
-            onClick={handleSubmit}>Confirmar</button>
-        </div>
       </div>
   )
 }

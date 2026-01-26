@@ -141,7 +141,7 @@ async function main() {
       data: {
         first_name: "Administrator",
         last_name: "McLibro",
-        email: "Imake@books.com",
+        email: "imake@books.com",
         password: await bcrypt.hash("bookboi", 10),
         role: Role.superadmin,
         createdAt: twelveMonthsAgo
@@ -163,7 +163,7 @@ async function main() {
       data: {
         first_name: "Juan",
         last_name: "AdminWasEditorial",
-        email: "JuanAdmin@waseditorial.com",
+        email: "juanadmin@waseditorial.com",
         password: await bcrypt.hash("PruebaAdmin1", 10),
         role: Role.superadmin,
         createdAt: twelveMonthsAgo
@@ -174,7 +174,7 @@ async function main() {
       data: {
         first_name: "Rebeca",
         last_name: "AdminWasEditorial",
-        email: "RebecaAdmin@waseditorial.com",
+        email: "rebecaadmin@waseditorial.com",
         password: await bcrypt.hash("PruebaAdmin2", 10),
         role: Role.superadmin,
         createdAt: twelveMonthsAgo
@@ -185,7 +185,7 @@ async function main() {
       data: {
         first_name: "Juan",
         last_name: "AutorWasEditorial",
-        email: "JuanAutor@waseditorial.com",
+        email: "juanautor@waseditorial.com",
         password: await bcrypt.hash("PruebaAutor1", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo
@@ -196,7 +196,7 @@ async function main() {
       data: {
         first_name: "Rebeca",
         last_name: "AutorWasEditorial",
-        email: "RebecaAutor@waseditorial.com",
+        email: "rebecaautor@waseditorial.com",
         password: await bcrypt.hash("PruebaAutor2", 10),
         role: Role.author,
         createdAt: twelveMonthsAgo
@@ -409,8 +409,8 @@ async function main() {
     }
 
     await addingBookToAuthor("adorno");
-    await addingBookToAuthor("Rebeca");
-    await addingBookToAuthor("Juan");
+    await addingBookToAuthor("rebeca");
+    await addingBookToAuthor("juan");
 
     /// Create fake sales
 

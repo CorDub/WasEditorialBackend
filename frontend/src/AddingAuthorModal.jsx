@@ -50,7 +50,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           referido: referido,
           email: email,
           phone: fullPhoneNumber,
-          birthday: birthday,
+          birthday: birthday === "0000" ? null : birthday,
         }),
       });
 
@@ -128,8 +128,8 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       length: 50
     }
     const emailExpectations = {
-      type: "string",
       presence: "not empty",
+      type: "string",
       validity: "email valid"
     }
     const referidoExpectations = {
@@ -158,11 +158,11 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
     const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
-    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhone = checkForErrors("El teléfono", fullPhoneNumber, phoneExpectations, phoneRef, "o")
     const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
-    const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
-    const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
-    const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
+    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : null;
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : null;
+    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : null;
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
@@ -171,7 +171,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       errorsReferido,
       errorsBirthdayDay,
       errorsBirthdayMonth,
-      errorsBirthdayYear,
+      errorsBirthdayYear
     ]
 
     for (const errorInput of errorInputs) {

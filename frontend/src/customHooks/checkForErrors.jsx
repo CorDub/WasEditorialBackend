@@ -57,12 +57,19 @@ function checkForErrors(
 
       case "presence":
         if (fieldExpectations.presence === "not empty") {
+          if (fieldName === "El teléfono") {
+            if (fieldValue.length < 4) {
+              errorList.push(`${fieldName} no puede estar vací${gender}.`);
+            }
+            addErrorClass(fieldRef);
+            return errorList;
+          }
           if (fieldValue === "" || fieldValue === 0) {
             errorList.push(`${fieldName} no puede estar vací${gender}.`);
           }
           addErrorClass(fieldRef);
         };
-        break;
+        return errorList
 
       case "length":
         if (fieldValue.length > fieldExpectations.length) {
@@ -114,6 +121,7 @@ function checkForErrors(
           }
         } else if (fieldExpectations.validity === "phone valid") {
           const clean = fieldValue.replace(/\s|\(|\)|-/g, '');
+          console.log("clean", clean);
           if (validPhoneRegex.test(clean) === false) {
             errorList.push(`${fieldName} no es un numéro de téléfono valido.`);
             addErrorClass(fieldRef);

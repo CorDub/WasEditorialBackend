@@ -101,6 +101,10 @@ function LoginPage() {
     return newErrors;
   }
 
+  useEffect(() => {
+    console.log("email", email)
+  }, [email])
+
   return (
     <div className="login-page">
       <div className="login-logo">
@@ -113,7 +117,7 @@ function LoginPage() {
             placeholder="Correo"
             value={email}
             ref={emailRef}
-            onChange={(e) => setEmail(e.target.value)}/>
+            onChange={(e) => setEmail(e.target.value.trim().toLowerCase())}/>
           <input className="global-input login-input"
             type="password"
             placeholder="Contraseña"

@@ -61,6 +61,7 @@ router.get('/users', getAuthors);
 export async function addAuthor(req, res) {
   try {
     const prismaClient = req.prisma || prisma;
+    console.log("req.body", req.body)
 
     const inputs = {
       "firstName": req.body.firstName,

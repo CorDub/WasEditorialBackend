@@ -36,13 +36,13 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
         const responseData = await response.json();
         if (responseData.failed.length > 0) {
           const alertMessage = `Los siguientes autores no pudieron estar añadidos`;
-          closeModal(pageIndex, globalFilter, false, alertMessage, "warning", responseData.failed)
+          closeModal(pageIndex, globalFilter, true, alertMessage, "warning", responseData.failed)
         } else {
           const alertMessage = `Los autores han estado añadidos con exito.`;
           closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
         }
       } else {
-        const alertMessage = "No se pudieron añadir varios libros.";
+        const alertMessage = "No se pudieron añadir varios autores.";
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
     } catch(error) {
@@ -56,7 +56,7 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
         <div className="mulauth-adicional-instruciones">
           <div className="mulauth-top-instrucciones">
             <p className="mulauth-line">Suba un archivo CSV para añadir varios autores al mismo tiempo.</p>
-            <p className="mulauth-line">Por favor no incluye el nombre de las columnas en el archivo</p>
+            <p className="mulauth-line">Por favor <span style={{"fontWeight":"bold"}}>no incluye el nombre de las columnas</span> en el archivo</p>
             <p className="mulauth-line">Las columnas deben estar en el siguiente orden:</p>
           </div>
           <div className="mulauth-line">
@@ -64,10 +64,11 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
             <p className="mulauth-line mulauth-mandatory">Apellido(s)*</p>
             {/* <p className="mulauth-line">País</p>
             <p className="mulauth-line">Categoria</p> */}
-            <p className="mulauth-line mulauth-mandatory">Correo*</p>
+            <p className="mulauth-line mulauth-mandatory" style={{"marginBottom": "0.40rem"}}>Correo*</p>
             <p className="mulauth-line mulauth-mandatory">Teléfono*</p>
-            <p className="mulauth-line">(10 números sin espacio / empezando con 00 + prefijo de país para números internacionales)</p>
-            <p className="mulauth-line">Fecha de nacimiento (ddmmaaaa - no separadores)</p>
+            <p className="mulauth-subline">(Al formato +520000000000 - sin espacios)</p>
+            <p className="mulauth-line">Fecha de nacimiento</p>
+            <p className="mulauth-subline">(ddmmaaaa - no separadores - ejemplo: 22121988)</p>
             <p className="mulauth-line">CLABE</p>
             <p className="mulauth-line">Nombre del titular</p>
             <p className="mulauth-line">Nombre del banco</p>

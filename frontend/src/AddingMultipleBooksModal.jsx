@@ -36,7 +36,7 @@ function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFil
         if (responseData.failed.length > 0) {
           const alertMessage = `Los siguientes libros no pudieron estar añadidos`;
           console.log(responseData)
-          closeModal(pageIndex, globalFilter, false, alertMessage, "warning", responseData.failed)
+          closeModal(pageIndex, globalFilter, true, alertMessage, "warning", responseData.failed);
         } else {
           const alertMessage = `Los libros han estado añadidos con exito.`;
           closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
@@ -56,20 +56,24 @@ function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFil
         <div className="mulauth-adicional-instruciones">
           <div className="mulauth-top-instrucciones">
             <p className="mulauth-line">Suba un archivo CSV para añadir varios libros al mismo tiempo.</p>
-            <p className="mulauth-line">Por favor no incluye el nombre de las columnas en el archivo</p>
+            <p className="mulauth-line">Por favor <span style={{"fontWeight": "bold"}}>no incluye el nombre de las columnas</span> en el archivo</p>
             <p className="mulauth-line">Los autores de los libros deben existir en la base de datos antes de poder añadir sus libros.</p>
-            <p className="mulauth-line">Solamente se puede añadir un autor por libro</p>
+            <p className="mulauth-line"><span style={{"fontWeight": "bold"}}>Solamente se puede añadir un autor por libro</span></p>
             <p className="mulauth-line">Si el libro tiene mas de un autor, por favor editen el libro después.</p>
             <p className="mulauth-line">Las columnas deben estar en el siguiente orden:</p>
           </div>
           <div className="mulauth-line">
-            <p className="mulauth-line">Precio en WAS*</p>
+            <p className="mulauth-line mulauth-mandatory">Título*</p>
+            <p className="mulauth-line mulauth-mandatory">Nombre del autor*</p>
+            <p className="mulauth-subline">(Exactamente como aparece en la pestaña de autores)</p>
+            <p className="mulauth-line mulauth-mandatory">Apellido del autor*</p>
+            <p className="mulauth-subline">(Exactamente como aparece en la pestaña de autores)</p>
+            <p className="mulauth-line mulauth-mandatory">Precio en WAS*</p>
+            <p className="mulauth-line mulauth-mandatory">Número de categoría*</p>
+            <p className="mulauth-line mulauth-mandatory" style={{"marginBottom": "0.40rem"}}>Cantidad inicial imprimida*</p>
+            <p className="mulauth-line">Pasta</p>
+            <p className="mulauth-subline">(Solamente "Blanda" o "Dura", con majuscula)</p>
             <p className="mulauth-line">ISBN</p>
-            <p className="mulauth-line">Título*</p>
-            <p className="mulauth-line">Nombre del autor</p>
-            <p className="mulauth-line">Appellido del autor</p>
-            <p className="mulauth-line">Pasta - solamente "Blanda" o "Dura", con majuscula</p>
-            <p className="mulauth-line">Cantidad inicial imprimida*</p>
           </div>
           <div className="mulauth-bottom-instrucciones">
             <p className="mulauth-line">*mandatorios</p>

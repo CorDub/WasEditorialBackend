@@ -81,7 +81,7 @@ export function validateInput(inputName, inputValue) {
       ["length", 255],
     ],
     "pasta": [
-      ["type", "string"],
+      ["type", "string or null"],
       ["length", 10],
       ["value", ["Blanda", "Dura"]],
     ],

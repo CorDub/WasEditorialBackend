@@ -61,7 +61,6 @@ router.get('/users', getAuthors);
 export async function addAuthor(req, res) {
   try {
     const prismaClient = req.prisma || prisma;
-    console.log("req.body", req.body)
 
     const inputs = {
       "firstName": req.body.firstName,
@@ -215,8 +214,8 @@ export async function addMultipleAuthors(req, res) {
           });
         }
 
-        const password = createRandomPassword();
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // const password = createRandomPassword();
+        // const hashedPassword = await bcrypt.hash(password, 10);
         const addedAuthor = await prismaClient.user.create({
           data: {
             first_name: fields[0],
@@ -230,7 +229,7 @@ export async function addMultipleAuthors(req, res) {
             name_bank_account: fields[6],
             bank: fields[7],
             swift: fields[8],
-            password: hashedPassword,
+            // password: hashedPassword,
             referido: fields[9]
           }
         })
@@ -870,43 +869,54 @@ export async function addMultipleBooks(req, res) {
     const errors = [];
     for (let i = 0; i < lines.length; i++) {
       try {
-        const fields = lines[i].split(",");
-        for (let j = 0; j < fields.length; j++) {
+        let fields = lines[i].split(",");
+        for (let j = 0; j < 8; j++) {
+          if (!fields[j]) {
+            fields[j] = null;
+            continue;
+          }
+
           fields[j] = fields[j].trim();
           if (fields[j] === "") {
             fields[j] = null
           }
         }
         if (!fields[0]) {
-          throw new Error("Missing price in WAS");
-        }
-        if (!fields[2]) {
           throw new Error("Missing title");
         }
-        if (!fields[3] || !fields[4]) {
+        if (!fields[1] || !fields[2]) {
           throw new Error("Missing author");
         }
-        if (fields[5] !== "Blanda" && fields[5] !== "Dura") {
-          throw new Error("Invalid pasta");
+        if (!fields[3]) {
+          throw new Error("Missing price");
         }
-        if (!fields[6]) {
+        if (!fields[4]) {
+          throw new Error("Missing category number");
+        }
+        if (!fields[5]) {
           throw new Error("Missing quantity");
+        }
+        if (fields[6] !== "Blanda" 
+          && fields[6] !== "Dura" 
+          && fields[6] !== null) {
+          throw new Error("Invalid pasta");
         }
 
         const inputs = {
-          "price": parseFloat(fields[0]),
-          "isbn": fields[1],
-          "title": fields[2],
-          "firstName": fields[3],
-          "lastName": fields[4],
-          "pasta": fields[5],
-          "quantity": parseInt(fields[6])
+          "title": fields[0],
+          "firstName": fields[1],
+          "lastName": fields[2],
+          "price": parseFloat(fields[3]),
+          "categoryId": parseInt(fields[4]),
+          "quantity": parseInt(fields[5]),
+          "pasta": fields[6],
+          "isbn": fields[7],
         }
         validateInputs(inputs);
 
         const deletedBook = await prismaClient.book.findFirst({
           where: {
-            title: fields[2],
+            title: inputs.title,
             isDeleted: true
           }
         })
@@ -914,7 +924,7 @@ export async function addMultipleBooks(req, res) {
         if (deletedBook) {
           await prismaClient.user.delete({
             where: {
-              title: fields[2]
+              title: inputs.title
             }
           });
         }
@@ -922,8 +932,8 @@ export async function addMultipleBooks(req, res) {
         const author = await prismaClient.user.findUnique({
           where: {
             first_name_last_name: {
-              first_name: fields[3],
-              last_name: fields[4]
+              first_name: inputs.firstName,
+              last_name: inputs.lastName
             }
           }
         })
@@ -936,22 +946,23 @@ export async function addMultipleBooks(req, res) {
           await prismaClient.$transaction(async (tx) => {
             const addedBook = await tx.book.create({
               data: {
-                title: fields[2],
-                pasta: fields[4],
-                isbn: fields[1],
+                title: inputs.title,
+                pasta: inputs.pasta,
+                isbn: inputs.isbn,
                 users: {
                   connect: {
                     id: author.id
                   }
                 },
-                mainAuthor: author.id
+                mainAuthor: author.id,
+                categoryId: inputs.categoryId
               }
             });
 
             const new_impression = await tx.impression.create({
               data: {
                 bookId: addedBook.id,
-                quantity: parseInt(fields[6]),
+                quantity: inputs.quantity,
               }
             })
 
@@ -959,10 +970,9 @@ export async function addMultipleBooks(req, res) {
               data: {
                 bookId: addedBook.id,
                 bookstoreId: 1,
-                country: "México",
-                price: parseFloat(fields[0]),
-                initial: parseInt(fields[6]),
-                current: parseInt(fields[6])
+                price: inputs.price,
+                initial: inputs.quantity,
+                current: inputs.quantity
               }
             })
           })
@@ -998,7 +1008,7 @@ export async function addMultipleBooks(req, res) {
             break;
           default:
             console.error(error);
-            errors.push({"line": i + 1, "error": "Error non identificada - puede ser con la impresión o el inventario"})
+            errors.push({"line": i + 1, "error": "Error non identificada"})
         }
       }
     }

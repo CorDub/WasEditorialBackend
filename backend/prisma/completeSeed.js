@@ -3,9 +3,7 @@ import bcrypt from "bcrypt";
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from "url";
-import { getForMonth } from '../utils.js';
 import { error } from "console";
-import { json } from "stream/consumers";
 
 const prisma = new PrismaClient();
 const __filename = fileURLToPath(import.meta.url);

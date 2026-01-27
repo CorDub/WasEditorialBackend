@@ -255,10 +255,7 @@ export async function getAuthorSales (req, res) {
     }
 
     const prismaClient = req.prisma || prisma
-
-    console.log("-------------")
     inputs.endDate.setUTCHours(23,59,59,999);
-    console.log("endDate after", inputs.endDate);
 
     // Get data
     let salesInRange = await prismaClient.sale.findMany({

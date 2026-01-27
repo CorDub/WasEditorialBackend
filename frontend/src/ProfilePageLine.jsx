@@ -101,7 +101,7 @@ function ProfilePageLine({
               placeholder={value}
               value={newValue}
               ref={inputRef}
-              onChange={(e) => setNewValue(e.target.value)}
+              onChange={(e) => setNewValue(e.target.value.toLocaleLowerCase())}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   updateProfileField();

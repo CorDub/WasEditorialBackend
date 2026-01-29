@@ -26,6 +26,7 @@ async function addAuthorFromDB(author) {
         last_name: author.last_name,
         email: author.email,
         phone: author.phone,
+        phonePrefix: author.phonePrefix,
         birthday: author.birthday,
         clabe: author.clabe,
         name_bank_account: author.name_bank_account,

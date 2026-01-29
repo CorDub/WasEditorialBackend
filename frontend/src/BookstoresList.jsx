@@ -57,7 +57,10 @@ function BookstoresList() {
     },
     {
       header: "Teléfono",
-      accessorKey: "contact_phone"
+      accessorKey: "contact_phone",
+      Cell: ({row}) => row.original.contact_phone
+        ? row.original.contact_phone_prefix + row.original.contact_phone
+        : ""
     },
     {
       header: "Correo",

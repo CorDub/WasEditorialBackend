@@ -64,9 +64,18 @@ export function validateInput(inputName, inputValue) {
       ["type", "string"],
       ["format", 'phone']
     ],
+    'phonePrefix': [
+      ["presence", "not empty"],
+      ["type", "string"],
+      ["format", 'phonePrefix']
+    ],
     "phoneBookstore": [
       ["type", "string or null"],
       ["format", "phone"]
+    ],
+    "phonePrefixBookstore": [
+      ["type", "string or null"],
+      ["format", "phonePrefix"]
     ],
     "category": [
       ["type", "number"],
@@ -417,8 +426,20 @@ export function validateInput(inputName, inputValue) {
             continue;
           }
 
-          const validPhoneRegex = /^\+[1-9]\d{10,14}$/;
+          const validPhoneRegex = /^\d{6,14}$/;
           if (!validPhoneRegex.test(inputValue)) {
+            errors.push([inputName, inputValue, "format"])
+            return errors
+          }
+        }
+
+        if (check[1] === "phonePrefix") {
+          if (inputValue === "" || inputValue === null || inputValue === undefined) {
+            continue;
+          }
+
+          const validPhonePrefixRegex = /^\+\d{1,3}$/;
+          if (!validPhonePrefixRegex.test(inputValue)) {
             errors.push([inputName, inputValue, "format"])
             return errors
           }

@@ -89,6 +89,7 @@ function ProfilePage() {
             title={'Teléfono'}
             field={"phone"}
             value={user.phone}
+            phonePrefix={extraInfo ? extraInfo.phonePrefix : "+52"}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
             forceRender={forceRender}

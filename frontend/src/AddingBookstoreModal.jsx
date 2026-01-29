@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import useCheckAdmin from './customHooks/useCheckAdmin';
 import checkForErrors from './customHooks/checkForErrors';
 import ErrorsList from './ErrorsList';
@@ -12,19 +12,20 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const [dealPercentage, setDealPercentage] = useState('');
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [phonePrefix, setPhonePrefix] = useState('+52');
-  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
+  const [contactPhonePrefix, setContactPhonePrefix] = useState('+52');
+  // const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [errors, setErrors] = useState([]);
   const nameRef = useRef();
   const dealPercentageRef = useRef();
   const contactNameRef = useRef();
   const contactPhoneRef = useRef();
+  const contactPhonePrefixRef = useRef();
   const contactEmailRef = useRef();
 
-  useEffect(() => {
-    setFullPhoneNumber(phonePrefix + contactPhone)
-  }, [contactPhone, phonePrefix])
+  // useEffect(() => {
+  //   setFullPhoneNumber(phonePrefix + contactPhone)
+  // }, [contactPhone, phonePrefix])
 
   async function sendToServer() {
     try {
@@ -38,7 +39,8 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           name: name,
           dealPercentage: dealPercentage,
           contactName: contactName,
-          contactPhone: fullPhoneNumber,
+          contactPhone: contactPhone,
+          contactPhonePrefix: contactPhonePrefix,
           contactEmail: contactEmail,
         }),
       });
@@ -77,6 +79,9 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
     const contactPhoneExpectations = {
       validity: "phone valid"
     };
+    const contactPhonePrefixExpectations = {
+      validity: "phonePrefix valid"
+    };
     const contactEmailExpectations =  {
       validity: "email valid"
     };
@@ -85,8 +90,9 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
     const errorsDealPercentage = checkForErrors("El percentage", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
     const errorsContactName = contactName ? checkForErrors("El nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
     const errorsContactPhone = contactPhone ? checkForErrors("El teléfono", contactPhone, contactPhoneExpectations, contactPhoneRef, 'o') : [];
+    const errorsContactPhonePrefix = contactPhonePrefix ? checkForErrors("El prefijo de país", contactPhonePrefix, contactPhonePrefixExpectations, contactPhonePrefixRef, 'o') : [];
     const errorsContactEmail = contactEmail ? checkForErrors("El correo", contactEmail, contactEmailExpectations, contactEmailRef, 'o') : [];
-    const errorInputs = [errorsName, errorsDealPercentage, errorsContactName, errorsContactPhone, errorsContactEmail]
+    const errorInputs = [errorsName, errorsDealPercentage, errorsContactName, errorsContactPhone, errorsContactPhonePrefix, errorsContactEmail]
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         newErrorList.push(errorInput);
@@ -134,7 +140,8 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           <label className="modal-form-label">Teléfono*</label>
           <div className="modal-phone">
             <select className="select-phone"
-              onChange={(e) => setPhonePrefix(e.target.value)}>
+              ref={contactPhonePrefixRef}
+              onChange={(e) => setContactPhonePrefix(e.target.value)}>
               {countryCallingCodes.map((country, index) => (
                 <option key={index} value={country.code}>{country.iso3} {country.code}</option>
               ))}

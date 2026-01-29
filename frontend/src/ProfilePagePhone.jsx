@@ -11,6 +11,7 @@ function ProfilePagePhone(
   title,
   field,
   value,
+  phonePrefix,
   setAlertMessage,
   setAlertType,
   forceRender,
@@ -23,17 +24,17 @@ function ProfilePagePhone(
   const [newValue, setNewValue] = useState("");
   const [displayValue, setDisplayValue] = useState("");
   const [phone, setPhone] = useState("");
-  const [phonePrefix, setPhonePrefix] = useState('+52');
+  const [newPhonePrefix, setNewPhonePrefix] = useState(phonePrefix || "+52");
   const phoneRef = useRef();
+  const phonePrefixRef = useRef();
   const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
 
   useEffect(() => {
     if (value) {
       // Get the prefix and sort the list based on this
       // get the code
-      const codeLength = value.length - 10;
-      const prefix = value.substring(0, codeLength);
-      const phoneNumber = value.substring(codeLength, value.length);
+      const prefix = phonePrefix;
+      const phoneNumber = value;
 
       // find the current country in the list
       let sortedCountryCodeList = [];
@@ -47,20 +48,20 @@ function ProfilePagePhone(
       }
 
       // set everything
-      setPhonePrefix(prefix)
+      setNewPhonePrefix(prefix)
       setPhone(phoneNumber)
-      setNewValue(phonePrefix + phoneNumber)
-      setDisplayValue(phonePrefix + phoneNumber)
+      setNewValue(newPhonePrefix + phoneNumber)
+      setDisplayValue(newPhonePrefix + phoneNumber)
       setSortedCountryCodes(sortedCountryCodeList)
     } else {
       // find the current country in the list
       let sortedCountryCodeList = [];
-      const currentCountryCode = countryCallingCodes.find(element => element.code === phonePrefix)
+      const currentCountryCode = countryCallingCodes.find(element => element.code === newPhonePrefix)
 
       // sort the list
       sortedCountryCodeList.push(currentCountryCode);
       for (const country of countryCallingCodes) {
-        if (country.code === phonePrefix) { continue }
+        if (country.code === newPhonePrefix) { continue }
         sortedCountryCodeList.push(country)
       }
 
@@ -70,8 +71,9 @@ function ProfilePagePhone(
   }, [value])
 
   useEffect(() => {
-    setNewValue(phonePrefix + phone)
-  }, [phone, phonePrefix])
+    setNewValue(newPhonePrefix + phone)
+    setDisplayValue(newPhonePrefix + phone)
+  }, [phone, newPhonePrefix])
 
   async function updateProfileField() {
     if (newValue === value || newValue === "" || newValue === undefined) {
@@ -93,7 +95,8 @@ function ProfilePagePhone(
         },
         credentials: "include",
         body: JSON.stringify({
-          "phone": newValue
+          "phone": phone,
+          "phonePrefix": newPhonePrefix,
         })
       });
 
@@ -115,9 +118,13 @@ function ProfilePagePhone(
     const phoneExpectations = {
       validity: "phone valid"
     }
+    const phonePrefixExpectations = {
+      validity: "phonePrefix valid"
+    }
 
-    const errorsPhone = checkForErrors("El teléfono", newValue, phoneExpectations, phoneRef, "o")
-    const errorInputs = [errorsPhone]
+    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhonePrefix = checkForErrors("El prefijo de país", newPhonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
+    const errorInputs = [errorsPhone, errorsPhonePrefix]
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -139,13 +146,14 @@ function ProfilePagePhone(
         ? <>
             <div className="modal-birthday profile-birthday-line">
               <select className="select-phone"
-                onChange={(e) => setPhonePrefix(e.target.value)}>
+                ref={phonePrefixRef}
+                onChange={(e) => setNewPhonePrefix(e.target.value)}>
                 {sortedCountryCodes.map((country, index) => (
                   <option key={index} value={country.code}>{country.iso3} {country.code}</option>
                 ))}
               </select>
               <input type='text'
-                inputmode="numeric"
+                inputMode="numeric"
                 pattern="[0-9]*"
                 className="input-phone" id="adding-author-teléfono"
                 ref={phoneRef}

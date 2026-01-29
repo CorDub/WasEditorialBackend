@@ -5,7 +5,8 @@
     "full_name": "Adriana Vega",
     "categoryId": 1,
     "email": "adrianavegapsic@gmail.com",
-    "phone": "+5213335071295",
+    "phone": "13335071295",
+    "phonePrefix": "+52",
     "birthday": "03041988",
     "clabe": "012320029711217077",
     "name_bank_account": "Adriana Vega Garc\u00eda",
@@ -17,7 +18,8 @@
     "full_name": "Ana Lourdes Silva",
     "categoryId": 1,
     "email": "no_email_0@no_email.com",
-    "phone": "+5218181126148"
+    "phone": "18181126148",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Paola",
@@ -25,7 +27,8 @@
     "full_name": "Paola Mueller",
     "categoryId": 1,
     "email": "no_email_1@no_email.com",
-    "phone": "+14047400856"
+    "phone": "4047400856",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Belkis Carrillo",
@@ -33,7 +36,8 @@
     "full_name": "Belkis Carrillo Carrillo",
     "categoryId": 1,
     "email": "no_email_2@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Carmen",
@@ -41,7 +45,8 @@
     "full_name": "Carmen Ar\u00e9chiga",
     "categoryId": 1,
     "email": "no_email_3@no_email.com",
-    "phone": "+5213311390782"
+    "phone": "13311390782",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Cecilia",
@@ -49,7 +54,8 @@
     "full_name": "Cecilia Jasqui",
     "categoryId": 1,
     "email": "no_email_4@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mariano",
@@ -57,7 +63,8 @@
     "full_name": "Mariano Bosaz",
     "categoryId": 1,
     "email": "no_email_5@no_email.com",
-    "phone": "+14042170116"
+    "phone": "4042170116",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Mark",
@@ -65,7 +72,8 @@
     "full_name": "Mark Achar",
     "categoryId": 1,
     "email": "no_email_6@no_email.com",
-    "phone": "+5215555062482"
+    "phone": "15555062482",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Patricia",
@@ -73,7 +81,8 @@
     "full_name": "Patricia Verdugo",
     "categoryId": 1,
     "email": "patricia041610@yahoo.com.mx",
-    "phone": "+5213310640131",
+    "phone": "13310640131",
+    "phonePrefix": "+52",
     "birthday": "16041969",
     "name_bank_account": "Patricia Verdugo",
     "bank": "Bancomer"
@@ -84,7 +93,8 @@
     "full_name": "Irma Mondrag\u00f3n",
     "categoryId": 1,
     "email": "irmaemolo@outlook.com",
-    "phone": "+5213310431041",
+    "phone": "13310431041",
+    "phonePrefix": "+52",
     "birthday": "16051969",
     "clabe": "072320005586362852",
     "name_bank_account": "Irma Elizabeth Mondrag\u00f3n L\u00f3pez",
@@ -96,7 +106,8 @@
     "full_name": "Diana Coto",
     "categoryId": 1,
     "email": "diana_coto@outlook.com",
-    "phone": "+525536982078",
+    "phone": "5536982078",
+    "phonePrefix": "+52",
     "birthday": "15121989",
     "clabe": "012180015938722311",
     "name_bank_account": "Brenda Diana Coto Casado",
@@ -108,7 +119,8 @@
     "full_name": "Isaac Dabbah",
     "categoryId": 1,
     "email": "isaac.zakhome@gmail.com",
-    "phone": "+5213412151283",
+    "phone": "13412151283",
+    "phonePrefix": "+52",
     "birthday": "09011971",
     "name_bank_account": "Isaac Dabbah Portilla",
     "bank": "banco Azteca"
@@ -119,7 +131,8 @@
     "full_name": "Jorge Serratos",
     "categoryId": 1,
     "email": "no_email_7@no_email.com",
-    "phone": "+5213317264960"
+    "phone": "13317264960",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jos\u00e9 Manuel",
@@ -127,7 +140,8 @@
     "full_name": "Jos\u00e9 Manuel de Le\u00f3n Guti\u00e9rrez",
     "categoryId": 1,
     "email": "no_email_8@no_email.com",
-    "phone": "+5213951157777"
+    "phone": "13951157777",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Norma E.",
@@ -135,7 +149,8 @@
     "full_name": "Norma E. Acosta Sustaita",
     "categoryId": 1,
     "email": "no_email_9@no_email.com",
-    "phone": "+16478957923"
+    "phone": "6478957923",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Imelda",
@@ -143,7 +158,8 @@
     "full_name": "Imelda \u00c1lvarez",
     "categoryId": 1,
     "email": "no_email_10@no_email.com",
-    "phone": "+5213324126505"
+    "phone": "13324126505",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Kathy",
@@ -151,7 +167,8 @@
     "full_name": "Kathy Triana",
     "categoryId": 1,
     "email": "no_email_11@no_email.com",
-    "phone": "+18327988381"
+    "phone": "8327988381",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Rafael",
@@ -159,7 +176,8 @@
     "full_name": "Rafael Montes de Oca",
     "categoryId": 1,
     "email": "rafaelmdo60@gmail.com",
-    "phone": "+523315754538",
+    "phone": "3315754538",
+    "phonePrefix": "+52",
     "birthday": "07051979",
     "name_bank_account": "Rafael Montes de Oca Manriquez",
     "bank": "Banorte"
@@ -170,7 +188,8 @@
     "full_name": "Tato Balderrama",
     "categoryId": 1,
     "email": "no_email_12@no_email.com",
-    "phone": "+5216621149823"
+    "phone": "16621149823",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Randy",
@@ -178,7 +197,8 @@
     "full_name": "Randy Gage",
     "categoryId": 1,
     "email": "no_email_13@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Raciel",
@@ -186,7 +206,8 @@
     "full_name": "Raciel Trejo",
     "categoryId": 3,
     "email": "no_email_14@no_email.com",
-    "phone": "+5214424932555"
+    "phone": "14424932555",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Johnny",
@@ -194,7 +215,8 @@
     "full_name": "Johnny Abraham",
     "categoryId": 2,
     "email": "no_email_15@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "David",
@@ -202,7 +224,8 @@
     "full_name": "David Hern\u00e1ndez",
     "categoryId": 1,
     "email": "no_email_16@no_email.com",
-    "phone": "+5215650735806"
+    "phone": "15650735806",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Alex",
@@ -210,7 +233,8 @@
     "full_name": "Alex Sierra",
     "categoryId": 1,
     "email": "no_email_17@no_email.com",
-    "phone": "+14696019008"
+    "phone": "4696019008",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Daisy",
@@ -218,7 +242,8 @@
     "full_name": "Daisy Rosales",
     "categoryId": 1,
     "email": "no_email_18@no_email.com",
-    "phone": "+573165847138"
+    "phone": "3165847138",
+    "phonePrefix": "+57"
   },
   {
     "first_name": "Lulu",
@@ -226,7 +251,8 @@
     "full_name": "Lulu Frompr",
     "categoryId": 1,
     "email": "no_email_19@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Patricia",
@@ -234,7 +260,8 @@
     "full_name": "Patricia Moreno",
     "categoryId": 1,
     "email": "no_email_20@no_email.com",
-    "phone": "+5213317403364"
+    "phone": "13317403364",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ulises",
@@ -242,7 +269,8 @@
     "full_name": "Ulises Osorio",
     "categoryId": 1,
     "email": "cpulisesosorio@gmail.com",
-    "phone": "+5214431313109",
+    "phone": "14431313109",
+    "phonePrefix": "+52",
     "birthday": "19071976",
     "clabe": "012470015204279088",
     "name_bank_account": "EDGAR ULISES OSORIO BAEZA",
@@ -254,7 +282,8 @@
     "full_name": "Emily Ch\u00e1vez Daumas",
     "categoryId": 1,
     "email": "emilyc.daumas@gmail.com",
-    "phone": "+5215519491132",
+    "phone": "15519491132",
+    "phonePrefix": "+52",
     "birthday": "01111980",
     "name_bank_account": "Emily Chavez Daumas",
     "bank": "NU MEXICO"
@@ -265,7 +294,8 @@
     "full_name": "Ignacio Hern\u00e1ndez",
     "categoryId": 1,
     "email": "idezj@yahoo.com.mx",
-    "phone": "+5215514589426",
+    "phone": "15514589426",
+    "phonePrefix": "+52",
     "birthday": "27031970",
     "clabe": "127180013144631604",
     "name_bank_account": "Ignacio Hern\u00e1ndez Jim\u00e9nez",
@@ -277,7 +307,8 @@
     "full_name": "Mari Carmen Cruz",
     "categoryId": 1,
     "email": "marycd13@hotmail.com",
-    "phone": "+5215529511533",
+    "phone": "15529511533",
+    "phonePrefix": "+52",
     "birthday": "13051976",
     "name_bank_account": "Mar\u00eda del Carmen Cruz Dom\u00ednguez",
     "bank": "Banorte"
@@ -288,7 +319,8 @@
     "full_name": "Ver\u00f3nika Santos",
     "categoryId": 1,
     "email": "no_email_21@no_email.com",
-    "phone": "+5212211022627"
+    "phone": "12211022627",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Alejandro",
@@ -296,7 +328,8 @@
     "full_name": "Alejandro V\u00e1zquez",
     "categoryId": 1,
     "email": "alejandro.vazquez@oceanitec.com",
-    "phone": "+5215525292134",
+    "phone": "15525292134",
+    "phonePrefix": "+52",
     "birthday": "31081983",
     "name_bank_account": "Oscar Alejandro V\u00e1zquez Hern\u00e1ndez",
     "bank": "Santander"
@@ -307,7 +340,8 @@
     "full_name": "Christian Borbolla Ballesca",
     "categoryId": 1,
     "email": "christian.borbolla@gmail.com",
-    "phone": "+525512282101",
+    "phone": "5512282101",
+    "phonePrefix": "+52",
     "birthday": "14101976",
     "clabe": "012180001975526458",
     "name_bank_account": "Christian Borbolla Ballesca",
@@ -320,7 +354,8 @@
     "full_name": "Alejandro G\u00f3mez Medina",
     "categoryId": 1,
     "email": "alexgomezmastercoach@gmail.com",
-    "phone": "+5215554160277",
+    "phone": "15554160277",
+    "phonePrefix": "+52",
     "birthday": "02081972",
     "name_bank_account": "Alejandro G\u00f3mez Medina",
     "bank": "Banamex"
@@ -331,7 +366,8 @@
     "full_name": "Caro Cruz",
     "categoryId": 1,
     "email": "no_email_22@no_email.com",
-    "phone": "+50689081176"
+    "phone": "89081176",
+    "phonePrefix": "+506"
   },
   {
     "first_name": "Leticia",
@@ -339,7 +375,8 @@
     "full_name": "Leticia Rodr\u00edguez",
     "categoryId": 1,
     "email": "aprendenred@gmail.com",
-    "phone": "+520000000000",
+    "phone": "0000000000",
+    "phonePrefix": "+52",
     "birthday": "13041966",
     "clabe": "012180015355342989",
     "name_bank_account": "Maria Guadalupe Leti Rodriguez Campos",
@@ -351,7 +388,8 @@
     "full_name": "Marisol Tafolla",
     "categoryId": 1,
     "email": "marisoltafolla07@gmail.com",
-    "phone": "+16618773174",
+    "phone": "6618773174",
+    "phonePrefix": "+1",
     "birthday": "19071978",
     "name_bank_account": "Marisol Tafolla Lemus",
     "bank": "B OF A"
@@ -362,7 +400,8 @@
     "full_name": "Ivonne Orozco",
     "categoryId": 1,
     "email": "no_email_23@no_email.com",
-    "phone": "+528448939954"
+    "phone": "8448939954",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Claudia",
@@ -370,7 +409,8 @@
     "full_name": "Claudia Rohan",
     "categoryId": 1,
     "email": "claudiarohan@hotmail.com",
-    "phone": "+5213314624270",
+    "phone": "13314624270",
+    "phonePrefix": "+52",
     "birthday": "04021972",
     "name_bank_account": "Carlos Alberto Hern\u00e1ndez Paredes",
     "bank": "Banco Mercantil Del Norte",
@@ -382,7 +422,8 @@
     "full_name": "Macrina Ram\u00edrez",
     "categoryId": 1,
     "email": "no_email_24@no_email.com",
-    "phone": "+5219511881921"
+    "phone": "19511881921",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Pablo Felipe",
@@ -390,7 +431,8 @@
     "full_name": "Pablo Felipe S\u00e1nchez",
     "categoryId": 1,
     "email": "no_email_25@no_email.com",
-    "phone": "+5214446518007"
+    "phone": "14446518007",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Gerardo",
@@ -398,7 +440,8 @@
     "full_name": "Gerardo P\u00e1ez",
     "categoryId": 1,
     "email": "no_email_26@no_email.com",
-    "phone": "+5218117375652"
+    "phone": "18117375652",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Elizabeth",
@@ -406,7 +449,8 @@
     "full_name": "Elizabeth Casillas",
     "categoryId": 1,
     "email": "no_email_27@no_email.com",
-    "phone": "+5213314334157"
+    "phone": "13314334157",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Arturo",
@@ -414,7 +458,8 @@
     "full_name": "Arturo J\u00edmenez",
     "categoryId": 1,
     "email": "no_email_28@no_email.com",
-    "phone": "+5213333685406"
+    "phone": "13333685406",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Karla",
@@ -422,7 +467,8 @@
     "full_name": "Karla Pizzarro",
     "categoryId": 1,
     "email": "klmpl0308@gmail.com",
-    "phone": "+5216181892507",
+    "phone": "16181892507",
+    "phonePrefix": "+52",
     "birthday": "03081978",
     "name_bank_account": "KARLA L PIZARRO LERMA",
     "bank": "BANAMEX"
@@ -433,7 +479,8 @@
     "full_name": "Sharite\u00e9 Salgado",
     "categoryId": 1,
     "email": "no_email_29@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jorge",
@@ -441,7 +488,8 @@
     "full_name": "Jorge Miranda",
     "categoryId": 1,
     "email": "no_email_30@no_email.com",
-    "phone": "+17862832024"
+    "phone": "7862832024",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Yoel",
@@ -449,7 +497,8 @@
     "full_name": "Yoel Sardi\u00f1as",
     "categoryId": 1,
     "email": "no_email_31@no_email.com",
-    "phone": "+19546183378"
+    "phone": "9546183378",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Ceciia",
@@ -457,7 +506,8 @@
     "full_name": "Ceciia Galindo",
     "categoryId": 1,
     "email": "no_email_32@no_email.com",
-    "phone": "+5218123286943"
+    "phone": "18123286943",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Elisa",
@@ -465,7 +515,8 @@
     "full_name": "Elisa Ram\u00edrez",
     "categoryId": 1,
     "email": "no_email_33@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Adriana",
@@ -473,7 +524,8 @@
     "full_name": "Adriana Mac\u00edas",
     "categoryId": 1,
     "email": "no_email_34@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Denisse",
@@ -481,7 +533,8 @@
     "full_name": "Denisse Rend\u00f3n",
     "categoryId": 1,
     "email": "denisse.rendon.gd@gmail.com",
-    "phone": "+520000000000",
+    "phone": "0000000000",
+    "phonePrefix": "+52",
     "birthday": "31121994",
     "name_bank_account": "Denisse Adriana Garza Rend\u00f3n",
     "bank": "STP Cuenca"
@@ -492,7 +545,8 @@
     "full_name": "Esmeralda Salas",
     "categoryId": 1,
     "email": "no_email_35@no_email.com",
-    "phone": "+5214621472481"
+    "phone": "14621472481",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rodrigo",
@@ -500,7 +554,8 @@
     "full_name": "Rodrigo Hellfer",
     "categoryId": 1,
     "email": "rod@rodhilfer.com",
-    "phone": "+5213311693672",
+    "phone": "13311693672",
+    "phonePrefix": "+52",
     "birthday": "15041991",
     "name_bank_account": "Rodrigo Hern\u00e1ndez",
     "bank": "Actinver"
@@ -511,7 +566,8 @@
     "full_name": "Jos\u00e9 Manuel Tovar",
     "categoryId": 1,
     "email": "no_email_36@no_email.com",
-    "phone": "+525528551174"
+    "phone": "5528551174",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Cristy",
@@ -519,7 +575,8 @@
     "full_name": "Cristy L\u00f3pez",
     "categoryId": 1,
     "email": "no_email_37@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Gerardo",
@@ -527,7 +584,8 @@
     "full_name": "Gerardo Reyes",
     "categoryId": 1,
     "email": "no_email_38@no_email.com",
-    "phone": "+17022086229"
+    "phone": "7022086229",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Jos\u00e9",
@@ -535,7 +593,8 @@
     "full_name": "Jos\u00e9 Mizrahi",
     "categoryId": 1,
     "email": "no_email_39@no_email.com",
-    "phone": "+5215555022144"
+    "phone": "15555022144",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rub\u00e9n",
@@ -543,7 +602,8 @@
     "full_name": "Rub\u00e9n Gallardo",
     "categoryId": 1,
     "email": "no_email_40@no_email.com",
-    "phone": "+5215654412701"
+    "phone": "15654412701",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sunita",
@@ -551,7 +611,8 @@
     "full_name": "Sunita Sachanandani",
     "categoryId": 1,
     "email": "no_email_41@no_email.com",
-    "phone": "+50766732160"
+    "phone": "66732160",
+    "phonePrefix": "+507"
   },
   {
     "first_name": "Jackie",
@@ -559,7 +620,8 @@
     "full_name": "Jackie Moguel",
     "categoryId": 1,
     "email": "no_email_42@no_email.com",
-    "phone": "+5219988420334"
+    "phone": "19988420334",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Pepe",
@@ -567,7 +629,8 @@
     "full_name": "Pepe Cabello",
     "categoryId": 1,
     "email": "no_email_43@no_email.com",
-    "phone": "+34661843684"
+    "phone": "661843684",
+    "phonePrefix": "+34"
   },
   {
     "first_name": "Ernesto",
@@ -575,7 +638,8 @@
     "full_name": "Ernesto Arag\u00f3n",
     "categoryId": 1,
     "email": "no_email_44@no_email.com",
-    "phone": "+5213315209782"
+    "phone": "13315209782",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Alex",
@@ -583,7 +647,8 @@
     "full_name": "Alex Palombo",
     "categoryId": 1,
     "email": "no_email_45@no_email.com",
-    "phone": "+5215554152414"
+    "phone": "15554152414",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ang\u00e9lica",
@@ -591,7 +656,8 @@
     "full_name": "Ang\u00e9lica Lighten",
     "categoryId": 1,
     "email": "no_email_46@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Claudia",
@@ -599,7 +665,8 @@
     "full_name": "Claudia Rocha",
     "categoryId": 1,
     "email": "claud_chan_21@hotmail.com",
-    "phone": "+5215513942833",
+    "phone": "15513942833",
+    "phonePrefix": "+52",
     "birthday": "21011983",
     "name_bank_account": "Claudia Elizabeth Rocha De la Rosa"
   },
@@ -609,7 +676,8 @@
     "full_name": "Diana Pau Gonz\u00e1lez",
     "categoryId": 1,
     "email": "dianapaugonzalez@hotmail.com",
-    "phone": "+5214422394086",
+    "phone": "14422394086",
+    "phonePrefix": "+52",
     "birthday": "17051989",
     "name_bank_account": "Diana Paulina Gonz\u00e1lez Olvera",
     "bank": "Banamex"
@@ -620,7 +688,8 @@
     "full_name": "Marina Rodr\u00edguez",
     "categoryId": 1,
     "email": "no_email_47@no_email.com",
-    "phone": "+5215514282838"
+    "phone": "15514282838",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Alejandro",
@@ -628,7 +697,8 @@
     "full_name": "Alejandro Saracho",
     "categoryId": 1,
     "email": "no_email_48@no_email.com",
-    "phone": "+5217229004432"
+    "phone": "17229004432",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Josu\u00e9",
@@ -636,7 +706,8 @@
     "full_name": "Josu\u00e9 Dr. Mo\u00f1o",
     "categoryId": 1,
     "email": "no_email_49@no_email.com",
-    "phone": "+5215580139467"
+    "phone": "15580139467",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Lupita",
@@ -644,7 +715,8 @@
     "full_name": "Lupita Arias",
     "categoryId": 1,
     "email": "lupita@restauranteroexitoso.com",
-    "phone": "+5216862804723",
+    "phone": "16862804723",
+    "phonePrefix": "+52",
     "birthday": "19032026",
     "name_bank_account": "Mar\u00eda Guadalupe Arias Vieyra",
     "bank": "Scotiabank"
@@ -655,7 +727,8 @@
     "full_name": "Juan Carlos Barrios",
     "categoryId": 1,
     "email": "no_email_50@no_email.com",
-    "phone": "+5214421281049"
+    "phone": "14421281049",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Enrique",
@@ -663,7 +736,8 @@
     "full_name": "Enrique Moreno",
     "categoryId": 1,
     "email": "no_email_51@no_email.com",
-    "phone": "+5215579227757"
+    "phone": "15579227757",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mihail",
@@ -671,7 +745,8 @@
     "full_name": "Mihail Millet",
     "categoryId": 1,
     "email": "no_email_52@no_email.com",
-    "phone": "+51969773741"
+    "phone": "969773741",
+    "phonePrefix": "+51"
   },
   {
     "first_name": "Nubia",
@@ -679,7 +754,8 @@
     "full_name": "Nubia Su\u00e1rez",
     "categoryId": 1,
     "email": "no_email_53@no_email.com",
-    "phone": "+18135919748"
+    "phone": "8135919748",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "\u00d3scar Javier",
@@ -687,7 +763,8 @@
     "full_name": "\u00d3scar Javier L\u00f3pez Mancilla",
     "categoryId": 1,
     "email": "oscar.lopez.mancilla@gmail.com",
-    "phone": "+5213311095796"
+    "phone": "13311095796",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Luiggi",
@@ -695,7 +772,8 @@
     "full_name": "Luiggi Lav\u00edn",
     "categoryId": 1,
     "email": "no_email_54@no_email.com",
-    "phone": "+525541833742"
+    "phone": "5541833742",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Pilar",
@@ -703,7 +781,8 @@
     "full_name": "Pilar Rosas",
     "categoryId": 1,
     "email": "no_email_55@no_email.com",
-    "phone": "+5214731148301"
+    "phone": "14731148301",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Daniel",
@@ -711,7 +790,8 @@
     "full_name": "Daniel Marcos",
     "categoryId": 1,
     "email": "no_email_56@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Francisco",
@@ -719,7 +799,8 @@
     "full_name": "Francisco Escobar",
     "categoryId": 1,
     "email": "no_email_57@no_email.com",
-    "phone": "+5217821008215"
+    "phone": "17821008215",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Israel Iv\u00e1n",
@@ -727,7 +808,8 @@
     "full_name": "Israel Iv\u00e1n Flores",
     "categoryId": 1,
     "email": "no_email_58@no_email.com",
-    "phone": "+5215528781422"
+    "phone": "15528781422",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mike",
@@ -735,7 +817,8 @@
     "full_name": "Mike Lara",
     "categoryId": 1,
     "email": "lamm317@gmail.com",
-    "phone": "+5214423596323",
+    "phone": "14423596323",
+    "phonePrefix": "+52",
     "birthday": "17031980",
     "clabe": "012680028554661563",
     "name_bank_account": "Miguel Angel Lara Martinez",
@@ -748,7 +831,8 @@
     "full_name": "Cristian Chabl\u00e9",
     "categoryId": 1,
     "email": "no_email_59@no_email.com",
-    "phone": "+5219841145572"
+    "phone": "19841145572",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Esteban",
@@ -756,7 +840,8 @@
     "full_name": "Esteban Ben\u00edtez",
     "categoryId": 1,
     "email": "no_email_60@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Patty",
@@ -764,7 +849,8 @@
     "full_name": "Patty Gonz\u00e1lez",
     "categoryId": 1,
     "email": "no_email_61@no_email.com",
-    "phone": "+524421331488"
+    "phone": "4421331488",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Paola",
@@ -772,7 +858,8 @@
     "full_name": "Paola Herrera",
     "categoryId": 1,
     "email": "no_email_62@no_email.com",
-    "phone": "+5214151140592"
+    "phone": "14151140592",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jos\u00e9 Luis",
@@ -780,7 +867,8 @@
     "full_name": "Jos\u00e9 Luis Gonz\u00e1lez P\u00e9rez",
     "categoryId": 1,
     "email": "luisglezper@gmail.com",
-    "phone": "+523111052501",
+    "phone": "3111052501",
+    "phonePrefix": "+52",
     "birthday": "02081976",
     "clabe": "012420029251321776",
     "name_bank_account": "Jos\u00e9 Luis Gonz\u00e1lez P\u00e9rez",
@@ -792,7 +880,8 @@
     "full_name": "Nicol\u00e1s Robles",
     "categoryId": 1,
     "email": "no_email_63@no_email.com",
-    "phone": "+5215576095525"
+    "phone": "15576095525",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Julio",
@@ -800,7 +889,8 @@
     "full_name": "Julio Candanosa",
     "categoryId": 1,
     "email": "julio.candanosa@gmail.com",
-    "phone": "+5213318946838",
+    "phone": "13318946838",
+    "phonePrefix": "+52",
     "birthday": "03021986",
     "name_bank_account": "Julio C\u00e9sar Candanosa Fuentes",
     "bank": "Scotiabank"
@@ -811,7 +901,8 @@
     "full_name": "Jer\u00f3nimo Garc\u00eda",
     "categoryId": 3,
     "email": "jeronimotao9@gmail.com",
-    "phone": "+5214423593313",
+    "phone": "14423593313",
+    "phonePrefix": "+52",
     "birthday": "08121954",
     "clabe": "002680700956865224",
     "name_bank_account": "JORGE GARCIA ZENTENO",
@@ -823,7 +914,8 @@
     "full_name": "Julio Pasos",
     "categoryId": 1,
     "email": "julio.pasos@zenkai.com.mx",
-    "phone": "+526643748636",
+    "phone": "6643748636",
+    "phonePrefix": "+52",
     "name_bank_account": "Julio C\u00e9sar Rodr\u00edguez Pasos",
     "bank": "Banamex"
   },
@@ -833,7 +925,8 @@
     "full_name": "Ang\u00e9lica Cruz",
     "categoryId": 1,
     "email": "angelica_cruz_garcia@hotmail.com",
-    "phone": "+523331704416",
+    "phone": "3331704416",
+    "phonePrefix": "+52",
     "birthday": "03021972",
     "name_bank_account": "Ma. Ang\u00e9lica Cruz Garc\u00eda",
     "bank": "Banamex"
@@ -844,7 +937,8 @@
     "full_name": "Gumaro Bracho",
     "categoryId": 1,
     "email": "no_email_64@no_email.com",
-    "phone": "+5214425679515"
+    "phone": "14425679515",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Antelma",
@@ -852,7 +946,8 @@
     "full_name": "Antelma Lozada",
     "categoryId": 1,
     "email": "no_email_65@no_email.com",
-    "phone": "+5212271111909"
+    "phone": "12271111909",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Karla",
@@ -860,7 +955,8 @@
     "full_name": "Karla Zorola",
     "categoryId": 1,
     "email": "no_email_66@no_email.com",
-    "phone": "+5215546071822"
+    "phone": "15546071822",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Gustavo",
@@ -868,7 +964,8 @@
     "full_name": "Gustavo Beltr\u00e1n",
     "categoryId": 1,
     "email": "gustavobeltran17@gmail.com",
-    "phone": "+525555070011",
+    "phone": "5555070011",
+    "phonePrefix": "+52",
     "birthday": "17021973",
     "name_bank_account": "Gustavo Eugenio Beltran Mu\u00f1oz",
     "bank": "BBVA"
@@ -879,7 +976,8 @@
     "full_name": "Isabella Cisneros",
     "categoryId": 1,
     "email": "no_email_67@no_email.com",
-    "phone": "+17605624789"
+    "phone": "7605624789",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Juan Manuel",
@@ -887,7 +985,8 @@
     "full_name": "Juan Manuel Morales",
     "categoryId": 1,
     "email": "no_email_68@no_email.com",
-    "phone": "+5215579227757"
+    "phone": "15579227757",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Coral",
@@ -895,7 +994,8 @@
     "full_name": "Coral Mujaes",
     "categoryId": 3,
     "email": "no_email_69@no_email.com",
-    "phone": "+5215539932262"
+    "phone": "15539932262",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Marcela",
@@ -903,7 +1003,8 @@
     "full_name": "Marcela Bruner",
     "categoryId": 1,
     "email": "no_email_70@no_email.com",
-    "phone": "+16786417981"
+    "phone": "6786417981",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Mirna",
@@ -911,7 +1012,8 @@
     "full_name": "Mirna Lucero",
     "categoryId": 1,
     "email": "no_email_71@no_email.com",
-    "phone": "+18018301287"
+    "phone": "8018301287",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "\u00d3scar",
@@ -919,7 +1021,8 @@
     "full_name": "\u00d3scar Lomel\u00ed",
     "categoryId": 1,
     "email": "no_email_72@no_email.com",
-    "phone": "+5213316991499"
+    "phone": "13316991499",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "\u00c1ngel",
@@ -927,7 +1030,8 @@
     "full_name": "\u00c1ngel Carmona",
     "categoryId": 1,
     "email": "no_email_73@no_email.com",
-    "phone": "+13058049472"
+    "phone": "3058049472",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Yudis",
@@ -935,7 +1039,8 @@
     "full_name": "Yudis Lonsoy",
     "categoryId": 1,
     "email": "no_email_74@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Andy",
@@ -943,7 +1048,8 @@
     "full_name": "Andy Lozano",
     "categoryId": 1,
     "email": "no_email_75@no_email.com",
-    "phone": "+5214424752811"
+    "phone": "14424752811",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Linda",
@@ -951,7 +1057,8 @@
     "full_name": "Linda Ribeiro",
     "categoryId": 1,
     "email": "no_email_76@no_email.com",
-    "phone": "+5214423854631"
+    "phone": "14423854631",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rosmy",
@@ -959,7 +1066,8 @@
     "full_name": "Rosmy Quir\u00f3s",
     "categoryId": 1,
     "email": "rosmy3445@gmail.com",
-    "phone": "+17544226537",
+    "phone": "7544226537",
+    "phonePrefix": "+1",
     "birthday": "26061978",
     "name_bank_account": "Mejora Continua LLC",
     "bank": "Wells Fargo"
@@ -970,7 +1078,8 @@
     "full_name": "Tarek William Saab",
     "categoryId": 1,
     "email": "no_email_77@no_email.com",
-    "phone": "+584142910602"
+    "phone": "4142910602",
+    "phonePrefix": "+58"
   },
   {
     "first_name": "Ana Laura",
@@ -978,7 +1087,8 @@
     "full_name": "Ana Laura Mungu\u00eda",
     "categoryId": 1,
     "email": "no_email_78@no_email.com",
-    "phone": "+5215552482636"
+    "phone": "15552482636",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Angie y Lu",
@@ -986,7 +1096,8 @@
     "full_name": "Angie y Lu Rosas",
     "categoryId": 1,
     "email": "no_email_79@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mar\u00eda",
@@ -994,7 +1105,8 @@
     "full_name": "Mar\u00eda G\u00f3mez",
     "categoryId": 1,
     "email": "no_email_80@no_email.com",
-    "phone": "+5214431558624"
+    "phone": "14431558624",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "M\u00f3nica",
@@ -1002,7 +1114,8 @@
     "full_name": "M\u00f3nica Laris",
     "categoryId": 1,
     "email": "no_email_81@no_email.com",
-    "phone": "+5215554022166"
+    "phone": "15554022166",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jos\u00e9 Fernando",
@@ -1010,7 +1123,8 @@
     "full_name": "Jos\u00e9 Fernando Montes",
     "categoryId": 1,
     "email": "ferchomontes_22@hotmail.com",
-    "phone": "+520000000000",
+    "phone": "0000000000",
+    "phonePrefix": "+52",
     "birthday": "22091996",
     "name_bank_account": "Jos\u00e9 Fernando Montes Arias",
     "bank": "Banamex"
@@ -1021,7 +1135,8 @@
     "full_name": "Luis H Jefferson",
     "categoryId": 1,
     "email": "no_email_82@no_email.com",
-    "phone": "+17542147190"
+    "phone": "7542147190",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Nanette",
@@ -1029,7 +1144,8 @@
     "full_name": "Nanette Torres",
     "categoryId": 1,
     "email": "sexplorapr@gmail.com",
-    "phone": "+17878102024",
+    "phone": "7878102024",
+    "phonePrefix": "+1",
     "birthday": "12101977",
     "clabe": "272037976",
     "name_bank_account": "Nanette Torres",
@@ -1042,7 +1158,8 @@
     "full_name": "Pedro Vergara",
     "categoryId": 1,
     "email": "pedrucus@gmail.com",
-    "phone": "+5213311242655",
+    "phone": "13311242655",
+    "phonePrefix": "+52",
     "birthday": "13011975",
     "name_bank_account": "Pedro vergara espinosa",
     "bank": "banamex"
@@ -1053,7 +1170,8 @@
     "full_name": "Iv\u00e1n Carmona",
     "categoryId": 1,
     "email": "ivcarma@gmail.com",
-    "phone": "+5215529004081",
+    "phone": "15529004081",
+    "phonePrefix": "+52",
     "birthday": "26041980",
     "name_bank_account": "Ivan Carmona Maury",
     "bank": "HSBC"
@@ -1064,7 +1182,8 @@
     "full_name": "Leonor Verdugo",
     "categoryId": 1,
     "email": "no_email_83@no_email.com",
-    "phone": "+34650160110"
+    "phone": "650160110",
+    "phonePrefix": "+34"
   },
   {
     "first_name": "Patty",
@@ -1072,7 +1191,8 @@
     "full_name": "Patty \u00c1lvarez Padilla",
     "categoryId": 1,
     "email": "no_email_84@no_email.com",
-    "phone": "+5215616356198"
+    "phone": "15616356198",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Simon",
@@ -1080,7 +1200,8 @@
     "full_name": "Simon Cohen",
     "categoryId": 1,
     "email": "no_email_85@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Esmeralda",
@@ -1088,7 +1209,8 @@
     "full_name": "Esmeralda Monroy",
     "categoryId": 1,
     "email": "no_email_86@no_email.com",
-    "phone": "+525611667105"
+    "phone": "5611667105",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Fabiola",
@@ -1096,7 +1218,8 @@
     "full_name": "Fabiola Passariello",
     "categoryId": 1,
     "email": "no_email_87@no_email.com",
-    "phone": "+17862183374"
+    "phone": "7862183374",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Jorge",
@@ -1104,7 +1227,8 @@
     "full_name": "Jorge Rosas",
     "categoryId": 1,
     "email": "no_email_88@no_email.com",
-    "phone": "+5214431355326"
+    "phone": "14431355326",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jaime",
@@ -1112,7 +1236,8 @@
     "full_name": "Jaime Lokier",
     "categoryId": 1,
     "email": "jimlokier@gmail.com",
-    "phone": "+59896501234",
+    "phone": "96501234",
+    "phonePrefix": "+598",
     "birthday": "14011978",
     "clabe": "4862790",
     "name_bank_account": "Ordey SA",
@@ -1124,7 +1249,8 @@
     "full_name": "Jarumi Veyrand",
     "categoryId": 1,
     "email": "jarumiv@gmail.com",
-    "phone": "+525594388806",
+    "phone": "5594388806",
+    "phonePrefix": "+52",
     "birthday": "20042025",
     "name_bank_account": "JARUMI VEYRAND YAMAKAWA",
     "bank": "Banamex"
@@ -1135,7 +1261,8 @@
     "full_name": "David de Alba",
     "categoryId": 1,
     "email": "soydaviddealba@gmail.com",
-    "phone": "+5213320823094",
+    "phone": "13320823094",
+    "phonePrefix": "+52",
     "birthday": "23121990",
     "name_bank_account": "David de Alba Gayt\u00e1n",
     "bank": "Klar"
@@ -1146,7 +1273,8 @@
     "full_name": "Ana Yazm\u00edn L\u00f3pez",
     "categoryId": 1,
     "email": "yazmin.cfd@gmail.com",
-    "phone": "+5213311961787",
+    "phone": "13311961787",
+    "phonePrefix": "+52",
     "birthday": "23121997",
     "name_bank_account": "Ana Yazmin L\u00f3pez L\u00f3pez",
     "bank": "NU bank"
@@ -1157,7 +1285,8 @@
     "full_name": "C\u00e9sar Su\u00e1rez Uribe",
     "categoryId": 1,
     "email": "no_email_89@no_email.com",
-    "phone": "+573124572281"
+    "phone": "3124572281",
+    "phonePrefix": "+57"
   },
   {
     "first_name": "Diana",
@@ -1165,7 +1294,8 @@
     "full_name": "Diana Mat\u00ednez",
     "categoryId": 1,
     "email": "no_email_90@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ver\u00f3nica",
@@ -1173,7 +1303,8 @@
     "full_name": "Ver\u00f3nica del Castillo",
     "categoryId": 1,
     "email": "no_email_91@no_email.com",
-    "phone": "+5215555021581"
+    "phone": "15555021581",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Alejandro",
@@ -1181,7 +1312,8 @@
     "full_name": "Alejandro Santill\u00e1n",
     "categoryId": 1,
     "email": "no_email_92@no_email.com",
-    "phone": "+5213313617888"
+    "phone": "13313617888",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Carolina",
@@ -1189,7 +1321,8 @@
     "full_name": "Carolina Alba",
     "categoryId": 1,
     "email": "no_email_93@no_email.com",
-    "phone": "+17077207899"
+    "phone": "7077207899",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Jessica",
@@ -1197,7 +1330,8 @@
     "full_name": "Jessica Garza",
     "categoryId": 1,
     "email": "no_email_94@no_email.com",
-    "phone": "+5218181615561"
+    "phone": "18181615561",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Marce",
@@ -1205,7 +1339,8 @@
     "full_name": "Marce Ch\u00e1vez",
     "categoryId": 1,
     "email": "no_email_95@no_email.com",
-    "phone": "+5214422497216"
+    "phone": "14422497216",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Santo",
@@ -1213,7 +1348,8 @@
     "full_name": "Santo Gonz\u00e1lez",
     "categoryId": 1,
     "email": "no_email_96@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Lili",
@@ -1221,7 +1357,8 @@
     "full_name": "Lili Jaime",
     "categoryId": 1,
     "email": "no_email_97@no_email.com",
-    "phone": "+5215540017774"
+    "phone": "15540017774",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ver\u00f3nica",
@@ -1229,7 +1366,8 @@
     "full_name": "Ver\u00f3nica Alcal\u00e1",
     "categoryId": 1,
     "email": "veroalcala@hotmail.com",
-    "phone": "+5213334402398",
+    "phone": "13334402398",
+    "phonePrefix": "+52",
     "birthday": "19031975",
     "name_bank_account": "Julia Ver\u00f3nica Alcal\u00e1 moreno",
     "bank": "Bancoppel"
@@ -1240,7 +1378,8 @@
     "full_name": "Jaime Fontanot",
     "categoryId": 1,
     "email": "no_email_98@no_email.com",
-    "phone": "+525510203006"
+    "phone": "5510203006",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Yamel Lara",
@@ -1248,7 +1387,8 @@
     "full_name": "Yamel Lara Lara",
     "categoryId": 1,
     "email": "viajaconyam@gmail.com",
-    "phone": "+5215531244613",
+    "phone": "15531244613",
+    "phonePrefix": "+52",
     "birthday": "30101974",
     "clabe": "012180015144446685",
     "name_bank_account": "Yamel Patricia Lara Cos",
@@ -1260,7 +1400,8 @@
     "full_name": "Alejandra Mart\u00ednez",
     "categoryId": 1,
     "email": "no_email_99@no_email.com",
-    "phone": "+5213333688363"
+    "phone": "13333688363",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Margarita",
@@ -1268,7 +1409,8 @@
     "full_name": "Margarita Miranda Correa",
     "categoryId": 1,
     "email": "no_email_100@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mariana",
@@ -1276,7 +1418,8 @@
     "full_name": "Mariana Yarce",
     "categoryId": 1,
     "email": "marianayarce@hotmail.com",
-    "phone": "+573228797719",
+    "phone": "3228797719",
+    "phonePrefix": "+57",
     "birthday": "09022026",
     "name_bank_account": "Mariana Yarce Giraldo",
     "bank": "Bancolombia"
@@ -1287,7 +1430,8 @@
     "full_name": "Jos\u00e9 Ard\u00f3n",
     "categoryId": 1,
     "email": "no_email_101@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Guadalupe",
@@ -1295,7 +1439,8 @@
     "full_name": "Guadalupe Rueda",
     "categoryId": 1,
     "email": "lachicadeoro@guadaluperueda.com",
-    "phone": "+5215551003946",
+    "phone": "15551003946",
+    "phonePrefix": "+52",
     "birthday": "12121984",
     "name_bank_account": "Maria Guadalupe Rueda Acosta",
     "bank": "BANORTE"
@@ -1306,7 +1451,8 @@
     "full_name": "Beneda Carrasco",
     "categoryId": 1,
     "email": "pcdistribuidor@hotmail.com",
-    "phone": "+5216643876972",
+    "phone": "16643876972",
+    "phonePrefix": "+52",
     "birthday": "25021975",
     "name_bank_account": "Beneda Carrasco Virrueta",
     "bank": "Nu mexico"
@@ -1317,7 +1463,8 @@
     "full_name": "Lorena Aurelluk",
     "categoryId": 1,
     "email": "lorena@lorenaaurelluk.com",
-    "phone": "+595993261000",
+    "phone": "993261000",
+    "phonePrefix": "+595",
     "birthday": "11111976",
     "name_bank_account": "Lorena Aurelluk",
     "bank": "UENO BANK"
@@ -1328,7 +1475,8 @@
     "full_name": "Jos\u00e9 Ortega",
     "categoryId": 1,
     "email": "no_email_102@no_email.com",
-    "phone": "+5214421799781"
+    "phone": "14421799781",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Fabiola",
@@ -1336,7 +1484,8 @@
     "full_name": "Fabiola Gonz\u00e1lez",
     "categoryId": 1,
     "email": "ghfabiola40@gmail.com",
-    "phone": "+525537175726",
+    "phone": "5537175726",
+    "phonePrefix": "+52",
     "birthday": "06081970",
     "name_bank_account": "Fabiola Gonz\u00e1lez Hern\u00e1ndez",
     "bank": "NU"
@@ -1347,7 +1496,8 @@
     "full_name": "Lisayly Hurtado Romero",
     "categoryId": 1,
     "email": "no_email_103@no_email.com",
-    "phone": "+17864584429"
+    "phone": "7864584429",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Jeanette",
@@ -1355,7 +1505,8 @@
     "full_name": "Jeanette Candiani",
     "categoryId": 1,
     "email": "no_email_104@no_email.com",
-    "phone": "+525543625575"
+    "phone": "5543625575",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sebasti\u00e1n",
@@ -1363,7 +1514,8 @@
     "full_name": "Sebasti\u00e1n Hermosillo",
     "categoryId": 1,
     "email": "shc@herceb.com",
-    "phone": "+5213331911415",
+    "phone": "13331911415",
+    "phonePrefix": "+52",
     "birthday": "25021982",
     "clabe": "012320001427685500",
     "name_bank_account": "Sebasti\u00e1n Hermosillo Ceballos",
@@ -1375,7 +1527,8 @@
     "full_name": "Rodrigo del Val M.",
     "categoryId": 1,
     "email": "no_email_105@no_email.com",
-    "phone": "+5219511066708"
+    "phone": "19511066708",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Julio",
@@ -1383,7 +1536,8 @@
     "full_name": "Julio Castillo",
     "categoryId": 1,
     "email": "jct.castillo@gmail.com",
-    "phone": "+18178052480",
+    "phone": "8178052480",
+    "phonePrefix": "+1",
     "birthday": "12031980",
     "name_bank_account": "Julio Castillo Tito",
     "bank": "American Express National Bank"
@@ -1394,7 +1548,8 @@
     "full_name": "Javier Reyes",
     "categoryId": 1,
     "email": "no_email_106@no_email.com",
-    "phone": "+5212441072362"
+    "phone": "12441072362",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rogelio",
@@ -1402,7 +1557,8 @@
     "full_name": "Rogelio Torres",
     "categoryId": 1,
     "email": "rogeliot1008@gmail.com",
-    "phone": "+19095784189",
+    "phone": "9095784189",
+    "phonePrefix": "+1",
     "birthday": "08101966",
     "clabe": "2194811358",
     "name_bank_account": "Br\u00edgido Torres",
@@ -1415,7 +1571,8 @@
     "full_name": "Mar\u00eda Leticia Michel",
     "categoryId": 1,
     "email": "no_email_107@no_email.com",
-    "phone": "+12174185027"
+    "phone": "2174185027",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Cinthya",
@@ -1423,7 +1580,8 @@
     "full_name": "Cinthya Sifuentes",
     "categoryId": 1,
     "email": "crecercontigosma@gmail.com",
-    "phone": "+5214151787770",
+    "phone": "14151787770",
+    "phonePrefix": "+52",
     "birthday": "15031977",
     "clabe": "072240004148461997",
     "name_bank_account": "Cinthya Guadalupe Sifuentes Gonz\u00e1lez",
@@ -1435,7 +1593,8 @@
     "full_name": "Roc\u00edo L\u00f3pez Garc\u00eda",
     "categoryId": 1,
     "email": "no_email_108@no_email.com",
-    "phone": "+525533324673"
+    "phone": "5533324673",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Yhashua Arturo",
@@ -1443,7 +1602,8 @@
     "full_name": "Yhashua Arturo S\u00e1mano",
     "categoryId": 1,
     "email": "no_email_109@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Omar",
@@ -1451,7 +1611,8 @@
     "full_name": "Omar P\u00e9rez",
     "categoryId": 1,
     "email": "omarp@evoagencia.com.mx",
-    "phone": "+5215520933906",
+    "phone": "15520933906",
+    "phonePrefix": "+52",
     "birthday": "14041976",
     "name_bank_account": "OMAR PEREZ AGUIRRE",
     "bank": "BBV BANCOMER"
@@ -1462,7 +1623,8 @@
     "full_name": "Jessica Garc\u00eda",
     "categoryId": 1,
     "email": "no_email_110@no_email.com",
-    "phone": "+34651931592"
+    "phone": "651931592",
+    "phonePrefix": "+34"
   },
   {
     "first_name": "Alex",
@@ -1470,7 +1632,8 @@
     "full_name": "Alex Garc\u00eda",
     "categoryId": 1,
     "email": "no_email_111@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Nara",
@@ -1478,7 +1641,8 @@
     "full_name": "Nara Trejo",
     "categoryId": 1,
     "email": "no_email_112@no_email.com",
-    "phone": "+5215554547508"
+    "phone": "15554547508",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Estrella",
@@ -1486,7 +1650,8 @@
     "full_name": "Estrella Veloz",
     "categoryId": 1,
     "email": "no_email_113@no_email.com",
-    "phone": "+5215519526496"
+    "phone": "15519526496",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Manuel",
@@ -1494,7 +1659,8 @@
     "full_name": "Manuel de Le\u00f3n",
     "categoryId": 1,
     "email": "no_email_114@no_email.com",
-    "phone": "+523957887410"
+    "phone": "3957887410",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ram\u00f3n",
@@ -1502,7 +1668,8 @@
     "full_name": "Ram\u00f3n TorreLemus",
     "categoryId": 1,
     "email": "no_email_115@no_email.com",
-    "phone": "+5215534888978"
+    "phone": "15534888978",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Fabi\u00e1n",
@@ -1510,7 +1677,8 @@
     "full_name": "Fabi\u00e1n Zepeda",
     "categoryId": 1,
     "email": "no_email_116@no_email.com",
-    "phone": "+5215528601989"
+    "phone": "15528601989",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Cecilio Eduardo",
@@ -1518,7 +1686,8 @@
     "full_name": "Cecilio Eduardo Segura",
     "categoryId": 1,
     "email": "no_email_117@no_email.com",
-    "phone": "+5214422506307"
+    "phone": "14422506307",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Elizabeth",
@@ -1526,7 +1695,8 @@
     "full_name": "Elizabeth Res\u00e9ndiz",
     "categoryId": 1,
     "email": "no_email_118@no_email.com",
-    "phone": "+5214421696731"
+    "phone": "14421696731",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "\u00d3scar",
@@ -1534,7 +1704,8 @@
     "full_name": "\u00d3scar Ram\u00edrez",
     "categoryId": 1,
     "email": "no_email_119@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Gabriela",
@@ -1542,7 +1713,8 @@
     "full_name": "Gabriela Jim\u00e9nez",
     "categoryId": 1,
     "email": "no_email_120@no_email.com",
-    "phone": "+5215554150077"
+    "phone": "15554150077",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sof\u00eda",
@@ -1550,7 +1722,8 @@
     "full_name": "Sof\u00eda Mu\u00f1iz",
     "categoryId": 1,
     "email": "no_email_121@no_email.com",
-    "phone": "+5215554043035"
+    "phone": "15554043035",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Conce",
@@ -1558,7 +1731,8 @@
     "full_name": "Conce Agui\u00f1on",
     "categoryId": 1,
     "email": "no_email_122@no_email.com",
-    "phone": "+5218114131696"
+    "phone": "18114131696",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Martha",
@@ -1566,7 +1740,8 @@
     "full_name": "Martha Pedroza",
     "categoryId": 1,
     "email": "fabiperezp85@gmail.com",
-    "phone": "+524776546248",
+    "phone": "4776546248",
+    "phonePrefix": "+52",
     "birthday": "14101985",
     "name_bank_account": "MARTHA FABIOLA PEREZ PEDROZA",
     "bank": "BANBAJIO"
@@ -1577,7 +1752,8 @@
     "full_name": "Juan G\u00f3mez",
     "categoryId": 1,
     "email": "no_email_123@no_email.com",
-    "phone": "+5218261711684"
+    "phone": "18261711684",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Daniel",
@@ -1585,7 +1761,8 @@
     "full_name": "Daniel Jacobo",
     "categoryId": 1,
     "email": "danieljacoobo@gmail.com",
-    "phone": "+5216672025235",
+    "phone": "16672025235",
+    "phonePrefix": "+52",
     "birthday": "10121993",
     "name_bank_account": "jose daniel Jacobo ahumada",
     "bank": "BBVA"
@@ -1596,7 +1773,8 @@
     "full_name": "Doris Michan",
     "categoryId": 1,
     "email": "no_email_124@no_email.com",
-    "phone": "+5215559542042"
+    "phone": "15559542042",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Naty",
@@ -1604,7 +1782,8 @@
     "full_name": "Naty Guill\u00e9n Rodr\u00edguez",
     "categoryId": 1,
     "email": "no_email_125@no_email.com",
-    "phone": "+5213315124961"
+    "phone": "13315124961",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Gemma",
@@ -1612,7 +1791,8 @@
     "full_name": "Gemma Mart\u00edn",
     "categoryId": 1,
     "email": "no_email_126@no_email.com",
-    "phone": "+523781095980"
+    "phone": "3781095980",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Nester",
@@ -1620,7 +1800,8 @@
     "full_name": "Nester Contreras",
     "categoryId": 1,
     "email": "ncontreras@uda.edu.mx",
-    "phone": "+528991603327",
+    "phone": "8991603327",
+    "phonePrefix": "+52",
     "birthday": "06121975",
     "name_bank_account": "Nester leao Contreras pi\u00f1a",
     "bank": "Afirme"
@@ -1631,7 +1812,8 @@
     "full_name": "Guillermina Cardona",
     "categoryId": 1,
     "email": "no_email_127@no_email.com",
-    "phone": "+5218999592605"
+    "phone": "18999592605",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Luisa",
@@ -1639,7 +1821,8 @@
     "full_name": "Luisa R\u00edos",
     "categoryId": 1,
     "email": "amorysaludsc@gmail.com",
-    "phone": "+5215527854495",
+    "phone": "15527854495",
+    "phonePrefix": "+52",
     "birthday": "25081956",
     "name_bank_account": "Luisa R\u00edos Aguirre.",
     "bank": "BANORTE"
@@ -1650,7 +1833,8 @@
     "full_name": "Sergio Le\u00f3n",
     "categoryId": 1,
     "email": "no_email_128@no_email.com",
-    "phone": "+5214421297390"
+    "phone": "14421297390",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Irma",
@@ -1658,7 +1842,8 @@
     "full_name": "Irma Rocha",
     "categoryId": 1,
     "email": "no_email_129@no_email.com",
-    "phone": "+5214271129783"
+    "phone": "14271129783",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Armando",
@@ -1666,7 +1851,8 @@
     "full_name": "Armando Varela",
     "categoryId": 1,
     "email": "no_email_130@no_email.com",
-    "phone": "+5212221256009"
+    "phone": "12221256009",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Arnold",
@@ -1674,7 +1860,8 @@
     "full_name": "Arnold Trujillo",
     "categoryId": 1,
     "email": "no_email_131@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sandra Isabel",
@@ -1682,7 +1869,8 @@
     "full_name": "Sandra Isabel Parra",
     "categoryId": 1,
     "email": "no_email_132@no_email.com",
-    "phone": "+18134659525"
+    "phone": "8134659525",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Minerva",
@@ -1690,7 +1878,8 @@
     "full_name": "Minerva Mart\u00ednez",
     "categoryId": 1,
     "email": "minerva.marti.m@gmail.com",
-    "phone": "+5215548902931",
+    "phone": "15548902931",
+    "phonePrefix": "+52",
     "birthday": "21031976",
     "clabe": "012617012137524459",
     "name_bank_account": "Minerva Mart\u00ednez Miguel",
@@ -1702,7 +1891,8 @@
     "full_name": "Josefina V\u00e1zquez Mota",
     "categoryId": 3,
     "email": "no_email_133@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "M\u00f3nica Viviana",
@@ -1710,7 +1900,8 @@
     "full_name": "M\u00f3nica Viviana Arias Arcila",
     "categoryId": 1,
     "email": "no_email_134@no_email.com",
-    "phone": "+573007675682"
+    "phone": "3007675682",
+    "phonePrefix": "+57"
   },
   {
     "first_name": "Maria Isabel",
@@ -1718,7 +1909,8 @@
     "full_name": "Maria Isabel Garc\u00e9s Chavez",
     "categoryId": 1,
     "email": "mariaisabel28@yahoo.com",
-    "phone": "+5215951087641",
+    "phone": "15951087641",
+    "phonePrefix": "+52",
     "birthday": "02011971",
     "name_bank_account": "Mar\u00eda Isabel Garc\u00e9s Ch\u00e1vez",
     "bank": "Bancoppel"
@@ -1729,7 +1921,8 @@
     "full_name": "Dr. Steve Schwarts",
     "categoryId": 1,
     "email": "no_email_135@no_email.com",
-    "phone": "+17862183374"
+    "phone": "7862183374",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Jordi",
@@ -1737,7 +1930,8 @@
     "full_name": "Jordi Vidal",
     "categoryId": 1,
     "email": "no_email_136@no_email.com",
-    "phone": "+17869278125"
+    "phone": "7869278125",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Gabriela",
@@ -1745,7 +1939,8 @@
     "full_name": "Gabriela Castillo Cabrera",
     "categoryId": 1,
     "email": "gccp2000@gmail.com",
-    "phone": "+13055425170",
+    "phone": "3055425170",
+    "phonePrefix": "+1",
     "birthday": "07101970",
     "clabe": "3197218337",
     "name_bank_account": "Gabriela Castillo",
@@ -1758,7 +1953,8 @@
     "full_name": "Juan Gaviria",
     "categoryId": 2,
     "email": "no_email_137@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sergio",
@@ -1766,7 +1962,8 @@
     "full_name": "Sergio Nava",
     "categoryId": 1,
     "email": "no_email_138@no_email.com",
-    "phone": "+5214481011106"
+    "phone": "14481011106",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Monono",
@@ -1774,7 +1971,8 @@
     "full_name": "Monono Franco",
     "categoryId": 1,
     "email": "no_email_139@no_email.com",
-    "phone": "+573186069597"
+    "phone": "3186069597",
+    "phonePrefix": "+57"
   },
   {
     "first_name": "David",
@@ -1782,7 +1980,8 @@
     "full_name": "David Absal\u00f3n",
     "categoryId": 1,
     "email": "dasmkting@gmail.com",
-    "phone": "+5214421861607",
+    "phone": "14421861607",
+    "phonePrefix": "+52",
     "birthday": "06101974",
     "name_bank_account": "david absalon sanchez solis",
     "bank": "ScotiaBank"
@@ -1793,7 +1992,8 @@
     "full_name": "Lucrecia Flores",
     "categoryId": 1,
     "email": "lucreciaflores52@gmail.com",
-    "phone": "+525575437875",
+    "phone": "5575437875",
+    "phonePrefix": "+52",
     "birthday": "05051952",
     "clabe": "012180015403493188",
     "name_bank_account": "Lucrecia Margarita Flores Garc\u00eda",
@@ -1805,7 +2005,8 @@
     "full_name": "Gaby Jaime",
     "categoryId": 1,
     "email": "no_email_140@no_email.com",
-    "phone": "+5214421560377"
+    "phone": "14421560377",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Omar",
@@ -1813,7 +2014,8 @@
     "full_name": "Omar Hern\u00e1ndez",
     "categoryId": 1,
     "email": "no_email_141@no_email.com",
-    "phone": "+17708737033"
+    "phone": "7708737033",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Claudia",
@@ -1821,7 +2023,8 @@
     "full_name": "Claudia Michel",
     "categoryId": 1,
     "email": "no_email_142@no_email.com",
-    "phone": "+5213171121943"
+    "phone": "13171121943",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Erika",
@@ -1829,7 +2032,8 @@
     "full_name": "Erika Torres",
     "categoryId": 1,
     "email": "eridecuevas@gmail.com",
-    "phone": "+5213331462373",
+    "phone": "13331462373",
+    "phonePrefix": "+52",
     "birthday": "27041972",
     "name_bank_account": "GEORGINA ERIKA TORRES MONTANO",
     "bank": "Banamex"
@@ -1840,7 +2044,8 @@
     "full_name": "Nayo Escobar",
     "categoryId": 1,
     "email": "no_email_143@no_email.com",
-    "phone": "+5218115000947"
+    "phone": "18115000947",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Regina",
@@ -1848,7 +2053,8 @@
     "full_name": "Regina Granados",
     "categoryId": 1,
     "email": "no_email_144@no_email.com",
-    "phone": "+5215535052017"
+    "phone": "15535052017",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jes\u00fas",
@@ -1856,7 +2062,8 @@
     "full_name": "Jes\u00fas Cochegr\u00fas",
     "categoryId": 1,
     "email": "jesus.cochegrus@gmail.com",
-    "phone": "+520000000000",
+    "phone": "0000000000",
+    "phonePrefix": "+52",
     "birthday": "21101976",
     "name_bank_account": "JESUS GUSTAVO COCHEGRUS JAIME",
     "bank": "Banamex"
@@ -1867,7 +2074,8 @@
     "full_name": "Ana Lugo",
     "categoryId": 1,
     "email": "no_email_145@no_email.com",
-    "phone": "+5217777126214"
+    "phone": "17777126214",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "David",
@@ -1875,7 +2083,8 @@
     "full_name": "David Cuper",
     "categoryId": 1,
     "email": "no_email_146@no_email.com",
-    "phone": "+5215541901289"
+    "phone": "15541901289",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Graciela",
@@ -1883,7 +2092,8 @@
     "full_name": "Graciela Pedro",
     "categoryId": 1,
     "email": "no_email_147@no_email.com",
-    "phone": "+5215520514970"
+    "phone": "15520514970",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Roc\u00edo",
@@ -1891,7 +2101,8 @@
     "full_name": "Roc\u00edo Jim\u00e9nez Nolasco",
     "categoryId": 1,
     "email": "no_email_148@no_email.com",
-    "phone": "+5212226634381"
+    "phone": "12226634381",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ana Georgina",
@@ -1899,7 +2110,8 @@
     "full_name": "Ana Georgina Luna",
     "categoryId": 1,
     "email": "no_email_149@no_email.com",
-    "phone": "+5216461287868"
+    "phone": "16461287868",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Noem\u00ed",
@@ -1907,7 +2119,8 @@
     "full_name": "Noem\u00ed Zozaya",
     "categoryId": 1,
     "email": "noemizozaya@gmail.com",
-    "phone": "+5215579061441",
+    "phone": "15579061441",
+    "phonePrefix": "+52",
     "birthday": "12081980",
     "name_bank_account": "Blanca Noemi Zozaya Franco",
     "bank": "BBVA"
@@ -1918,7 +2131,8 @@
     "full_name": "Jos\u00e9 Alday",
     "categoryId": 1,
     "email": "all_daycancun@hotmail.com",
-    "phone": "+5219985774718"
+    "phone": "19985774718",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Josu\u00e9",
@@ -1926,7 +2140,8 @@
     "full_name": "Josu\u00e9 Mej\u00eda",
     "categoryId": 1,
     "email": "no_email_150@no_email.com",
-    "phone": "+5215532456733",
+    "phone": "15532456733",
+    "phonePrefix": "+52",
     "birthday": "12011987",
     "name_bank_account": "Josue Abraham Mejia Espejel",
     "bank": "BBVA"
@@ -1937,7 +2152,8 @@
     "full_name": "Jes\u00fas Alberto Santacruz",
     "categoryId": 1,
     "email": "panisantacruz@gmail.com",
-    "phone": "+520000000000",
+    "phone": "0000000000",
+    "phonePrefix": "+52",
     "birthday": "17121957",
     "clabe": "62757374060",
     "name_bank_account": "Jesus Alberto Santacruz Santacruz",
@@ -1949,7 +2165,8 @@
     "full_name": "Nancy Valiente",
     "categoryId": 1,
     "email": "no_email_151@no_email.com",
-    "phone": "+5213222789589"
+    "phone": "13222789589",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Yuri",
@@ -1957,7 +2174,8 @@
     "full_name": "Yuri Mendoza",
     "categoryId": 1,
     "email": "no_email_152@no_email.com",
-    "phone": "+5215560616463"
+    "phone": "15560616463",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Guillermo",
@@ -1965,7 +2183,8 @@
     "full_name": "Guillermo Loza",
     "categoryId": 1,
     "email": "no_email_153@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jack",
@@ -1973,7 +2192,8 @@
     "full_name": "Jack Levy Hasson",
     "categoryId": 1,
     "email": "no_email_154@no_email.com",
-    "phone": "+5213333794227"
+    "phone": "13333794227",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Andrys",
@@ -1981,7 +2201,8 @@
     "full_name": "Andrys Duran",
     "categoryId": 1,
     "email": "no_email_155@no_email.com",
-    "phone": "+14703631291"
+    "phone": "4703631291",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Francisco",
@@ -1989,7 +2210,8 @@
     "full_name": "Francisco Hern\u00e1ndez",
     "categoryId": 1,
     "email": "no_email_156@no_email.com",
-    "phone": "+5217772748913"
+    "phone": "17772748913",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jenny",
@@ -1997,7 +2219,8 @@
     "full_name": "Jenny V\u00e1zquez",
     "categoryId": 1,
     "email": "no_email_157@no_email.com",
-    "phone": "+5215570727470"
+    "phone": "15570727470",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Dante J.",
@@ -2005,7 +2228,8 @@
     "full_name": "Dante J. Baez",
     "categoryId": 1,
     "email": "no_email_158@no_email.com",
-    "phone": "+5218127322987"
+    "phone": "18127322987",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jorge",
@@ -2013,7 +2237,8 @@
     "full_name": "Jorge Laurel",
     "categoryId": 1,
     "email": "no_email_159@no_email.com",
-    "phone": "+5217742059931"
+    "phone": "17742059931",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Eduardo",
@@ -2021,7 +2246,8 @@
     "full_name": "Eduardo Rodr\u00edguez",
     "categoryId": 1,
     "email": "invierteconeduardo@gmail.com",
-    "phone": "+528661549719",
+    "phone": "8661549719",
+    "phonePrefix": "+52",
     "birthday": "05031998",
     "clabe": "012580004688492858",
     "name_bank_account": "Eduardo Rodriguez Cruz",
@@ -2033,7 +2259,8 @@
     "full_name": "Hugo Gorostieta",
     "categoryId": 1,
     "email": "no_email_160@no_email.com",
-    "phone": "+5217725211039"
+    "phone": "17725211039",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mario",
@@ -2041,7 +2268,8 @@
     "full_name": "Mario Sol\u00eds",
     "categoryId": 1,
     "email": "no_email_161@no_email.com",
-    "phone": "+5215554384682"
+    "phone": "15554384682",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mauricio",
@@ -2049,7 +2277,8 @@
     "full_name": "Mauricio Mendoza Meza",
     "categoryId": 1,
     "email": "no_email_162@no_email.com",
-    "phone": "+5213312688444"
+    "phone": "13312688444",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Jenny",
@@ -2057,7 +2286,8 @@
     "full_name": "Jenny Linares",
     "categoryId": 1,
     "email": "no_email_163@no_email.com",
-    "phone": "+573173734103"
+    "phone": "3173734103",
+    "phonePrefix": "+57"
   },
   {
     "first_name": "Sara",
@@ -2065,7 +2295,8 @@
     "full_name": "Sara Salas Tovar",
     "categoryId": 1,
     "email": "no_email_164@no_email.com",
-    "phone": "+16196643145"
+    "phone": "6196643145",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Milly",
@@ -2073,7 +2304,8 @@
     "full_name": "Milly Moreno",
     "categoryId": 1,
     "email": "no_email_165@no_email.com",
-    "phone": "+50688835620"
+    "phone": "88835620",
+    "phonePrefix": "+506"
   },
   {
     "first_name": "Ana",
@@ -2081,7 +2313,8 @@
     "full_name": "Ana Michelle",
     "categoryId": 1,
     "email": "no_email_166@no_email.com",
-    "phone": "+17633932511"
+    "phone": "7633932511",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Hilda",
@@ -2089,7 +2322,8 @@
     "full_name": "Hilda Joanico",
     "categoryId": 1,
     "email": "no_email_167@no_email.com",
-    "phone": "+5214491511571"
+    "phone": "14491511571",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Luis",
@@ -2097,7 +2331,8 @@
     "full_name": "Luis Guzm\u00e1n",
     "categoryId": 1,
     "email": "effect_ld@hotmail.com",
-    "phone": "+5215526532770",
+    "phone": "15526532770",
+    "phonePrefix": "+52",
     "birthday": "08061979",
     "name_bank_account": "Luis Daniel Guzman Venado",
     "bank": "BBVA"
@@ -2108,7 +2343,8 @@
     "full_name": "Miriam Gonz\u00e1lez",
     "categoryId": 1,
     "email": "no_email_168@no_email.com",
-    "phone": "+5215517944824"
+    "phone": "15517944824",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Noreyda",
@@ -2116,7 +2352,8 @@
     "full_name": "Noreyda Coronado",
     "categoryId": 1,
     "email": "no_email_169@no_email.com",
-    "phone": "+18138255781"
+    "phone": "8138255781",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Mauricio",
@@ -2124,7 +2361,8 @@
     "full_name": "Mauricio Benoist",
     "categoryId": 1,
     "email": "no_email_170@no_email.com",
-    "phone": "+5216444512787"
+    "phone": "16444512787",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Mar\u00eda Eugenia",
@@ -2132,7 +2370,8 @@
     "full_name": "Mar\u00eda Eugenia Gonz\u00e1lez de la Cueva",
     "categoryId": 1,
     "email": "no_email_171@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ver\u00f3nica",
@@ -2140,7 +2379,8 @@
     "full_name": "Ver\u00f3nica Villatoro",
     "categoryId": 1,
     "email": "no_email_172@no_email.com",
-    "phone": "+13053323578"
+    "phone": "3053323578",
+    "phonePrefix": "+1"
   },
   {
     "first_name": "Alonso",
@@ -2148,7 +2388,8 @@
     "full_name": "Alonso Lozano",
     "categoryId": 1,
     "email": "alozano@alonsolozano.com",
-    "phone": "+5218116740558",
+    "phone": "18116740558",
+    "phonePrefix": "+52",
     "birthday": "30082001",
     "name_bank_account": "Miguel Alonso Lozano Gonz\u00e1lez",
     "bank": "Nu M\u00e9xico"
@@ -2159,7 +2400,8 @@
     "full_name": "Aurora Padilla",
     "categoryId": 1,
     "email": "no_email_173@no_email.com",
-    "phone": "+5215548239442"
+    "phone": "15548239442",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Itala",
@@ -2167,7 +2409,8 @@
     "full_name": "Itala Ureta",
     "categoryId": 1,
     "email": "no_email_174@no_email.com",
-    "phone": "+5251997976788"
+    "phone": "51997976788",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Yolanda",
@@ -2175,7 +2418,8 @@
     "full_name": "Yolanda Atayde",
     "categoryId": 1,
     "email": "yola-yaky0128@hotmail.com",
-    "phone": "+5215648115830",
+    "phone": "15648115830",
+    "phonePrefix": "+52",
     "birthday": "28011974",
     "clabe": "012180015254590366",
     "name_bank_account": "Yolanda Atayde Mejia",
@@ -2187,7 +2431,8 @@
     "full_name": "Elizabeth Orea",
     "categoryId": 1,
     "email": "lizorea@yahoo.com.mx",
-    "phone": "+525565131025",
+    "phone": "5565131025",
+    "phonePrefix": "+52",
     "birthday": "08031976",
     "name_bank_account": "Elizabeth Orea S\u00e1nchez",
     "bank": "BBVA"
@@ -2198,7 +2443,8 @@
     "full_name": "Ronaldo Arriaga",
     "categoryId": 1,
     "email": "no_email_175@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Miriam",
@@ -2206,7 +2452,8 @@
     "full_name": "Miriam Vega",
     "categoryId": 1,
     "email": "no_email_176@no_email.com",
-    "phone": "+5214447042882"
+    "phone": "14447042882",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Nadia",
@@ -2214,7 +2461,8 @@
     "full_name": "Nadia Hussain",
     "categoryId": 1,
     "email": "hola@nadiahussain.mx",
-    "phone": "+5215586037270",
+    "phone": "15586037270",
+    "phonePrefix": "+52",
     "birthday": "19071982",
     "name_bank_account": "Nadia Hussain Miranda \u00f1",
     "bank": "Monex"
@@ -2225,7 +2473,8 @@
     "full_name": "Ricardo Calder\u00f3n de la Barca",
     "categoryId": 1,
     "email": "no_email_177@no_email.com",
-    "phone": "+5215540886747"
+    "phone": "15540886747",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Anna",
@@ -2233,7 +2482,8 @@
     "full_name": "Anna Ferro",
     "categoryId": 1,
     "email": "no_email_178@no_email.com",
-    "phone": "+5215527722213"
+    "phone": "15527722213",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Esther",
@@ -2241,7 +2491,8 @@
     "full_name": "Esther Delgado",
     "categoryId": 1,
     "email": "no_email_179@no_email.com",
-    "phone": "+5214424224213"
+    "phone": "14424224213",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rub\u00e9n",
@@ -2249,7 +2500,8 @@
     "full_name": "Rub\u00e9n Duque",
     "categoryId": 1,
     "email": "ruben@rubenduque.com",
-    "phone": "+5213321836748",
+    "phone": "13321836748",
+    "phonePrefix": "+52",
     "birthday": "30101979",
     "name_bank_account": "Serpiente Star SA de CV",
     "bank": "BANCO MERCANTIL DEL NORTE, S.A."
@@ -2260,7 +2512,8 @@
     "full_name": "Jenny Veytia",
     "categoryId": 1,
     "email": "no_email_180@no_email.com",
-    "phone": "+5213310856752"
+    "phone": "13310856752",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Javier",
@@ -2268,7 +2521,8 @@
     "full_name": "Javier Rayas",
     "categoryId": 1,
     "email": "no_email_181@no_email.com",
-    "phone": "+5213314110831"
+    "phone": "13314110831",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Rub\u00ed Annet",
@@ -2276,7 +2530,8 @@
     "full_name": "Rub\u00ed Annet \u00c1lvarez Soltero",
     "categoryId": 1,
     "email": "no_email_182@no_email.com",
-    "phone": "+5213328681259"
+    "phone": "13328681259",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Sandra",
@@ -2284,7 +2539,8 @@
     "full_name": "Sandra Ballesteros",
     "categoryId": 1,
     "email": "no_email_183@no_email.com",
-    "phone": "+5215515717629"
+    "phone": "15515717629",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Spencer",
@@ -2292,7 +2548,8 @@
     "full_name": "Spencer Hoffmann",
     "categoryId": 1,
     "email": "no_email_184@no_email.com",
-    "phone": "+520000000000"
+    "phone": "0000000000",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Martha",
@@ -2300,7 +2557,8 @@
     "full_name": "Martha D\u00edaz",
     "categoryId": 1,
     "email": "no_email_185@no_email.com",
-    "phone": "+5218662536066"
+    "phone": "18662536066",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Ivonne Lucero",
@@ -2308,7 +2566,8 @@
     "full_name": "Ivonne Lucero Ortega",
     "categoryId": 1,
     "email": "no_email_186@no_email.com",
-    "phone": "+5215543564380"
+    "phone": "15543564380",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Laura Janeth",
@@ -2316,7 +2575,8 @@
     "full_name": "Laura Janeth S\u00e1nchez",
     "categoryId": 1,
     "email": "no_email_187@no_email.com",
-    "phone": "+5215545989878"
+    "phone": "15545989878",
+    "phonePrefix": "+52"
   },
   {
     "first_name": "Roc\u00edo",
@@ -2324,6 +2584,7 @@
     "full_name": "Roc\u00edo Flores",
     "categoryId": 1,
     "email": "no_email_188@no_email.com",
-    "phone": "+5213111228610"
+    "phone": "13111228610",
+    "phonePrefix": "+52"
   }
 ]

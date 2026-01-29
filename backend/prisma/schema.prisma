@@ -42,6 +42,7 @@ model User {
   referido            String?
   email               String?   @unique
   phone               String?
+  phonePrefix         String    @default("+52")
   birthday            String?
   clabe               String?   @unique
   name_bank_account   String?
@@ -93,17 +94,18 @@ model Category {
 }
 
 model Bookstore {
-  id              Int         @id @default(autoincrement())
-  name            String      @unique
-  deal_percentage Float?
-  contact_name    String?
-  contact_phone   String?
-  contact_email   String?
-  inventories     Inventory[]
-  color           String?     @default("#E2E2E2")
-  isDeleted       Boolean     @default(false)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id                   Int         @id @default(autoincrement())
+  name                 String      @unique
+  deal_percentage      Float?
+  contact_name         String?
+  contact_phone        String?
+  contact_phone_prefix String      @default("+52")
+  contact_email        String?
+  inventories          Inventory[]
+  color                String?     @default("#E2E2E2")
+  isDeleted            Boolean     @default(false)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 }
 
 model Inventory {

@@ -150,7 +150,7 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           className="global-input" id="adding-author-last-name"
           ref={lastNameRef}
           onChange={(e) => setLastName(e.target.value)}></input>
-        <input type='text' placeholder="Correo"
+        <input type='text' placeholder="Correo*"
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>

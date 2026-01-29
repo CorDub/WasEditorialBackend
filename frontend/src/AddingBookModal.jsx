@@ -265,15 +265,23 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       addErrorClass(inputPrice);
     }
 
-    if (isNaN(parseInt(isbn)) && isbn !== "") {
-      newErrorList.push(41);
-      addErrorClass(inputIsbn);
-    };
+    // if (isNaN(parseInt(isbn)) && isbn !== "") {
+    //   newErrorList.push(41);
+    //   addErrorClass(inputIsbn);
+    // };
 
     if (serverError === 42) {
       newErrorList.push(42);
       addErrorClass(inputIsbn);
     };
+
+    if (isbn !== "") {
+      const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
+      if (!validISBNRegex.test(isbn)) {
+        newErrorList.push(43);
+        addErrorClass(inputIsbn);
+      }
+    }
 
     if (isNaN(parseInt(quantity))) {
       newErrorList.push(61);

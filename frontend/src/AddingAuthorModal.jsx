@@ -23,6 +23,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   const referidoRef = useRef();
   const emailRef = useRef();
   const phoneRef = useRef();
+  const phonePrefixRef = useRef();
   const dayRef = useRef();
   const monthRef = useRef();
   const yearRef = useRef();
@@ -49,7 +50,8 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           lastName: lastName,
           referido: referido,
           email: email,
-          phone: fullPhoneNumber,
+          phone: phone,
+          phonePrefix: phonePrefix,
           birthday: birthday === "0000" ? null : birthday,
         }),
       });
@@ -154,20 +156,26 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       presence: "not empty",
       validity: "phone valid"
     }
+    const phonePrefixExpectations = {
+      presence: "not empty",
+      validity: "phonePrefix valid"
+    }
 
     const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
     const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
-    const errorsPhone = checkForErrors("El teléfono", fullPhoneNumber, phoneExpectations, phoneRef, "o")
+    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhonePrefix = checkForErrors("El prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
     const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
-    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : null;
-    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : null;
-    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : null;
+    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
+    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
       errorsEmail,
       errorsPhone,
+      errorsPhonePrefix,
       errorsReferido,
       errorsBirthdayDay,
       errorsBirthdayMonth,
@@ -175,6 +183,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     ]
 
     for (const errorInput of errorInputs) {
+      // console.log("errorInput", errorInput)
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
         setErrors(prev => [...prev, errorInput]);
@@ -214,6 +223,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           <label className="modal-form-label">Teléfono*</label>
           <div className="modal-phone">
             <select className="select-phone"
+              ref={phonePrefixRef}
               onChange={(e) => setPhonePrefix(e.target.value)}>
               {countryCallingCodes.map((country, index) => (
                 <option key={index} value={country.code}>{country.iso3} {country.code}</option>

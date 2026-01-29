@@ -90,7 +90,7 @@ export async function updateAdmin(req, res) {
     const prismaClient = req.prisma || prisma;
 
     const inputs = {
-      "id": req.params.id,
+      "id": parseInt(req.params.id),
       "firstName": req.body.firstName,
       "lastName": req.body.lastName,
       "email": req.body.email,

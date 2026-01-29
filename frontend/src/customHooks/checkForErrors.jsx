@@ -8,10 +8,11 @@ function checkForErrors(
   const errorList = []
   const expectationsList = Object.keys(fieldExpectations);
   const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const validPhoneRegex = /^\+[1-9]\d{10,14}$/;
+  const validPhoneRegex = /^\d{6,14}$/;
+  const validPhonePrefixRegex = /^\+\d{1,3}$/;
   const validClabeRegex = /^\d{18}$/;
   const validSwiftRegex = /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
-  const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
+  const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/
 
   if (fieldRef instanceof HTMLElement) {
     if (fieldRef.classList.contains("error-inputs")) {
@@ -69,7 +70,8 @@ function checkForErrors(
           }
           addErrorClass(fieldRef);
         };
-        return errorList
+        // return errorList
+        break;
 
       case "length":
         if (fieldValue.length > fieldExpectations.length) {
@@ -121,9 +123,13 @@ function checkForErrors(
           }
         } else if (fieldExpectations.validity === "phone valid") {
           const clean = fieldValue.replace(/\s|\(|\)|-/g, '');
-          console.log("clean", clean);
           if (validPhoneRegex.test(clean) === false) {
             errorList.push(`${fieldName} no es un numéro de téléfono valido.`);
+            addErrorClass(fieldRef);
+          }
+        } else if (fieldExpectations.validity === "phonePrefix valid") {
+          if (validPhonePrefixRegex.test(fieldValue) === false) {
+            errorList.push(`${fieldName} no es un prefijo de país valido.`)
             addErrorClass(fieldRef);
           }
         } else if (fieldExpectations.validity === "clabe valid") {

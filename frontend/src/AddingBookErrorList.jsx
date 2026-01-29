@@ -21,6 +21,8 @@ function AddingBookErrorList({ errorList, setErrorList }) {
         return (<p className="login-error">El ISBN debe ser un número</p>)
       case 42:
         return (<p className="login-error">Este ISBN ya existe</p>)
+      case 43:
+        return (<p className="login-error">Este ISBN no tiene un formato valido</p>)
       case 51:
         return (<p className="login-error">El autor no puede estar vacío.</p>)
       case 52:

@@ -30,6 +30,8 @@ function AuthorsList() {
   });
   const [isLoading, setLoading] = useState(false);
 
+  console.log("ftcheddata", fetchedData)
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -68,8 +70,10 @@ function AuthorsList() {
     {
       header: "Teléfono",
       size: 50,
-      accessorKey: "phone"
-
+      accessorKey: "phone",
+      Cell: ({row}) => row.original.phone
+        ? row.original.phonePrefix + row.original.phone
+        : ""
     },
     {
       header: "Fecha de nacimiento",

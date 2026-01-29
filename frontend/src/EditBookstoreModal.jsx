@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import AddingBookstoreErrorList from "./AddingBookstoreErrorList";
+import ErrorsList from "./ErrorsList";
+import checkForErrors from "./customHooks/checkForErrors";
 import { countryCallingCodes } from "../countryCodes";
 
 function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
@@ -10,24 +11,29 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [name, setName] = useState(clickedRow.name);
   const [dealPercentage, setDealPercentage] = useState(clickedRow.deal_percentage);
   const [contactName, setContactName] = useState(clickedRow.contact_name);
-  const [contactPhone, setContactPhone] = useState("");
-  const [phonePrefix, setPhonePrefix] = useState('+52');
-  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
+  const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
+  const [contactPhonePrefix, setContactPhonePrefix] = useState(clickedRow.contact_phone_prefix);
+  // const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
-  const [errorList, setErrorList] = useState([]);
+  const [errors, setErrors] = useState([]);
   const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
+  const nameRef = useRef();
+  const dealPercentageRef = useRef();
+  const contactNameRef = useRef();
+  const contactPhoneRef = useRef();
+  const contactPhonePrefixRef = useRef();
+  const contactEmailRef = useRef();
 
-  useEffect(() => {
-    setFullPhoneNumber(phonePrefix + contactPhone)
-  }, [contactPhone, phonePrefix])
+  // useEffect(() => {
+  //   setFullPhoneNumber(phonePrefix + contactPhone)
+  // }, [contactPhone, phonePrefix])
 
   // Get the prefix and sort the list based on this
   useEffect(() => {
     if (clickedRow.contact_phone) {
       // get the code
-      const codeLength = clickedRow.contact_phone.length - 10;
-      const prefix = clickedRow.contact_phone.substring(0, codeLength);
-      const phoneNumber = clickedRow.contact_phone.substring(codeLength, clickedRow.contact_phone.length);
+      const prefix = clickedRow.contact_phone_prefix;
+      const phoneNumber = clickedRow.contact_phone;
 
       // find the current country in the list
       let sortedCountryCodeList = [];
@@ -41,18 +47,18 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
       }
 
       // set everything
-      setPhonePrefix(prefix)
+      setContactPhonePrefix(prefix)
       setContactPhone(phoneNumber)
       setSortedCountryCodes(sortedCountryCodeList)
     } else {
       // find the current country in the list
       let sortedCountryCodeList = [];
-      const currentCountryCode = countryCallingCodes.find(element => element.code === phonePrefix)
+      const currentCountryCode = countryCallingCodes.find(element => element.code === contactPhonePrefix)
 
       // sort the list
       sortedCountryCodeList.push(currentCountryCode);
       for (const country of countryCallingCodes) {
-        if (country.code === phonePrefix) { continue }
+        if (country.code === contactPhonePrefix) { continue }
         sortedCountryCodeList.push(country)
       }
 
@@ -63,7 +69,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
 
   async function sendToServer() {
     try {
-      console.log("fullPhoneNumber", fullPhoneNumber);
       const response = await fetch(`${baseURL}/api/admin/bookstore/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
@@ -74,7 +79,8 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
           name: name,
           dealPercentage: dealPercentage,
           contactName: contactName,
-          contactPhone: fullPhoneNumber,
+          contactPhone: contactPhone,
+          contactPhonePrefix: contactPhonePrefix,
           contactEmail: contactEmail,
         })
       });
@@ -92,40 +98,54 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
     }
   }
 
-  function addErrorClass(element) {
-    if (!element.classList.contains("error-inputs")) {
-      element.classList.add("error-inputs");
-    };
-  }
-
-  function checkForErrors() {
+  function checkInputs() {
     let newErrorList = [];
-    const inputName = document.getElementById("adding-bookstore-name");
-    const inputDealPercentage = document.getElementById("adding-bookstore-dealPercentage");
-    const inputContactName = document.getElementById("adding-bookstore-contactName");
-    const inputContactPhone = document.getElementById("adding-bookstore-contactPhone");
-    const inputContactEmail = document.getElementById("adding-bookstore-contactEmail");
-    let inputList = [inputName, inputDealPercentage, inputContactName, inputContactPhone, inputContactEmail];
+    const nameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    };
+    const dealPercentageExpectations = {
+      type: "number",
+      presence: "not empty",
+      range: "positive",
+      maximum: 100
+    };
+    const contactNameExpectations = {
+      type: "string",
+    };
+    const contactPhoneExpectations = {
+      validity: "phone valid"
+    };
+    const contactPhonePrefixExpectations = {
+      validity: "phonePrefix valid"
+    };
+    const contactEmailExpectations =  {
+      validity: "email valid"
+    };
 
-    inputList.forEach((input) => {
-      if (input.classList.contains("error-inputs")) {
-        input.classList.remove("error-inputs");
+    const errorsName = checkForErrors("El nombre de la librería", name, nameExpectations, nameRef, 'o');
+    const errorsDealPercentage = checkForErrors("El percentage", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
+    const errorsContactName = contactName ? checkForErrors("El nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
+    const errorsContactPhone = contactPhone ? checkForErrors("El teléfono", contactPhone, contactPhoneExpectations, contactPhoneRef, 'o') : [];
+    const errorsContactPhonePrefix = contactPhonePrefix ? checkForErrors("El prefijo de país", contactPhonePrefix, contactPhonePrefixExpectations, contactPhonePrefixRef, 'o') : [];
+    const errorsContactEmail = contactEmail ? checkForErrors("El correo", contactEmail, contactEmailExpectations, contactEmailRef, 'o') : [];
+    const errorInputs = [errorsName, errorsDealPercentage, errorsContactName, errorsContactPhone, errorsContactPhonePrefix, errorsContactEmail]
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        newErrorList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
       }
-    });
-
-    if (name === "") {
-      newErrorList.push(11);
-      addErrorClass(inputName);
     }
 
-    setErrorList(newErrorList);
     return newErrorList;
   }
 
   function handleSubmit(e) {
     e.preventDefault();
+    setErrors([]);
 
-    const errorList = checkForErrors();
+    const errorList = checkInputs();
     if (errorList.length > 0) {
       return;
     }
@@ -147,25 +167,29 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
             <label className="modal-form-label">Nombre *</label>
             <input type='text' placeholder="Nombre" value={name}
               className="global-input" id="adding-bookstore-name"
+              ref={nameRef}
               onChange={(e) => setName(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
             <label className="modal-form-label">Percentage de acuerdo</label>
             <input type='text' placeholder="% Acuerdo" value={dealPercentage}
               className="global-input" id="adding-bookstore-dealPercentage"
+              ref={dealPercentageRef}
               onChange={(e) => setDealPercentage(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Nombre del contacto</label>
           <input type='text' placeholder="Nombre del contacto" value={contactName}
             className="global-input" id="adding-bookstore-contactName"
+            ref={contactNameRef}
             onChange={(e) => setContactName(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
-          <label className="modal-form-label">Teléfono*</label>
+          <label className="modal-form-label">Teléfono</label>
           <div className="modal-phone">
             <select className="select-phone"
-              onChange={(e) => setPhonePrefix(e.target.value)}>
+              ref={contactPhonePrefixRef}
+              onChange={(e) => setContactPhonePrefix(e.target.value)}>
               {sortedCountryCodes.map((country, index) => (
                 <option key={index} value={country.code}>{country.iso3} {country.code}</option>
               ))}
@@ -175,6 +199,7 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
               inputMode="numeric"
               pattern="[0-9]*"
               value={contactPhone}
+              ref={contactPhoneRef}
               onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               onChange={(e) => setContactPhone(e.target.value)}></input>
           </div>
@@ -183,9 +208,10 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
           <label className="modal-form-label">Correo</label>
           <input type='text' placeholder="Correo" value={contactEmail}
             className="global-input" id="adding-bookstore-contactEmail"
+            ref={contactEmailRef}
             onChange={(e) => setContactEmail(e.target.value)}></input>
         </div>
-        <AddingBookstoreErrorList errorList={errorList} setErrorList={setErrorList}/>
+        <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

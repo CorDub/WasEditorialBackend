@@ -36,6 +36,7 @@ export async function getAuthors(req, res) {
         referido: true,
         email: true,
         phone: true,
+        phonePrefix: true,
         birthday: true,
         clabe: true,
         name_bank_account: true,
@@ -68,6 +69,7 @@ export async function addAuthor(req, res) {
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
+      "phonePrefix": req.body.phonePrefix,
       "birthday": req.body.birthday,
     }
     validateInputs(inputs);
@@ -82,8 +84,8 @@ export async function addAuthor(req, res) {
         }
       });
 
-      const password = createRandomPassword();
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // const password = createRandomPassword();
+      // const hashedPassword = await bcrypt.hash(password, 10);
 
       if (existing) {
         if (existing.isDeleted === false) {
@@ -123,8 +125,9 @@ export async function addAuthor(req, res) {
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
+          phonePrefix: inputs.phonePrefix,
           birthday: inputs.birthday,
-          password: hashedPassword,
+          // password: hashedPassword,
         },
       });
 
@@ -277,6 +280,7 @@ export async function updateAuthor(req, res) {
       "referido": req.body.referido,
       "email": req.body.email,
       "phone": req.body.phone,
+      "phonePrefix": req.body.phonePrefix,
       "birthday": req.body.birthday,
     }
     validateInputs(inputs);
@@ -291,6 +295,7 @@ export async function updateAuthor(req, res) {
           referido: inputs.referido,
           email: inputs.email,
           phone: inputs.phone,
+          phonePrefix: inputs.phonePrefix,
           birthday: inputs.birthday,
         }
       });
@@ -1216,6 +1221,7 @@ export async function addBookstore(req, res) {
       "dealPercentage": parseFloat(req.body.dealPercentage),
       "contactName": req.body.contactName,
       "phoneBookstore": req.body.contactPhone,
+      "phonePrefixBookstore": req.body.contactPhonePrefix,
       "emailBookstore": req.body.contactEmail
     }
     validateInputs(inputs);
@@ -1228,6 +1234,7 @@ export async function addBookstore(req, res) {
         deal_percentage: inputs.dealPercentage,
         contact_name: inputs.contactName,
         contact_phone: inputs.phoneBookstore,
+        contact_phone_prefix: inputs.phonePrefixBookstore,
         contact_email: inputs.emailBookstore,
       },
     });
@@ -1250,6 +1257,7 @@ export async function updateBookstore(req, res) {
       "dealPercentage": parseFloat(req.body.dealPercentage),
       "contactName": req.body.contactName,
       "phoneBookstore" : req.body.contactPhone,
+      "phonePrefixBookstore": req.body.contactPhonePrefix,
       "emailBookstore": req.body.contactEmail
     }
     validateInputs(inputs);
@@ -1267,6 +1275,7 @@ export async function updateBookstore(req, res) {
           deal_percentage: inputs.dealPercentage,
           contact_name: inputs.contactName,
           contact_phone: inputs.phoneBookstore,
+          contact_phone_prefix: inputs.phonePrefixBookstore,
           contact_email: inputs.emailBookstore,
         }
       });

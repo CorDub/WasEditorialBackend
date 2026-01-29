@@ -68,19 +68,26 @@ for row in was_df.itertuples(index=True):
   ### Teléfono
   phone_str = str(row.Phone)
   if not phone_str.startswith("+"):
-    phone_str = "+52" + phone_str
+    phone_str = "+52" + " " + phone_str
 
-  phone_str = phone_str.replace("-", "")
-  phone_str = phone_str.replace("(", "")
-  phone_str = phone_str.replace(")", "")
-  phone_str = phone_str.replace("/", "")
-  phone_str = phone_str.replace(" ", "")
+  phone_split = phone_str.split(" ")
+  phone_prefix = phone_split[0]
+  phone_number = ''.join(phone_split[1:])
 
-  if len(phone_str) < 10 or len(phone_str) > 14:
-    phone_str = "+520000000000"
-    authorBeingBuilt["phone"] = phone_str
+  phone_number = phone_number.replace("-", "")
+  phone_number = phone_number.replace("(", "")
+  phone_number = phone_number.replace(")", "")
+  phone_number = phone_number.replace("/", "")
+  phone_number = phone_number.replace(" ", "")
+  full_phone_number = phone_prefix + phone_number
+
+  if len(full_phone_number) < 10 or len(full_phone_number) > 14:
+    empty_phone = "0000000000"
+    authorBeingBuilt["phone"] = empty_phone
+    authorBeingBuilt["phonePrefix"] = phone_prefix
   else:
-    authorBeingBuilt["phone"] = phone_str
+    authorBeingBuilt["phone"] = phone_number
+    authorBeingBuilt["phonePrefix"] = phone_prefix
   
 
   ### Birthday

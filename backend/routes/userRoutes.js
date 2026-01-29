@@ -90,6 +90,7 @@ router.post('/reset', getReset)
 export async function getUserExtra(req, res) {
   try {
     const user_id = req.session.user_id;
+    if (!user_id) { return }
     const prismaClient = req.prisma || prisma
 
     const user = await prismaClient.user.findUnique({where: {id: user_id}});
@@ -103,6 +104,7 @@ export async function getUserExtra(req, res) {
     const user_send = {
       "email": user.email,
       "phone": user.phone,
+      "phonePrefix" : user.phonePrefix,
       "birthday": user.birthday,
       "font_size": user.font_size,
       "clabe": user.clabe,
@@ -123,7 +125,7 @@ export async function updateUser(req, res) {
   try {
     const fieldToChange = req.body;
     const permittedFields = [
-      "email", "phone", "country", "birthday", 'font_size', 'clabe', "name_bank_account",
+      "email", "phone", "phonePrefix", "country", "birthday", 'font_size', 'clabe', "name_bank_account",
       "bank", "swift"
     ]
     for (const field of Object.entries(fieldToChange)) {

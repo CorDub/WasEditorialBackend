@@ -22,8 +22,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   const [category, setCategory] = useState(clickedRow.categoryId);
   const [existingCategories, setExistingCategories] = useState([]);
 
-  console.log("clickedRow", clickedRow)
-
   useEffect(() => {
     let possiblePasta = ["Blanda", "Dura"]
     for (let i = 0; i < possiblePasta.length; i++) {

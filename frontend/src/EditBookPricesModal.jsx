@@ -15,9 +15,6 @@ function EditBookPricesModal({
   const [errors, setErrors] = useState([])
   const pricesRefs = useRef([]);
 
-  // console.log(clickedRow)
-  // console.log(pricesRefs)
-
   useEffect(() => {
     let prices = [];
     for (const inv of clickedRow.inventories) {

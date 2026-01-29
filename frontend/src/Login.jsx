@@ -101,10 +101,6 @@ function LoginPage() {
     return newErrors;
   }
 
-  useEffect(() => {
-    console.log("email", email)
-  }, [email])
-
   return (
     <div className="login-page">
       <div className="login-logo">

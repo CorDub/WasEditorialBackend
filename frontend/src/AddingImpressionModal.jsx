@@ -77,7 +77,7 @@ function AddingImpressionModal({
           id: clickedRow.id,
           quantity: quantity,
           note: note,
-          date: date
+          deliveryDate: date
         }),
       });
 

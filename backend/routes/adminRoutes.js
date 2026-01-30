@@ -637,7 +637,7 @@ export async function updateCategory(req, res) {
           },
           data: {
             number: inputs.number,
-            category_type: inputs.categoryType,
+            // category_type: inputs.categoryType,
             percentage_management_stores: inputs.gestionTiendas,
             rebate_author: null,
             management_min: inputs.gestionMinima,
@@ -652,7 +652,7 @@ export async function updateCategory(req, res) {
           },
           data: {
             number: inputs.number,
-            category_type: inputs.categoryType,
+            // category_type: inputs.categoryType,
             management_min: null,
             percentage_royalties: inputs.regaliasPercent,
             percentage_management_stores: null,
@@ -1670,6 +1670,7 @@ export async function getBookInventory(req, res) {
     const relevantInventories = [];
     let currentTotal = 0;
     let initialTotal = 0;
+    let overallInTiendaTotal = 0;
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
     let soldTotal = 0;
@@ -1719,6 +1720,7 @@ export async function getBookInventory(req, res) {
         impressions: thatBookImpressions
       }
       relevantInventories.push(inventoryComplete);
+      overallInTiendaTotal += inTiendaTotal;
     }
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
     const payload = {
@@ -1727,6 +1729,7 @@ export async function getBookInventory(req, res) {
       id,
       currentTotal,
       initialTotal,
+      overallInTiendaTotal,
       returnsTotal,
       givenToAuthorTotal,
       soldTotal,
@@ -2030,55 +2033,55 @@ router.get('/inventoriesCurrentTotals', getInventoriesCurrentTotals);
 
 
 
-export async function updateInventory(req, res) {
-  try {
-    const inputs = {
-      id: parseInt(req.params.id),
-      bookId: parseInt(req.body.book),
-      bookstoreId: parseInt(req.body.bookstore),
-      inicial: parseInt(req.body.inicial),
-      price: parseFloat(req.body.price)
-    }
-    validateInputs(inputs);
+// export async function updateInventory(req, res) {
+//   try {
+//     const inputs = {
+//       id: parseInt(req.params.id),
+//       bookId: parseInt(req.body.book),
+//       bookstoreId: parseInt(req.body.bookstore),
+//       // inicial: parseInt(req.body.inicial),
+//       price: parseFloat(req.body.price)
+//     }
+//     validateInputs(inputs);
 
-    const prismaClient = req.prisma || prisma
+//     const prismaClient = req.prisma || prisma
 
-    await prismaClient.$transaction(async (tx) => {
-      const currentInventory = await tx.inventory.findUnique({
-        where: {id: inputs.id}
-      });
-      if (currentInventory.isDeleted) {
-        throw new Error("this inventory is deleted");
-      }
+//     await prismaClient.$transaction(async (tx) => {
+//       const currentInventory = await tx.inventory.findUnique({
+//         where: {id: inputs.id}
+//       });
+//       if (currentInventory.isDeleted) {
+//         throw new Error("this inventory is deleted");
+//       }
 
-      const difference = inputs.inicial - currentInventory.initial
-      let updatedInventory = await tx.inventory.update({
-        where: {id: inputs.id},
-        data: {
-          bookId: inputs.bookId,
-          bookstoreId: inputs.bookstoreId,
-          initial: inputs.inicial,
-          current: currentInventory.current + difference,
-          price: inputs.price
-        }
-      });
+//       // const difference = inputs.inicial - currentInventory.initial
+//       let updatedInventory = await tx.inventory.update({
+//         where: {id: inputs.id},
+//         data: {
+//           bookId: inputs.bookId,
+//           bookstoreId: inputs.bookstoreId,
+//           // initial: inputs.inicial,
+//           // current: currentInventory.current + difference,
+//           price: inputs.price
+//         }
+//       });
 
-      if (updatedInventory) {
-        res.status(200).json({message: "Successfully updated inventory"});
-      } else {
-        if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`)"))) {
-          res.status(500).json({message: "Este inventario ya existe"})
-          return;
-        }
-        res.status(500).json({error: "There was an issue updating the bookstore"});
-      };
-    })
-  } catch(error) {
-    console.error("Server error at the update bookstore route:", error);
-    res.status(500).json({error: "There was an issue updating the bookstore"});
-  }
-}
-router.patch('/inventory/:id', updateInventory);
+//       if (updatedInventory) {
+//         res.status(200).json({message: "Successfully updated inventory"});
+//       } else {
+//         if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`)"))) {
+//           res.status(500).json({message: "Este inventario ya existe"})
+//           return;
+//         }
+//         res.status(500).json({error: "There was an issue updating the inventory"});
+//       };
+//     })
+//   } catch(error) {
+//     console.error("Server error at the update inventory route:", error);
+//     res.status(500).json({error: "There was an issue updating the inventory"});
+//   }
+// }
+// router.patch('/inventory/:id', updateInventory);
 
 // export async function deleteInventory(req, res) {
 //   const inventory_id = parseInt(req.params.id);
@@ -2614,7 +2617,7 @@ export async function addImpression(req, res) {
       quantity: parseInt(req.body.quantity),
       id: parseInt(req.body.id),
       note: req.body.note,
-      date: new Date(req.body.date)
+      date: new Date(req.body.deliveryDate)
     }
     validateInputs(inputs);
 
@@ -3073,7 +3076,13 @@ export async function getPayments(req, res) {
       ])
     }
 
+    const paymentsSent = [];
     const promises = selectedPayments.map(payment => updateAmount(payment));
+    for (const payment of selectedPayments) {
+      if (payment.amount > 0) {
+        paymentsSent.push(payment)
+      }
+    }
     const results = await Promise.all(promises)
 
     // get a total
@@ -3084,7 +3093,7 @@ export async function getPayments(req, res) {
 
     const finalPayload = {
       totalAmount: totalAmount,
-      selectedPayments: selectedPayments,
+      selectedPayments: paymentsSent,
     }
 
     res.status(200).json(finalPayload);
@@ -3190,7 +3199,7 @@ export async function addCost(req, res) {
       "paymentId": req.body.paymentId ? parseInt(req.body.paymentId) : null,
       "amount": parseFloat(req.body.amount),
       "note": req.body.note,
-      "date": new Date(req.body.date),
+      "date": req.body.date ? new Date(req.body.date) : new Date() ,
       "bookId": parseInt(req.body.bookId),
     }
     validateInputs(inputs);
@@ -3238,7 +3247,7 @@ export async function addCost(req, res) {
           // paymentIds.push(newPayment.id)
         }
 
-        if (userPayment.status !== 'created') {
+        if (userPayment && userPayment.status !== 'created') {
           const newPaymentNextMonth = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
@@ -3250,7 +3259,7 @@ export async function addCost(req, res) {
           // continue;
         }
 
-        if (userPayment.isDeleted) {
+        if (userPayment && userPayment.isDeleted) {
           const deletedPayment = await tx.payment.delete({
             where: {
               id: userPayment.id
@@ -3267,7 +3276,7 @@ export async function addCost(req, res) {
           paymentId = resetPayment.id;
         }
 
-        if (!userPayment.isDeleted && userPayment.status === "created") {
+        if (userPayment && !userPayment.isDeleted && userPayment.status === "created") {
           // paymentIds.push(userPayment.id);
           // continue;
           paymentId = userPayment.id;

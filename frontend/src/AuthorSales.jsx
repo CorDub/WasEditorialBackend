@@ -44,7 +44,9 @@ function AuthorSales() {
           value: 0
         };
       }
-      monthlySales[monthKey].quantity += sale.quantity;
+      if (sale.quantity) {
+        monthlySales[monthKey].quantity += sale.quantity;
+      }
       monthlySales[monthKey].value += sale.value;
     });
 

@@ -11,7 +11,6 @@ import {
   twelveMonthsAgo,
   validateInputs,
 } from "../utils.js";
-import { verify } from "node:crypto";
 
 const upload = multer();
 const router = express.Router();
@@ -360,18 +359,18 @@ export async function getAuthorSales (req, res) {
 
     // Add kindleSales
     for (const kindleSale of kindleSalesInRange) {
-      totalSales += kindleSale.quantityPod + kindleSale.quantityEbook;
+      // totalSales += kindleSale.quantityPod + kindleSale.quantityEbook;
       totalValue += kindleSale.regalias
 
       if (salesByBook.has(kindleSale.book.title)) {
         const targetedBook = salesByBook.get(kindleSale.book.title);
-        targetedBook.quantity += kindleSale.quantityPod + kindleSale.quantityEbook;
+        // targetedBook.quantity += kindleSale.quantityPod + kindleSale.quantityEbook;
         targetedBook.value += kindleSale.regalias;
       } else {
         salesByBook.set(kindleSale.book.title, {
           "bookId": kindleSale.bookId,
           "title": kindleSale.book.title,
-          "quantity": kindleSale.quantityPod + kindleSale.quantityEbook,
+          // "quantity": kindleSale.quantityPod + kindleSale.quantityEbook,
           "value": kindleSale.regalias,
         })
       }
@@ -380,7 +379,7 @@ export async function getAuthorSales (req, res) {
         book_id: kindleSale.bookId,
         date: kindleSale.datePay,
         id: kindleSale.id,
-        quantity: kindleSale.quantityEbook + kindleSale.quantityPod,
+        // quantity: kindleSale.quantityEbook + kindleSale.quantityPod,
         value: kindleSale.regalias
       })
     }

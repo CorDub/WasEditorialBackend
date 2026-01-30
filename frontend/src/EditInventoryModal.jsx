@@ -14,15 +14,13 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [bookstore, setBookstore] = useState(clickedRow.bookstore.name);
   const [bookstoreId, setBookstoreId] = useState(clickedRow.bookstoreId);
   const [price, setPrice] = useState(clickedRow.price);
-  const [inicial, setInicial] = useState(clickedRow.initial);
+  // const [inicial, setInicial] = useState(clickedRow.initial);
   // const [disponible, setDisponible] = useState(clickedRow.current);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  const inicialRef = useRef();
+  // const inicialRef = useRef();
   // const disponibleRef = useRef();
   const priceRef = useRef();
-
-  console.log("clickedRow", clickedRow)
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -106,47 +104,46 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     fetchData();
   }, [])
 
-  function dropDownChange(e, input_name, input_index) {
+  // function dropDownChange(e, input_name, input_index) {
+  //   const inputs = {
+  //     "Book": {
+  //       "function": setBook,
+  //       "element": bookRef
+  //     },
+  //     "Bookstore": {
+  //       "function": setBookstore,
+  //       "element": bookstoreRef
+  //     },
+  //   }
 
-    const inputs = {
-      "Book": {
-        "function": setBook,
-        "element": bookRef
-      },
-      "Bookstore": {
-        "function": setBookstore,
-        "element": bookstoreRef
-      },
-    }
+  //   if (input_index !== undefined) {
+  //     inputs[input_name]["function"](input_index, e);
+  //     if (e.target.value === "null") {
+  //       if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+  //         inputs[input_name]["element"].current.classList.remove("selected")
+  //       };
+  //       return;
+  //     } else {
+  //       // inputs[input_name]["function"](input_index, e);
+  //       if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+  //         inputs[input_name]["element"].current.classList.add("selected")
+  //       };
+  //       return;
+  //     }
+  //   };
 
-    if (input_index !== undefined) {
-      inputs[input_name]["function"](input_index, e);
-      if (e.target.value === "null") {
-        if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-          inputs[input_name]["element"].current.classList.remove("selected")
-        };
-        return;
-      } else {
-        // inputs[input_name]["function"](input_index, e);
-        if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-          inputs[input_name]["element"].current.classList.add("selected")
-        };
-        return;
-      }
-    };
-
-    if (e.target.value === "null") {
-      inputs[input_name]["function"](null);
-      if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-        inputs[input_name]["element"].current.classList.remove("selected")
-      };
-    } else {
-      inputs[input_name]["function"](e.target.value);
-      if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-        inputs[input_name]["element"].current.classList.add("selected")
-      };
-    };
-  }
+  //   if (e.target.value === "null") {
+  //     inputs[input_name]["function"](null);
+  //     if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+  //       inputs[input_name]["element"].current.classList.remove("selected")
+  //     };
+  //   } else {
+  //     inputs[input_name]["function"](e.target.value);
+  //     if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+  //       inputs[input_name]["element"].current.classList.add("selected")
+  //     };
+  //   };
+  // }
 
   function checkInputs() {
     let errorsList = []
@@ -162,11 +159,11 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     //   length: 50,
     //   value: bookstoreNamesList
     // };
-    const expectationsInicial = {
-      type: "number",
-      presence: "not empty",
-      range: "positive"
-    };
+    // const expectationsInicial = {
+    //   type: "number",
+    //   presence: "not empty",
+    //   range: "positive"
+    // };
     const expectationsPrice = {
       type: "number",
       presence: "not empty",
@@ -176,11 +173,11 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
     // const errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
     // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, 'a');
     // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
-    const errorsInicial = checkForErrors("La cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef, "a");
+    // const errorsInicial = checkForErrors("La cantidad inicial", parseInt(inicial), expectationsInicial, inicialRef, "a");
     // const errorsDisponible = checkForErrors("La cantidad disponible", parseInt(inicial), expectationsInicial, inicialRef, "a");
     // const errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsInicial];
     const errorsPrice = checkForErrors("El precio", price, expectationsPrice, priceRef, "o");
-    const errorInputs = [errorsInicial, errorsPrice];
+    const errorInputs = [errorsPrice];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -214,7 +211,7 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
         body: JSON.stringify({
           book: bookId,
           bookstore: bookstoreId,
-          inicial: inicial,
+          // inicial: inicial,
           // disponible: disponible,
           price: price
         }),
@@ -258,12 +255,12 @@ function EditInventoryModal({ clickedRow, closeModal, pageIndex, globalFilter })
             ))}
           </select>
         </div> */}
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Inventario inicial *</label>
           <input type="text" placeholder="Cantidad inicial de libros"
             className="global-input" value={inicial}
             ref={inicialRef} onChange={(e) => setInicial(e.target.value)}></input>
-        </div>
+        </div> */}
         {/* <div className="modal-form-line">
           <label className="modal-form-label">Inventario disponible *</label>
           <input type="text" placeholder="Cantidad disponible de libros"

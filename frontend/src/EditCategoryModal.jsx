@@ -59,20 +59,19 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
 
   function checkForErrors(serverError) {
     let newErrorList = [];
-    const inputType = document.getElementById("adding-category-type");
+    // const inputType = document.getElementById("adding-category-type");
     const inputRegalias = document.getElementById("adding-category-regalias");
     const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
     const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
     const inputRebate = document.getElementById("adding-category-descuento");
     let inputList = [];
     if (type === "regalias") {
-      inputList = [inputType, inputRegalias, inputRebate]
+      inputList = [inputRegalias, inputRebate]
     } else if (type === "comissions") {
-      inputList = [inputType, inputGestionTiendas, inputGestionMinima]
+      inputList = [inputGestionTiendas, inputGestionMinima]
     }
 
     inputList.forEach((input) => {
-      console.log("input", input)
       if (input.classList.contains("error-inputs")) {
         input.classList.remove("error-inputs");
       }
@@ -84,15 +83,15 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       }
     });
 
-    if (type === false) {
-      newErrorList.push(11);
-      addErrorClass(inputType);
-    }
+    // if (type === false) {
+    //   newErrorList.push(11);
+    //   addErrorClass(inputType);
+    // }
 
-    if (serverError === 13) {
-      newErrorList.push(13);
-      addErrorClass(inputType);
-    }
+    // if (serverError === 13) {
+    //   newErrorList.push(13);
+    //   addErrorClass(inputType);
+    // }
 
     if (type === "regalias") {
       if (isNaN(parseFloat(regalias))) {
@@ -178,7 +177,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         <p>*Campos obligatorios</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Tipo *</label>
           <select className="select-global"
             id="adding-category-type"
@@ -203,7 +202,7 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
               </>
             )}
           </select>
-        </div>
+        </div> */}
         {type === "comissions" && (
           <>
             <div className="modal-form-line">

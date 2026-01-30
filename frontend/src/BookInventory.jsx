@@ -20,6 +20,9 @@ function BookInventory({
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
+  const [inTiendaTotal, setTiendaTotal] = useState(0);
+  //If an inventory gets deleted with copies in it they're just lost. Should put a safeguard.
+  //In tienda and initial are different because of this
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
   const [data, setData] = useState([]);
@@ -268,12 +271,11 @@ function BookInventory({
   useEffect(() => {
     if (specificBook) {
       setData(specificBook.sortedRelevantInventories)
-      console.log("data", specificBook.sortedRelevantInventories)
       setSelectedBook(specificBook.name)
       setSelectedBookId(specificBook.id)
       setCurrentTotal(specificBook.currentTotal)
       setInitialTotal(specificBook.initialTotal)
-      console.log('initialTotal', specificBook.initialTotal)
+      setTiendaTotal(specificBook.overallInTiendaTotal)
       setSoldTotal(specificBook.soldTotal)
       setGivenToAuthorTotal(specificBook.givenToAuthorTotal)
       setReturnsTotal(specificBook.returnsTotal)
@@ -356,13 +358,14 @@ function BookInventory({
         selectedBookId={selectedBookId}
         currentTotal={currentTotal}
         initialTotal={initialTotal}
+        inTiendaTotal={inTiendaTotal}
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
         soldTotal={soldTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}
-        ref={inventoryTotalRef}
+        // ref={inventoryTotalRef}
         setModalType={setModalType}
         openModal={openModal}
         setRetreat={setRetreat}

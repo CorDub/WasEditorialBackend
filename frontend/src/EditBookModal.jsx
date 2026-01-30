@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
-import AddingBookErrorList from "./AddingBookErrorList";
+// import AddingBookErrorList from "./AddingBookErrorList";
+import ErrorsList from "./ErrorsList";
+import checkForErrors from "./customHooks/checkForErrors";
 
 function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFontSize }) {
   useCheckAdmin();
@@ -17,10 +19,17 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
-  const [errorList, setErrorList] = useState([]);
+  // const [errorList, setErrorList] = useState([]);
   const [pastaDisplay, setPastaDisplay] = useState([]);
   const [category, setCategory] = useState(clickedRow.categoryId);
   const [existingCategories, setExistingCategories] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const titleRef = useRef()
+  const pastaRef = useRef()
+  const priceRef = useRef()
+  const categoryRef = useRef()
+  const isbnRef = useRef()
+  const quantityRef = useRef()
 
   useEffect(() => {
     let possiblePasta = ["Blanda", "Dura"]
@@ -70,7 +79,11 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
         if (response.ok) {
           const data = await response.json()
-          setExistingCategories(data)
+          let categoryNumbers = [];
+          for (const entry of data) {
+            categoryNumbers.push(entry.number)
+          }
+          setExistingCategories(categoryNumbers);
         }
       } catch (error) {
         console.log(error);
@@ -115,6 +128,16 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
         const alertMessage = `Se actualizó "${title}" con exito`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
+        const error = await response.json();
+        if (error.message === "Este ISBN ya existe") {
+          closeModal(pageIndex, globalFilter, false, error.message, "error")
+          return;
+        }
+
+        if (error.message === "Un libro con el mismo título ya existe.") {
+          closeModal(pageIndex, globalFilter, false, error.message, "error")
+          return;
+        }
         const alertMessage = `No se pudó actualizar "${title}"`;
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
@@ -138,95 +161,166 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
     }
   }
 
-  function addErrorClass(element) {
-    if (!element.classList.contains("error-inputs")) {
-      element.classList.add("error-inputs");
-    };
-  }
+  // function addErrorClass(element) {
+  //   if (!element.classList.contains("error-inputs")) {
+  //     element.classList.add("error-inputs");
+  //   };
+  // }
 
-  function checkForErrors() {
-    let newErrorList =[];
+  // function checkForErrors() {
+  //   let newErrorList =[];
 
-    const inputTitle = document.getElementById('adding-book-title');
-    const inputPasta = document.getElementById('pasta-select');
-    const inputIsbn = document.getElementById('adding-book-isbn');
-    const inputCategory = document.getElementById('category-select');
-    const inputAuthors = [];
-    authors.map((author, index) => {
-      inputAuthors.push(document.getElementById(`author-select-${index}`));
-    });
+  //   const inputTitle = document.getElementById('adding-book-title');
+  //   const inputPasta = document.getElementById('pasta-select');
+  //   const inputIsbn = document.getElementById('adding-book-isbn');
+  //   const inputCategory = document.getElementById('category-select');
+  //   const inputAuthors = [];
+  //   authors.map((author, index) => {
+  //     inputAuthors.push(document.getElementById(`author-select-${index}`));
+  //   });
 
-    const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors, inputCategory];
+  //   const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors, inputCategory];
 
-    inputsList.forEach((input) => {
-      if (input !== inputAuthors) {
-        if (input.classList.contains("error-inputs")) {
-          input.classList.remove("error-inputs");
-        }
-      }
-    })
-    inputAuthors.forEach((input) => {
-      if (input.classList.contains("error-inputs")) {
-        input.classList.remove("error-inputs");
-      }
-    })
+  //   inputsList.forEach((input) => {
+  //     if (input !== inputAuthors) {
+  //       if (input.classList.contains("error-inputs")) {
+  //         input.classList.remove("error-inputs");
+  //       }
+  //     }
+  //   })
+  //   inputAuthors.forEach((input) => {
+  //     if (input.classList.contains("error-inputs")) {
+  //       input.classList.remove("error-inputs");
+  //     }
+  //   })
 
-    if (title === '') {
-      newErrorList.push(11);
-      addErrorClass(inputTitle);
-    };
+  //   if (title === '') {
+  //     newErrorList.push(11);
+  //     addErrorClass(inputTitle);
+  //   };
 
-    if (title.length > 200) {
-      newErrorList.push(12);
-      addErrorClass(inputTitle);
-    };
+  //   if (title.length > 200) {
+  //     newErrorList.push(12);
+  //     addErrorClass(inputTitle);
+  //   };
 
-    if (pasta === null) {
-      newErrorList.push(21);
-      addErrorClass(inputPasta);
-    };
+  //   if (pasta === null) {
+  //     newErrorList.push(21);
+  //     addErrorClass(inputPasta);
+  //   };
 
-    if (pasta !== "Dura" && pasta !== "Blanda") {
-      newErrorList.push(22);
-      addErrorClass(inputPasta);
-    };
+  //   if (pasta !== "Dura" && pasta !== "Blanda") {
+  //     newErrorList.push(22);
+  //     addErrorClass(inputPasta);
+  //   };
 
-    if (isNaN(parseInt(category))) {
-      newErrorList.push(71);
-      addErrorClass(inputCategory);
+  //   if (isNaN(parseInt(category))) {
+  //     newErrorList.push(71);
+  //     addErrorClass(inputCategory);
+  //   }
+
+  //   authors.map((authorTop, index) => {
+  //     if (authorTop === null) {
+  //       newErrorList.push(41);
+  //       addErrorClass(inputAuthors[index]);
+  //       return
+  //     };
+
+  //     let authorsIds = []
+  //     existingAuthors.map((authorBot) => {
+  //       authorsIds.push(authorBot.id);
+  //     })
+
+  //     if (!authorsIds.includes(authorTop.id)) {
+  //       newErrorList.push(42);
+  //       addErrorClass(inputAuthors[index]);
+  //     };
+  //   })
+
+  //   setErrorList(newErrorList);
+  //   return newErrorList;
+  // }
+
+  function checkInputs() {
+    let errorsList = []
+    const titleExpectations = {
+      presence: "not empty",
+      type: "string",
+      length: 255
+    }
+    const pastaExpectations =  {
+      presence: "not empty",
+      type: "string",
+      value: ["Blanda", "Dura"]
+    }
+    const priceExpectations = {
+      presence: "not empty",
+      type: "number",
+      range: "positive"
+    }
+    const categoryExpectations = {
+      presence: "not empty",
+      type: "number",
+      value: existingCategories
+    }
+    const isbnExpectations = {
+      validity: "isbn valid",
+    }
+    const quantityExpectations = {
+      presence: "not empty",
+      type: "number",
+      range: "positive"
+    }
+    const authorExpectations = {
+      presence: "not empty",
+      value: existingAuthors
     }
 
-    authors.map((authorTop, index) => {
-      if (authorTop === null) {
-        newErrorList.push(41);
-        addErrorClass(inputAuthors[index]);
-        return
-      };
+    const errorsTitle = checkForErrors("Título", title, titleExpectations, titleRef, "o");
+    const errorsPasta = checkForErrors("Pasta", pasta, pastaExpectations, pastaRef, "a");
+    const errorsPrice = checkForErrors("Precio", price, priceExpectations, priceRef, "o");
+    const errorsCategory = checkForErrors("Categoría", parseInt(category), categoryExpectations, categoryRef, "a");
+    const errorsISBN = isbn !== "" ? checkForErrors("ISBN", isbn, isbnExpectations, isbnRef, "o") : [];
+    const errorsQuantity = checkForErrors("Cantidad", quantity, quantityExpectations, quantityRef, "a");
 
-      let authorsIds = []
-      existingAuthors.map((authorBot) => {
-        authorsIds.push(authorBot.id);
-      })
+    let errorInputs = [
+      errorsTitle,
+      errorsPasta,
+      errorsPrice,
+      errorsCategory,
+      errorsISBN,
+      errorsQuantity
+    ]
 
-      if (!authorsIds.includes(authorTop.id)) {
-        newErrorList.push(42);
-        addErrorClass(inputAuthors[index]);
-      };
-    })
+    for (const i in authors) {
+      const authorId = document.getElementById(`author-select-${i}`)
+      const errorAuthor = checkForErrors("Autor", authors[i], authorExpectations, authorId, "o");
+      if (errorAuthor.length > 1) {
+        errorInputs.push(errorAuthor);
+      }
+    }
 
-    setErrorList(newErrorList);
-    return newErrorList;
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
+      }
+    }
+
+    return errorsList
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setErrors([]);
 
-    const errorList = checkForErrors();
+    const errorList = checkInputs();
     if (errorList.length > 0) {
       return;
     }
-    sendToServer();
+    sendToServer(e);
   }
+
 
   function dropDownChange(e, input_name, input_index) {
     const inputs = {
@@ -366,7 +460,8 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
               </div>
             ))}
           </div>
-        <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/>
+        {/* <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/> */}
+        <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

@@ -87,7 +87,7 @@ export async function sendWelcomeMail(email, name) {
       to: email,
       subject: `Bienvenido en la pagina de autores de WAS`,
       html: `<p>Hola ${name}, \n</p>
-      <p>Ya abrimos tu cuenta en la pagina para autores de WAS Editorial donde vas a poder seguir las ventas y
+      <p>Abrimos tu cuenta en la pagina para autores de WAS Editorial donde vas a poder seguir las ventas y
       resultados de tus libros.</p>
       <a href="">Entra</a>
       <p>Solo haga clic en "Primera visita o olvidó su contraseña" para empezar el proceso de ingreso.</p>

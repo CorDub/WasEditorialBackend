@@ -13,7 +13,6 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
-import { createRandomPassword } from "../passwordUtils.js";
 
 const upload = multer();
 const router = express.Router();
@@ -86,7 +85,7 @@ export async function addAuthor(req, res) {
 
       // const password = createRandomPassword();
       // const hashedPassword = await bcrypt.hash(password, 10);
-
+      let new_author;
       if (existing) {
         if (existing.isDeleted === false) {
           res.status(500).json({message: "Este usuario ya existe"})
@@ -95,41 +94,43 @@ export async function addAuthor(req, res) {
 
         //User necromancy right here - for later restore.
 
-        // const exhumedUser = await tx.user.update({
-        //   where: {id: existing.id},
-        //   data: {
-        //     first_name: inputs.firstName,
-        //     last_name: inputs.lastName,
-        //     country: inputs.country,
-        //     referido: inputs.referido,
-        //     email: inputs.email,
-        //     phone: inputs.phone,
-        //     birthday: inputs.birthday,
-        //     password: hashedPassword,
-        //     categoryId: inputs.category,
-        //     isDeleted: false
-        //   }
-        // });
-        // res.status(201).json({
-        //   firstName: exhumedUser.first_name,
-        //   lastName: exhumedUser.last_name,
-        //   email: exhumedUser.email});
-        // sendSetPasswordMail(email, firstName, password);
-        // return;
+        const exhumedUser = await tx.user.update({
+          where: {id: existing.id},
+          data: {
+            first_name: inputs.firstName,
+            last_name: inputs.lastName,
+            // country: inputs.country,
+            referido: inputs.referido,
+            email: inputs.email,
+            phone: inputs.phone,
+            phonePrefix: inputs.phonePrefix,
+            birthday: inputs.birthday,
+            // password: hashedPassword,
+            // categoryId: inputs.category,
+            isDeleted: false
+          }
+        });
+        new_author = exhumedUser
+        res.status(201).json({
+          firstName: exhumedUser.first_name,
+          lastName: exhumedUser.last_name,
+          email: exhumedUser.email});
+        sendWelcomeMail(exhumedUser.email, exhumedUser.first_name);
+        return;
+      } else {
+        const new_author =  await tx.user.create({
+          data: {
+            first_name: inputs.firstName,
+            last_name: inputs.lastName,
+            referido: inputs.referido,
+            email: inputs.email,
+            phone: inputs.phone,
+            phonePrefix: inputs.phonePrefix,
+            birthday: inputs.birthday,
+            // password: hashedPassword,
+          },
+        });
       }
-
-      const new_author =  await tx.user.create({
-        data: {
-          first_name: inputs.firstName,
-          last_name: inputs.lastName,
-          referido: inputs.referido,
-          email: inputs.email,
-          phone: inputs.phone,
-          phonePrefix: inputs.phonePrefix,
-          birthday: inputs.birthday,
-          // password: hashedPassword,
-        },
-      });
 
       res.status(201).json({
         firstName: new_author.first_name,
@@ -783,7 +784,7 @@ export async function addBook(req, res) {
       "title": req.body.title,
       "pasta": req.body.pasta,
       "price": parseFloat(req.body.price),
-      "isbn": req.body.isbn,
+      "isbn": req.body.isbn !== "" ? req.body.isbn : null,
       "quantity": parseInt(req.body.quantity),
       "categoryId": parseInt(req.body.category)
     }
@@ -848,6 +849,11 @@ export async function addBook(req, res) {
   } catch(error) {
     if (String(error).includes(("Unique constraint failed on the fields: (`isbn`)"))) {
       res.status(500).json({message: "Este ISBN ya existe"})
+      return;
+    }
+
+    if (String(error).includes(("Unique constraint failed on the fields: (`title`)"))) {
+      res.status(500).json({message: "Un libro con el mismo título ya existe."})
       return;
     }
 

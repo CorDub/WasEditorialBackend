@@ -58,7 +58,7 @@ function EditBookPricesModal({
 
     for (const index in prices) {
       const errors = checkForErrors(
-        "El precio", 
+        "Precio", 
         parseFloat(prices[index].price), 
         priceExpectations, 
         pricesRefs.current[index], 

@@ -43,8 +43,8 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        const alertMessage = `Un(a) nuev(o.a) admin ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña se ha sido enviado por correo.`;
+        const alertMessage = `Un(a) nuev(o.a) admin ${data.firstName} ${data.lastName} ha sido creado en la database. 
+        Un correo le ha estado enviado para ingresar a la plataforma.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -56,22 +56,23 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   function checkInputs() {
     let errorsList = []
     const Expectations = {
-      type: "string",
       presence: "not empty",
+      type: "string",
     };
     const roleExpectations = {
       presence: "not empty",
       value: ["superadmin", "admin", "author"]
     }
     const emailExpectations = {
+      presence: "not empty",
       type: "string",
       validity: "email valid"
     }
 
-    const errorsFirstName = checkForErrors("El nombre", firstName, Expectations, firstNameRef, "o");
-    const errorsLastName = checkForErrors("El apellido", lastName, Expectations, lastNameRef, "o");
-    const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o");
-    const errorsRole = checkForErrors("El rol", role, roleExpectations, roleRef, "o");
+    const errorsFirstName = checkForErrors("Nombre", firstName, Expectations, firstNameRef, "o");
+    const errorsLastName = checkForErrors("Apellido", lastName, Expectations, lastNameRef, "o");
+    const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o");
+    const errorsRole = checkForErrors("Rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -161,6 +162,15 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           <option value="admin">Admin</option>
         </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
+        <div>
+          <p style={{
+            fontSize:"14px", 
+            textAlign: "center", 
+            marginRight: "0.5rem",
+            marginLeft: "0.5rem"
+          }}>Añadir un nuevo admin en la base de datos le manda 
+            automaticamente un correo para ingresar en la plataforma.</p>
+        </div>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

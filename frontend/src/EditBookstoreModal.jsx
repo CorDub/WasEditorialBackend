@@ -101,13 +101,13 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   function checkInputs() {
     let newErrorList = [];
     const nameExpectations = {
-      type: "string",
       presence: "not empty",
+      type: "string",
       length: 50
     };
     const dealPercentageExpectations = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       range: "positive",
       maximum: 100
     };
@@ -124,12 +124,12 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
       validity: "email valid"
     };
 
-    const errorsName = checkForErrors("El nombre de la librería", name, nameExpectations, nameRef, 'o');
-    const errorsDealPercentage = checkForErrors("El percentage", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
-    const errorsContactName = contactName ? checkForErrors("El nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
-    const errorsContactPhone = contactPhone ? checkForErrors("El teléfono", contactPhone, contactPhoneExpectations, contactPhoneRef, 'o') : [];
-    const errorsContactPhonePrefix = contactPhonePrefix ? checkForErrors("El prefijo de país", contactPhonePrefix, contactPhonePrefixExpectations, contactPhonePrefixRef, 'o') : [];
-    const errorsContactEmail = contactEmail ? checkForErrors("El correo", contactEmail, contactEmailExpectations, contactEmailRef, 'o') : [];
+    const errorsName = checkForErrors("Nombre", name, nameExpectations, nameRef, 'o');
+    const errorsDealPercentage = checkForErrors("Porcentaje de acuerdo", dealPercentage, dealPercentageExpectations, dealPercentageRef, 'o');
+    const errorsContactName = contactName ? checkForErrors("Nombre del contacto", contactName, contactNameExpectations, contactNameRef, 'o') : [];
+    const errorsContactPhone = contactPhone ? checkForErrors("Teléfono", contactPhone, contactPhoneExpectations, contactPhoneRef, 'o') : [];
+    const errorsContactPhonePrefix = contactPhonePrefix ? checkForErrors("Prefijo de país", contactPhonePrefix, contactPhonePrefixExpectations, contactPhonePrefixRef, 'o') : [];
+    const errorsContactEmail = contactEmail ? checkForErrors("Correo", contactEmail, contactEmailExpectations, contactEmailRef, 'o') : [];
     const errorInputs = [errorsName, errorsDealPercentage, errorsContactName, errorsContactPhone, errorsContactPhonePrefix, errorsContactEmail]
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

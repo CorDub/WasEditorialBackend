@@ -27,6 +27,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   const dayRef = useRef();
   const monthRef = useRef();
   const yearRef = useRef();
+  const fullBirthdayRef = useRef();
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {
@@ -67,8 +68,8 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña se le ha sido enviado por correo.`;
+        const alertMessage = `Un(a) nuev(o.a) autor(a) ${data.firstName} ${data.lastName} ha sido creado en la database.
+        Un correo le ha estado enviado para ingresar a la plataforma.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -120,13 +121,13 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   function checkInputs() {
     let errorsList = []
     const firstNameExpectations = {
-      type: "string",
       presence: "not empty",
+      type: "string",
       length: 50
     }
     const lastNameExpectations = {
-      type: "string",
       presence: "not empty",
+      type: "string",
       length: 50
     }
     const emailExpectations = {
@@ -160,16 +161,20 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       presence: "not empty",
       validity: "phonePrefix valid"
     }
+    const fullBirthdayExpectations = {
+      validity: "birthday valid"
+    }
 
-    const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
-    const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
-    const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
-    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
-    const errorsPhonePrefix = checkForErrors("El prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
-    const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
-    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
-    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
-    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
+    const errorsFirstName = checkForErrors("Nombre", firstName, firstNameExpectations, firstNameRef, "o")
+    const errorsLastName = checkForErrors("Apellido", lastName, lastNameExpectations, lastNameRef, "a")
+    const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o" )
+    const errorsPhone = checkForErrors("Teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhonePrefix = checkForErrors("Prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
+    const errorsReferido = checkForErrors("Referido", referido, referidoExpectations, referidoRef, "o")
+    const errorsBirthdayDay = day !== "" ? checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
+    const errorsBirthdayYear = year !== "" ? checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
+    const errorsFullBirthday = birthday !== "0000" || birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
@@ -179,11 +184,11 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       errorsReferido,
       errorsBirthdayDay,
       errorsBirthdayMonth,
-      errorsBirthdayYear
+      errorsBirthdayYear,
+      errorsFullBirthday
     ]
 
     for (const errorInput of errorInputs) {
-      // console.log("errorInput", errorInput)
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
         setErrors(prev => [...prev, errorInput]);
@@ -238,7 +243,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
               onChange={(e) => setPhone(e.target.value)}></input>
           </div>
         </div>
-        <div className="modal-form-line">
+        <div className="modal-form-line" ref={fullBirthdayRef}>
           <label className="modal-form-label">Fecha de nacimiento</label>
           <div className="modal-birthday">
             <input type="text" placeholder="dd"
@@ -265,6 +270,8 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
           </div>
         </div>
         <ErrorsList errors={errors} setErrors={setErrors} />
+        <p style={{fontSize:"14px", textAlign: "center", width: "70%"}}>Añadir un nuevo autor en la base de datos le manda 
+            automaticamente un correo para ingresar en la plataforma.</p>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

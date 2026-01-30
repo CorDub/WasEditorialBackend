@@ -2,9 +2,11 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 
 function DeleteBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
+  console.log("clickedRow", clickedRow);
 
   async function deleteBookstore() {
-    const baseURL = import.meta.env.VITE_API_URL || '';
+    
     try {
       const response = await fetch(`${baseURL}/api/admin/bookstore/${clickedRow.id}`, {
         method: "DELETE",

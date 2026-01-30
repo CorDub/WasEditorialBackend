@@ -29,6 +29,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const dayRef = useRef();
   const monthRef = useRef();
   const yearRef = useRef();
+  const fullBirthdayRef = useRef();
   const [errors, setErrors] = useState([]);
   const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
 
@@ -189,16 +190,20 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       presence: "not empty",
       validity: "phonePrefix valid"
     }
+    const fullBirthdayExpectations = {
+      validity: "birthday valid"
+    }
 
-    const errorsFirstName = checkForErrors("El nombre", firstName, firstNameExpectations, firstNameRef, "o")
-    const errorsLastName = checkForErrors("El apellido", lastName, lastNameExpectations, lastNameRef, "a")
-    const errorsEmail = checkForErrors("El correo", email, emailExpectations, emailRef, "o" )
-    const errorsPhone = checkForErrors("El teléfono", phone, phoneExpectations, phoneRef, "o")
-    const errorsPhonePrefix = checkForErrors("El prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
-    const errorsReferido = checkForErrors("El referido", referido, referidoExpectations, referidoRef, "o")
-    const errorsBirthdayDay = day !== "" ? checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
-    const errorsBirthdayMonth = month !== "" ? checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
-    const errorsBirthdayYear = year !== "" ? checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
+    const errorsFirstName = checkForErrors("Nombre", firstName, firstNameExpectations, firstNameRef, "o")
+    const errorsLastName = checkForErrors("Apellido", lastName, lastNameExpectations, lastNameRef, "a")
+    const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o" )
+    const errorsPhone = checkForErrors("Teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhonePrefix = checkForErrors("Prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
+    const errorsReferido = checkForErrors("Referido", referido, referidoExpectations, referidoRef, "o")
+    const errorsBirthdayDay = day !== "" ? checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
+    const errorsBirthdayYear = year !== "" ? checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
+    const errorsFullBirthday = birthday !== "0000" || birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
@@ -209,6 +214,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       errorsBirthdayDay,
       errorsBirthdayMonth,
       errorsBirthdayYear,
+      errorsFullBirthday
     ]
 
     for (const errorInput of errorInputs) {
@@ -291,7 +297,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
                 onChange={(e) => setPhone(e.target.value)}></input>
             </div>
           </div>
-          <div className="modal-form-line">
+          <div className="modal-form-line" ref={fullBirthdayRef}>
             <label className="modal-form-label">Fecha de nacimiento</label>
             <div className="modal-birthday">
               <input type="text" placeholder="dd"

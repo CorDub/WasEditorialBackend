@@ -70,7 +70,7 @@ function InventoriesList() {
       )
     },
     {
-      header: "Enviados",
+      header: "Copias",
       size: 100,
       accessorKey: "initial",
       Cell: ({row}) => {
@@ -83,7 +83,7 @@ function InventoriesList() {
       }
     },
     {
-      header: "Impresiónes",
+      header: "Nuevas impresiónes",
       size: 100,
       accessorKey: "extraImpressions",
     },

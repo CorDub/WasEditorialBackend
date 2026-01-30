@@ -22,30 +22,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const quantityRef = useRef();
   const dateRef = useRef();
   const [date, setDate] = useState(new Date(clickedRow.date));
-  const [countries, setCountries] = useState([
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ]);
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -137,51 +113,51 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
-  function dropDownChange(e, input_name, input_index) {
+  // function dropDownChange(e, input_name, input_index) {
 
-    const inputs = {
-      "Book": {
-        "function": setBook,
-        "element": bookRef
-      },
-      "Bookstore": {
-        "function": setBookstore,
-        "element": bookstoreRef
-      },
-      // "Country": {
-      //   "function": setCountry,
-      //   "element": countryRef
-      // }
-    }
+  //   const inputs = {
+  //     "Book": {
+  //       "function": setBook,
+  //       "element": bookRef
+  //     },
+  //     "Bookstore": {
+  //       "function": setBookstore,
+  //       "element": bookstoreRef
+  //     },
+  //     // "Country": {
+  //     //   "function": setCountry,
+  //     //   "element": countryRef
+  //     // }
+  //   }
 
-    if (input_index !== undefined) {
-      inputs[input_name]["function"](input_index, e);
-      if (e.target.value === "null") {
-        if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-          inputs[input_name]["element"].current.classList.remove("selected")
-        };
-        return;
-      } else {
-        // inputs[input_name]["function"](input_index, e);
-        if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-          inputs[input_name]["element"].current.classList.add("selected")
-        };
-        return;
-      }
-    };
+  //   if (input_index !== undefined) {
+  //     inputs[input_name]["function"](input_index, e);
+  //     if (e.target.value === "null") {
+  //       if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+  //         inputs[input_name]["element"].current.classList.remove("selected")
+  //       };
+  //       return;
+  //     } else {
+  //       // inputs[input_name]["function"](input_index, e);
+  //       if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+  //         inputs[input_name]["element"].current.classList.add("selected")
+  //       };
+  //       return;
+  //     }
+  //   };
 
-    if (e.target.value === "null") {
-      inputs[input_name]["function"](null);
-      if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-        inputs[input_name]["element"].current.classList.remove("selected")
-      };
-    } else {
-      inputs[input_name]["function"](e.target.value);
-      if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-        inputs[input_name]["element"].current.classList.add("selected")
-      };
-    };
-  }
+  //   if (e.target.value === "null") {
+  //     inputs[input_name]["function"](null);
+  //     if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
+  //       inputs[input_name]["element"].current.classList.remove("selected")
+  //     };
+  //   } else {
+  //     inputs[input_name]["function"](e.target.value);
+  //     if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
+  //       inputs[input_name]["element"].current.classList.add("selected")
+  //     };
+  //   };
+  // }
 
   function checkInputs() {
     let errorsList = []
@@ -197,12 +173,12 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       length: 50,
       value: bookstoreNamesList
     };
-    const expectationsPais = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: countries
-    };
+    // const expectationsPais = {
+    //   type: "string",
+    //   presence: "not empty",
+    //   length: 50,
+    //   value: countries
+    // };
     const expectationsCantidad = {
       type: "number",
       presence: "not empty",
@@ -214,12 +190,12 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       range: "no future"
     }
 
-    const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
-    const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
+    // const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
+    // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
     // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsQuantity = checkForErrors("La cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
     const errorsDate = checkForErrors("la fecha", date, expectationsDate, dateRef, 'a');
-    const errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDate];
+    const errorInputs = [errorsQuantity, errorsDate];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -289,7 +265,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         <p>*Campos obligatorios</p>
       </div>
       <form className="global-form">
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Título *</label>
           <select onChange={(e) => dropDownChange(e, "Book")}
             className="select-global" ref={bookRef}>
@@ -306,7 +282,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
               <option key={index} value={bookstore.title}>{bookstore.name}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         {/* <div className="modal-form-line">
           <label className="modal-form-label">País *</label>
           <select onChange={(e) => dropDownChange(e, "Country")}

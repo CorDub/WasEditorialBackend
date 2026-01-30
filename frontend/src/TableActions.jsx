@@ -214,7 +214,7 @@ function TableActions ({
 
         {type && type === "inventory" &&
           <>
-          <FontAwesomeIcon
+          {/* <FontAwesomeIcon
             icon={faPen}
             className="ta-button ta-edit"
             id={`ta-edit-${row.index}`}
@@ -222,7 +222,7 @@ function TableActions ({
             onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
             onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
           {isEditTooltipOpen && (
-            <div className="ta-tooltip">Editar</div>)}
+            <div className="ta-tooltip">Editar</div>)} */}
           {/* <FontAwesomeIcon
             icon={faCircleXmark}
             className="ta-button ta-delete"

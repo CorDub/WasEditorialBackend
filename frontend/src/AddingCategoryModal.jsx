@@ -28,7 +28,6 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
 
       if (response.ok) {
         const data = await response.json();
-        console.log("data", data);
         setNumber(data.length + 1);
       }
 
@@ -99,7 +98,7 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
     } else if (type === "comissions") {
       inputList = [inputType, inputGestionTiendas, inputGestionMinima]
     }
-
+    
     inputList.forEach((input) => {
       if (input.classList.contains("error-inputs")) {
         input.classList.remove("error-inputs");
@@ -132,15 +131,20 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
         addErrorClass(inputRegalias);
       }
 
-      if (isNaN(parseFloat(gestionMinima))) {
-        newErrorList.push(41);
-        addErrorClass(inputGestionMinima);
-      };
+      if (!rebate) {
+        newErrorList.push(51);
+        addErrorClass(inputRebate);
+      }
 
-      if (gestionMinima === "") {
-        newErrorList.push(42);
-        addErrorClass(inputGestionMinima);
-      };
+      if (isNaN(parseFloat(rebate))) {
+        newErrorList.push(52);
+        addErrorClass(inputRebate);
+      }
+
+      if (rebate < 0 || rebate > 100) {
+        newErrorList.push(53);
+        addErrorClass(inputRebate)
+      }
     }
 
     if (type === "comissions") {
@@ -159,20 +163,15 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
         addErrorClass(inputGestionTiendas);
       }
 
-      if (!rebate) {
-        newErrorList.push(51);
-        addErrorClass(inputRebate);
-      }
+      if (isNaN(parseFloat(gestionMinima))) {
+        newErrorList.push(41);
+        addErrorClass(inputGestionMinima);
+      };
 
-      if (isNaN(parseFloat(rebate))) {
-        newErrorList.push(52);
-        addErrorClass(inputRebate);
-      }
-
-      if (rebate < 0 || rebate > 100) {
-        newErrorList.push(53);
-        addErrorClass(inputRebate)
-      }
+      if (gestionMinima === "") {
+        newErrorList.push(42);
+        addErrorClass(inputGestionMinima);
+      };
     }
 
     setErrorList(newErrorList);

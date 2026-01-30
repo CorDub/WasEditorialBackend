@@ -13,6 +13,7 @@ function InventoryTotal({
     selectedLogo,
     currentTotal,
     initialTotal,
+    inTiendaTotal,
     returnsTotal,
     givenToAuthorTotal,
     soldTotal,
@@ -37,10 +38,10 @@ function InventoryTotal({
   const [isAddingImpressionTooltipHovered, setAddingImpressionTooltipHovered] = useState(false);
 
   // import only the logo you need based on the name
-  useEffect(() => {
-    import (`./assets/${selectedBookstoreNoSpaces}.png`)
-      .then((image) => setLogo(image.default));
-  }, [selectedBookstoreNoSpaces])
+  // useEffect(() => {
+  //   import (`./assets/${selectedBookstoreNoSpaces}.png`)
+  //     .then((image) => setLogo(image.default));
+  // }, [selectedBookstoreNoSpaces])
 
   //assign name based on either bookstore name or book title
   useEffect(() => {
@@ -83,8 +84,6 @@ function InventoryTotal({
     openModal("adding", book);
   };
 
-  console.log("selectedBookstore", selectedBookstore)
-
   return(
     <div className="total-and-impressions"
       style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
@@ -123,7 +122,7 @@ function InventoryTotal({
               Impresiónes: {impressions.length}
             </div>
           </div>)}
-        <div className="inventory-total-details">Inicial: {initialTotal}</div>
+        <div className="inventory-total-details">Inicial: {inTiendaTotal ? inTiendaTotal: initialTotal}</div>
         {extraImpressions > 0 &&
           <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
         {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
@@ -132,7 +131,8 @@ function InventoryTotal({
           <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
         }
         <div className="inventory-total-details">Disponibles: {
-          initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
+          // initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
+          currentTotal
           }</div>
         <div className="bookstore-progress-return">
           <FontAwesomeIcon

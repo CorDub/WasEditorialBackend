@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { DateTime } from "luxon";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -53,6 +54,14 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     return errorsList
   }
 
+  function properDate(deliveryDate) {
+    const properDate = DateTime
+      .fromISO(deliveryDate, {zone: "America/Mexico_City"})
+      .set({ hour: 12, minute: 0, second: 0})
+      .toUTC()
+    return properDate
+  }
+
   async function sendToServer() {
     try {
       const response = await fetch(`${baseURL}/api/admin/impression`, {
@@ -65,7 +74,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           quantity: quantity,
           id: clickedRow.bookId,
           note: "- Entrega del autor - " + note,
-          deliveryDate: deliveryDate
+          deliveryDate: properDate(deliveryDate)
         }),
       });
 

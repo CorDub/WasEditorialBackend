@@ -73,10 +73,10 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
       });
 
       if (response.ok) {
-        const alertMessage = `La categoría ${clickedRow.type} ha sido eliminada con exito.`
+        const alertMessage = `La categoría ${clickedRow.number} ha sido eliminada con exito.`
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
-        const alertMessage = `No se pudó eliminar la categoría ${clickedRow.type}`;
+        const alertMessage = `No se pudó eliminar la categoría ${clickedRow.number}`;
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
@@ -92,20 +92,20 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
           ?
           <div className="delmod-confirm-other">
             <div className="dco-text">
-              <p>{`Quedan ${impactedUsers} libros en la categoría ${clickedRow.type}.`}</p> 
+              <p>{`Quedan ${impactedUsers} libros en la categoría ${clickedRow.number}.`}</p> 
               <p>¿A que categoría quiere asignarlos?</p>
             </div>
             <select className="select-global"
               onChange={(e) => setSelectedCategory(e.target.value)}>
               <option value={0} placeholder="categoría"></option>
               {existingCategories.map((category, index) => (
-                <option key={index} value={category.id}>{category.type}</option>
+                <option key={index} value={category.id}>{category.number}</option>
               ))}
             </select>
           </div>
           : 
           <div className="delmod-confirm">
-            <p>{`¿Está seguro que quiere eliminar la categoria ${clickedRow.type}?`}</p>
+            <p>{`¿Está seguro que quiere eliminar la categoria ${clickedRow.number}?`}</p>
           </div>
         }
         <div className="modal-actions">

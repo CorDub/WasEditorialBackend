@@ -26,6 +26,7 @@ const SalesContent = ({
           <h3>Libros vendidos</h3>
           <p>{selectedBookSales} libros</p>
           <p className="sales-value">{formatNumber(selectedBookValue)}</p>
+          <p style={{fontWeight: "400", fontSize:"14px", marginTop:'0.5rem', fontStyle:"italic"}}>Este reporte no contiene datos de ventas en Kindle</p>
         </div>
         <div id="books-sold">
           {selectedBook === 'total'

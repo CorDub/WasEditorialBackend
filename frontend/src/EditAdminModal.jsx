@@ -85,10 +85,10 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       value: ["superadmin", "admin", "author"]
     }
 
-    const errorsFirstName = checkForErrors("El nombre", firstName, Expectations, firstNameRef, "o");
-    const errorsLastName = checkForErrors("El apellido", lastName, Expectations, lastNameRef, "o");
-    const errorsEmail = checkForErrors("El correo", email, Expectations, emailRef, "o");
-    const errorsRole = checkForErrors("El rol", role, roleExpectations, roleRef, "o");
+    const errorsFirstName = checkForErrors("Nombre", firstName, Expectations, firstNameRef, "o");
+    const errorsLastName = checkForErrors("Apellido", lastName, Expectations, lastNameRef, "o");
+    const errorsEmail = checkForErrors("Correo", email, Expectations, emailRef, "o");
+    const errorsRole = checkForErrors("Rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

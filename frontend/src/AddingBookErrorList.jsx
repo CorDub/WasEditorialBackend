@@ -7,6 +7,8 @@ function AddingBookErrorList({ errorList, setErrorList }) {
         return (<p className="login-error">El titulo no puede estar vacío.</p>)
       case 12:
         return (<p className="login-error">El titulo no puede tener mas de 200 caracteres.</p>)
+      case 13:
+        return (<p className="login-error">Un libro con el mismo título ya existe.</p>)
       case 21:
         return (<p className="login-error">La pasta no puede estar vacía.</p>)
       case 22:

@@ -4,7 +4,7 @@ import express from "express";
 import { validateInputs } from "../utils.js";
 import { createRandomPassword } from "../passwordUtils.js";
 import bcrypt from "bcrypt";
-import { sendSetPasswordMail } from "../mailer.js";
+import { sendSetPasswordMail, sendWelcomeMail } from "../mailer.js";
 
 const router = express.Router();
 
@@ -48,15 +48,39 @@ export async function addAdmin (req, res) {
     validateInputs(inputs);
 
     /// NOW START DOING STUFF
-    const password = createRandomPassword();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const new_admin = await prismaClient.user.create({
-      data: {
-        first_name: inputs.firstName,
-        last_name: inputs.lastName,
-        email: inputs.email,
-        password: hashedPassword,
-        role: inputs.role
+    // const password = createRandomPassword();
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    let new_admin;
+    await prismaClient.$transaction(async (tx) => {
+      const existingUser = await tx.user.findUnique({
+        where: {
+          first_name_last_name: {
+            first_name: inputs.firstName,
+            last_name: inputs.lastName
+          }
+        },
+      })
+
+      if (existingUser && existingUser.isDeleted) {
+        const revivedUser = await tx.user.update({
+          where: {
+            id: existingUser.id
+          },
+          data: {
+            isDeleted: false
+          }
+        })
+        new_admin = revivedUser;
+      } else {
+        new_admin = await tx.user.create({
+          data: {
+            first_name: inputs.firstName,
+            last_name: inputs.lastName,
+            email: inputs.email,
+            // password: hashedPassword,
+            role: inputs.role
+          }
+        })
       }
     })
 
@@ -66,7 +90,8 @@ export async function addAdmin (req, res) {
       email: new_admin.email
     });
     
-    sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
+    sendWelcomeMail(new_admin.email, new_admin.name)
+    // sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
 
   } catch (error) {
     console.error(error);

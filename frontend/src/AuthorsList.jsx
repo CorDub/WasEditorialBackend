@@ -29,9 +29,7 @@ function AuthorsList() {
     pageSize: 30
   });
   const [isLoading, setLoading] = useState(false);
-
-  console.log("ftcheddata", fetchedData)
-
+  
   const columns = useMemo(() => [
     {
       header: "Acciones",

@@ -3,7 +3,6 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 function DeleteBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
-  console.log("clickedRow", clickedRow);
 
   async function deleteBookstore() {
     
@@ -33,7 +32,8 @@ function DeleteBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   return (
     <div className="modal-overlay">
       <div className="modal-proper">
-        <div className="delmod-confirm">
+        <div className="delmod-confirm-other">
+          <p style={{marginBottom:"0.5rem"}}>Todos los libros que quedan disponibles en esta librería estarán transferidos al inventario de WAS Editorial.</p>
           <p>{`¿Está seguro que quiere eliminar la librería
           ${clickedRow.name}?`}</p>
         </div>

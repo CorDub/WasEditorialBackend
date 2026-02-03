@@ -26,7 +26,7 @@ export function getResend() {
 //   }
 // });
 
-async function sendEmail({ to, subject, text, attachments }) {
+async function sendEmail({ to, subject, text, html, attachments }) {
   // if (process.env.NODE_ENV !== "production") {
   //   return ("test environment - no email sent")
   // }

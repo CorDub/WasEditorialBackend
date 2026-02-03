@@ -5,8 +5,7 @@ import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
 import { useEffect } from "react";
-import { twelveMonthsAgo, applyFilters } from "../../backend/utils";
-import { DateTime } from "luxon";
+import { twelveMonthsAgo, applyFilters, mexicoDate } from "../../backend/utils";
 
 function SalesListPerMonths() {
   useCheckAdmin();
@@ -31,26 +30,26 @@ function SalesListPerMonths() {
     fetchSalesPerMonths(startDate, new Date());
   }, [forceRender])
 
-  const ZONE = "America/Mexico_City";
+  // const ZONE = "America/Mexico_City";
 
-  function mexicoDate(ingressDate, startOrEnd) {
-    let date;
-    if (startOrEnd === "start") {
-      date = DateTime
-      .fromISO(ingressDate.toISOString(), {zone:ZONE})
-      .startOf("day")
-      .toUTC()
-      .toJSDate();
-    } else if (startOrEnd === "end") {
-      date = DateTime
-      .fromISO(ingressDate.toISOString(), {zone:ZONE})
-      .endOf("day")
-      .toUTC()
-      .toJSDate();
-    }
+  // function mexicoDate(ingressDate, startOrEnd) {
+  //   let date;
+  //   if (startOrEnd === "start") {
+  //     date = DateTime
+  //     .fromISO(ingressDate.toISOString(), {zone:ZONE})
+  //     .startOf("day")
+  //     .toUTC()
+  //     .toJSDate();
+  //   } else if (startOrEnd === "end") {
+  //     date = DateTime
+  //     .fromISO(ingressDate.toISOString(), {zone:ZONE})
+  //     .endOf("day")
+  //     .toUTC()
+  //     .toJSDate();
+  //   }
 
-    return date
-  }
+  //   return date
+  // }
 
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
@@ -67,6 +66,7 @@ function SalesListPerMonths() {
         const data = await response.json();
         sessionStorage.setItem("startDate", startDate)
         sessionStorage.setItem("endDate", endDate)
+        console.log("data", data);
         setData(data);
         setLoading(false);
         setActiveMonth(data[data.length-1].forMonth);

@@ -7,7 +7,8 @@ import {
   getForMonth,
   twelveMonthsAgo,
   generateMonthKeysForRange,
-  getAuthorString
+  getAuthorString,
+  mexicoDate
 } from './../utils.js';
 import { prisma } from "../prisma/client.js";
 import multer from "multer";
@@ -2312,6 +2313,7 @@ export async function addSale(req, res) {
     }
     validateInputs(inputs);
 
+    const dateMexico = mexicoDate(req.body.date, "midday");
     const prismaClient = req.prisma || prisma
 
     let createdSale;
@@ -2351,7 +2353,7 @@ export async function addSale(req, res) {
       })
 
       const authorListIds = bookWithUsers.users.map(user => user.id);
-      const saleForMonth = getForMonth(inputs.date);
+      const saleForMonth = getForMonth(dateMexico);
       let paymentIds = []
       for (const authorId of authorListIds) {
         const existingPayment = await tx.payment.findUnique({
@@ -2397,7 +2399,7 @@ export async function addSale(req, res) {
         data: {
           inventoryId: selectedInventory.id,
           quantity: inputs.quantity,
-          date: inputs.date,
+          date: dateMexico,
           payments: {
             connect: paymentIds
           }
@@ -3305,7 +3307,7 @@ export async function addCost(req, res) {
           where: {
             userId_forMonth: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(inputs.date)
+              forMonth: getForMonth(new Date())
             },
           }
         })
@@ -3314,7 +3316,7 @@ export async function addCost(req, res) {
           const newPayment = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(inputs.date)
+              forMonth: getForMonth(new Date())
             }
           })
           paymentId = newPayment.id;
@@ -3343,7 +3345,7 @@ export async function addCost(req, res) {
           const resetPayment = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(inputs.date)
+              forMonth: getForMonth(new Date())
             }
           })
           // paymentIds.push(resetPayment.id)

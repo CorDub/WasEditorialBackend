@@ -161,18 +161,18 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   function checkInputs() {
     let errorsList = []
-    const expectationsBook = {
-      type: "string",
-      presence: "not empty",
-      length: 100,
-      value: bookTitlesList
-    };
-    const expectationsBookstore = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: bookstoreNamesList
-    };
+    // const expectationsBook = {
+    //   presence: "not empty",
+    //   type: "string",
+    //   length: 100,
+    //   value: bookTitlesList
+    // };
+    // const expectationsBookstore = {
+    //   presence: "not empty",
+    //   type: "string",
+    //   length: 50,
+    //   value: bookstoreNamesList
+    // };
     // const expectationsPais = {
     //   type: "string",
     //   presence: "not empty",
@@ -180,21 +180,21 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     //   value: countries
     // };
     const expectationsCantidad = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       range: "positive"
     }
     const expectationsDate = {
-      type: "datetime",
       presence: "not empty",
+      type: "datetime",
       range: "no future"
     }
 
     // const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
     // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
     // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
-    const errorsQuantity = checkForErrors("La cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
-    const errorsDate = checkForErrors("la fecha", date, expectationsDate, dateRef, 'a');
+    const errorsQuantity = checkForErrors("Cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
+    const errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, 'a');
     const errorInputs = [errorsQuantity, errorsDate];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

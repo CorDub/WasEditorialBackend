@@ -1,6 +1,6 @@
 import "./TableCosts.scss";
 import formatNumber from "./customHooks/formatNumber";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TableCostsDetails from "./TableCostsDetails";
 
 function TableCosts({costs, totalCosts, setTotalCosts}) {
@@ -11,8 +11,6 @@ function TableCosts({costs, totalCosts, setTotalCosts}) {
     //     costs.map(cost => totalCosts += cost.amount);
     //     setTotalCosts(totalCosts);
     // }, [costs])
-
-    console.log("totalCosts", totalCosts)
 
     return(
         <div className="table-costs"

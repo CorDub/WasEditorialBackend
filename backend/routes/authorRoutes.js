@@ -477,7 +477,8 @@ export async function getMonthlySalesByPayments (req, res) {
             id: true,
             amount: true,
             note: true,
-            isDeleted: true
+            isDeleted: true,
+            date: true
           }
         }
       },
@@ -619,7 +620,7 @@ export async function getMonthlySalesByPayments (req, res) {
       //Now we're adding the costs
       for (const cost of payment.costs) {
         if (cost.isDeleted === false) {
-          paymentSales.costs.push({"amount": cost.amount, "note": cost.note})
+          paymentSales.costs.push({"amount": cost.amount, "note": cost.note, "date": cost.date})
           paymentSales.totalValue -= cost.amount
         }
       }

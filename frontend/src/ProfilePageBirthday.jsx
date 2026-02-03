@@ -78,24 +78,21 @@ function ProfilePageBirthday(
   function checkInputs() {
     let errorsList = []
     const birthdayDayExpectations = {
-      type: "number",
       minimum: 1,
       maximum: 31
     }
     const birthdayMonthExpectations = {
-      type: "number",
       minimum: 1,
       maximum: 12
     }
     const birthdayYearExpectations = {
-      type: "number",
       maximum: new Date().getFullYear(),
       minimum: (new Date().getFullYear() - 120)
     }
 
-    const errorsBirthdayDay = checkForErrors("El día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
-    const errorsBirthdayMonth = checkForErrors("El mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
-    const errorsBirthdayYear = checkForErrors("El año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
+    const errorsBirthdayDay = checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o")
+    const errorsBirthdayMonth = checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o")
+    const errorsBirthdayYear = checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o")
     const errorInputs = [
       errorsBirthdayDay,
       errorsBirthdayMonth,
@@ -123,6 +120,9 @@ function ProfilePageBirthday(
             <div className="modal-birthday profile-birthday-line">
               <input type="text"
                 placeholder="dd"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
                 value={day}
                 className="global-input birthday-day no-margin"
                 maxLength="2"
@@ -133,11 +133,17 @@ function ProfilePageBirthday(
                 value={month}
                 className="global-input birthday-month no-margin"
                 maxLength="2"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
                 ref={monthRef}
                 onChange={(e) => setMonth(e.target.value)}></input>
               <input type="text"
                 placeholder="aaaa"
                 value={year}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
                 className="global-input birthday-year no-margin"
                 maxLength="4"
                 ref={yearRef}

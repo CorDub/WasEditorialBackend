@@ -1,4 +1,5 @@
 import { validateInput } from './validations.js';
+import { DateTime } from "luxon";
 
 export function calculateAuthorRevenue(
   category_type,
@@ -205,6 +206,7 @@ export function changeDateFormat(date, format='normal') {
 
 
 export function applyFilters(data, filters, type) {
+  console.log("data", data);
   let filteredResults = [];
   // getting all our paths + functions listed
   const options = {
@@ -355,4 +357,29 @@ export function avoidTimeshift(strDate) {
   const day = Number(strDate.substring(8,10))
   const res = new Date(Date.UTC(year, month, day, 12, 0, 0))
   return res
+}
+
+export function mexicoDate(ingressDate, period) {
+  let date;
+  if (period === "start") {
+    date = DateTime
+    .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
+    .startOf("day")
+    .toUTC()
+    .toJSDate();
+  } else if (period === "end") {
+    date = DateTime
+    .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
+    .endOf("day")
+    .toUTC()
+    .toJSDate();
+  } else if (period === "midday") {
+    date = DateTime
+    .fromFormat(ingressDate, "yyyy-MM-dd", {zone:"America/Mexico_City"})
+    .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+    .toUTC()
+    .toJSDate();
+  }
+
+  return date
 }

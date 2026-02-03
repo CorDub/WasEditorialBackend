@@ -82,7 +82,6 @@ function checkForErrors(
         break;
 
       case "value":
-        console.log("fieldName, fieldValue, fieldExpectations", fieldName, fieldValue, fieldExpectations)
         if (!fieldExpectations.value.includes(fieldValue)) {
           errorList.push(`${fieldName} debe estar en la lista`)
         };

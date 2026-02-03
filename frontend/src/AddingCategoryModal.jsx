@@ -217,7 +217,7 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
     const errorsRegalias = type === "regalias" ? checkForErrors("Regalías", regalias, regaliasExpectations, regaliasRef, "as") : [];
     const errorsRebate = type === "regalias" ? checkForErrors("Descuento", rebate, rebateExpectations, rebateRef, "o") : [];
     const errorsGestionTiendas = type === "comissions" ? checkForErrors("Gestión tiendas", gestionTiendas, gestionTiendasExpectations, gestionTiendasRef, "a") : [];
-    const errorsGestionMinima = type === "comissions" ? checkForErrors("Gestión minima", gestionMinima, gestionMinimaExpectations, gestionMinimaRef, "o") : [];
+    const errorsGestionMinima = type === "comissions" ? checkForErrors("Gestión minima", gestionMinima, gestionMinimaExpectations, gestionMinimaRef, "a") : [];
     const errorInputs = [
       errorsType,
       errorsRegalias,

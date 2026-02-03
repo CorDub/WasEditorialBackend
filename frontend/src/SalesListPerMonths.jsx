@@ -66,7 +66,6 @@ function SalesListPerMonths() {
         const data = await response.json();
         sessionStorage.setItem("startDate", startDate)
         sessionStorage.setItem("endDate", endDate)
-        console.log("data", data);
         setData(data);
         setLoading(false);
         setActiveMonth(data[data.length-1].forMonth);

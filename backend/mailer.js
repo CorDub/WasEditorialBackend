@@ -49,11 +49,12 @@ async function sendEmail({ to, subject, text, attachments }) {
       to: finalTo,
       subject,
       text,
+      html,
       attachments,
     });
 
     if (error) {
-      throw new Error (error)
+      throw new Error (JSON.stringify(error))
     }
 
     return data;
@@ -89,7 +90,7 @@ export async function sendWelcomeMail(email, name) {
       html: `<p>Hola ${name}, \n</p>
       <p>Abrimos tu cuenta en la pagina para autores de WAS Editorial donde vas a poder seguir las ventas y
       resultados de tus libros.</p>
-      <a href="">Entra</a>
+      <a href="https://plataformawaseditorialstaging.onrender.com/">Entra</a>
       <p>Solo haga clic en "Primera visita o olvidó su contraseña" para empezar el proceso de ingreso.</p>
       `
     })

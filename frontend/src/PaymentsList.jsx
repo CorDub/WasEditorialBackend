@@ -203,7 +203,6 @@ function PaymentsList() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("data", data)
         setData(data.selectedPayments);
         setTotal(data.totalAmount);
         setLoading(false);

@@ -55,23 +55,23 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     function checkInputs() {
         let errorsList = []
         const expectationsAmount = {
-            type: "number",
             presence: "not empty",
+            type: "number",
             range: "positive"
         };
         const expectationsNote = {
-            type: "string",
             presence: "not empty",
+            type: "string",
             length: 240
         }
         const expectationsDate = {
             type: "datetime",
         }
 
-        const errorsAmount = checkForErrors("El monto", parseInt(amount), expectationsAmount, amountRef, "o");
-        const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a");
-        const errorsBook = checkForErrors("El libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
-        const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+        const errorsAmount = checkForErrors("Monto", parseInt(amount), expectationsAmount, amountRef, "o");
+        const errorsNote = checkForErrors("Nota", note, expectationsNote, noteRef, "a");
+        const errorsBook = checkForErrors("Libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
+        const errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, "a");
         const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDate];
 
         for (const errorInput of errorInputs) {

@@ -38,7 +38,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     }
 
     const errorsQuantity = checkForErrors(
-      "La cantidad",
+      "Cantidad",
       quantity,
       expectationsQuantity,
       quantityRef,

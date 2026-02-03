@@ -101,19 +101,18 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
       existingBookIds.push(book.id)
     }
     const expectationsBook = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       value: existingBookIds
     };
     const expectationsCantidad = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       range: "positive"
     }
-
     const expectationsDate = {
-      type: "datetime",
       presence: "not empty",
+      type: "datetime",
       range: "no future"
     }
 
@@ -126,16 +125,16 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
     let errorsRegalias;
 
     if (clickedRow) {
-      errorsQuantityEbook = checkForErrors("La cantidad", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
-      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+      errorsQuantityEbook = checkForErrors("Cantidad", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
+      errorsQuantityPod = checkForErrors("Cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
       errorInputs = [errorsQuantityEbook];
     } else {
-      errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
-      errorsQuantityEbook = checkForErrors("La cantidad Ebook", (quantityEbook + quantityPod), expectationsCantidad, quantityEbookRef, "a");
-      errorsQuantityPod = checkForErrors("La cantidad Pod", (quantityPod + quantityEbook), expectationsCantidad, quantityPodRef, "a");
-      errorsDatePay = checkForErrors("La fecha de pago", datePay, expectationsDate, datePayRef, "a");
-      errorsDateCut = checkForErrors("La fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
-      errorsRegalias = checkForErrors("El número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");
+      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef, "o");
+      errorsQuantityEbook = checkForErrors("Cantidad Ebook", (quantityEbook + quantityPod), expectationsCantidad, quantityEbookRef, "a");
+      errorsQuantityPod = checkForErrors("Cantidad Pod", (quantityPod + quantityEbook), expectationsCantidad, quantityPodRef, "a");
+      errorsDatePay = checkForErrors("Fecha de pago", datePay, expectationsDate, datePayRef, "a");
+      errorsDateCut = checkForErrors("Fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
+      errorsRegalias = checkForErrors("Número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");
       errorInputs = [errorsBook, errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
       if (new Date(dateCut) >= new Date(datePay)) {
         errorInputs.push("La fecha de corte no puede estar después de la fecha de pago")

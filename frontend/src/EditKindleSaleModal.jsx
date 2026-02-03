@@ -95,19 +95,19 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       existingBookIds.push(book.id)
     }
     const expectationsBook = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       value: existingBookIds
     };
     const expectationsCantidad = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       range: "positive"
     }
 
     const expectationsDate = {
-      type: "datetime",
       presence: "not empty",
+      type: "datetime",
       range: "no future"
     }
 
@@ -119,19 +119,19 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     let errorsDateCut;
     let errorsRegalias;
 
-    if (clickedRow) {
-      errorsQuantityEbook = checkForErrors("La cantidad", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
-      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
-      errorInputs = [errorsQuantityEbook];
-    } else {
-      errorsBook = checkForErrors("El libro", parseInt(book), expectationsBook, bookRef, "o");
-      errorsQuantityEbook = checkForErrors("La cantidad Ebook", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
-      errorsQuantityPod = checkForErrors("La cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
-      errorsDatePay = checkForErrors("La fecha de pago", datePay, expectationsDate, datePayRef, "a");
-      errorsDateCut = checkForErrors("La fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
-      errorsRegalias = checkForErrors("El número de las regalías", regalias, expectationsCantidad, regaliasRef, "o");
-      errorInputs = [errorsBook, errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
-    }
+    // if (clickedRow) {
+    //   errorsQuantityEbook = checkForErrors("Cantidad", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
+    //   errorsQuantityPod = checkForErrors("Cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+    //   errorInputs = [errorsQuantityEbook];
+    // } else {
+    // errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef, "o");
+    errorsQuantityEbook = checkForErrors("Cantidad Ebook", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
+    errorsQuantityPod = checkForErrors("Cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
+    errorsDatePay = checkForErrors("Fecha de pago", datePay, expectationsDate, datePayRef, "a");
+    errorsDateCut = checkForErrors("Fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
+    errorsRegalias = checkForErrors("Regalías", regalias, expectationsCantidad, regaliasRef, "as");
+    errorInputs = [errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
+    // }
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -224,7 +224,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             className="global-input"
             value={quantityEbook}
             ref={quantityEbookRef} 
-            onChange={(e) => setQuantityEbook(parseInt(e.target.value))}></input>
+            onChange={(e) => setQuantityEbook(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Cantidad Pod vendida*</label>
@@ -237,7 +237,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             value={quantityPod}
             ref={quantityPodRef} 
-            onChange={(e) => setQuantityPod(parseInt(e.target.value))}></input>
+            onChange={(e) => setQuantityPod(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Fecha de corte</label>
@@ -268,7 +268,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             className="global-input"
             value={regalias}
             ref={regaliasRef} 
-            onChange={(e) => setRegalias(parseInt(e.target.value))}></input>
+            onChange={(e) => setRegalias(e.target.value)}></input>
         </div>
         
         <ErrorsList errors={errors} setErrors={setErrors}/>

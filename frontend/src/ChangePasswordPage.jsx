@@ -127,7 +127,7 @@ function ChangePasswordPage() {
   return(
     <div className="chapas">
       <div>
-        <p>Cambiar contraseña</p>
+        <p>Cambiar o elegir su contraseña si primera visita</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form special-forpas">
         <input type="password" placeholder="Nueva contraseña"

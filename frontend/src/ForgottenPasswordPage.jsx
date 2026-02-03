@@ -94,7 +94,7 @@ function ForgottenPasswordPage() {
           className="global-input" ref={email2Ref}
           onChange={(e) => setCorreo2(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors} />
-        <button type="submit" className="blue-button" style={{marginTop: "0.5rem"}}>Submit</button>
+        <button type="submit" className="blue-button" style={{marginTop: "0.5rem"}}>Ingresar</button>
       </form>
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>

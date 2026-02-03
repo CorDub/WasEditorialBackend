@@ -54,7 +54,7 @@ function ConfirmationCodePage() {
 
   return (
     <div className="ccp">
-      <p>Por favor ingrese el codigo de confirmación mandado por correo.</p>
+      <p>Por favor ingrese el codigo de confirmación que le mandamos por nuevo correo.</p>
       <form onSubmit={handleSubmit}>
         <div>
           <input type="text" maxLength='1' id='ccp1'
@@ -87,7 +87,7 @@ function ConfirmationCodePage() {
             onChange={(e) => setConfirmationCode6((e.target.value).toString())}></input>
         </div>
         <div className='form-actions ccp-actions'>
-          <button type='submit' className="blue-button">Submit</button>
+          <button type='submit' className="blue-button">Ingresar</button>
         </div>
       </form>
     </div>

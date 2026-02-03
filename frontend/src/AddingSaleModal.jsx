@@ -2,7 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { convertISOString, mexicoDate } from "../../backend/utils";
+import { mexicoDate } from "../../backend/utils.js";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();

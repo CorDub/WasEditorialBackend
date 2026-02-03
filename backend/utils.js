@@ -206,7 +206,6 @@ export function changeDateFormat(date, format='normal') {
 
 
 export function applyFilters(data, filters, type) {
-  console.log("data", data);
   let filteredResults = [];
   // getting all our paths + functions listed
   const options = {
@@ -337,7 +336,6 @@ export function validateInputs(inputObject) {
 
 export function getForMonthDate(date) {
   const completeDate = forMonth + "-01"
-  console.log("completeDate", completeDate);
   const inDateTime = new Date(completeDate);
   const toUTC = inDateTime.toISOString()
   return toUTC

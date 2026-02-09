@@ -1,7 +1,7 @@
 import { Role } from "@prisma/client";
 import express from "express";
-import bcrypt from 'bcrypt';
-import { sendSetPasswordMail, sendWelcomeMail } from './../mailer.js';
+// import bcrypt from 'bcrypt';
+import { sendWelcomeMail } from './../mailer.js';
 import {
   calculateAuthorRevenue,
   getForMonth,
@@ -1235,6 +1235,20 @@ export async function addBookstore(req, res) {
 
     const prismaClient = req.prisma || prisma
 
+    //Check if bookstore still exists as deleted first
+    const existingBookstore = await prismaClient.bookstore.findUnique({where:{name: inputs.name}})
+    if (existingBookstore && existingBookstore.isDeleted) {
+      const updatedDeletedBookstore = await prismaClient.bookstore.update({
+        where: {
+          id: existingBookstore.id
+        },
+        data: {
+          name: existingBookstore.name + '_deleted'
+        }
+      })
+    }
+
+    //Then create the new bookstore
     const new_bookstore =  await prismaClient.bookstore.create({
       data: {
         name: inputs.name,

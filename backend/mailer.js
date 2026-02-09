@@ -110,7 +110,7 @@ export async function sendResetPasswordMail(to, name) {
       Por favor ingrese el siguiente código de confirmación en la pagina de Was:\n
       ${codigo}
       \n
-      No comparte este codigo con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.
+      No comparte este codigó con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.
       Ese codigo estará valido 24 horas.`
     });
 

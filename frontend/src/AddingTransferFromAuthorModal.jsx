@@ -34,7 +34,6 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
       type: "number",
       presence: "not empty",
       range: "positive",
-      maximum: clickedRow.current
     }
 
     const errorsQuantity = checkForErrors(

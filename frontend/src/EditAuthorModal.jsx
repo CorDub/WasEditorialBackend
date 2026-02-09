@@ -194,6 +194,8 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       validity: "birthday valid"
     }
 
+    console.log("fullBirthday", birthday)
+
     const errorsFirstName = checkForErrors("Nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("Apellido", lastName, lastNameExpectations, lastNameRef, "a")
     const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o" )
@@ -203,7 +205,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     const errorsBirthdayDay = day !== "" ? checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
     const errorsBirthdayMonth = month !== "" ? checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
     const errorsBirthdayYear = year !== "" ? checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
-    const errorsFullBirthday = birthday !== "0000" || birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
+    const errorsFullBirthday = birthday !== "0000" && birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
     const errorInputs = [
       errorsFirstName,
       errorsLastName,
@@ -216,6 +218,8 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       errorsBirthdayYear,
       errorsFullBirthday
     ]
+
+    console.log("errorInputs", errorInputs);
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

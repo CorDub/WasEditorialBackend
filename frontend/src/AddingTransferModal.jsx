@@ -316,7 +316,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>{transferType && transferType === "send" ? 'Nueva transferencia' : 'Nueva devolución'}</p>
+        <p>{transferType && transferType === "send" ? 'Ingreso a librería' : 'Nueva devolución'}</p>
         <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
       </div>
       <div className="campos-obligatorios">

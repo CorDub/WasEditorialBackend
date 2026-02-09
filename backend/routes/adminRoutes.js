@@ -74,70 +74,81 @@ export async function addAuthor(req, res) {
     }
     validateInputs(inputs);
 
+    let new_author;
     await prismaClient.$transaction(async (tx) => {
-      const existing = await tx.user.findUnique({
+      const existingUsers = await tx.user.findMany({
         where: {
-          first_name_last_name: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName
-          }
-        }
-      });
-
-      // const password = createRandomPassword();
-      // const hashedPassword = await bcrypt.hash(password, 10);
-      let new_author;
-      if (existing) {
-        if (existing.isDeleted === false) {
-          res.status(500).json({message: "Este usuario ya existe"})
-          return;
-        }
-
-        //User necromancy right here - for later restore.
-
-        const exhumedUser = await tx.user.update({
-          where: {id: existing.id},
-          data: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName,
-            // country: inputs.country,
-            referido: inputs.referido,
-            email: inputs.email,
-            phone: inputs.phone,
-            phonePrefix: inputs.phonePrefix,
-            birthday: inputs.birthday,
-            // password: hashedPassword,
-            // categoryId: inputs.category,
-            isDeleted: false
-          }
-        });
-        new_author = exhumedUser
-        res.status(201).json({
-          firstName: exhumedUser.first_name,
-          lastName: exhumedUser.last_name,
-          email: exhumedUser.email});
-        sendWelcomeMail(exhumedUser.email, exhumedUser.first_name);
-        return;
-      } else {
-        const new_author =  await tx.user.create({
-          data: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName,
-            referido: inputs.referido,
-            email: inputs.email,
-            phone: inputs.phone,
-            phonePrefix: inputs.phonePrefix,
-            birthday: inputs.birthday,
-            // password: hashedPassword,
+          AND: [{
+            first_name: {
+              startsWith: inputs.firstName
+            },
           },
-        });
+          {
+            last_name: {
+              startsWith: inputs.lastName
+            }
+          }
+        ]},
+      })
+
+      if (existingUsers.length > 1) {
+        const lastDeletedUser =  await tx.user.findUnique({
+          where: {
+            first_name_last_name: {
+              first_name: inputs.firstName,
+              last_name: inputs.lastName
+            }
+          }
+        })
+        
+        if (lastDeletedUser && lastDeletedUser.isDeleted) {
+          const updatedLastDeletedUser = await tx.user.update({
+          where: {
+            first_name_last_name: {
+              first_name: inputs.firstName,
+              last_name: inputs.lastName
+            }
+          },
+          data: {
+            first_name: inputs.firstName + "_deleted" + existingUsers.length,
+            last_name: inputs.lastName +"_deleted" + existingUsers.length,
+            email: null,
+            clabe: null
+          }
+        })
+        }
       }
+
+      if (existingUsers.length === 1 && existingUsers[0].isDeleted) {
+        const revivedUser = await tx.user.update({
+          where: {
+            id: existingUsers[0].id
+          },
+          data: {
+            first_name: existingUsers[0].first_name + "_deleted",
+            last_name: existingUsers[0].last_name + "_deleted",
+            email: null,
+            clabe: null
+          }
+        })
+      } 
+
+      new_author = await tx.user.create({
+        data: {
+          first_name: inputs.firstName,
+          last_name: inputs.lastName,
+          referido: inputs.referido,
+          email: inputs.email,
+          phone: inputs.phone,
+          phonePrefix: inputs.phonePrefix,
+          birthday: inputs.birthday,
+        },
+      });
 
       res.status(201).json({
         firstName: new_author.first_name,
         lastName: new_author.last_name,
         email: new_author.email});
-      // sendSetPasswordMail(inputs.email, inputs.firstName, hashedPassword);
       sendWelcomeMail(inputs.email, inputs.firstName);
     })
 
@@ -805,6 +816,58 @@ export async function addBook(req, res) {
     const prismaClient = req.prisma || prisma;
 
     await prismaClient.$transaction(async (tx) => {
+      //before creating the book we check for duplicates
+      const possiblyDeletedBooks = await tx.book.findMany({
+        where: {
+          AND: [
+            {
+              title: {
+                startsWith: inputs.title
+              }
+            },
+            {
+              mainAuthor: authorsIds[0].id
+            }
+          ]
+        }
+      })
+      console.log("possiblyDeletedBooks.length", possiblyDeletedBooks.length)
+
+      if (possiblyDeletedBooks.length === 1 && possiblyDeletedBooks[0].isDeleted) {
+        const deletedBook = await tx.book.update({
+          where: {
+            id: possiblyDeletedBooks[0].id
+          },
+          data: {
+            title: possiblyDeletedBooks[0].title + "_deleted",
+            isbn: null,
+          }
+        })
+      } 
+
+      if (possiblyDeletedBooks.length > 1) {
+        const lastDeletedBook = await tx.book.findUnique({
+          where: {
+            title_mainAuthor: {
+              title: inputs.title,
+              mainAuthor: authorsIds[0].id
+            }
+          }
+        })
+        if (lastDeletedBook && lastDeletedBook.isDeleted) {
+          const updatedLastDeletedBook = await tx.book.update({
+            where: {
+              id: lastDeletedBook.id
+            },
+            data: {
+              title: inputs.title + "_deleted" + possiblyDeletedBooks.length,
+              isbn: null
+            }
+          })
+        }
+      }
+
+      //once we've cleared the way we create the book.
       const new_book = await tx.book.create({
         data: {
           title: inputs.title,
@@ -853,8 +916,8 @@ export async function addBook(req, res) {
       return;
     }
 
-    if (String(error).includes(("Unique constraint failed on the fields: (`title`)"))) {
-      res.status(500).json({message: "Un libro con el mismo título ya existe."})
+    if (String(error).includes(("Unique constraint failed on the fields: (`title`,`mainAuthor`)"))) {
+      res.status(500).json({message: "Un libro con el mismo título y autor ya existe."})
       return;
     }
 

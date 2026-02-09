@@ -113,7 +113,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           return;
         }
 
-        if (error.message === "Un libro con el mismo título ya existe.") {
+        if (error.message === "Un libro con el mismo título y autor ya existe.") {
           closeModal(pageIndex, globalFilter, false, error.message, "error")
           return;
         }

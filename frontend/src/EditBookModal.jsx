@@ -3,7 +3,6 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from "./Tooltip";
-// import AddingBookErrorList from "./AddingBookErrorList";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
 
@@ -23,13 +22,12 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   const [pastaDisplay, setPastaDisplay] = useState([]);
   const [category, setCategory] = useState(clickedRow.categoryId);
   const [existingCategories, setExistingCategories] = useState([]);
+  const [existingCategoryNumbers, setExistingCategoryNumbers] = useState([]);
   const [errors, setErrors] = useState([]);
   const titleRef = useRef()
   const pastaRef = useRef()
-  const priceRef = useRef()
   const categoryRef = useRef()
   const isbnRef = useRef()
-  const quantityRef = useRef()
 
   useEffect(() => {
     let possiblePasta = ["Blanda", "Dura"]
@@ -83,7 +81,8 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           for (const entry of data) {
             categoryNumbers.push(entry.number)
           }
-          setExistingCategories(categoryNumbers);
+          setExistingCategories(data);
+          setExistingCategoryNumbers(categoryNumbers);
         }
       } catch (error) {
         console.log(error);
@@ -161,86 +160,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
     }
   }
 
-  // function addErrorClass(element) {
-  //   if (!element.classList.contains("error-inputs")) {
-  //     element.classList.add("error-inputs");
-  //   };
-  // }
-
-  // function checkForErrors() {
-  //   let newErrorList =[];
-
-  //   const inputTitle = document.getElementById('adding-book-title');
-  //   const inputPasta = document.getElementById('pasta-select');
-  //   const inputIsbn = document.getElementById('adding-book-isbn');
-  //   const inputCategory = document.getElementById('category-select');
-  //   const inputAuthors = [];
-  //   authors.map((author, index) => {
-  //     inputAuthors.push(document.getElementById(`author-select-${index}`));
-  //   });
-
-  //   const inputsList = [inputTitle, inputPasta, inputIsbn, inputAuthors, inputCategory];
-
-  //   inputsList.forEach((input) => {
-  //     if (input !== inputAuthors) {
-  //       if (input.classList.contains("error-inputs")) {
-  //         input.classList.remove("error-inputs");
-  //       }
-  //     }
-  //   })
-  //   inputAuthors.forEach((input) => {
-  //     if (input.classList.contains("error-inputs")) {
-  //       input.classList.remove("error-inputs");
-  //     }
-  //   })
-
-  //   if (title === '') {
-  //     newErrorList.push(11);
-  //     addErrorClass(inputTitle);
-  //   };
-
-  //   if (title.length > 200) {
-  //     newErrorList.push(12);
-  //     addErrorClass(inputTitle);
-  //   };
-
-  //   if (pasta === null) {
-  //     newErrorList.push(21);
-  //     addErrorClass(inputPasta);
-  //   };
-
-  //   if (pasta !== "Dura" && pasta !== "Blanda") {
-  //     newErrorList.push(22);
-  //     addErrorClass(inputPasta);
-  //   };
-
-  //   if (isNaN(parseInt(category))) {
-  //     newErrorList.push(71);
-  //     addErrorClass(inputCategory);
-  //   }
-
-  //   authors.map((authorTop, index) => {
-  //     if (authorTop === null) {
-  //       newErrorList.push(41);
-  //       addErrorClass(inputAuthors[index]);
-  //       return
-  //     };
-
-  //     let authorsIds = []
-  //     existingAuthors.map((authorBot) => {
-  //       authorsIds.push(authorBot.id);
-  //     })
-
-  //     if (!authorsIds.includes(authorTop.id)) {
-  //       newErrorList.push(42);
-  //       addErrorClass(inputAuthors[index]);
-  //     };
-  //   })
-
-  //   setErrorList(newErrorList);
-  //   return newErrorList;
-  // }
-
   function checkInputs() {
     let errorsList = []
     const titleExpectations = {
@@ -253,23 +172,13 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
       type: "string",
       value: ["Blanda", "Dura"]
     }
-    const priceExpectations = {
-      presence: "not empty",
-      type: "number",
-      range: "positive"
-    }
     const categoryExpectations = {
       presence: "not empty",
       type: "number",
-      value: existingCategories
+      value: existingCategoryNumbers
     }
     const isbnExpectations = {
       validity: "isbn valid",
-    }
-    const quantityExpectations = {
-      presence: "not empty",
-      type: "number",
-      range: "positive"
     }
     const authorExpectations = {
       presence: "not empty",
@@ -278,18 +187,14 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
     const errorsTitle = checkForErrors("Título", title, titleExpectations, titleRef, "o");
     const errorsPasta = checkForErrors("Pasta", pasta, pastaExpectations, pastaRef, "a");
-    const errorsPrice = checkForErrors("Precio", price, priceExpectations, priceRef, "o");
     const errorsCategory = checkForErrors("Categoría", parseInt(category), categoryExpectations, categoryRef, "a");
-    const errorsISBN = isbn !== "" ? checkForErrors("ISBN", isbn, isbnExpectations, isbnRef, "o") : [];
-    const errorsQuantity = checkForErrors("Cantidad", quantity, quantityExpectations, quantityRef, "a");
+    const errorsISBN = isbn !== null ? checkForErrors("ISBN", isbn, isbnExpectations, isbnRef, "o") : [];
 
     let errorInputs = [
       errorsTitle,
       errorsPasta,
-      errorsPrice,
       errorsCategory,
       errorsISBN,
-      errorsQuantity
     ]
 
     for (const i in authors) {
@@ -381,12 +286,14 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
             <label className="modal-form-label">Título *</label>
             <input type='text' value={title}
               className="global-input" id="adding-book-title"
+              ref={titleRef}
               onChange={(e) => setTitle(e.target.value)}></input>
             </div>
           <div className="modal-form-line">
             <label className="modal-form-label">Pasta *</label>
             <select onChange={(e) =>dropDownChange(e, "Pasta")}
-              className="select-global" id="pasta-select">
+              className="select-global" id="pasta-select"
+              ref={pastaRef}>
               {pastaDisplay.map((pasta, index) => (
                 <option key={index} value={pasta}>{pasta}</option>
               ))}
@@ -395,9 +302,10 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           <div className="modal-form-line">
             <label className="modal-form-label">Categoría</label>
             <select onChange={(e) => dropDownChange(e, "Category")}
-              value={category}
+              value={category.id}
               className="select-global"
-              id="category-select">
+              id="category-select"
+              ref={categoryRef}>
               {existingCategories && existingCategories.map((category, index) => (
                 <option value={category.id} key={index}>{category.number}</option>
               )) }
@@ -410,6 +318,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
               pattern="[0-9]*"
               onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               className="global-input" id="adding-book-isbn"
+              ref={isbnRef}
               onChange={(e) => setIsbn(e.target.value)}></input>
           </div>
           <div className="modal-form-line">

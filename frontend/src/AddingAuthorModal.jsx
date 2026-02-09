@@ -174,7 +174,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
     const errorsBirthdayDay = day !== "" ? checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
     const errorsBirthdayMonth = month !== "" ? checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
     const errorsBirthdayYear = year !== "" ? checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
-    const errorsFullBirthday = birthday !== "0000" || birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
+    const errorsFullBirthday = birthday !== "0000" && birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
     const errorInputs = [
       errorsFirstName,
       errorsLastName,

@@ -47,41 +47,77 @@ export async function addAdmin (req, res) {
     }
     validateInputs(inputs);
 
-    /// NOW START DOING STUFF
     // const password = createRandomPassword();
     // const hashedPassword = await bcrypt.hash(password, 10);
     let new_admin;
     await prismaClient.$transaction(async (tx) => {
-      const existingUser = await tx.user.findUnique({
+      const existingUsers = await tx.user.findMany({
         where: {
-          first_name_last_name: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName
+          AND: [{
+            first_name: {
+              startsWith: inputs.firstName
+            },
+          },
+          {
+            last_name: {
+              startsWith: inputs.lastName
+            }
           }
-        },
+        ]},
       })
 
-      if (existingUser && existingUser.isDeleted) {
-        const revivedUser = await tx.user.update({
+      if (existingUsers.length > 1) {
+        const lastDeletedUser =  await tx.user.findUnique({
           where: {
-            id: existingUser.id
+            first_name_last_name: {
+              first_name: inputs.firstName,
+              last_name: inputs.lastName
+            }
+          }
+        })
+        
+        if (lastDeletedUser && lastDeletedUser.isDeleted) {
+          const updatedLastDeletedUser = await tx.user.update({
+          where: {
+            first_name_last_name: {
+              first_name: inputs.firstName,
+              last_name: inputs.lastName
+            }
           },
           data: {
-            isDeleted: false
+            first_name: inputs.firstName + "_deleted" + existingUsers.length,
+            last_name: inputs.lastName +"_deleted" + existingUsers.length,
+            email: null,
+            clabe: null
           }
         })
-        new_admin = revivedUser;
-      } else {
-        new_admin = await tx.user.create({
-          data: {
-            first_name: inputs.firstName,
-            last_name: inputs.lastName,
-            email: inputs.email,
-            // password: hashedPassword,
-            role: inputs.role
-          }
-        })
+        }
       }
+
+      if (existingUsers.length === 1 && existingUsers[0].isDeleted) {
+        const revivedUser = await tx.user.update({
+          where: {
+            id: existingUsers[0].id
+          },
+          data: {
+            first_name: existingUsers[0].first_name + "_deleted",
+            last_name: existingUsers[0].last_name + "_deleted",
+            email: null,
+            clabe: null
+          }
+        })
+        // new_admin = revivedUser;
+      } 
+
+      new_admin = await tx.user.create({
+        data: {
+          first_name: inputs.firstName,
+          last_name: inputs.lastName,
+          email: inputs.email,
+          // password: hashedPassword,
+          role: inputs.role
+        }
+      })
     })
 
     res.status(201).json({

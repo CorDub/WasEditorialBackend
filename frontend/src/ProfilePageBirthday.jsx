@@ -67,7 +67,7 @@ function ProfilePageBirthday(
         setEditOpen(false);
         setAlertMessage(`Su fecha de nacimiento ha sido actualizada`);
         setAlertType("confirmation");
-        setForceRender(!forceRender);
+        setForceRender(prev => !prev);
       }
 
     } catch (error) {

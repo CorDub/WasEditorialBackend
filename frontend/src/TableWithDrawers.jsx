@@ -226,11 +226,9 @@ function TableWithDrawers({
   }
 
   function closeModal(globalFilter, reload, alertMessage, alertType) {
-    console.log("closeModal called, reload, alertMessage, alertType", reload, alertMessage, alertType)
     setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      console.log("forceRender called")
       setForceRender(prev =>!prev);
     }
     if (alertMessage) {

@@ -104,7 +104,7 @@ function ProfilePagePhone(
         setEditOpen(false);
         setAlertMessage(`Su número de teléfono ha sido actualizado`);
         setAlertType("confirmation");
-        setForceRender(!forceRender);
+        setForceRender(prev => !prev);
       }
 
     } catch (error) {

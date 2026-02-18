@@ -190,7 +190,7 @@ function CategoriesList() {
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
     if (reload === true) {
-      setForceRender(!forceRender);
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);

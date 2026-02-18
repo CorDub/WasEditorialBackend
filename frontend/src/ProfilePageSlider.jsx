@@ -37,7 +37,7 @@ function ProfilePageSlider({
         setEditOpen(false);
         setAlertMessage(`El tamaño de las letras ha estado cambiado`);
         setAlertType("confirmation");
-        setForceRender(!forceRender);
+        setForceRender(prev => !prev);
       }
     } catch (error) {
       console.log(error);

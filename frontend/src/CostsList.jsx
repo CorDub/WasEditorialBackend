@@ -168,7 +168,7 @@ function CostsLists() {
         setModalOpen(false);
         globalFilter && setGlobalFilter(globalFilter);
         if (reload === true) {
-            setForceRender(!forceRender);
+            setForceRender(prev => !prev);
         }
         if (alertMessage) {
             setAlertMessage(alertMessage);

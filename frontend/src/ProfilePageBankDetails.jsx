@@ -73,7 +73,7 @@ function ProfilePageBankDetails({
         setEditOpen(false);
         setAlertMessage(`Su cuenta bancaría ha estado actualizado con exitó`);
         setAlertType("confirmation");
-        setForceRender(!forceRender);
+        setForceRender(prev => !prev);
       } else {
         setAlertMessage(`No se pudó actualizar su cuenta bancaría`);
         setAlertType("error");

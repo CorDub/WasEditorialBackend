@@ -342,7 +342,7 @@ function BookInventory({
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
       getBookInventories();
-      setForceRender(!forceRender);
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);

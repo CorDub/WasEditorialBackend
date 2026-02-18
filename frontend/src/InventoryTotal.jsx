@@ -122,7 +122,7 @@ function InventoryTotal({
               Impresiónes: {impressions.length}
             </div>
           </div>)}
-        <div className="inventory-total-details">Inicial: {inTiendaTotal ? inTiendaTotal: initialTotal}</div>
+        <div className="inventory-total-details">Inicial: {initialTotal ? initialTotal: initialTotal}</div>
         {extraImpressions > 0 &&
           <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
         {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}

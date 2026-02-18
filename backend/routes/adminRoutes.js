@@ -831,7 +831,6 @@ export async function addBook(req, res) {
           ]
         }
       })
-      console.log("possiblyDeletedBooks.length", possiblyDeletedBooks.length)
 
       if (possiblyDeletedBooks.length === 1 && possiblyDeletedBooks[0].isDeleted) {
         const deletedBook = await tx.book.update({
@@ -1768,7 +1767,7 @@ export async function getBookInventory(req, res) {
         date: true
       },
       orderBy: {
-        date: "asc"
+        date: "desc"
       }
     })
 
@@ -1821,7 +1820,7 @@ export async function getBookInventory(req, res) {
 
     const relevantInventories = [];
     let currentTotal = 0;
-    let initialTotal = 0;
+    let initialTotal = thatBookImpressions[0].quantity;
     let overallInTiendaTotal = 0;
     let returnsTotal = 0;
     let givenToAuthorTotal = 0;
@@ -1858,7 +1857,7 @@ export async function getBookInventory(req, res) {
             inTiendaTotal += impression.quantity
           }
         }
-        initialTotal += inventory.initial
+        // initialTotal += inventory.initial
         inTiendaTotal -= inventory.returns
 
       } else {
@@ -1912,6 +1911,9 @@ export async function getInventoriesByBookstore(req, res) {
           select: {
             title: true,
             impressions: {
+              orderBy: {
+                date: 'asc',
+              },
               select: {
                 quantity: true,
                 isDeleted: true
@@ -2104,7 +2106,7 @@ export async function getBookstoreInventory(req, res) {
             quantity: true
           },
           orderBy: {
-            date: "asc"
+            date: "desc"
           }
         })
 
@@ -2519,7 +2521,6 @@ export async function updateSale(req, res) {
     validateInputs(inputs);
 
     const prismaClient = req.prisma || prisma
-    // console.log("db", process.env.DATABASE_URL)
 
     await prismaClient.$transaction(async (tx) => {
       const selectedInventory = await tx.inventory.findUnique({where : {

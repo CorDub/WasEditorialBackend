@@ -47,15 +47,15 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     if (errorsQuantity.length > 0) {
       errorsList.push(errorsQuantity);
     };
-    console.log("errorsQuantity", errorsQuantity);
 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
   }
 
   function properDate(deliveryDate) {
+    const dateToUse = deliveryDate === "" ? new Date().toISOString() : deliveryDate
     const properDate = DateTime
-      .fromISO(deliveryDate, {zone: "America/Mexico_City"})
+      .fromISO(dateToUse, {zone: "America/Mexico_City"})
       .set({ hour: 12, minute: 0, second: 0})
       .toUTC()
     return properDate

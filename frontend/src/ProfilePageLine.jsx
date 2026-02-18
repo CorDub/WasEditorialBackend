@@ -51,7 +51,7 @@ function ProfilePageLine({
         setEditOpen(false);
         setAlertMessage(`Su ${title.toLowerCase()} ha sido cambiado`);
         setAlertType("confirmation");
-        setForceRender(!forceRender);
+        setForceRender(prev => !prev);
       }
 
     } catch (error) {

@@ -17,7 +17,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const bookstoreRef = useRef();
   const quantityRef = useRef();
   const dateRef = useRef();
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState("");
 
   async function getExistingBooks() {
     try {
@@ -189,7 +189,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       type: "number",
       range: "positive"
     }
-
     const expectationsDate = {
       presence: "not empty",
       type: "datetime",

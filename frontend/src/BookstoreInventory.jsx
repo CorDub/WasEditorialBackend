@@ -332,7 +332,6 @@ function BookstoreInventory({
 
   useEffect(() => {
     if (specificBookstore) {
-      console.log(specificBookstore)
       setData(specificBookstore.sortedRelevantInventories)
       setSelectedBookstoreId(specificBookstore.id)
       setSelectedBookstore(specificBookstore.name)
@@ -424,7 +423,7 @@ function BookstoreInventory({
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
       getBookstoreInventories();
-      setForceRender(!forceRender);
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);

@@ -85,74 +85,80 @@ function InventoryTotal({
   };
 
   return(
-    <div className="total-and-impressions"
-      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
-      <div className="bookstore-inventory-total">
+    <>
+      {type === "" ?
+        null
+        :
+        <div className="total-and-impressions"
+          style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
+          <div className="bookstore-inventory-total">
 
-        {logo ?
-          <img src={logo} className="bookstore-inventory-img"/> :
-          <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
-            <FontAwesomeIcon
-              icon={type === "book" ? faBookOpen : faStore}
-              className="inventory-logo"/>
-            <div
-              className="inventory-name"
-              style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
-          </div>
-        }
+            {logo ?
+              <img src={logo} className="bookstore-inventory-img"/> :
+              <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
+                <FontAwesomeIcon
+                  icon={type === "book" ? faBookOpen : faStore}
+                  className="inventory-logo"/>
+                <div
+                  className="inventory-name"
+                  style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
+              </div>
+            }
 
-        {impressions != null && type === "book" &&
-          (<div className="bookstore-inventory-total-impressions"
-            onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
-            <div className="adding-impression">
+            {impressions != null && type === "book" &&
+              (<div className="bookstore-inventory-total-impressions"
+                onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
+                <div className="adding-impression">
+                  <FontAwesomeIcon
+                    icon={faCirclePlus}
+                    onClick={openAddingModal}
+                    onMouseEnter={() => setAddingImpressionTooltipHovered(true)}
+                    onMouseLeave={() => setAddingImpressionTooltipHovered(false)}/>
+                  {isAddingImpressionTooltipHovered
+                    && (
+                      <div className="tooltip-adding-impression">
+                        Añadir impresión
+                      </div>
+                    )}
+                </div>
+                <div
+                  className="bookstore-inventory-impressions-info">
+                  Impresiónes: {impressions.length}
+                </div>
+              </div>)}
+            <div className="inventory-total-details">Inicial: {initialTotal ? initialTotal: initialTotal}</div>
+            {extraImpressions > 0 &&
+              <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
+            {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
+            <div className="inventory-total-details">Vendidos: {soldTotal}</div>
+            {(type === "bookstore" && selectedBookstore === "WAS Editorial") &&
+              <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+            }
+            {type === "book" &&
+              <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+            }
+            <div className="inventory-total-details">Disponibles: {
+              // initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
+              currentTotal
+              }</div>
+            <div className="bookstore-progress-return">
               <FontAwesomeIcon
-                icon={faCirclePlus}
-                onClick={openAddingModal}
-                onMouseEnter={() => setAddingImpressionTooltipHovered(true)}
-                onMouseLeave={() => setAddingImpressionTooltipHovered(false)}/>
-              {isAddingImpressionTooltipHovered
-                && (
-                  <div className="tooltip-adding-impression">
-                    Añadir impresión
-                  </div>
-                )}
+                icon={faCircleXmark}
+                className="inventory-back-button"
+                onClick={returnToInventoriesAreaDashboard}/>
             </div>
-            <div
-              className="bookstore-inventory-impressions-info">
-              Impresiónes: {impressions.length}
-            </div>
-          </div>)}
-        <div className="inventory-total-details">Inicial: {initialTotal ? initialTotal: initialTotal}</div>
-        {extraImpressions > 0 &&
-          <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
-        {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
-        <div className="inventory-total-details">Vendidos: {soldTotal}</div>
-        {(type === "bookstore" && selectedBookstore === "WAS Editorial") &&
-          <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
-        }
-        {type === "book" &&
-          <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
-        }
-        <div className="inventory-total-details">Disponibles: {
-          // initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
-          currentTotal
-          }</div>
-        <div className="bookstore-progress-return">
-          <FontAwesomeIcon
-            icon={faCircleXmark}
-            className="inventory-back-button"
-            onClick={returnToInventoriesAreaDashboard}/>
+          </div>
+          <div className="inventory-total-impressions">
+            {isImpressionsOpen &&
+              <ImpressionsList
+                impressions={impressions}
+                setModalType={setModalType}
+                openModal={openModal}
+                book={book}/>}
+          </div>
         </div>
-      </div>
-      <div className="inventory-total-impressions">
-        {isImpressionsOpen &&
-          <ImpressionsList
-            impressions={impressions}
-            setModalType={setModalType}
-            openModal={openModal}
-            book={book}/>}
-      </div>
-    </div>
+      }
+    </>
   )
 }
 

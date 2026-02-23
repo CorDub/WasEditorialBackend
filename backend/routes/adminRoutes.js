@@ -2056,6 +2056,14 @@ export async function getBookstoreInventory(req, res) {
         book: {
           select: {
             title: true,
+            impressions: {
+              select: {
+                isDeleted: true,
+                id: true,
+                quantity: true,
+                date: true,
+              }
+            }
           }
         },
         bookId: true,
@@ -2107,19 +2115,20 @@ export async function getBookstoreInventory(req, res) {
       //Impressions for Plataforma Was inventory
       let extraImpressionsOutside = 0;
       if (inputs.id === 1) {
-        const thatBookImpressions = await prismaClient.impression.findMany({
-          where: {
-            bookId: inventory.bookId,
-            isDeleted: false
-          },
-          select: {
-            id: true,
-            quantity: true
-          },
-          orderBy: {
-            date: "desc"
-          }
-        })
+        // const thatBookImpressions = await prismaClient.impression.findMany({
+        //   where: {
+        //     bookId: inventory.bookId,
+        //     isDeleted: false
+        //   },
+        //   select: {
+        //     id: true,
+        //     quantity: true
+        //   },
+        //   orderBy: {
+        //     date: "desc"
+        //   }
+        // })
+        const thatBookImpressions = inventory.book.impressions
 
         if (thatBookImpressions.length > 1) {
           let extraImpressions = thatBookImpressions.slice(1)

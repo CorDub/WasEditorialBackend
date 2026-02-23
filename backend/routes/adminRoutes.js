@@ -1656,7 +1656,7 @@ export async function getInventoriesByBook(req, res) {
       function determineExtraImpressions(extraImpressionsByBook) {
         let extraImpressionsTotal = 0;
         let extraImpressions = inventory.book.impressions.slice(1)
-        if (extraImpressions.length > 0) {
+        if (extraImpressions.length > 1) {
           for (const impression of extraImpressions) {
             if (!impression.isDeleted) {
               extraImpressionsTotal += impression.quantity

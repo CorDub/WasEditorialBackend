@@ -1614,6 +1614,9 @@ export async function getInventoriesByBook(req, res) {
           select: {
             title: true,
             impressions: {
+              orderBy: {
+                date: "desc"
+              },
               select: {
                 id: true,
                 quantity: true,
@@ -1912,7 +1915,7 @@ export async function getInventoriesByBookstore(req, res) {
             title: true,
             impressions: {
               orderBy: {
-                date: 'asc',
+                date: 'desc',
               },
               select: {
                 quantity: true,

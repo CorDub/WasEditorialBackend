@@ -21,8 +21,6 @@ function BookInventory({
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
   const [inTiendaTotal, setTiendaTotal] = useState(0);
-  //If an inventory gets deleted with copies in it they're just lost. Should put a safeguard.
-  //In tienda and initial are different because of this
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
   const [data, setData] = useState([]);

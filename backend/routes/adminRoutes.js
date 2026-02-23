@@ -1925,7 +1925,10 @@ export async function getInventoriesByBookstore(req, res) {
             title: true,
             impressions: {
               orderBy: {
-                date: 'desc',
+                date: 'asc',
+              },
+              where: {
+                isDeleted: false
               },
               select: {
                 quantity: true,
@@ -1970,9 +1973,9 @@ export async function getInventoriesByBookstore(req, res) {
         let extraImpressions = 0;
         if (inventory.bookstoreId === 1) {
           for (const impression of inventory.book.impressions.slice(1)) {
-            if (!impression.isDeleted) {
-              extraImpressions += impression.quantity
-            }
+            
+            extraImpressions += impression.quantity
+        
           }
         }
 
@@ -2070,6 +2073,12 @@ export async function getBookstoreInventory(req, res) {
           select: {
             title: true,
             impressions: {
+              where: {
+                isDeleted: false
+              },
+              orderBy: {
+                date: "asc"
+              },
               select: {
                 isDeleted: true,
                 id: true,
@@ -2147,10 +2156,8 @@ export async function getBookstoreInventory(req, res) {
         if (thatBookImpressions.length > 1) {
           let extraImpressions = thatBookImpressions.slice(1)
           for (const impression of extraImpressions) {
-            if (!impression.isDeleted) {
-              extraImpressionsOutside += impression.quantity
-              extraImpressionsTotal += impression.quantity
-            }
+            extraImpressionsOutside += impression.quantity
+            extraImpressionsTotal += impression.quantity
           }
         }
       }

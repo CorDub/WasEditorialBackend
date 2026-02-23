@@ -36,29 +36,9 @@ function InventoriesList() {
   const [isInventoryTypeBook, setInventoryType] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false, "returns": true});
 
-  console.log("data", data)
+  console.log(data)
 
   const columns = useMemo(() => [
-    // {
-    //   header: "Acciones",
-    //   Cell: ({row}) => (
-    //     <div style={{position:"relative", overflow:"visible !important"}}>
-    //       <TableActions
-    //         key={isTableActionsOpen}
-    //         openModal={openModal}
-    //         row={row}
-    //         isTableActionsOpen={isTableActionsOpen}
-    //         setTableActionsOpen={setTableActionsOpen}
-    //         setModalType={setModalType}
-    //         type={"inventory"}/>
-    //     </div>
-    //   ),
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       overflow: "visible"
-    //     }
-    //   }
-    // },
     {
       header: "Nombre",
       accessorKey: "name",
@@ -76,7 +56,6 @@ function InventoriesList() {
       size: 100,
       accessorKey: "initial",
       Cell: ({row}) => {
-        // console.log(row.original)
         return (
           row.original.type === "bookstore" && row.original.bookstoreId === 1 ?
           row.original.initial + row.original.extraImpressions :
@@ -256,11 +235,6 @@ function InventoriesList() {
     getBookstoreInventories();
   }, []);
 
-
-  // useEffect(() => {
-  //   fetchBookstores();
-  // }, [isModalOpen])
-
   async function getBookInventories() {
     try {
       const response = await fetch(`${baseURL}/api/admin/inventoriesByBook`, {
@@ -293,49 +267,9 @@ function InventoriesList() {
     }
   }
 
-  // function openModal(type, clickedRow) {
-  //   setClickedRow(clickedRow);
-  //   switch (type) {
-  //     case 'adding':
-  //       setModalAction("adding");
-  //       break;
-  //     case 'edit':
-  //       setModalAction("edit");
-  //       break;
-  //     case 'delete':
-  //       setModalAction("delete");
-  //       break;
-  //     default:
-  //       console.log("Unknown error")
-  //       return;
-  //   }
-  //   setModalOpen(true);
-  // }
-
-  // function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-  //   setModalOpen(false);
-  //   globalFilter && setGlobalFilter(globalFilter);
-  //   pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-  //   if (reload === true) {
-  //     setForceRender(!forceRender);
-  //   }
-  //   if (alertMessage) {
-  //     setAlertMessage(alertMessage);
-  //     setAlertType(alertType);
-  //   }
-  // }
-
   return(
     <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"inventories-list"}/>
-      {/* {isModalOpen &&
-        <Modal
-          modalType={modalType}
-          modalAction={modalAction}
-          clickedRow={clickedRow}
-          closeModal={closeModal}
-          pageIndex={pagination.pageIndex}
-          globalFilter={globalFilter} />} */}
       {isLoading && <LoadingWheel />}
       {data
         && !isLoading

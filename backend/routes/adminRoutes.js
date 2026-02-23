@@ -1780,7 +1780,7 @@ export async function getBookInventory(req, res) {
         date: true
       },
       orderBy: {
-        date: "desc"
+        date: "asc"
       }
     })
 

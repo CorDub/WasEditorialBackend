@@ -2128,7 +2128,8 @@ export async function getBookstoreInventory(req, res) {
         //     date: "desc"
         //   }
         // })
-        const thatBookImpressions = inventory.book.impressions
+        const thatBookImpressions = inventory.book.impressions.sort((a, b) => a.date - b.date)
+        console.log('thatBookImpressions', thatBookImpressions)
 
         if (thatBookImpressions.length > 1) {
           let extraImpressions = thatBookImpressions.slice(1)

@@ -2032,11 +2032,20 @@ router.get('/inventoriesByBookstore', getInventoriesByBookstore);
 
 export async function getBookstoreInventory(req, res) {
   try {
+    const start = Date.now();
+    console.log("Route start");
+
     const inputs = {
       "id": parseInt(req.params.id),
     }
+    validateInputs(inputs);
+    const validationInput = Date.now();
+    console.log("After input validation: ", Date.now() - start, "ms");
 
     const prismaClient = req.prisma || prisma
+    const afterPrismaClient = Date.now();
+    console.log("After Prisma Client assignment", Date.now() - validationInput, "ms");
+
     const thatBookstoreInventories = await prismaClient.inventory.findMany({
       where: {
         bookstoreId: inputs.id,
@@ -2070,6 +2079,8 @@ export async function getBookstoreInventory(req, res) {
         }
       }
     })
+    const afterPrismaQuery = Date.now()
+    console.log("After Prisma query", Date.now() - afterPrismaClient, "ms")
 
     const relevantInventories = [];
     let currentTotal = 0;
@@ -2125,7 +2136,13 @@ export async function getBookstoreInventory(req, res) {
       }
       relevantInventories.push(inventoryPlusSales);
     }
+    const afterDoubleLoop = Date.now();
+    console.log("After double loop: ", Date.now() - afterPrismaQuery, "ms");
+
     const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
+    const afterSort = Date.now();
+    console.log("After sort: ", Date.now() - afterDoubleLoop, "ms");
+    
     const payload = {
       name,
       id,
@@ -2137,8 +2154,8 @@ export async function getBookstoreInventory(req, res) {
       soldTotal,
       extraImpressionsTotal
     }
-
     res.status(200).json(payload);
+    console.log("End route:", Date.now() - afterSort, "ms");
 
   } catch (error) {
     console.error(error);

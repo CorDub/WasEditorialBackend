@@ -2137,8 +2137,10 @@ export async function getBookstoreInventory(req, res) {
         if (thatBookImpressions.length > 1) {
           let extraImpressions = thatBookImpressions.slice(1)
           for (const impression of extraImpressions) {
-            extraImpressionsOutside += impression.quantity
-            extraImpressionsTotal += impression.quantity
+            if (!impression.isDeleted) {
+              extraImpressionsOutside += impression.quantity
+              extraImpressionsTotal += impression.quantity
+            }
           }
         }
       }

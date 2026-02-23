@@ -173,35 +173,6 @@ function BookInventory({
         }
       }
     },
-    // {
-    //   header: "País",
-    //   accessorKey: "country",
-    //   // muiTableHeadCellProps: {
-    //   //   sx: {
-    //   //     width: '3%'
-    //   //   }
-    //   // },
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       // width: '3%',
-    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-    //       whiteSpace: "nowrap",
-    //       overflow: "hidden",
-    //       textOverflow: "ellipsis"
-    //     }
-    //   }
-    // },
-    // {
-    //   header: "Progreso",
-    //   Cell: ({row}) => (
-    //     <ProgressBar
-    //       current={row.original.current}
-    //       initial={row.original.initial}
-    //       returns={row.original.returns}
-    //       sold={row.original.totalSales}
-    //       given={row.original.givenToAuthor}/>
-    //   )
-    // }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
@@ -213,14 +184,6 @@ function BookInventory({
     enablePagination: true,
     enableFullScreenToggle: false,
     enableRowVirtualization: false,
-    // renderTopToolbarCustomActions: () => (
-    //   <div className="table-add-button">
-    //     <div
-    //       className="campos-obligatorios"
-    //       style={{ fontSize: `clamp(0.8rem, 1.1rem)`}}>
-    //         Una transferencia de Plataforma Was a otra librería retira la cantidad de la columna "Inicial" de Was.</div>
-    //   </div>
-    // ),
     initialState: {
       density: 'compact',
     },

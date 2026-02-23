@@ -1615,12 +1615,16 @@ export async function getInventoriesByBook(req, res) {
             title: true,
             impressions: {
               orderBy: {
-                date: "desc"
+                date: "asc"
+              },
+              where: {
+                isDeleted: false,
               },
               select: {
                 id: true,
                 quantity: true,
-                isDeleted: true
+                date: true
+                // isDeleted: true
               }
             }
           }
@@ -1649,29 +1653,30 @@ export async function getInventoriesByBook(req, res) {
 
     let inventoriesByBook = []
     let extraImpressionsByBook = [];
+    //Prepping extraImpressions data
+    function determineExtraImpressions(extraImpressionsByBook, inventoryImpressions, title) {
+      let extraImpressionsTotal = 0;
+      let extraImpressions = inventoryImpressions.slice(1)
+      if (extraImpressions.length > 0) {
+        for (const impression of extraImpressions) {
+          extraImpressionsTotal += impression.quantity
+        }
+      }
+
+      extraImpressionsByBook.push({
+        "name": title,
+        "extraImpressions": extraImpressionsTotal
+      })
+    }
+
     for (const inventory of inventories) {
       let sold = 0;
 
-      //Prepping extraImpressions data
-      function determineExtraImpressions(extraImpressionsByBook) {
-        let extraImpressionsTotal = 0;
-        let extraImpressions = inventory.book.impressions.slice(1)
-        if (extraImpressions.length > 1) {
-          for (const impression of extraImpressions) {
-            if (!impression.isDeleted) {
-              extraImpressionsTotal += impression.quantity
-            }
-          }
-        }
-
-        extraImpressionsByBook.push({
-          "name": inventory.book.title,
-          "extraImpressions": extraImpressionsTotal
-        })
-      }
+      const inventoryImpressions = inventory.book.impressions
+      const inventoryTitle = inventory.book.title
 
       if (extraImpressionsByBook.length === 0) {
-        determineExtraImpressions(extraImpressionsByBook)
+        determineExtraImpressions(extraImpressionsByBook, inventoryImpressions, inventoryTitle)
       }
 
       for (const entry of extraImpressionsByBook) {
@@ -1680,7 +1685,7 @@ export async function getInventoriesByBook(req, res) {
         }
       }
 
-      determineExtraImpressions(extraImpressionsByBook);
+      determineExtraImpressions(extraImpressionsByBook, inventoryImpressions, inventoryTitle);
 
       for (const sale of inventory.sales) {
         if (sale.isDeleted === false) {
@@ -1693,12 +1698,13 @@ export async function getInventoriesByBook(req, res) {
           "id": inventory.bookId,
           "type": "book",
           "name": inventory.book.title,
-          "initial": inventory.initial,
+          "initial": inventory.bookstoreId === 1 ? inventory.book.impressions[0].quantity : 0,
           "sold": sold,
           "current": inventory.current,
           "returns": inventory.returns,
           "givenToAuthor": inventory.givenToAuthor
         })
+
         continue;
       };
 
@@ -1712,6 +1718,10 @@ export async function getInventoriesByBook(req, res) {
           if (bookInventory.givenToAuthor === 0) {
             bookInventory.givenToAuthor += inventory.givenToAuthor
           }
+          if (inventory.bookstoreId === 1) {
+            bookInventory.initial = inventory.book.impressions[0].quantity
+          }
+
           existingBook = true
         }
       }
@@ -1721,7 +1731,7 @@ export async function getInventoriesByBook(req, res) {
           "id": inventory.bookId,
           "type": "book",
           "name": inventory.book.title,
-          "initial": inventory.initial,
+          "initial": inventory.bookstoreId === 1 ? inventory.book.impressions[0].quantity : 0,
           "sold": sold,
           "current": inventory.current,
           "returns": inventory.returns,

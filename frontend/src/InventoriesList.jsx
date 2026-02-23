@@ -36,6 +36,8 @@ function InventoriesList() {
   const [isInventoryTypeBook, setInventoryType] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false, "returns": true});
 
+  console.log("data", data)
+
   const columns = useMemo(() => [
     // {
     //   header: "Acciones",

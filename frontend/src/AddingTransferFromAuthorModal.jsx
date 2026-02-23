@@ -56,7 +56,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     const dateToUse = deliveryDate === "" ? new Date().toISOString() : deliveryDate
     const properDate = DateTime
       .fromISO(dateToUse, {zone: "America/Mexico_City"})
-      .set({ hour: 12, minute: 0, second: 0})
+      // .set({ hour: 12, minute: 0, second: 0})
       .toUTC()
     return properDate
   }

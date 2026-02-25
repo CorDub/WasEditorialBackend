@@ -84,10 +84,6 @@ function InventoryTotal({
     openModal("adding", book);
   };
 
-  console.log("type", type)
-  console.log("selectedBookstore", selectedBookstore)
-  console.log("selectedBook", selectedBook)
-
   return(
     <>
       {type === "" ?

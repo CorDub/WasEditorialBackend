@@ -2,7 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { convertISOString } from "../../backend/utils";
+import { convertISOString, toLocalISODate } from "../../backend/utils";
 
 function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -245,7 +245,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
             className="global-input"
             ref={dateCutRef}
             onChange={(e) => setDateCut(e.target.value)}
-            value={convertISOString(dateCut)}></input>
+            value={toLocalISODate(dateCut)}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Fecha de pago</label>
@@ -254,7 +254,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
             className="global-input"
             ref={datePayRef}
             onChange={(e) => setDatePay(e.target.value)}
-            value={convertISOString(datePay)}></input>
+            value={toLocalISODate(datePay)}></input>
         </div>
         <input type="text" placeholder="Regalías*" className="global-input"
           inputMode="numeric"

@@ -20,12 +20,14 @@ function DateRange({
       <input
         className="global-input dr-input"
         type="date"
-        value={convertISOString(startDate)}
+        // value={convertISOString(startDate)}
+        value={toLocalISODate(startDate)}
         onChange={(e) => setStartDate(avoidTimeshift(e.target.value))}></input>
       <input
         className="global-input dr-input"
         type="date"
-        value={convertISOString(endDate)}
+        // value={convertISOString(endDate)}
+        value={toLocalISODate(endDate)}
         onChange={(e) => setEndDate(avoidTimeshift(e.target.value))}></input>
     </div>
   )

@@ -315,8 +315,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             inputMode="numeric"
             pattern="[0-9]*"
             onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
-            onChange={(e) => setDate(e.target.value)}
-            value={mexicoDate(date, "middday")}></input>
+            onChange={(e) => setDate(mexicoDate(e.target.value, "midday"))}
+            value={mexicoDate(date, "middday")}
+            ></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

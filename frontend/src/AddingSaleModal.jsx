@@ -237,6 +237,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
+      console.log("date", date)
       const response = await fetch(`${baseURL}/api/admin/sale`, {
         method: "POST",
         headers: {

@@ -1,29 +1,23 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import Navbar from "./Navbar";
 import Alert from "./Alert";
-import Modal from "./Modal";
 import LoadingWheel from "./LoadingWheel";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import UserContext from './UserContext';
-import TableActions from "./TableActions";
 import BookstoreInventory from './BookstoreInventory';
 import BookInventory from './BookInventory';
+import InventoryWASTotal from './InventoryWASTotal';
 
 function InventoriesList() {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [wasData, setWasData] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("bookstore");
-  const [modalAction, setModalAction] = useState('');
-  const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  const [isTableActionsOpen, setTableActionsOpen] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
@@ -34,69 +28,96 @@ function InventoriesList() {
   const [isSpecificBookstoreOpen, setSpecificBookstoreOpen] = useState(false);
   const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
   const [isInventoryTypeBook, setInventoryType] = useState(false)
-  const [columnVisibility, setColumnVisibility] = useState({"extraImpressions": false, "returns": true});
+  const [columnVisibility, setColumnVisibility] = useState({
+    "name": true,
+    "initial": true,
+    "extraImpressions": true, 
+    "copias": false,
+    "returns": true,
+    "entregadosDelAutor": true,
+    "entregadosAlAutor": true,
+    "transfers": true,
+    "ventas": true,
+  });
 
+  console.log("data", data)
+  
   const columns = useMemo(() => [
     {
       header: "Nombre",
       accessorKey: "name",
       maxSize: 200,
-      Cell: ({row}) => (
+      Cell: ({row}) => {
+        return (
         <div
           onClick={() => openSpecifics(row.original.type, row.original.id)}
           className="table-clickable-row">
           {row.original.name}
         </div>
-      )
+      )}
     },
     {
-      header: "Copias",
+      header: "Impresión / Ingreso inicial",
       size: 100,
       accessorKey: "initial",
       Cell: ({row}) => {
         return (
-          row.original.type === "bookstore" && row.original.bookstoreId === 1 ?
-          row.original.initial + row.original.extraImpressions :
-          row.original.initial
+          row.original.impressionInicial || row.original.transferInicial
         )
       }
     },
     {
-      header: "Nuevas impresiónes",
+      header: "Nuevas impresiónes / ingresos",
       size: 100,
       accessorKey: "extraImpressions",
+      Cell: ({row}) => {
+        return (row.original.extraImpressions || row.original.extraTransfers || '-')
+      }
+    },
+    {
+      header: "Copias",
+      accessorKey: "copias",
+      size: 100
+    },
+    {
+      header: "Entregados del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 100,
+      Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
+    },
+    {
+      header: "Ingresados a otras librerias",
+      accessorKey: "transfers",
+      size: 100,
+      Cell: ({row}) => ( row.original.transfers || "-")
     },
     {
       header: "Vendidos",
       size: 100,
-      accessorKey: "sold",
+      accessorKey: "ventas",
     },
     {
       header: "Devueltos",
       size: 100,
       accessorKey: "returns",
       Cell: ({row}) => (
-        // <div>{row.original.id === 1
-        //       ? `+ ${row.original.returns}`
-        //       : `- ${row.original.returns}`}</div>
-        <div>{row.original.returns === 0 ? 0 : row.original.id === 1 && row.original.type === "bookstore" ? `+ ${row.original.returns}` : `- ${row.original.returns}`}</div>
+        <div>{row.original.returns === 0 
+          ? "-"
+          : row.original.type === "bookstore" && row.original.id === 1 
+            ? `+ ${row.original.returns}` 
+            : `- ${row.original.returns}`}</div>
       )
     },
     {
       header: "Entregados al autor",
       size: 100,
-      accessorKey: "givenToAuthor"
+      accessorKey: "entregadosAlAutor",
+      Cell: ({row}) => ( row.original.entregadosAlAutor || "-")
     },
     {
       header: "Disponibles",
       size: 100,
-      Cell: ({row}) => (
-        row.original.type === "book" ?
-          <div>{row.original.initial + row.original.extraImpressions - row.original.sold - row.original.givenToAuthor}</div> :
-          <div>{row.original.id === 1 ?
-            row.original.initial - row.original.sold + row.original.returns - row.original.givenToAuthor:
-            row.original.initial - row.original.sold - row.original.returns - row.original.givenToAuthor}</div>
-      )
+      accessorKey: "disponibles"
     },
   ], []);
   const table = useMaterialReactTable({
@@ -105,19 +126,23 @@ function InventoriesList() {
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <div
-          className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button non-clickable"}
-          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
-          onClick={() => isInventoryTypeBook && toggleInventoriesType()}>
-            Inventarios por librería</div>
-        <div
-          className={isInventoryTypeBook ? "blue-button non-clickable" : "blue-button-inactive"}
-          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
-          onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
-            Inventarios por libro</div>
-      </div>
-
+      <>
+        <div className="table-button-inventories">
+          <div className="table-add-button">
+            <div
+              className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button non-clickable"}
+              style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+              onClick={() => isInventoryTypeBook && toggleInventoriesType()}>
+                Inventarios por librería</div>
+            <div
+              className={isInventoryTypeBook ? "blue-button non-clickable" : "blue-button-inactive"}
+              style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+              onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
+                Inventarios por libro</div>
+          </div>
+          {/* <InventoryWASTotal wasData={wasData}/> */}
+        </div>
+      </>
     ),
     initialState: {
       density: 'compact',
@@ -176,7 +201,7 @@ function InventoriesList() {
   async function openSpecifics(type, id) {
     try {
       if (type === "bookstore") {
-        const response = await fetch(`${baseURL}/api/admin/inventoriesByBookstore/${id}`, {
+        const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -190,7 +215,7 @@ function InventoriesList() {
           setSpecificBookstoreOpen(true);
         }
       } else if (type === "book") {
-        const response = await fetch(`${baseURL}/api/admin/inventoriesByBook/${id}`, {
+        const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -212,7 +237,7 @@ function InventoriesList() {
 
   async function getBookstoreInventories() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/inventoriesByBookstore`, {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -223,6 +248,8 @@ function InventoriesList() {
       if (response.ok) {
         const data = await response.json();
         setData(data);
+        const wasData = data.find(el => el.name === "WAS Editorial")
+        setWasData(wasData);
       }
     } catch (error) {
       console.log(error)
@@ -235,7 +262,7 @@ function InventoriesList() {
 
   async function getBookInventories() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/inventoriesByBook`, {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook`, {
         method: "GET",
         header: {
           "Content-Type": "application/json"
@@ -258,10 +285,30 @@ function InventoriesList() {
     setInventoryType(newType);
     if (newType) {
       getBookInventories();
-      setColumnVisibility((prev) => ({...prev, extraImpressions: true, returns: false}))
+      setColumnVisibility((prev) => ({
+        "name": true,
+        "initial": true,
+        "extraImpressions": true, 
+        "copias": false,
+        "returns": false,
+        "entregadosDelAutor": true,
+        "entregadosAlAutor": true,
+        "transfers": false,
+        "ventas": true,
+      }))
     } else {
       getBookstoreInventories();
-      setColumnVisibility((prev) => ({...prev, extraImpressions: false, returns: true}))
+      setColumnVisibility((prev) => ({
+        "name": true,
+        "initial": true,
+        "extraImpressions": true, 
+        "copias": false,
+        "returns": true,
+        "entregadosDelAutor": true,
+        "entregadosAlAutor": true,
+        "transfers": true,
+        "ventas": true,
+      }))
     }
   }
 

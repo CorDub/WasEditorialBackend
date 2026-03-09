@@ -371,9 +371,16 @@ export function mexicoDate(ingressDate, period) {
     .endOf("day")
     .toUTC()
     .toJSDate();
+  // } else if (period === "midday") {
+  //   date = DateTime
+  //   .fromFormat(ingressDate, "yyyy-MM-dd", {zone:"America/Mexico_City"})
+  //   .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+  //   .toUTC()
+  //   .toJSDate();
   } else if (period === "midday") {
     date = DateTime
-    .fromFormat(ingressDate, "yyyy-MM-dd", {zone:"America/Mexico_City"})
+    .fromISO(ingressDate, { zone: "utc" })
+    .setZone("America/Mexico_City")
     .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
     .toUTC()
     .toJSDate();

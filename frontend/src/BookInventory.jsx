@@ -23,6 +23,7 @@ function BookInventory({
   const [inTiendaTotal, setTiendaTotal] = useState(0);
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
+  const [entregadosDelAutorTotal, setEntregadosDelAutorTotal] = useState(0);
   const [data, setData] = useState([]);
   const bookInventoryRef = useRef();
   const [clickedRow, setClickedRow] = useState(null);
@@ -56,6 +57,9 @@ function BookInventory({
     }
   }, [modalType, isModalOpen])
 
+  console.log("specificBook", specificBook)
+  console.log("data", data)
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -80,7 +84,7 @@ function BookInventory({
     },
     {
       header: "Librería",
-      accessorKey:'bookstore.name',
+      accessorKey:'name',
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -90,10 +94,21 @@ function BookInventory({
         }
       }
     },
+    // {
+    //   header: "Inicial",
+    //   accessorKey: "inicial"
+    // },
+    // {
+    //   header: "Nuevos ingresos",
+    //   accessorKey: "extraTransfers",
+    //   Cell: ({row}) => {
+    //     return (<div>{row.original.extraTransfers || "-"}</div>)
+    //   }
+    // },
     {
       header: "Copías",
       Cell: ({row}) => {
-        return (<div>{row.original.inTienda}</div>)
+        return (<div>{row.original.copias}</div>)
       },
       muiTableBodyCellProps: {
         sx: {
@@ -114,7 +129,7 @@ function BookInventory({
     {
       header: "Vendidos",
       Cell: ({row}) => {
-        return (<div>{row.original.totalSales}</div>)
+        return (<div>{row.original.ventas}</div>)
       },
       muiTableBodyCellProps: {
         sx: {
@@ -132,8 +147,8 @@ function BookInventory({
           row.original.returns === 0 ?
           0 :
             row.original.bookstoreId === 1 ?
-            ` + ${row.original.returns}` :
-            ` - ${row.original.returns}`
+            `+ ${row.original.returns}` :
+            `- ${row.original.returns}`
           }</div>
       ),
       muiTableBodyCellProps: {
@@ -148,7 +163,7 @@ function BookInventory({
     {
       header: "Entregados al autor",
       Cell: ({row}) => (
-        <div>{row.original.givenToAuthor}</div>
+        <div>{row.original.entregadosAlAutor}</div>
       ),
       muiTableBodyCellProps: {
         sx: {
@@ -162,7 +177,7 @@ function BookInventory({
     {
       header: "Disponibles",
       Cell: ({row}) => (
-        <div>{row.original.current}</div>
+        <div>{row.original.disponibles}</div>
       ),
       muiTableBodyCellProps: {
         sx: {
@@ -231,22 +246,23 @@ function BookInventory({
 
   useEffect(() => {
     if (specificBook) {
-      setData(specificBook.sortedRelevantInventories)
-      setSelectedBook(specificBook.name)
-      setSelectedBookId(specificBook.id)
-      setCurrentTotal(specificBook.currentTotal)
-      setInitialTotal(specificBook.initialTotal)
-      setTiendaTotal(specificBook.overallInTiendaTotal)
-      setSoldTotal(specificBook.soldTotal)
-      setGivenToAuthorTotal(specificBook.givenToAuthorTotal)
-      setReturnsTotal(specificBook.returnsTotal)
-      setImpressions(specificBook.thatBookImpressions)
+      setData(specificBook.specifics)
+      setSelectedBook(specificBook.total.name)
+      setSelectedBookId(specificBook.total.id)
+      setCurrentTotal(specificBook.total.disponibles)
+      setInitialTotal(specificBook.total.impressionInicial)
+      setTiendaTotal(specificBook.total.copias)
+      setSoldTotal(specificBook.total.ventas)
+      setGivenToAuthorTotal(specificBook.total.entregadosAlAutor)
+      setReturnsTotal(specificBook.total.returns)
+      setImpressions(specificBook.total.thatBookImpressions)
+      setEntregadosDelAutorTotal(specificBook.total.entregadosDelAutor)
     }
   }, [specificBook])
 
   async function getBookInventories() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/inventoriesByBook/${selectedBookId}`, {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook/${selectedBookId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -255,20 +271,22 @@ function BookInventory({
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setData(data.sortedRelevantInventories);
-        setSelectedBook(data.name)
-        setSelectedBookId(data.id)
-        setCurrentTotal(data.currentTotal);
-        setInitialTotal(data.initialTotal);
-        setSoldTotal(data.soldTotal);
-        setGivenToAuthorTotal(data.givenToAuthorTotal);
-        setReturnsTotal(data.returnsTotal);
-        setImpressions(data.thatBookImpressions);
+        const data = await response.json()
+        setData(data.specifics);
+        setSelectedBook(data.total.name)
+        setSelectedBookId(data.total.id)
+        setCurrentTotal(data.total.disponibles)
+        setInitialTotal(data.total.impressionInicial)
+        setTiendaTotal(data.total.copias)
+        setSoldTotal(data.total.ventas)
+        setGivenToAuthorTotal(data.total.entregadosAlAutor)
+        setReturnsTotal(data.total.returns)
+        setImpressions(data.thatBookImpressions)
+        setEntregadosDelAutorTotal(specificBook.total.entregadosDelAutor)
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -323,6 +341,7 @@ function BookInventory({
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
         soldTotal={soldTotal}
+        entregadosDelAutorTotal={entregadosDelAutorTotal}
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}

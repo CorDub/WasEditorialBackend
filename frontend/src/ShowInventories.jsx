@@ -118,6 +118,8 @@ function ShowInventories({
     setLegendDisplays(options[name]);
   }
 
+  console.log("inventories", inventories)
+
   return (
     inventories && (
       <div id='show-inventory-container'>

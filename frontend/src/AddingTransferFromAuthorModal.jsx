@@ -73,7 +73,8 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           quantity: quantity,
           id: clickedRow.bookId,
           note: "- Entrega del autor - " + note,
-          deliveryDate: properDate(deliveryDate)
+          deliveryDate: properDate(deliveryDate),
+          authorDelivery: true
         }),
       });
 
@@ -99,7 +100,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     <div className="modal-proper">
       <div className="form-title">
         <p>Nueva entrega del autor</p>
-        <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
       <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor está considerada como una impresión y sera visible en las impresiónes.</p>
       <form

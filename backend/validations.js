@@ -298,6 +298,9 @@ export function validateInput(inputName, inputValue) {
       ["type", "number"],
       ["minimum", 0],
       ["maximum", 100]
+    ],
+    "authorDelivery": [
+      ["type", "boolean"]
     ]
   }
 

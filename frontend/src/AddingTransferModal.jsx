@@ -18,6 +18,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
+
+  console.log("clickedRow", clickedRow)
   
   useEffect(() => {
     if (clickedRow.bookstoreId === 1) {
@@ -268,6 +270,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     return errorsList
   }
 
+  console.log("clickedRow", clickedRow)
+
   async function sendToServer() {
     try {
       for (let i = 0; i < bookstoresToTransfer.length; i++) {
@@ -317,7 +321,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     <div className="modal-proper">
       <div className="form-title">
         <p>{transferType && transferType === "send" ? 'Ingreso a librería' : 'Nueva devolución'}</p>
-        <p className="form-subtitle">{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.name }</p>
       </div>
       <div className="campos-obligatorios">
         <p>*Campos obligatorios</p>

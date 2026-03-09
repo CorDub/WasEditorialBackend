@@ -1,8 +1,9 @@
 import { validateInput } from "./validations.js"
 import crypto from 'crypto';
 import { execSync } from "node:child_process";
+import { getForMonth } from "./utils.js";
 
-export async function createAuthor(
+export async function createAuthorFull(
   prisma,
   {
     first_name = null,
@@ -51,10 +52,10 @@ export async function createAuthor(
   return newAuthor
 }
 
-export async function createCategory(
+export async function createCategoryFull(
   prisma,
   {
-    number = 1,
+    number = null,
     category_type = "regalias",
     management_min = 180,
     rebate_author = 5,
@@ -65,10 +66,11 @@ export async function createCategory(
   } = {}
 ) {
   // const finalNumber = number === null ? `catType_${crypto.randomUUID()}` : number;
+  const numOfCategories = await prisma.category.count()
 
   const newCategory = await prisma.category.create({
     data: {
-      number: number,
+      number: number ? number : numOfCategories + 1,
       category_type: category_type,
       management_min: management_min,
       rebate_author: rebate_author,
@@ -82,27 +84,37 @@ export async function createCategory(
   return newCategory
 }
 
-export async function createBook(
+export async function createBookFull(
   prisma,
-  userList,
   {
+    userList = null,
     title = null,
     categoryId = 1,
     isDeleted = false,
-    mainAuthor = userList[0],
-    createdAt = new Date()
+    mainAuthor = null,
+    createdAt = new Date(),
   } = {}
 ) {
-  const validUserList = []
-  for (const element of userList) {
-    validUserList.push({"id": element});
+  let validUserList = []
+  if (!userList) {
+    const author = await createAuthorFull(prisma)
+    validUserList = [{"id": author.id}]
+  } else {
+    for (const element of userList) {
+      validUserList.push({"id": element});
 
-    if (!element || validateInput("id", element).length > 0) {
-      console.log("incorrect user list - you didn't send Ids")
-      return;
+      if (!element || validateInput("id", element).length > 0) {
+        console.log("incorrect user list - you didn't send Ids")
+        return;
+      }
     }
   }
+  const mainAuthorSafe = mainAuthor ? mainAuthor : validUserList[0]
   const uniqueTitle = title === null ? `title_${crypto.randomUUID()}` : title;
+  let categorySafe = await prisma.category.findUnique({where: {id: categoryId}})
+  if (!categorySafe) {
+    categorySafe = await createCategoryFull(prisma)
+  }
 
   const newBook = await prisma.book.create({
     data: {
@@ -110,9 +122,9 @@ export async function createBook(
       users: {
         connect: validUserList
       },
-      mainAuthor: mainAuthor,
+      mainAuthor: mainAuthorSafe,
       category: {
-        connect: {"id": categoryId}
+        connect: {"id": categorySafe.id}
       },
       isDeleted: isDeleted,
       createdAt : createdAt
@@ -122,7 +134,7 @@ export async function createBook(
   return newBook
 }
 
-export async function createBookstore(
+export async function createBookstoreFull(
   prisma,
   {
     name = null,
@@ -151,11 +163,11 @@ export async function createBookstore(
   return newBookstore;
 }
 
-export async function createInventory(
+export async function createInventoryFull(
   prisma,
-  bookId,
-  bookstoreId,
   {
+    bookId = null,
+    bookstoreId = null,
     initial = 1000,
     current = 1000,
     returns = 0,
@@ -165,10 +177,20 @@ export async function createInventory(
     createdAt = new Date()
   } = {}
 ) {
+  let bookSafe = bookId
+  if (!bookSafe) {
+    bookSafe = await createBook()
+  }
+
+  let bookstoreSafe = bookstoreId
+  if (!bookstoreSafe) {
+    bookstoreSafe = await createBookstoreFull()
+  }
+
   const newInventory = await prisma.inventory.create({
     data: {
-      bookId: bookId,
-      bookstoreId: bookstoreId,
+      bookId: bookId ? bookId : bookSafe.id,
+      bookstoreId: bookstoreId ? bookstoreId : bookstoreSafe.id,
       initial: initial,
       current: current,
       isDeleted: isDeleted,
@@ -182,11 +204,11 @@ export async function createInventory(
   return newInventory;
 }
 
-export async function createPayment (
+export async function createPaymentFull(
   prisma,
-  userId,
-  forMonth,
   {
+    userId = null,
+    forMonth = null,
     dateMarkedAsPaid = null,
     status = "created",
     isDeleted = false,
@@ -194,10 +216,20 @@ export async function createPayment (
     updatedAt = new Date(),
   } = {}
 ) {
+  let userSafe;
+  if (!userId) {
+    userSafe = await createAuthorFull()
+  }
+
+  let forMonthSafe;
+  if (!forMonth) {
+    forMonthSafe = getForMonth(new Date()) 
+  }
+
   const newPayment = await prisma.payment.create({
     data: {
-      userId: userId,
-      forMonth: forMonth,
+      userId: userId ? userId : userSafe.id,
+      forMonth: forMonth ? forMonth : forMonthSafe,
       dateMarkedAsPaid: dateMarkedAsPaid,
       status: status,
       isDeleted: isDeleted,
@@ -210,30 +242,40 @@ export async function createPayment (
   return newPayment;
 }
 
-export async function createSale(
+export async function createSaleFull(
   prisma,
-  inventoryId,
-  paymentsIdList,
   {
+    inventoryId = null,
+    paymentsIdList = null,
     quantity = 10,
     isDeleted = false,
     date = new Date(),
     createdAt = new Date()
   } = {}
 ) {
-  const validPaymentIdList = []
-  for (const element of paymentsIdList) {
-    validPaymentIdList.push({"id": element})
+  let validPaymentIdList = []
+  if (!paymentsIdList) {
+    const payment = await createPayment()
+    validPaymentIdList = [{"id": payment.id}]
+  } else {
+    for (const element of paymentsIdList) {
+      validPaymentIdList.push({"id": element})
 
-    if (!element || validateInput("id", element).length > 0) {
-      console.log("incorrect payments id list - you didn't pass payment IDs")
-      return;
+      if (!element || validateInput("id", element).length > 0) {
+        console.log("incorrect payments id list - you didn't pass payment IDs")
+        return;
+      }
     }
   }
 
+  let inventorySafe;
+  if (!inventoryId) {
+    inventorySafe = await createInventoryFull()
+  }
+  
   const newSale = await prisma.sale.create({
     data: {
-      inventoryId: inventoryId,
+      inventoryId: inventoryId ? inventoryId : inventorySafe,
       payments: {
         connect: validPaymentIdList
       },
@@ -247,11 +289,11 @@ export async function createSale(
   return newSale;
 }
 
-export async function createKindleSale(
+export async function createKindleSaleFull(
   prisma,
-  bookId,
-  paymentsIdList,
   {
+    bookId = null,
+    paymentsIdList = null,
     datePay = null,
     quantityEbook = 100,
     quantityPod = 100,
@@ -264,19 +306,29 @@ export async function createKindleSale(
   const validDateCut = new Date(validDatePay);
   validDateCut.setMonth(validDateCut.getMonth() - 2);
 
-  const validPaymentIdList = []
-  for (const element of paymentsIdList) {
-    validPaymentIdList.push({"id": element})
+  let validPaymentIdList = []
+  if (!paymentsIdList) {
+    const payment = await createPaymentFull()
+    validPaymentIdList = [{"id": payment.id}]
+  } else {
+    for (const element of paymentsIdList) {
+      validPaymentIdList.push({"id": element})
 
-    if (!element || validateInput("id", element).length > 0) {
-      console.log("incorrect payments id list - you didn't pass Ids")
-      return;
+      if (!element || validateInput("id", element).length > 0) {
+        console.log("incorrect payments id list - you didn't pass payment IDs")
+        return;
+      }
     }
+  }
+
+  let bookSafe;
+  if (!bookId) {
+    bookSafe = await createBook()
   }
 
   const newKindleSale = await prisma.kindleSale.create({
     data: {
-      bookId: bookId,
+      bookId: bookId ? bookId : bookSafe.id,
       payments: {
         connect: validPaymentIdList
       },
@@ -293,21 +345,26 @@ export async function createKindleSale(
   return newKindleSale
 }
 
-export async function createImpression(
+export async function createImpressionFull(
   prisma,
-  bookId,
   {
+    bookId = null,
     quantity = 1000,
     isDeleted=false,
     note=null,
     date=new Date(),
     createdAt = new Date(),
-    authorDelivery = false
+    authorDelivery = false,
   } = {}
 ) {
+  let bookSafe;
+  if (!bookId) {
+    bookSafe = await createBook()
+  }
+
   const newImpression = await prisma.impression.create({
     data: {
-      bookId: bookId,
+      bookId: bookId ? bookId : bookSafe,
       quantity: quantity,
       isDeleted: isDeleted,
       note: note,
@@ -320,10 +377,10 @@ export async function createImpression(
   return newImpression
 }
 
-export async function createTransfer(
+export async function createTransferFull(
   prisma,
-  fromInventoryId,
   {
+    fromInventoryId=null,
     toInventoryId=null,
     quantity=100,
     type="send",
@@ -335,14 +392,19 @@ export async function createTransfer(
     createdAt=new Date()
   } = {}
 ) {
+  let fromInventorySafe;
+  if (!fromInventoryId) {
+    fromInventorySafe = await createInventoryFull()
+  }
+
   const newTransfer = await prisma.transfer.create({
     data: {
-      fromInventoryId: fromInventoryId,
+      fromInventoryId: fromInventoryId ? fromInventoryId : fromInventorySafe,
       quantity: quantity,
       toInventoryId: toInventoryId,
       type: type,
       note: note,
-      deliveryDate: deliveryDate ? deliveryDate : new Date(),
+      deliveryDate: deliveryDate,
       place: place,
       person: person,
       isDeleted: isDeleted,
@@ -353,11 +415,11 @@ export async function createTransfer(
   return newTransfer;
 }
 
-export async function createCost(
+export async function createCostFull(
   prisma,
-  paymentId,
-  bookId,
   {
+    paymentId = null,
+    bookId = null,
     amount = 100,
     note = null,
     date = new Date(),
@@ -365,10 +427,20 @@ export async function createCost(
     createdAt = new Date()
   } = {}
 ) {
+  let paymentSafe;
+  if (!paymentId) {
+    paymentSafe = await createPaymentFull()
+  } 
+
+  let bookSafe;
+  if (!bookId) {
+    bookSafe = await createBook()
+  }
+
   const newCost = await prisma.cost.create({
     data: {
-      paymentId: paymentId,
-      bookId: bookId,
+      paymentId: paymentId ? paymentId : paymentSafe.id,
+      bookId: bookId ? bookId : bookSafe.id,
       amount: amount,
       note: note,
       date: date,

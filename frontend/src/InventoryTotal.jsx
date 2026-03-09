@@ -9,6 +9,7 @@ import "./InventoryTotal.scss";
 
 function InventoryTotal({
     selectedBookstore,
+    selectedBookstoreId,
     selectedBookstoreNoSpaces,
     selectedLogo,
     currentTotal,
@@ -17,6 +18,9 @@ function InventoryTotal({
     returnsTotal,
     givenToAuthorTotal,
     soldTotal,
+    entregadosDelAutorTotal,
+    transfersTotal,
+    extraTransfersTotal,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
     selectedBook,
@@ -36,12 +40,6 @@ function InventoryTotal({
   const [isImpressionsOpen, setImpressionsOpen] = useState(false);
   const [book, setBook] = useState(null);
   const [isAddingImpressionTooltipHovered, setAddingImpressionTooltipHovered] = useState(false);
-
-  // import only the logo you need based on the name
-  // useEffect(() => {
-  //   import (`./assets/${selectedBookstoreNoSpaces}.png`)
-  //     .then((image) => setLogo(image.default));
-  // }, [selectedBookstoreNoSpaces])
 
   //assign name based on either bookstore name or book title
   useEffect(() => {
@@ -67,8 +65,6 @@ function InventoryTotal({
 
   function returnToInventoriesAreaDashboard() {
     if (type === "book") {
-      // setBookInventoryOpen(false);
-      // setRetreat(false);
       setSpecificBookOpen(false);
     } else {
       setSpecificBookstoreOpen(false);
@@ -126,19 +122,30 @@ function InventoryTotal({
                   Impresiónes: {impressions.length}
                 </div>
               </div>)}
-            <div className="inventory-total-details">Inicial: {initialTotal ? initialTotal: initialTotal}</div>
+            <div className="inventory-total-details">Inicial: {initialTotal}</div>
             {extraImpressions > 0 &&
               <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
+            {(type === "bookstore" && selectedBookstoreId !== 1) &&
+              <div className="inventory-total-details">Nuevos ingresos: {extraTransfersTotal}</div>
+            }
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
+            }
+            {(type === "book") &&
+              <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
+            }
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Transferidos: {transfersTotal}</div>
+            }
             {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
             <div className="inventory-total-details">Vendidos: {soldTotal}</div>
-            {(type === "bookstore" && selectedBookstore === "WAS Editorial") &&
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
               <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
             }
             {type === "book" &&
               <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
             }
             <div className="inventory-total-details">Disponibles: {
-              // initialTotal + extraImpressions - soldTotal - givenToAuthorTotal
               currentTotal
               }</div>
             <div className="bookstore-progress-return">

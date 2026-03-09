@@ -160,15 +160,16 @@ model KindleSale {
 }
 
 model Impression {
-  id        Int      @id @default(autoincrement())
-  book      Book     @relation(fields: [bookId], references: [id])
-  bookId    Int
-  quantity  Int
-  note      String?
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  date      DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  book           Book     @relation(fields: [bookId], references: [id])
+  bookId         Int
+  quantity       Int
+  note           String?
+  authorDelivery Boolean  @default(false)
+  isDeleted      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  date           DateTime @default(now())
 }
 
 model Transfer {

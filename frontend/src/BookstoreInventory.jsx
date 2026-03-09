@@ -26,6 +26,9 @@ function BookstoreInventory({
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
+  const [entregadosDelAutorTotal, setEntregadosDelAutorTotal] = useState(0);
+  const [transfersTotal, setTransfersTotal] = useState(0);
+  const [extraTransfersTotal, setExtraTransfersTotal] = useState(0);
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -37,12 +40,25 @@ function BookstoreInventory({
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState({
-    "impressions": false, 
-    "entregasAlAutor": false});
+    "name": true,
+    "initial": true,
+    "impressions": true, 
+    "extraTransfers": false,
+    "copias": false,
+    "returns": true,
+    "entregadosDelAutor": true,
+    "entregadosAlAutor": true,
+    "transfers": true,
+    "ventas": true,
+  });
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 30
   })
+
+  console.log("specificBookstore", specificBookstore)
+  console.log("selectedBookstoreId", selectedBookstoreId)
+  console.log("data", data)
 
   const columns = useMemo(() => [
     {
@@ -60,66 +76,18 @@ function BookstoreInventory({
             type={"inventory"}/>
         </div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          overflow: 'visible'
-        }
-      }
     },
     {
       header: "Libro",
       maxSize: 200,
-      accessorKey:'book.title',
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
+      accessorKey:'name',
     },
-    // {
-    //   header: "Precio",
-    //   accessorKey:"price",
-    //   muiTableHeadCellProps: {
-    //     sx: {
-    //       width: '3%'
-    //     }
-    //   },
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       width: '3%',
-    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-    //     }
-    //   }
-    // },
     {
       header: "Inicial",
-      size: 50,
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => {
-        return (<div>{row.original.initial}</div>)
+        return (<div>{row.original.inicial}</div>)
       },
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
     },
     {
       id: "impressions",
@@ -128,129 +96,52 @@ function BookstoreInventory({
       Cell: ({row}) => {
         return (<div>{row.original.extraImpressions}</div>)
       },
-       muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
+    },
+    {
+      header: "Nuevos ingresos",
+      accessorKey: "extraTransfers",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null
+    },
+    {
+      header: "Entregados del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 50
+    },
+    {
+      header: "Ingresados a otra librerías",
+      accessorKey: "transfers",
+      size: 50
     },
     {
       header: "Devueltos",
-      size: 50,
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => (
         <div>{row.original.returns}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
     },
     {
       header: "Vendidos",
-      size: 50,
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => {
-        return (<div>{row.original.totalSales}</div>)
+        return (<div>{row.original.ventas}</div>)
       },
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
     },
     {
-      id: "entregasAlAutor",
+      id: "entregadosAlAutor",
       size: 50,
       header: "Entregados al autor",
       Cell: ({row}) => (
-        <div>{row.original.givenToAuthor}</div>
+        <div>{row.original.entregadosAlAutor}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
     },
     {
+      id: "disponibles",
       header: "Disponibles",
-      size: 50,
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => (
-        <div>{selectedBookstoreId === 1 
-          ? row.original.current + row.original.returns
-          : row.original.current - row.original.returns}</div>
+        <div>{row.original.disponibles}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '3%',
-          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-        }
-      }
     },
-    // {
-    //   header: "País",
-    //   accessorKey: "country",
-    //   muiTableHeadCellProps: {
-    //     sx: {
-    //       width: '3%'
-    //     }
-    //   },
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       width: '3%',
-    //       fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
-    //     }
-    //   }
-    // },
-    // {
-    //   header: "Progreso",
-    //   Cell: ({row}) => (
-    //     <ProgressBar
-    //       current={row.original.current}
-    //       initial={row.original.initial}
-    //       returns={row.original.returns}
-    //       sold={row.original.totalSales}
-    //       given={row.original.givenToAuthor} />
-    //   ),
-    //   muiTableHeadCellProps: {
-    //     sx: {
-    //       width: '10%'
-    //     }
-    //   },
-    //   muiTableBodyCellProps: {
-    //     sx: {
-    //       width: '10%',
-    //     }
-    //   }
-    // }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
@@ -262,11 +153,6 @@ function BookstoreInventory({
     enablePagination: true,
     enableFullScreenToggle: false,
     enableRowVirtualization: false,
-    // renderTopToolbarCustomActions: () => (
-    //   <div className="table-add-button">
-    //     <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
-    //   </div>
-    // ),
     initialState: {
       density: 'compact',
     },
@@ -332,27 +218,46 @@ function BookstoreInventory({
 
   useEffect(() => {
     if (specificBookstore) {
-      setData(specificBookstore.sortedRelevantInventories)
-      setSelectedBookstoreId(specificBookstore.id)
-      setSelectedBookstore(specificBookstore.name)
-      setCurrentTotal(specificBookstore.currentTotal)
-      setInitialTotal(specificBookstore.initialTotal)
-      setSoldTotal(specificBookstore.soldTotal)
-      setGivenToAuthorTotal(specificBookstore.givenToAuthorTotal)
-      setReturnsTotal(specificBookstore.returnsTotal)
-      setImpressions(specificBookstore.extraImpressionsTotal)
+      setData(specificBookstore.specifics)
+      setSelectedBookstoreId(specificBookstore.total.bookstoreId)
+      setSelectedBookstore(specificBookstore.total.name)
+      setCurrentTotal(specificBookstore.total.disponibles)
+      setInitialTotal(specificBookstore.total.inicial)
+      setSoldTotal(specificBookstore.total.ventas)
+      setGivenToAuthorTotal(specificBookstore.total.entregadosAlAutor)
+      setReturnsTotal(specificBookstore.total.returns)
+      setImpressions(specificBookstore.total.extraImpressions)
+      setEntregadosDelAutorTotal(specificBookstore.total.entregadosDelAutor)
+      setTransfersTotal(specificBookstore.total.transfers)
+      setExtraTransfersTotal(specificBookstore.total.extraTransfers)
 
-      if (specificBookstore.id === 1) {
+      if (specificBookstore.total.bookstoreId === 1) {
         setColumnVisibility(
           {
-            'impressions': true,
-            'entregasAlAutor': true
+            "name": true,
+            "initial": true,
+            "impressions": true, 
+            "extraTransfers": false,
+            "copias": false,
+            "returns": true,
+            "entregadosDelAutor": true,
+            "entregadosAlAutor": true,
+            "transfers": true,
+            "ventas": true,
           })
       } else {
         setColumnVisibility(
           {
-            'impressions': false,
-            'entregasAlAutor': false
+            "name": true,
+            "initial": true,
+            "impressions": false, 
+            "extraTransfers": true,
+            "copias": false,
+            "returns": true,
+            "entregadosDelAutor": false,
+            "entregadosAlAutor": false,
+            "transfers": false,
+            "ventas": true,
           }
         )
       }
@@ -361,7 +266,7 @@ function BookstoreInventory({
 
   async function getBookstoreInventories() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/inventoriesByBookstore/${selectedBookstoreId}`, {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore/${selectedBookstoreId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -371,25 +276,24 @@ function BookstoreInventory({
 
       if (response.ok) {
         const data = await response.json();
-        setData(data.sortedRelevantInventories);
-        setSelectedBookstoreId(data.id)
-        setSelectedBookstore(data.name)
-        setCurrentTotal(data.currentTotal);
-        setInitialTotal(data.initialTotal);
-        setSoldTotal(data.soldTotal);
-        setGivenToAuthorTotal(data.givenToAuthorTotal);
-        setReturnsTotal(data.returnsTotal);
-        setImpressions(data.extraImpressionsTotal)
+        setData(data.specifics)
+        setSelectedBookstoreId(data.total.bookstoreId)
+        setSelectedBookstore(data.total.name)
+        setCurrentTotal(data.total.disponibles)
+        setInitialTotal(data.total.inicial)
+        setSoldTotal(data.total.ventas)
+        setGivenToAuthorTotal(data.total.entregadosAlAutor)
+        setReturnsTotal(data.total.returns)
+        setImpressions(data.total.extraImpressions)
+        setEntregadosDelAutorTotal(data.total.entregadosDelAutor)
+        setTransfersTotal(data.total.transfers)
+        setExtraTransfersTotal(data.total.extraTransfers)
       }
 
     } catch (error) {
       console.log(error)
     }
   }
-
-  // useEffect(() => {
-  //   getBookstoreInventories();
-  // }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -438,6 +342,7 @@ function BookstoreInventory({
       style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
       <InventoryTotal
         selectedBookstore={selectedBookstore}
+        selectedBookstoreId={selectedBookstoreId}
         selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
@@ -445,6 +350,9 @@ function BookstoreInventory({
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
         soldTotal={soldTotal}
+        entregadosDelAutorTotal={entregadosDelAutorTotal}
+        transfersTotal={transfersTotal}
+        extraTransfersTotal={extraTransfersTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
         preferredFontSize={preferredFontSize}

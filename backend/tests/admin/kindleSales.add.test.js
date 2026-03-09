@@ -112,7 +112,8 @@ describe("adding kindle sale with missing parameters", async() => {
         "dateCut": "2025-08-13T00:00:00.000Z",
         "datePay": "2025-10-13T00:00:00.000Z",
         "regalias": 121.5
-      }
+      },
+      prisma: prisma
     }
 
     mockRes = {
@@ -134,6 +135,7 @@ describe("adding kindle sale with missing parameters", async() => {
   })
 
   it("should return status 500", async() => {
+    const authors = await prisma.user.findMany()
     await addKindleSale(mockReq, mockRes);
     expect(mockRes.status).toHaveBeenCalledWith(500);
   })

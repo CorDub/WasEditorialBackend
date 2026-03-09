@@ -4,7 +4,7 @@ function ImpressionsList({impressions, setModalType, openModal, book}) {
 
   return(
     <div className="impressions-list">
-      {impressions.map((impression, index) => (
+      {impressions && impressions.map((impression, index) => (
         <Impression
           key={index}
           impression={impression}

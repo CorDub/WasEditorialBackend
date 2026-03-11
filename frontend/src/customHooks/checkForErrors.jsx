@@ -1,3 +1,5 @@
+import { today } from "../../../backend/utils";
+
 function checkForErrors(
   fieldName,
   fieldValue,
@@ -95,10 +97,17 @@ function checkForErrors(
           };
           addErrorClass(fieldRef);
         } else if (fieldExpectations.range === "no future") {
-          if (new Date(fieldValue) > new Date()) {
-            errorList.push(`${fieldName} no puede estar en el futuro`)
-          };
-          addErrorClass(fieldRef);
+          if (fieldValue.legnth === 10) {
+            if (fieldValue > today()) {
+              errorList.push(`${fieldName} no puede estar el en futuro`)
+            };
+            addErrorClass(fieldRef)
+          } else {
+            if (new Date(fieldValue) > new Date()) {
+              errorList.push(`${fieldName} no puede estar en el futuro`)
+            };
+            addErrorClass(fieldRef);
+          }
         }
         break;
 

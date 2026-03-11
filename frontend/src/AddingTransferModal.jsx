@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import Tooltip from "./Tooltip";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+// import Tooltip from "./Tooltip";
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import "./AddingTransferModal.scss"
+import { today } from "../../backend/utils.js";
 
 function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -13,13 +14,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [bookstoresToTransfer, setBookstoresToTransfer] = useState([null]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [bookstoreNamesList, setBookstoresNamesList] = useState([]);
-  const [tooltipMessage, setTooltipMessage] = useState("");
+  // const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
-
-  console.log("clickedRow", clickedRow)
+  const [date, setDate] = useState(today());
   
   useEffect(() => {
     if (clickedRow.bookstoreId === 1) {
@@ -74,11 +74,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       const elementRect = element.getBoundingClientRect();
       setY(elementRect.top);
       setX(elementRect.left);
-      setTooltipMessage(message);
+      // setTooltipMessage(message);
     } else {
       setY(null);
       setX(null);
-      setTooltipMessage("");
+      // setTooltipMessage("");
     }
   }
 
@@ -90,7 +90,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     setBookstoresToTransfer(bookstoresToTransfer.filter((_, index)=> index !== indexToRemove));
     setX(null);
     setY(null);
-    setTooltipMessage("");
+    // setTooltipMessage("");
   }
 
   function dropDownChange(e, input_index, type) {
@@ -156,6 +156,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
 
     soFar[input_index]["fecha"] = e.target.value;
+    setDate(e.target.value);
   }
 
   async function handleSubmit(e) {
@@ -270,8 +271,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     return errorsList
   }
 
-  console.log("clickedRow", clickedRow)
-
   async function sendToServer() {
     try {
       for (let i = 0; i < bookstoresToTransfer.length; i++) {
@@ -289,7 +288,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             inventoryFromId: clickedRow.id,
             // bookId: clickedRow.bookId,
             type: transferType,
-            deliveryDate: bookstoresToTransfer[i].fecha
+            dateStr: bookstoresToTransfer[i].fecha
             // country: bookstoresToTransfer[i].country
           }),
         });
@@ -352,28 +351,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                   </option>
                   ))};
               </select>
-              {/* <select
-                className="select-transfer"
-                id={`country-select-${index}`}
-                onChange={(e) => dropDownChange(e, index, 'country')}>
-                <option
-                  key={index}
-                  value="null">
-                  País*
-                  </option>
-                {countries.map((country, index) => (
-                  <option
-                    key={index}
-                    value={country}>
-                      {country}
-                    </option>
-                ))}
-              </select> */}
               <input
                 type="date"
                 className="global-input"
                 id={`fecha-${index}`}
-                onChange={(e) => updateFecha(e, index)}>
+                onChange={(e) => updateFecha(e, index)}
+                value={date}>
               </input>
               <input
                 type='text'
@@ -382,34 +365,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 id={`quantity-select-${index}`}
                 onChange={(e) => updateQuantity(e, index)}>
               </input>
-              {/* <div className="additional-transfer-buttons">
-              <Tooltip message={tooltipMessage} x={x} y={y}/>
-              <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherBookstore}
-                id={`plus-icon-${index}`}
-                onMouseEnter={() => toggleTooltip(
-                  "Añadir otra transferencia",
-                  `plus-icon-${index}`)}
-                onMouseLeave={() => toggleTooltip(
-                  "Añadir otra transferencia",
-                  `plus-icon-${index}`)}
-                className="button-icon transfer"/>
-              {bookstoresToTransfer.length > 1 &&
-                <>
-                  <Tooltip
-                    message={tooltipMessage}
-                    x={x}
-                    y={y}/>
-                  <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherBookstore(index)}
-                    id={`cross-icon-${index}`}
-                    onMouseEnter={() => toggleTooltip(
-                      "Eliminar la transferencia",
-                      `cross-icon-${index}`)}
-                    onMouseLeave={() => toggleTooltip(
-                      "Eliminar la transferencia",
-                      `cross-icon-${index}`)}
-                    className="button-icon transfer"/>
-                </>}
-              </div> */}
             </div>
           ))}</>)
           :

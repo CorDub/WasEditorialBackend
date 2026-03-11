@@ -1,14 +1,16 @@
 import { Role } from "@prisma/client";
 import express from "express";
-// import bcrypt from 'bcrypt';
 import { sendWelcomeMail } from './../mailer.js';
 import {
   calculateAuthorRevenue,
   getForMonth,
   twelveMonthsAgo,
   generateMonthKeysForRange,
+  generateMonthKeysForRangeStr,
   getAuthorString,
-  mexicoDate
+  mexicoDate,
+  getForMonthStr,
+  today
 } from './../utils.js';
 import { prisma } from "../prisma/client.js";
 import multer from "multer";
@@ -798,7 +800,8 @@ export async function addBook(req, res) {
       "price": parseFloat(req.body.price),
       "isbn": req.body.isbn !== "" ? req.body.isbn : null,
       "quantity": parseInt(req.body.quantity),
-      "categoryId": parseInt(req.body.category)
+      "categoryId": parseInt(req.body.category),
+      "dateStr": req.body.date
     }
     validateInputs(inputs)
 
@@ -888,6 +891,7 @@ export async function addBook(req, res) {
           data: {
             bookId: new_book.id,
             quantity: inputs.quantity,
+            dateStr: inputs.dateStr
           }
         })
       };
@@ -2305,8 +2309,8 @@ router.get('/inventoriesCurrentTotals', getInventoriesCurrentTotals);
 export async function getSales(req, res) {
   try {
     const inputs = {
-      startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
-      endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
+      startDateStr: req.query.startDate ? req.query.startDate : twelveMonthsAgo(),
+      endDateStr: req.query.endDate ? req.query.endDate : today()
     };
     validateInputs(inputs);
 
@@ -2315,9 +2319,9 @@ export async function getSales(req, res) {
     const sales = await prismaClient.sale.findMany({
       where: {
         isDeleted: false,
-        date: {
-          gte: inputs.startDate,
-          lte: inputs.endDate
+        dateStr: {
+          gte: inputs.startDateStr,
+          lte: inputs.endDateStr
         }
       },
       select: {
@@ -2353,10 +2357,10 @@ export async function getSales(req, res) {
         quantity: true,
         createdAt: true,
         updatedAt: true,
-        date: true
+        dateStr: true
       },
       orderBy: {
-        date: "desc"
+        dateStr: "desc"
       }
     });
 
@@ -2364,11 +2368,12 @@ export async function getSales(req, res) {
       sale.completeInventory = sale.inventory.book.title + ", " + sale.inventory.bookstore.name
       sale.createdAt = sale.createdAt.toLocaleString();
       sale.updatedAt = sale.updatedAt.toLocaleString();
-      sale.date = sale.date.toLocaleString();
+      // sale.date = sale.date.toLocaleString();
+      sale.dateStr = sale.dateStr.toLocaleString();
       sale.authorsString = getAuthorString(sale.inventory.book.users);
     })
 
-    const monthsRange = generateMonthKeysForRange(inputs.startDate, inputs.endDate)
+    const monthsRange = generateMonthKeysForRangeStr(inputs.startDateStr, inputs.endDateStr)
     let salesCompiled = [];
     for (const month of monthsRange) {
       salesCompiled.push(
@@ -2384,7 +2389,7 @@ export async function getSales(req, res) {
     }
     for (const sale of sales) {
       for (const month of salesCompiled) {
-        if (getForMonth(sale.date) === month.forMonth) {
+        if (getForMonth(sale.dateStr) === month.forMonth) {
           month.sales.push(sale);
           month.total += sale.quantity
 
@@ -2424,11 +2429,11 @@ export async function addSale(req, res) {
       "bookId": parseInt(req.body.bookId),
       "bookstoreId": parseInt(req.body.bookstoreId),
       "quantity": parseInt(req.body.quantity),
-      "date": new Date(req.body.date)
+      "dateStr": req.body.dateStr
     }
     validateInputs(inputs);
 
-    const dateMexico = mexicoDate(req.body.date, "midday");
+    // const dateMexico = mexicoDate(req.body.date, "midday");
     const prismaClient = req.prisma || prisma
 
     let createdSale;
@@ -2468,7 +2473,8 @@ export async function addSale(req, res) {
       })
 
       const authorListIds = bookWithUsers.users.map(user => user.id);
-      const saleForMonth = getForMonth(dateMexico);
+      // const saleForMonth = getForMonth(dateMexico);
+      const saleForMonth = getForMonthStr(inputs.dateStr);
       let paymentIds = []
       for (const authorId of authorListIds) {
         const existingPayment = await tx.payment.findUnique({
@@ -2514,7 +2520,7 @@ export async function addSale(req, res) {
         data: {
           inventoryId: selectedInventory.id,
           quantity: inputs.quantity,
-          date: dateMexico,
+          dateStr: inputs.dateStr,
           payments: {
             connect: paymentIds
           }
@@ -2552,7 +2558,7 @@ export async function updateSale(req, res) {
       bookId: parseInt(req.body.book),
       bookstoreId: parseInt(req.body.bookstore),
       quantity: parseInt(req.body.quantity),
-      date: new Date(req.body.date)
+      dateStr: req.body.dateStr
     }
     validateInputs(inputs);
 
@@ -2607,13 +2613,13 @@ export async function updateSale(req, res) {
       }
 
       let recipientPayments = []
-      if (getForMonth(inputs.date) !== getForMonth(previousSale.date)) {
+      if (getForMonthStr(inputs.dateStr) !== getForMonthStr(previousSale.dateStr)) {
         for (const user of previousSale.inventory.book.users) {
           const existingPayment = await prismaClient.payment.findUnique({
             where: {
               userId_forMonth: {
                 userId: user.id,
-                forMonth: getForMonth(inputs.date)
+                forMonth: getForMonthStr(inputs.dateStr)
               }
             }
           })
@@ -2622,7 +2628,7 @@ export async function updateSale(req, res) {
             const createdPayment = await prismaClient.payment.create({
               data: {
                 userId: user.id,
-                forMonth: getForMonth(inputs.date)
+                forMonth: getForMonthStr(inputs.dateStr)
               }
             })
             recipientPayments.push({"id": createdPayment.id})
@@ -2634,7 +2640,7 @@ export async function updateSale(req, res) {
             const recreatedPayment = await prismaClient.payment.create({
               data: {
                 userId: user.id,
-                forMonth: getForMonth(inputs.date)
+                forMonth: getForMonthStr(inputs.dateStr)
               }
             });
             recipientPayments.push({"id": recreatedPayment.id});
@@ -2702,7 +2708,7 @@ export async function updateSale(req, res) {
         data: {
           inventoryId: selectedInventory.id,
           quantity: inputs.quantity,
-          date: new Date(inputs.date),
+          dateStr: inputs.dateStr,
           payments: {
             set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments
           }
@@ -2807,7 +2813,7 @@ export async function addImpression(req, res) {
       quantity: parseInt(req.body.quantity),
       id: parseInt(req.body.id),
       note: req.body.note,
-      date: new Date(req.body.deliveryDate),
+      dateStr: req.body.dateStr,
       authorDelivery: req.body.authorDelivery ? true : false
     }
     validateInputs(inputs);
@@ -2820,7 +2826,7 @@ export async function addImpression(req, res) {
           bookId: inputs.id,
           quantity: inputs.quantity,
           note: inputs.note,
-          date: inputs.date,
+          dateStr: inputs.dateStr,
           authorDelivery: inputs.authorDelivery
         }
       })
@@ -2916,7 +2922,7 @@ export async function updateImpression(req, res) {
       quantity: parseInt(req.body.quantity),
       bookId: parseInt(req.body.book_id),
       note: req.body.note,
-      date: new Date(req.body.date),
+      dateStr: req.body.dateStr,
     }
 
     const prismaClient = req.prisma || prisma
@@ -2929,7 +2935,7 @@ export async function updateImpression(req, res) {
         where: {id: inputs.id},
         data: {
           quantity: inputs.quantity,
-          date: inputs.date,
+          dateStr: inputs.dateStr,
           note: inputs.note
         }
       });
@@ -2976,7 +2982,8 @@ export async function addTransfer(req, res) {
       // bookId: parseInt(req.body.bookId),
       type: req.body.type,
       note: req.body.note || null,
-      deliveryDate: req.body.deliveryDate ? new Date(req.body.deliveryDate) : null,
+      // deliveryDate: req.body.deliveryDate ? new Date(req.body.deliveryDate) : null,
+      dateStrOptional: req.body.dateStr || null,
       place: req.body.place || null,
       person: req.body.person || null
     }
@@ -3008,7 +3015,7 @@ export async function addTransfer(req, res) {
             fromInventoryId: inputs.inventoryFromId,
             quantity: inputs.quantity,
             note: inputs.note,
-            deliveryDate: inputs.deliveryDate,
+            dateStr: inputs.dateStrOptional,
             place: inputs.place,
             person: inputs.person
           }
@@ -3352,7 +3359,7 @@ export async function getCurrentCosts(req, res) {
         paymentId: true,
         note: true,
         amount: true,
-        date: true,
+        dateStr: true,
         payment: {
           select: {
             forMonth: true,
@@ -3391,7 +3398,7 @@ export async function addCost(req, res) {
       "paymentId": req.body.paymentId ? parseInt(req.body.paymentId) : null,
       "amount": parseFloat(req.body.amount),
       "note": req.body.note,
-      "date": req.body.date ? new Date(req.body.date) : new Date() ,
+      "dateStrOptional": req.body.dateStr ? req.body.dateStr : null,
       "bookId": parseInt(req.body.bookId),
     }
     validateInputs(inputs);
@@ -3485,7 +3492,7 @@ export async function addCost(req, res) {
         data: {
           paymentId: paymentId,
           amount: inputs.amount,
-          date: inputs.date,
+          dateStr: inputs.dateStrOptional,
           bookId: inputs.bookId,
           note: inputs.note
         }
@@ -3509,7 +3516,7 @@ export async function updateCost(req, res) {
     const inputs = {
       id: parseInt(req.params.id),
       amount: parseFloat(req.body.amount),
-      date: new Date(req.body.date),
+      dateStr: req.body.dateStr,
       note: req.body.note,
       bookId: parseInt(req.body.bookId)
     }
@@ -3528,7 +3535,7 @@ export async function updateCost(req, res) {
         data: {
           amount: inputs.amount,
           note: inputs.note,
-          date: inputs.date,
+          dateStr: inputs.dateStr,
           bookId: inputs.bookId
         }
       })
@@ -3579,22 +3586,22 @@ export async function getKindleSales(req, res) {
     // let startDate = new Date(JSON.parse(req.query.startDate))
     // let endDate = new Date(JSON.parse(req.query.endDate))
     const inputs = {
-      startDate: new Date(req.query.startDate),
-      endDate: new Date(req.query.endDate)
+      startDateStr: req.query.startDate,
+      endDateStr: req.query.endDate
     }
     validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 
-    inputs.startDate.setUTCHours(0, 0, 0, 0);
-    inputs.endDate.setUTCHours(23, 59, 59, 999);
+    // inputs.startDate.setUTCHours(0, 0, 0, 0);
+    // inputs.endDate.setUTCHours(23, 59, 59, 999);
 
     const kindleSales = await prismaClient.kindleSale.findMany({
       where: {
         isDeleted: false,
-        datePay: {
-          gte: inputs.startDate,
-          lt: inputs.endDate
+        datePayStr: {
+          gte: inputs.startDateStr,
+          lte: inputs.endDateStr
         }
       },
       select: {
@@ -3614,22 +3621,22 @@ export async function getKindleSales(req, res) {
         },
         quantityEbook: true,
         quantityPod: true,
-        dateCut: true,
-        datePay: true,
+        dateCutStr: true,
+        datePayStr: true,
         regalias: true,
       },
       orderBy: {
-        datePay: "desc"
+        datePayStr: "desc"
       }
     });
 
     kindleSales.map((kindleSale) => {
-      kindleSale.dateCut = kindleSale.dateCut.toLocaleString();
-      kindleSale.datePay = kindleSale.datePay.toLocaleString();
+      // kindleSale.dateCut = kindleSale.dateCut.toLocaleString();
+      // kindleSale.datePay = kindleSale.datePay.toLocaleString();
       kindleSale.authorsString = getAuthorString(kindleSale.book.users);
     })
 
-    const monthsRange = generateMonthKeysForRange(inputs.startDate, inputs.endDate)
+    const monthsRange = generateMonthKeysForRangeStr(inputs.startDateStr, inputs.endDateStr)
     let kindleSalesCompiled = [];
     for (const month of monthsRange) {
       kindleSalesCompiled.push(
@@ -3643,7 +3650,7 @@ export async function getKindleSales(req, res) {
     }
     for (const kindleSale of kindleSales) {
       for (const month of kindleSalesCompiled) {
-        if (getForMonth(kindleSale.datePay) === month.forMonth) {
+        if (getForMonthStr(kindleSale.datePayStr) === month.forMonth) {
           month.sales.push(kindleSale);
 
           if (!month.books.includes(kindleSale.book.title)) {
@@ -3677,12 +3684,12 @@ export async function addKindleSale (req, res) {
       "bookId": parseInt(req.body.book),
       "quantityEbook": parseInt(req.body.quantityEbook),
       "quantityPod": parseInt(req.body.quantityPod),
-      "dateCut": new Date(req.body.dateCut),
-      "datePay": new Date(req.body.datePay),
+      "dateCutStr": req.body.dateCutStr,
+      "datePayStr": req.body.datePayStr,
       "regaliasKindle": parseFloat(req.body.regalias),
     }
     validateInputs(inputs);
-    if (inputs.dateCut >= inputs.datePay) {
+    if (inputs.dateCutStr >= inputs.datePayStr) {
       throw new Error("dateCut later than datePay");
     }
     if ((inputs.quantityEbook + inputs.quantityPod) <= 0) {
@@ -3712,7 +3719,7 @@ export async function addKindleSale (req, res) {
           where: {
             userId_forMonth: {
               userId: author,
-              forMonth: getForMonth(inputs.datePay)
+              forMonth: getForMonth(inputs.datePayStr)
             }
           }
         })
@@ -3723,7 +3730,7 @@ export async function addKindleSale (req, res) {
           const createdPayment = await tx.payment.create({
             data: {
               userId: author,
-              forMonth: getForMonth(inputs.datePay)
+              forMonth: getForMonth(inputs.datePayStr)
             }
           })
           paymentIds.push({"id": createdPayment.id})
@@ -3738,8 +3745,8 @@ export async function addKindleSale (req, res) {
           },
           quantityEbook: inputs.quantityEbook,
           quantityPod: inputs.quantityPod,
-          dateCut: inputs.dateCut,
-          datePay: inputs.datePay,
+          dateCutStr: inputs.dateCutStr,
+          datePayStr: inputs.datePayStr,
           regalias: inputs.regaliasKindle
         }
       });
@@ -3763,8 +3770,8 @@ export async function updateKindleSale(req, res) {
       id: parseInt(req.params.id),
       quantityEbook: parseInt(req.body.quantityEbook),
       quantityPod: parseInt(req.body.quantityPod),
-      dateCut: new Date(req.body.dateCut),
-      datePay: new Date(req.body.datePay),
+      dateCutStr: req.body.dateCutStr,
+      datePayStr: req.body.datePayStr,
       regaliasKindle: parseFloat(req.body.regalias)
     }
     validateInputs(inputs)
@@ -3798,13 +3805,13 @@ export async function updateKindleSale(req, res) {
     }
 
     let recipientPayments = []
-    if (getForMonth(inputs.datePay) !== getForMonth(targetSale.datePay)) {
+    if (getForMonthStr(inputs.datePayStr) !== getForMonthStr(targetSale.datePayStr)) {
       for (const user of targetSale.book.users) {
         const existingPayment = await prismaClient.payment.findUnique({
           where: {
             userId_forMonth: {
               userId: user.id,
-              forMonth: getForMonth(inputs.datePay)
+              forMonth: getForMonthStr(inputs.datePayStr)
             }
           }
         })
@@ -3813,7 +3820,7 @@ export async function updateKindleSale(req, res) {
           const createdPayment = await prismaClient.payment.create({
             data: {
               userId: user.id,
-              forMonth: getForMonth(inputs.datePay)
+              forMonth: getForMonthStr(inputs.datePayStr)
             }
           })
 
@@ -3826,7 +3833,7 @@ export async function updateKindleSale(req, res) {
           const recreatedPayment = await prismaClient.payment.create({
             data: {
               userId: user.id,
-              forMonth: getForMonth(inputs.datePay)
+              forMonth: getForMonthStr(inputs.datePayStr)
             }
           });
           recipientPayments.push({"id": recreatedPayment.id});
@@ -3895,8 +3902,8 @@ export async function updateKindleSale(req, res) {
       data: {
         quantityEbook: inputs.quantityEbook,
         quantityPod: inputs.quantityPod,
-        dateCut: inputs.dateCut,
-        datePay: inputs.datePay,
+        dateCutStr: inputs.dateCutStr,
+        datePayStr: inputs.datePayStr,
         regalias: inputs.regaliasKindle,
         payments: {
           set: recipientPayments.length > 0 ? recipientPayments : previousSalePayments

@@ -1,6 +1,4 @@
 import "./DateRange.scss";
-import { useEffect } from "react";
-import { convertISOString, avoidTimeshift, toLocalISODate } from "../../backend/utils";
 
 function DateRange({
   startDate,
@@ -9,26 +7,18 @@ function DateRange({
   setEndDate
 }) {
 
-  // useEffect(() => {
-  //   console.log("end date", endDate)
-  //   console.log(typeof endDate)
-  //   console.log("isodlocal", toLocalISODate(endDate))
-  // }, [endDate])
-
   return(
     <div className="date-range">
       <input
         className="global-input dr-input"
         type="date"
-        // value={convertISOString(startDate)}
-        value={toLocalISODate(startDate)}
-        onChange={(e) => setStartDate(avoidTimeshift(e.target.value))}></input>
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}></input>
       <input
         className="global-input dr-input"
         type="date"
-        // value={convertISOString(endDate)}
-        value={toLocalISODate(endDate)}
-        onChange={(e) => setEndDate(avoidTimeshift(e.target.value))}></input>
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}></input>
     </div>
   )
 }

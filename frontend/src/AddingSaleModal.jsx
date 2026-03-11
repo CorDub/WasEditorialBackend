@@ -2,7 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { mexicoDate } from "../../backend/utils.js";
+import { today } from "../../backend/utils.js";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -16,8 +16,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const bookRef = useRef();
   const bookstoreRef = useRef();
   const quantityRef = useRef();
-  const dateRef = useRef();
-  const [date, setDate] = useState("");
+  const dateStrRef = useRef();
+  const [dateStr, setDateStr] = useState(today());
 
   async function getExistingBooks() {
     try {
@@ -189,9 +189,9 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       type: "number",
       range: "positive"
     }
-    const expectationsDate = {
+    const expectationsDateStr = {
       presence: "not empty",
-      type: "datetime",
+      type: "string",
       range: "no future"
     }
 
@@ -199,7 +199,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     let errorsBookstore;
     let errorsQuantity;
     let errorInputs;
-    let errorsDate;
+    let errorsDateStr;
 
     if (clickedRow) {
       errorsQuantity = checkForErrors("Cantidad", quantity, expectationsCantidad, quantityRef, "a");
@@ -208,8 +208,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef, "o");
       errorsBookstore = checkForErrors("Librería", bookstore, expectationsBookstore, bookstoreRef, "a");
       errorsQuantity = checkForErrors("Cantidad", quantity, expectationsCantidad, quantityRef, "a");
-      errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, "a");
-      errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDate];
+      errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+      errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDateStr];
     }
 
     for (const errorInput of errorInputs) {
@@ -237,7 +237,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      console.log("date", date)
       const response = await fetch(`${baseURL}/api/admin/sale`, {
         method: "POST",
         headers: {
@@ -248,7 +247,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           bookId: parseInt(book),
           bookstoreId: parseInt(bookstore),
           quantity: quantity,
-          date: date
+          dateStr: dateStr
         }),
       });
 
@@ -312,12 +311,12 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             type="date"
             placeholder="Fecha"
             className="global-input"
-            ref={dateRef}
+            ref={dateStrRef}
             inputMode="numeric"
             pattern="[0-9]*"
             onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
-            onChange={(e) => setDate(mexicoDate(e.target.value, "midday"))}
-            value={mexicoDate(date, "middday")}
+            onChange={(e) => setDateStr(e.target.value)}
+            value={dateStr}
             ></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

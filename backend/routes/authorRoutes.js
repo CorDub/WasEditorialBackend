@@ -8,6 +8,8 @@ import {
   calculateBookstoreComission,
   generateMonthKeysForRange,
   getForMonth,
+  localISODateTwelveMonthsAgo,
+  today,
   twelveMonthsAgo,
   validateInputs,
 } from "../utils.js";
@@ -118,7 +120,7 @@ export async function getAuthorInventories (req, res) {
               select: {
                 quantity: true,
                 isDeleted: true,
-                date: true,
+                dateStr: true,
               }
             }
           }
@@ -182,7 +184,7 @@ export async function getAuthorInventories (req, res) {
           overallInitialTotal += impression.quantity
           impressionsData.push({
             quantity: impression.quantity,
-            date: impression.date
+            dateStr: impression.dateStr
           })
           break;
         }
@@ -196,7 +198,7 @@ export async function getAuthorInventories (req, res) {
           overallNewImpressions += impression.quantity
           impressionsData.push({
             quantity: impression.quantity,
-            date: impression.date
+            dateStr: impression.dateStr
           })
         }
       }
@@ -245,16 +247,16 @@ export async function getAuthorSales (req, res) {
     // Validate all inputs
     if (!req.session.user_id) {return res.status(401).json({message: "Unauthorized"});}
     const inputs = {
-      startDate: req.query.startDate ? new Date(req.query.startDate) : twelveMonthsAgo(),
-      endDate: req.query.endDate ? new Date(req.query.endDate) : new Date()
+      startDateStr: req.query.startDateStr ? req.query.startDateStr : localISODateTwelveMonthsAgo(),
+      endDateStr: req.query.endDateStr ? req.query.endDateStr : today()
     }
     validateInputs(inputs);
-    if (inputs.startDate >= inputs.endDate) {
+    if (inputs.startDateStr >= inputs.endDateStr) {
       return res.status(400).json({message: "The start date cannot come after the end date"})
     }
 
     const prismaClient = req.prisma || prisma
-    inputs.endDate.setUTCHours(23,59,59,999);
+    // inputs.endDate.setUTCHours(23,59,59,999);
 
     // Get data
     let salesInRange = await prismaClient.sale.findMany({
@@ -265,9 +267,9 @@ export async function getAuthorSales (req, res) {
           }
         },
         isDeleted: false,
-        date: {
-          gte: inputs.startDate,
-          lte: inputs.endDate
+        dateStr: {
+          gte: inputs.startDateStr,
+          lte: inputs.endDateStr
         }
       },
       include: {
@@ -284,7 +286,7 @@ export async function getAuthorSales (req, res) {
         payments: true
       },
       orderBy: {
-        date: "desc"
+        dateStr: "desc"
       }
     });
 
@@ -296,9 +298,9 @@ export async function getAuthorSales (req, res) {
           }
         },
         isDeleted: false,
-        datePay: {
-          gte: inputs.startDate,
-          lte: inputs.endDate
+        datePayStr: {
+          gte: inputs.startDateStr,
+          lte: inputs.endDateStr
         }
       },
       include: {
@@ -306,7 +308,7 @@ export async function getAuthorSales (req, res) {
         book: true
       },
       orderBy: {
-        datePay: 'desc'
+        datePayStr: 'desc'
       }
     });
 
@@ -349,7 +351,7 @@ export async function getAuthorSales (req, res) {
 
       sales.push({
         book_id: sale.inventory.bookId,
-        date: sale.date,
+        dateStr: sale.dateStr,
         id: sale.id,
         quantity: sale.quantity,
         title: sale.inventory.book.title,
@@ -377,7 +379,7 @@ export async function getAuthorSales (req, res) {
 
       sales.push({
         book_id: kindleSale.bookId,
-        date: kindleSale.datePay,
+        dateStr: kindleSale.datePayStr,
         id: kindleSale.id,
         // quantity: kindleSale.quantityEbook + kindleSale.quantityPod,
         value: kindleSale.regalias
@@ -402,7 +404,6 @@ router.get('/sales', getAuthorSales)
 
 export async function getMonthlySalesByPayments (req, res) {
   try {
-    // Get the last twelfth month first day as a cutoff date
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
@@ -467,8 +468,8 @@ export async function getMonthlySalesByPayments (req, res) {
             id: true,
             quantityEbook: true,
             quantityPod: true,
-            dateCut: true,
-            datePay: true,
+            dateCutStr: true,
+            datePayStr: true,
             regalias: true
           }
         },
@@ -478,7 +479,7 @@ export async function getMonthlySalesByPayments (req, res) {
             amount: true,
             note: true,
             isDeleted: true,
-            date: true
+            dateStr: true
           }
         }
       },
@@ -620,7 +621,7 @@ export async function getMonthlySalesByPayments (req, res) {
       //Now we're adding the costs
       for (const cost of payment.costs) {
         if (cost.isDeleted === false) {
-          paymentSales.costs.push({"amount": cost.amount, "note": cost.note, "date": cost.date})
+          paymentSales.costs.push({"amount": cost.amount, "note": cost.note, "dateStr": cost.dateStr})
           paymentSales.totalValue -= cost.amount
         }
       }
@@ -642,8 +643,8 @@ export async function getMonthlySalesByPayments (req, res) {
               "ganancia": kindleSale.regalias,
               "quantityEbook": kindleSale.quantityEbook,
               "quantityPod": kindleSale.quantityPod,
-              "dateCut": kindleSale.dateCut,
-              "datePay": kindleSale.datePay,
+              "dateCutStr": kindleSale.dateCutStr,
+              "datePayStr": kindleSale.datePayStr,
               "regalias": kindleSale.regalias
             }],
             // "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),
@@ -682,8 +683,8 @@ export async function getMonthlySalesByPayments (req, res) {
                 "ganancia": kindleSale.regalias,
                 "quantityEbook": kindleSale.quantityEbook,
                 "quantityPod": kindleSale.quantityPod,
-                "dateCut": kindleSale.dateCut,
-                "datePay": kindleSale.datePay,
+                "dateCutStr": kindleSale.dateCutStr,
+                "datePayStr": kindleSale.datePayStr,
                 "regalias": kindleSale.regalias
               })
 
@@ -704,8 +705,8 @@ export async function getMonthlySalesByPayments (req, res) {
               "ganancia": kindleSale.regalias,
               "quantityEbook": kindleSale.quantityEbook,
               "quantityPod": kindleSale.quantityPod,
-              "dateCut": kindleSale.dateCut,
-              "datePay": kindleSale.datePay,
+              "dateCutStr": kindleSale.dateCutStr,
+              "datePayStr": kindleSale.datePayStr,
               "regalias": kindleSale.regalias
             }],
             // "totalTitleQuantity": (kindleSale.quantityEbook + kindleSale.quantityPod),

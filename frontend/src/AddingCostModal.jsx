@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ErrorsList from './ErrorsList';
 import checkForErrors from './customHooks/checkForErrors';
 import useCheckAdmin from './customHooks/useCheckAdmin';
+import { today } from "../../backend/utils.js";
 
 function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     useCheckAdmin();
@@ -14,8 +15,8 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [errors, setErrors] = useState([]);
     const [selectedBookId, setSelectedBookId] = useState('');
     const bookRef = useRef();
-    const [date, setDate] = useState(null);
-    const dateRef = useRef();
+    const [dateStr, setDateStr] = useState(today());
+    const dateStrRef = useRef();
 
     async function fetchExistingBooks() {
         try {
@@ -64,15 +65,15 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             type: "string",
             length: 240
         }
-        const expectationsDate = {
-            type: "datetime",
+        const expectationsDateStr = {
+            type: "string",
         }
 
         const errorsAmount = checkForErrors("Monto", parseInt(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("Nota", note, expectationsNote, noteRef, "a");
         const errorsBook = checkForErrors("Libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
-        const errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, "a");
-        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDate];
+        const errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDateStr];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -95,7 +96,7 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 body: JSON.stringify({
                     paymentId: clickedRow ? clickedRow.id : null,
                     amount: amount,
-                    date: date,
+                    dateStr: dateStr,
                     note: note,
                     bookId: selectedBookId
                 })
@@ -138,8 +139,9 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 <input type='date'
                     className="global-input"
                     placeholder="Fecha*"
-                    ref={dateRef}
-                    onChange={(e) => setDate(e.target.value)} />
+                    ref={dateStrRef}
+                    onChange={(e) => setDateStr(e.target.value)} 
+                    value={dateStr}/>
                 <input type='text'
                     className="global-input"
                     placeholder="Nota para el autor"

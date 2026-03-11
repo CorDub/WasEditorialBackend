@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { today } from "../../backend/utils.js";
 
 function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -9,7 +10,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState(null);
+  const [dateStr, setDateStr] = useState(today());
   const [place, setPlace] = useState('');
   const [person, setPerson] = useState('');
   const quantityRef = useRef();
@@ -48,7 +49,6 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
     if (errorsQuantity.length > 0) {
       errorsList.push(errorsQuantity);
     };
-    console.log("errorsQuantity", errorsQuantity);
 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
@@ -67,7 +67,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           inventoryFromId: clickedRow.id,
           type: "send",
           note: note,
-          deliveryDate: deliveryDate,
+          dateStr: dateStr,
           place: place,
           person: person,
           country: clickedRow.country
@@ -92,8 +92,6 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
     }
   }
 
-  console.log("clickedRow", clickedRow)
-
   return(
     <div className="modal-proper">
       <div className="form-title">
@@ -117,7 +115,8 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           type="date"
           placeholder="Fecha de entrega"
           className="global-input"
-          onChange={(e) => setDeliveryDate(e.target.value)}/>
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}/>
         <input
           type="text"
           placeholder="Lugar (opcional)"

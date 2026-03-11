@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
-import { convertISOString } from "../../backend/utils";
+import { convertISOString, today } from "../../backend/utils";
 
 function AddingImpressionModal({
     clickedRow,
@@ -12,10 +12,10 @@ function AddingImpressionModal({
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const quantityRef = useRef();
-  const dateRef = useRef();
+  const dateStrRef = useRef();
   const noteRef = useRef();
   const [quantity, setQuantity] = useState(null);
-  const [date, setDate] = useState(new Date());
+  const [dateStr, setDateStr] = useState(today());
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState([]);
 
@@ -40,12 +40,12 @@ function AddingImpressionModal({
     }
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
 
-    const expectationsDate = {
-      type: "datetime",
+    const expectationsDateStr = {
+      type: "string",
       presence: "not empty",
       range: "no future"
     }
-    const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+    const errorsDateStr = checkForErrors("La fecha", dateStr, expectationsDateStr, dateStrRef, "a");
 
     const expectationsNote = {
       type: "string",
@@ -53,7 +53,7 @@ function AddingImpressionModal({
     }
     const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
 
-    const errorInputs = [errorsQuantity, errorsDate, errorsNote];
+    const errorInputs = [errorsQuantity, errorsDateStr, errorsNote];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -77,7 +77,7 @@ function AddingImpressionModal({
           id: clickedRow.id,
           quantity: quantity,
           note: note,
-          deliveryDate: date
+          dateStr: dateStr
         }),
       });
 
@@ -121,9 +121,9 @@ function AddingImpressionModal({
           type="date"
           placeholder="Fecha"
           className="global-input"
-          ref={dateRef}
-          onChange={(e) => setDate(e.target.value)}
-          value={convertISOString(date)}></input>
+          ref={dateStrRef}
+          onChange={(e) => setDateStr(e.target.value)}
+          value={convertISOString(dateStr)}></input>
         <input
           type="text"
           placeholder="Nota para el autor (opcional)"

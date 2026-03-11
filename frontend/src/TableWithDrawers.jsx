@@ -9,7 +9,7 @@ import Modal from "./Modal";
 import Alert from "./Alert";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import formatNumber from "./customHooks/formatNumber";
-import { convertDateStringToLocalFormat } from "../../backend/utils";
+import { changeDateFormat } from "../../backend/utils";
 import { useEffect } from "react";
 
 function TableWithDrawers({
@@ -97,7 +97,7 @@ function TableWithDrawers({
         {
           header: "Fecha",
           Cell: ({row}) => (
-            <div>{convertDateStringToLocalFormat(row.original.date)}</div>
+            <div>{changeDateFormat(row.original.dateStr, "yearFirstSlash")}</div>
           )
         },
       ]
@@ -140,14 +140,14 @@ function TableWithDrawers({
           header: "Fecha de corte",
           size: 50,
           Cell: ({row}) => (
-            <div>{convertDateStringToLocalFormat(row.original.dateCut)}</div>
+            <div>{row.original.dateCutStr}</div>
           )
         },
         {
           header: "Fecha de pago",
           size: 50,
           Cell: ({row}) => (
-            <div>{convertDateStringToLocalFormat(row.original.datePay)}</div>
+            <div>{row.original.datePayStr}</div>
           )
         },
         {

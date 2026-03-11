@@ -172,14 +172,32 @@ export function validateInput(inputName, inputValue) {
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
+    "dateStr": [
+      ['type', "string"],
+      ["timerange", "no future"]
+    ],
+    "dateStrOptional": [
+      ['type', "string or null"],
+      ["timerange", "no future"]
+    ],
     "dateCut": [
       ['presence', 'not empty'],
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
+    "dateCutStr": [
+      ['presence', 'not empty'],
+      ["type", "string"],
+      ["timerange", "no future"]
+    ],
     "datePay": [
       ['presence', 'not empty'],
       ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "datePayStr": [
+      ['presence', 'not empty'],
+      ["type", "string"],
       ["timerange", "no future"]
     ],
     "regaliasKindle": [
@@ -225,9 +243,19 @@ export function validateInput(inputName, inputValue) {
       ["type", "datetime"],
       ["timerange", "no future"]
     ],
+    "startDateStr": [
+      ['presence', 'not empty'],
+      ["type", "string"],
+      ["timerange", "no future"]
+    ],
     "endDate": [
       ['presence', 'not empty'],
       ["type", "datetime"],
+      ["timerange", "no future"]
+    ],
+    "endDateStr": [
+      ['presence', 'not empty'],
+      ["type", "string"],
       ["timerange", "no future"]
     ],
     "bookstoreToId": [

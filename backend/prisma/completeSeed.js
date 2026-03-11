@@ -39,6 +39,10 @@ async function addAuthorFromDB(author) {
   }
 }
 
+function today() {
+  return new Date().toISOString().split('T')[0]
+}
+
 async function addBookFromDB(book) {
   try {
     const preparedBook = {
@@ -107,6 +111,7 @@ async function addBookFromDB(book) {
           data: {
             bookId: new_book.id,
             quantity: preparedBook.quantity,
+            dateStr: today()
           }
         })
       };
@@ -117,7 +122,6 @@ async function addBookFromDB(book) {
           data: {
             bookId: new_book.id,
             bookstoreId: 1,
-            country: "México",
             price: preparedBook.price,
             initial: preparedBook.quantity,
             current: preparedBook.quantity

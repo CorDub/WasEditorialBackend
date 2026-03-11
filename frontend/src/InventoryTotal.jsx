@@ -101,7 +101,7 @@ function InventoryTotal({
               </div>
             }
 
-            {impressions != null && type === "book" &&
+            {impressions && type === "book" &&
               (<div className="bookstore-inventory-total-impressions"
                 onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
                 <div className="adding-impression">

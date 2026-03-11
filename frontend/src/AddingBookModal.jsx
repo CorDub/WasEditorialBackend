@@ -3,10 +3,9 @@ import useCheckAdmin from './customHooks/useCheckAdmin';
 import "./AddingBookModal.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import Tooltip from "./Tooltip";
-import AddingBookErrorList from "./AddingBookErrorList";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from './customHooks/checkForErrors';
+import { today } from "../../backend/utils";
 
 function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
@@ -19,10 +18,8 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const [quantity, setQuantity] = useState(null);
   const [authors, setAuthors] = useState([null]);
   const [existingAuthors, setExistingAuthors] = useState(null);
-  const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
-  // const [errorList, setErrorList] = useState([]);
   const [errors, setErrors] = useState([]);
   const [category, setCategory] = useState(null);
   const [existingCategories, setExistingCategories] = useState([]);
@@ -102,6 +99,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           quantity: parseInt(quantity),
           category: category,
           authors: authors,
+          date: today()
         }),
       });
 
@@ -149,7 +147,6 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     setAuthors(authors.filter((_, index)=> index !== indexToRemove));
     setX(null);
     setY(null);
-    setTooltipMessage("");
   }
 
   function dropDownChange(e, input_name, input_index) {
@@ -204,150 +201,11 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       const elementRect = element.getBoundingClientRect();
       setY(elementRect.top);
       setX(elementRect.left);
-      setTooltipMessage(message);
     } else {
       setY(null);
       setX(null);
-      setTooltipMessage("");
     }
   }
-
-  // function addErrorClass(element) {
-  //   if (!element.classList.contains("error-inputs")) {
-  //     element.classList.add("error-inputs");
-  //   };
-  // }
-
-  // function checkForErrors(serverError) {
-  //   let newErrorList =[];
-
-  //   const inputTitle = document.getElementById('adding-book-title');
-  //   const inputPasta = document.getElementById('pasta-select');
-  //   const inputPrice = document.getElementById('adding-book-price');
-  //   const inputIsbn = document.getElementById('adding-book-isbn');
-  //   const inputQuantity = document.getElementById('adding-book-quantity');
-  //   const inputCategory = document.getElementById('category-select');
-  //   const inputAuthors = [];
-  //   authors.map((author, index) => {
-  //     inputAuthors.push(document.getElementById(`author-select-${index}`));
-  //   });
-
-  //   const inputsList = [inputTitle, inputPasta, inputPrice,
-  //     inputIsbn, inputQuantity, inputAuthors, inputCategory];
-
-  //   inputsList.forEach((input) => {
-  //     if (input !== inputAuthors) {
-  //       if (input.classList.contains("error-inputs")) {
-  //         input.classList.remove("error-inputs");
-  //       }
-  //     }
-  //   })
-  //   inputAuthors.forEach((input) => {
-  //     if (input.classList.contains("error-inputs")) {
-  //       input.classList.remove("error-inputs");
-  //     }
-  //   })
-
-  //   if (title === '') {
-  //     newErrorList.push(11);
-  //     addErrorClass(inputTitle);
-  //   };
-
-  //   if (title.length > 200) {
-  //     newErrorList.push(12);
-  //     addErrorClass(inputTitle);
-  //   };
-
-  //   if (serverError === 13) {
-  //     newErrorList.push(13);
-  //     addErrorClass(inputTitle)
-  //   }
-
-  //   if (pasta === null) {
-  //     newErrorList.push(21);
-  //     addErrorClass(inputPasta);
-  //   };
-
-  //   if (pasta !== "Dura" && pasta !== "Blanda") {
-  //     newErrorList.push(22);
-  //     addErrorClass(inputPasta);
-  //   };
-
-  //   if (isNaN(parseFloat(price))) {
-  //     newErrorList.push(31);
-  //     addErrorClass(inputPrice);
-  //   };
-
-  //   if (parseFloat(price) < 0) {
-  //     newErrorList.push(32);
-  //     addErrorClass(inputPrice);
-  //   };
-
-  //   if (price === null) {
-  //     newErrorList.push(33);
-  //     addErrorClass(inputPrice);
-  //   }
-
-  //   // if (isNaN(parseInt(isbn)) && isbn !== "") {
-  //   //   newErrorList.push(41);
-  //   //   addErrorClass(inputIsbn);
-  //   // };
-
-  //   if (serverError === 42) {
-  //     newErrorList.push(42);
-  //     addErrorClass(inputIsbn);
-  //   };
-
-  //   if (isbn !== "") {
-  //     const validISBNRegex = /^(?:(?:\d{9}[\dX])|(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX])|(?:(?:978|979)\d{10})|(?:(?:978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d))$/;
-  //     if (!validISBNRegex.test(isbn)) {
-  //       newErrorList.push(43);
-  //       addErrorClass(inputIsbn);
-  //     }
-  //   }
-
-  //   if (isNaN(parseInt(quantity))) {
-  //     newErrorList.push(61);
-  //     addErrorClass(inputQuantity);
-  //   };
-
-  //   if (parseInt(quantity) < 0) {
-  //     newErrorList.push(62);
-  //     addErrorClass(inputQuantity);
-  //   };
-
-  //   if (isNaN(parseInt(category))) {
-  //     newErrorList.push(71);
-  //     addErrorClass(inputCategory);
-  //   }
-
-  //   authors.map((author, index) => {
-  //     if (author === null) {
-  //       newErrorList.push(51);
-  //       addErrorClass(inputAuthors[index]);
-  //     };
-
-  //     let authorsIds = []
-  //     existingAuthors.map((author) => {
-  //       authorsIds.push(author.id);
-  //     })
-  //     if (!authorsIds.includes(author)) {
-  //       newErrorList.push(52);
-  //       addErrorClass(inputAuthors[index]);
-  //     };
-
-  //     const authorsSet = new Set(authors);
-  //     if (authorsSet.size !== authors.length) {
-  //       if (!newErrorList.includes(53)) {
-  //         newErrorList.push(53);
-  //       }
-  //       addErrorClass(inputAuthors[index]);
-  //     }
-  //   })
-
-  //   setErrorList(newErrorList);
-  //   return newErrorList;
-  // }
 
   function checkInputs() {
     let errorsList = []
@@ -498,7 +356,6 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
               })}
             </select>
             <div className="additional-authors-buttons">
-              {/* <Tooltip message={tooltipMessage} x={x} y={y}/> */}
               <FontAwesomeIcon icon={faCirclePlus} onClick={addOtherAuthor}
                 id={`plus-icon-${index}`}
                 onMouseEnter={() => toggleTooltip(
@@ -510,10 +367,6 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
                 className="button-icon"/>
               {authors.length > 1 &&
                 <>
-                  {/* <Tooltip
-                    message={tooltipMessage}
-                    x={x}
-                    y={y}/> */}
                   <FontAwesomeIcon icon={faCircleXmark} onClick={() => removeOtherAuthor(index)}
                     id={`cross-icon-${index}`}
                     onMouseEnter={() => toggleTooltip(
@@ -527,7 +380,6 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
             </div>
           </div>
         ))}
-        {/* <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/> */}
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

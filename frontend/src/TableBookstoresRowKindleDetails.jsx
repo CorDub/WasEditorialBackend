@@ -23,13 +23,13 @@ function TableBookstoresRowKindleDetails({bookstore}) {
         <div className="kindle-details-group">
           <div className="kindle-details-group-title">Fecha de corte</div>
           <div className="kindle-details-group-value">{bookstore && 
-            changeDateFormat(bookstore.dateCut, "fullMonths")}
+            changeDateFormat(bookstore.dateCutStr, "fullMonths")}
           </div>
         </div>
         <div className="kindle-details-group">
           <div className="kindle-details-group-title">Fecha de pago</div>
           <div className="kindle-details-group-value">{bookstore && 
-            changeDateFormat(bookstore.datePay, "fullMonths")}
+            changeDateFormat(bookstore.datePayStr, "fullMonths")}
           </div>
         </div>
         <div className="kindle-details-group">

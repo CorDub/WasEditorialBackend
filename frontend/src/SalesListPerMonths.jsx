@@ -5,7 +5,14 @@ import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
 import { useEffect } from "react";
-import { twelveMonthsAgo, applyFilters, mexicoDate } from "../../backend/utils";
+import { 
+  twelveMonthsAgo, 
+  applyFilters, 
+  mexicoDate,
+  getForMonthStr,
+  localISODateTwelveMonthsAgo,
+  today 
+} from "../../backend/utils";
 
 function SalesListPerMonths() {
   useCheckAdmin();
@@ -23,38 +30,18 @@ function SalesListPerMonths() {
   const [selectedBook, setSelectedBook] = useState("");
   const [authorsInMonth, setAuthorsInMonth] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
-  const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)));
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(localISODateTwelveMonthsAgo());
+  const [endDate, setEndDate] = useState(today());
 
   useEffect(() => {
-    fetchSalesPerMonths(startDate, new Date());
+    fetchSalesPerMonths(startDate, today());
   }, [forceRender])
 
-  // const ZONE = "America/Mexico_City";
-
-  // function mexicoDate(ingressDate, startOrEnd) {
-  //   let date;
-  //   if (startOrEnd === "start") {
-  //     date = DateTime
-  //     .fromISO(ingressDate.toISOString(), {zone:ZONE})
-  //     .startOf("day")
-  //     .toUTC()
-  //     .toJSDate();
-  //   } else if (startOrEnd === "end") {
-  //     date = DateTime
-  //     .fromISO(ingressDate.toISOString(), {zone:ZONE})
-  //     .endOf("day")
-  //     .toUTC()
-  //     .toJSDate();
-  //   }
-
-  //   return date
-  // }
 
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${mexicoDate(startDate, "start")}&endDate=${mexicoDate(endDate, "end")}`, {
+      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -115,7 +102,7 @@ function SalesListPerMonths() {
       //refetch if date has changed
       if (dateRangeChanged) {
         setLoading(true);
-        const response = await fetch(`${baseURL}/api/admin/sales?startDate=${mexicoDate(startDate, "start")}&endDate=${mexicoDate(endDate, "end")}`, {
+        const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

@@ -15,8 +15,8 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [existingBooks, setExistingBooks] = useState([]);
     const [selectedBookId, setSelectedBookId] = useState(clickedRow.bookId);
     const bookRef = useRef();
-    const [date, setDate] = useState(changeDateFormat(clickedRow.date, "yearFirst"));
-    const dateRef = useRef();
+    const [dateStr, setDateStr] = useState(changeDateFormat(clickedRow.dateStr, "yearFirst"));
+    const dateStrRef = useRef();
 
     async function fetchExistingBooks() {
         try {
@@ -65,15 +65,15 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             type: "string",
             length: 240
         };
-        const expectationsDate = {
-            type: "datetime",
+        const expectationsDateStr = {
+            type: "string",
         };
 
         const errorsAmount = checkForErrors("Monto", parseFloat(amount), expectationsAmount, amountRef, "o");
         const errorsNote = checkForErrors("Nota", note, expectationsNote, noteRef, "a");
         const errorsBook = checkForErrors("Libro", parseInt(selectedBookId), expectationsAmount, bookRef, "o");
-        const errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, "a");
-        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDate];
+        const errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+        const errorInputs = [errorsAmount, errorsNote, errorsBook, errorsDateStr];
 
         for (const errorInput of errorInputs) {
             if (errorInput.length > 0) {
@@ -96,7 +96,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 body: JSON.stringify({
                     amount: parseFloat(amount),
                     note: note,
-                    date: date,
+                    dateStr: dateStr,
                     bookId: selectedBookId
                 })
             });
@@ -145,9 +145,9 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                     <input type="date"
                         className="global-input"
                         placeholder="Fecha"
-                        ref={dateRef}
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}/>
+                        ref={dateStrRef}
+                        value={dateStr}
+                        onChange={(e) => setDateStr(e.target.value)}/>
                 </div>
                 <div className="modal-form-line">
                     <label className="modal-form-label">Nota</label>

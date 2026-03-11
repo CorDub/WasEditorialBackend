@@ -56,7 +56,7 @@ export async function getAuthorInventories (req, res) {
                         isDeleted: true,
                         quantity: true,
                         authorDelivery: true,
-                        date: true,
+                        dateStr: true,
                         id: true
                       }
                     }
@@ -86,7 +86,7 @@ export async function getAuthorInventories (req, res) {
                     isDeleted: false
                   },
                   orderBy: {
-                    deliveryDate: "asc"
+                    dateStr: "asc"
                   },
                   select: {
                     quantity: true,
@@ -100,12 +100,12 @@ export async function getAuthorInventories (req, res) {
                 isDeleted: false
               },
               orderBy: {
-                date: "asc"
+                dateStr: "asc"
               },
               select: {
                 quantity: true,
                 authorDelivery: true,
-                date: true
+                dateStr: true
               }
             }
           }

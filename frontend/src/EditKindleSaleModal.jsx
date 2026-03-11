@@ -108,7 +108,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       type: "number",
       range: "positive"
     }
-
     const expectationsDateStr = {
       presence: "not empty",
       type: "string",

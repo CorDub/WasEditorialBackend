@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { DateTime } from "luxon";
+// import { DateTime } from "luxon";
+import { today } from "../../backend/utils.js";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -11,7 +12,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState('');
+  const [dateStr, setDateStr] = useState(today());
   const quantityRef = useRef();
 
   async function handleSubmit(e) {
@@ -52,14 +53,14 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     return errorsList
   }
 
-  function properDate(deliveryDate) {
-    const dateToUse = deliveryDate === "" ? new Date().toISOString() : deliveryDate
-    const properDate = DateTime
-      .fromISO(dateToUse, {zone: "America/Mexico_City"})
-      // .set({ hour: 12, minute: 0, second: 0})
-      .toUTC()
-    return properDate
-  }
+  // function properDate(deliveryDate) {
+  //   const dateToUse = deliveryDate === "" ? new Date().toISOString() : deliveryDate
+  //   const properDate = DateTime
+  //     .fromISO(dateToUse, {zone: "America/Mexico_City"})
+  //     // .set({ hour: 12, minute: 0, second: 0})
+  //     .toUTC()
+  //   return properDate
+  // }
 
   async function sendToServer() {
     try {
@@ -73,7 +74,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           quantity: quantity,
           id: clickedRow.bookId,
           note: "- Entrega del autor - " + note,
-          deliveryDate: properDate(deliveryDate),
+          dateStr: dateStr,
           authorDelivery: true
         }),
       });
@@ -120,7 +121,8 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           type="date"
           placeholder="Fecha"
           className="global-input transfer-quantity"
-          onChange={(e) => setDeliveryDate(e.target.value)}/>
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}/>
         <input
           type="text"
           placeholder="Comentario (opcional)"

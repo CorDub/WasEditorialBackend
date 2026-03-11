@@ -2,7 +2,7 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { convertISOString } from "../../backend/utils";
+import { getDateCutStr } from "../../backend/utils.js"
 
 function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -15,12 +15,16 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const bookRef = useRef();
   const quantityEbookRef = useRef();
   const quantityPodRef = useRef();
-  const dateCutRef = useRef();
-  const [dateCut, setDateCut] = useState(new Date(clickedRow.dateCut));
-  const [datePay, setDatePay] = useState(new Date(clickedRow.datePay));
-  const datePayRef = useRef();
+  // const dateCutStrRef = useRef();
+  const [dateCutStr, setDateCutStr] = useState(clickedRow.dateCutStr);
+  const [datePayStr, setDatePayStr] = useState(clickedRow.datePayStr);
+  const datePayStrRef = useRef();
   const [regalias, setRegalias] = useState(clickedRow.regalias);
   const regaliasRef = useRef();
+
+  useEffect(() => {
+    setDateCutStr(getDateCutStr(datePayStr))
+  }, [datePayStr])
 
   async function getExistingBooks() {
     try {
@@ -105,9 +109,9 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive"
     }
 
-    const expectationsDate = {
+    const expectationsDateStr = {
       presence: "not empty",
-      type: "datetime",
+      type: "string",
       range: "no future"
     }
 
@@ -115,8 +119,8 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     let errorsQuantityEbook;
     let errorsQuantityPod;
     let errorInputs;
-    let errorsDatePay;
-    let errorsDateCut;
+    let errorsDatePayStr;
+    // let errorsDateCutStr;
     let errorsRegalias;
 
     // if (clickedRow) {
@@ -127,10 +131,10 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     // errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef, "o");
     errorsQuantityEbook = checkForErrors("Cantidad Ebook", quantityEbook, expectationsCantidad, quantityEbookRef, "a");
     errorsQuantityPod = checkForErrors("Cantidad Pod", quantityPod, expectationsCantidad, quantityPodRef, "a");
-    errorsDatePay = checkForErrors("Fecha de pago", datePay, expectationsDate, datePayRef, "a");
-    errorsDateCut = checkForErrors("Fecha de corte", dateCut, expectationsDate, dateCutRef, "a");
+    errorsDatePayStr = checkForErrors("Fecha de pago", datePayStr, expectationsDateStr, datePayStrRef, "a");
+    // errorsDateCutStr = checkForErrors("Fecha de corte", dateCutStr, expectationsDateStr, dateCutStrRef, "a");
     errorsRegalias = checkForErrors("Regalías", regalias, expectationsCantidad, regaliasRef, "as");
-    errorInputs = [errorsQuantityEbook, errorsQuantityPod, errorsDatePay, errorsDateCut, errorsRegalias];
+    errorInputs = [errorsQuantityEbook, errorsQuantityPod, errorsDatePayStr, errorsRegalias];
     // }
 
     for (const errorInput of errorInputs) {
@@ -167,8 +171,8 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         body: JSON.stringify({
           quantityEbook: quantityEbook,
           quantityPod: quantityPod,
-          dateCut: dateCut,
-          datePay: datePay,
+          dateCutStr: dateCutStr,
+          datePayStr: datePayStr,
           regalias: regalias
         }),
       });
@@ -239,23 +243,23 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             ref={quantityPodRef} 
             onChange={(e) => setQuantityPod(e.target.value)}></input>
         </div>
-        <div className="modal-form-line">
+        {/* <div className="modal-form-line">
           <label className="modal-form-label">Fecha de corte</label>
           <input 
             type="date"
             className="global-input"
-            ref={dateCutRef}
-            onChange={(e) => setDateCut(e.target.value)}
-            value={convertISOString(dateCut)}></input>
-        </div>
+            ref={dateCutStrRef}
+            onChange={(e) => setDateCutStr(e.target.value)}
+            value={dateCutStr}></input>
+        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Fecha de pago</label>
           <input 
             type="date"
             className="global-input"
-            ref={datePayRef}
-            onChange={(e) => setDatePay(e.target.value)}
-            value={convertISOString(datePay)}></input>
+            ref={datePayStrRef}
+            onChange={(e) => setDatePayStr(e.target.value)}
+            value={datePayStr}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Regalías*</label>

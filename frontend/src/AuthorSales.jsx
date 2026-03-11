@@ -6,7 +6,13 @@ import Navbar from "./Navbar";
 import BookSelector from './BookSelector';
 import SalesContent from './SalesContent';
 import LoadingWheel from './LoadingWheel';
-import { generateMonthKeysForRange } from '../../backend/utils';
+import { 
+  generateMonthKeysForRange,
+  generateMonthKeysForRangeStr,
+  getForMonthStr,
+  today,
+  localISODateTwelveMonthsAgo
+} from '../../backend/utils';
 import Alert from "./Alert";
 
 function AuthorSales() {
@@ -19,8 +25,8 @@ function AuthorSales() {
   const [error, setError] = useState(null);
   const [selectedBook, setSelectedBook] = useState('total');
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)).toLocaleDateString('en-CA'),
-    endDate: new Date().toLocaleDateString('en-CA')
+    startDateStr: localISODateTwelveMonthsAgo(),
+    endDateStr: today()
   });
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -34,8 +40,10 @@ function AuthorSales() {
         : sales.filter(sale => sale.book_id === parseInt(bookId));
 
       filteredSales.forEach(sale => {
-        const date = new Date(sale.date);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        console.log("sale", sale)
+        const date = sale.dateStr;
+        // const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        const monthKey = getForMonthStr(date);
 
       if (!monthlySales[monthKey]) {
         monthlySales[monthKey] = {
@@ -55,7 +63,7 @@ function AuthorSales() {
         month.value = Number((month.value).toFixed(2));
       }
 
-      const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
+      const monthKeysInRange = generateMonthKeysForRangeStr(dateRange.startDateStr, dateRange.endDateStr);
       // let counter = 0;
       // for (let i = 0; i < monthKeysInRange.length; i++) {
       //   if (sortedData[counter] === undefined || monthKeysInRange[i] !== sortedData[counter].month) {
@@ -78,7 +86,7 @@ function AuthorSales() {
       });
       setMonthlyData(finalData);
     } else {
-      const monthKeysInRange = generateMonthKeysForRange(new Date(dateRange.startDate), new Date(dateRange.endDate));
+      const monthKeysInRange = generateMonthKeysForRangeStr(dateRange.startDateStr, dateRange.endDateStr);
       let sortedData = []
       for (const month of monthKeysInRange) {
         const monthToPush = {
@@ -104,8 +112,8 @@ function AuthorSales() {
       setLoading(true);
       setError(null);
       const queryParams = new URLSearchParams({
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate
+        startDateStr: dateRange.startDateStr,
+        endDateStr: dateRange.endDateStr
       });
 
       const response = await fetch(`${baseURL}/api/author/sales?${queryParams}`, {
@@ -149,15 +157,15 @@ function AuthorSales() {
 
     let valueChecked = value;
     //checking date is not in the future or start date is not after end date
-    if (name === "endDate")  {
-      if (new Date(value) > new Date()) {
-        valueChecked = new Date().toLocaleDateString('en-CA')
+    if (name === "endDateStr")  {
+      if ((value) > today()) {
+        // valueChecked = new Date().toLocaleDateString('en-CA')
         setAlertMessage("No se puede poner una fecha de fin en el futuro.")
         setAlertType("error")
       }
-    } else if (name === "startDate") {
-      if (new Date(value) > new Date() || new Date(value) > new Date(dateRange.endDate)) {
-        valueChecked = new Date().toLocaleDateString('en-CA')
+    } else if (name === "startDateStr") {
+      if (value > today() || value > dateRange.endDateStr) {
+        // valueChecked = new Date().toLocaleDateString('en-CA')
         setAlertMessage("No se puede poner una fecha de inicio en el futuro o después de la fecha de fin")
         setAlertType("error")
       }
@@ -205,8 +213,8 @@ function AuthorSales() {
             <input
               type="date"
               id="startDate"
-              name="startDate"
-              value={dateRange.startDate}
+              name="startDateStr"
+              value={dateRange.startDateStr}
               onChange={handleDateChange}
             />
           </div>
@@ -214,8 +222,8 @@ function AuthorSales() {
             <input
               type="date"
               id="endDate"
-              name="endDate"
-              value={dateRange.endDate}
+              name="endDateStr"
+              value={dateRange.endDateStr}
               onChange={handleDateChange}
             />
           </div>

@@ -96,6 +96,10 @@ export function getForMonth(timestamp) {
   return forMonth
 }
 
+export function getForMonthStr(dateStr) {
+  return dateStr.substring(0,7)
+}
+
 export function convertISOString(date, separator='-') {
   let JsonParsedDate = JSON.stringify(date);
   const justDateNoTime = JsonParsedDate.split("T")[0]
@@ -127,6 +131,33 @@ export function generateMonthKeysForRange(startDate, endDate) {
   for (let i = 0; i <= numMonthsInRange; i++) {
     const month = (Number(start.substring(5,7)) + i) - (12 * Math.trunc((Number(start.substring(5,7)) + i -1)/12))
     const year = Number(start.substring(0,4)) + (Math.trunc((Number(start.substring(5,7)) + i - 1) / 12))
+    const monthKey = String(year) + "-" + String(month).padStart(2, "0");
+    monthKeysInRange.push(monthKey)
+  }
+
+  return monthKeysInRange
+}
+
+export function generateMonthKeysForRangeStr(startDate, endDate) {
+  // const startString = convertISOString(startDate);
+  // const endString = convertISOString(endDate);
+
+  // const start = startString.substring(0,7);
+  // const end = endString.substring(0,7);
+
+  let numMonthsInRange = 0;
+  if (startDate.substring(0,4) === endDate.substring(0,4)) {
+    numMonthsInRange = Number(endDate.substring(5,7)) - Number(startDate.substring(5,7));
+  } else {
+    numMonthsInRange = Number(endDate.substring(5,7))
+      + (Number(endDate.substring(0,4)) - Number(startDate.substring(0,4))) * 12
+      - Number(startDate.substring(5,7))
+  }
+
+  let monthKeysInRange = []
+  for (let i = 0; i <= numMonthsInRange; i++) {
+    const month = (Number(startDate.substring(5,7)) + i) - (12 * Math.trunc((Number(startDate.substring(5,7)) + i -1)/12))
+    const year = Number(startDate.substring(0,4)) + (Math.trunc((Number(startDate.substring(5,7)) + i - 1) / 12))
     const monthKey = String(year) + "-" + String(month).padStart(2, "0");
     monthKeysInRange.push(monthKey)
   }
@@ -199,6 +230,8 @@ export function changeDateFormat(date, format='normal') {
     return date.substring(0,4) + "-" + date.substring(5,7) + "-" + date.substring(8,10);
   } else if (format === "dayFirst") {
     return date.substring(8, 10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);
+  } else if (format === "yearFirstSlash") {
+    return date.substring(0,4) + "/" + date.substring(5,7) + "/" + date.substring(8,10);
   }
 
   return months[date.substring(5,7)] + " " + date.substring(0,4);
@@ -387,4 +420,27 @@ export function mexicoDate(ingressDate, period) {
   }
 
   return date
+}
+
+export function today() {
+  return new Date().toISOString().split('T')[0]
+}
+
+export function getDateCutStr(dateStr) {
+  const month = Number(dateStr.substring(5,7))
+  const dateCutDay = Number(dateStr.substring(8,10)) > 28 ? 28 : Number(dateStr.substring(8,10))
+  const paddedDateCutDay = String(dateCutDay).padStart(2, "0")
+
+  if (month > 12) {
+    console.error(`Not a correct month number (1-12): ${month}`)
+    return
+  } else if (month > 2) {
+    const dateCutMonth = month - 2
+    return `${dateStr.substring(0,4) + "-" + String(dateCutMonth).padStart(2, "0") + "-" + paddedDateCutDay}`
+  } else {
+    const dateCutYear = Number(dateStr.substring(0,4)) - 1;
+    const overspill = Math.abs(month - 2);
+    const dateCutMonth = 12 - overspill;
+    return `${dateCutYear + "-" + dateCutMonth + "-" + paddedDateCutDay}`
+  }
 }

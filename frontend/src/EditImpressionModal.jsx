@@ -8,14 +8,12 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckAdmin();
   const quantityRef = useRef();
-  const dateRef = useRef();
+  const dateStrRef = useRef();
   const noteRef = useRef();
   const [quantity, setQuantity] = useState(clickedRow.quantity);
-  const [date, setDate] = useState(convertISOString(clickedRow.date));
+  const [dateStr, setDateStr] = useState(clickedRow.dateStr);
   const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
-
-  console.log(clickedRow)
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -38,12 +36,12 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
     
-    const expectationsDate = {
+    const expectationsDateStr = {
       type: "datetime",
       presence: "not empty",
       range: "no future"
     }
-    const errorsDate = checkForErrors("La fecha", date, expectationsDate, dateRef, "a");
+    const errorsDateStr = checkForErrors("La fecha", dateStr, expectationsDateStr, dateStrRef, "a");
 
     const expectationsNote = {
       type: "string",
@@ -51,7 +49,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
     const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
 
-    const errorInputs = [errorsQuantity, errorsDate, errorsNote];
+    const errorInputs = [errorsQuantity, errorsDateStr, errorsNote];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -75,7 +73,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           quantity: quantity,
           book_id: clickedRow.bookId,
           note: note,
-          date: date
+          dateStr: dateStr
         }),
       });
 
@@ -115,9 +113,9 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           type="date"
           placeholder="Fecha"
           className="global-input"
-          ref={dateRef}
-          onChange={(e) => setDate(e.target.value)}
-          value={convertISOString(date)}></input>
+          ref={dateStrRef}
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}></input>
         <input
           type="text"
           placeholder="Nota para el autor (opcional)"

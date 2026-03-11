@@ -7,14 +7,12 @@ import { MaterialReactTable, useMaterialReactTable } from 'material-react-table'
 import UserContext from './UserContext';
 import BookstoreInventory from './BookstoreInventory';
 import BookInventory from './BookInventory';
-import InventoryWASTotal from './InventoryWASTotal';
 
 function InventoriesList() {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  const [wasData, setWasData] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -39,8 +37,6 @@ function InventoriesList() {
     "transfers": true,
     "ventas": true,
   });
-
-  console.log("data", data)
   
   const columns = useMemo(() => [
     {
@@ -140,7 +136,6 @@ function InventoriesList() {
               onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
                 Inventarios por libro</div>
           </div>
-          {/* <InventoryWASTotal wasData={wasData}/> */}
         </div>
       </>
     ),
@@ -248,8 +243,6 @@ function InventoriesList() {
       if (response.ok) {
         const data = await response.json();
         setData(data);
-        const wasData = data.find(el => el.name === "WAS Editorial")
-        setWasData(wasData);
       }
     } catch (error) {
       console.log(error)

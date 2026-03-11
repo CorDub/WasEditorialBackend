@@ -4,7 +4,13 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
-import { twelveMonthsAgo, applyFilters, putDateAtNoon } from "../../backend/utils";
+import { 
+  twelveMonthsAgo, 
+  applyFilters, 
+  putDateAtNoon,
+  localISODateTwelveMonthsAgo,
+  today
+} from "../../backend/utils";
 
 function KindleSalesListPerMonth() {
   useCheckAdmin();
@@ -20,13 +26,13 @@ function KindleSalesListPerMonth() {
   const [selectedBook, setSelectedBook] = useState("");
   const [authorsInMonth, setAuthorsInMonth] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
-  const [startDate, setStartDate] = useState(new Date(twelveMonthsAgo().setDate(1)));
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(localISODateTwelveMonthsAgo());
+  const [endDate, setEndDate] = useState(today());
 
   async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
       setLoading(true)
-      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${putDateAtNoon(startDate)}&endDate=${putDateAtNoon(endDate)}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -64,8 +70,8 @@ function KindleSalesListPerMonth() {
     const previousStartDate = sessionStorage.getItem("startDate");
     const previousEndDate = sessionStorage.getItem("endDate");
 
-    if (startDate < new Date(previousStartDate)
-      && endDate > new Date(previousEndDate)
+    if (startDate < previousStartDate
+      && endDate > previousEndDate
     ) {
       await fetchKindleSalesPerMonth(startDate, endDate)
     }

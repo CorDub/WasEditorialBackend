@@ -20,8 +20,8 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const bookstoreRef = useRef();
   // const countryRef = useRef();
   const quantityRef = useRef();
-  const dateRef = useRef();
-  const [date, setDate] = useState(new Date(clickedRow.date));
+  const dateStrRef = useRef();
+  const [dateStr, setDateStr] = useState(clickedRow.dateStr);
 
   let bookTitlesList = []
   for (const book of existingBooks) {
@@ -184,9 +184,9 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       type: "number",
       range: "positive"
     }
-    const expectationsDate = {
+    const expectationsDateStr= {
       presence: "not empty",
-      type: "datetime",
+      type: "string",
       range: "no future"
     }
 
@@ -194,8 +194,8 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
     // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsQuantity = checkForErrors("Cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
-    const errorsDate = checkForErrors("Fecha", date, expectationsDate, dateRef, 'a');
-    const errorInputs = [errorsQuantity, errorsDate];
+    const errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, 'a');
+    const errorInputs = [errorsQuantity, errorsDateStr];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
         errorsList.push(errorInput);
@@ -233,7 +233,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           bookstore: bookstoreId,
           // country: country,
           quantity: parseInt(quantity),
-          date: date
+          dateStr: dateStr
         }),
       });
 
@@ -307,9 +307,9 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             type="date"
             placeholder="Fecha"
             className="global-input"
-            ref={dateRef}
-            onChange={(e) => setDate(e.target.value)}
-            value={convertISOString(date)}></input>
+            ref={dateStrRef}
+            onChange={(e) => setDateStr(e.target.value)}
+            value={dateStr}></input>
         </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

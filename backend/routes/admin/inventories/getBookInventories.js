@@ -40,14 +40,15 @@ export async function getBookInventory(req, res) {
                 isDeleted: false,
               },
               orderBy: {
-                date: "asc"
+                dateStr: "asc"
               },
               select: {
                 id: true,
                 quantity: true,
                 note: true,
                 authorDelivery: true,
-                date: true
+                date: true,
+                dateStr: true
               }
             }
           }

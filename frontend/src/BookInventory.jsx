@@ -57,9 +57,6 @@ function BookInventory({
     }
   }, [modalType, isModalOpen])
 
-  console.log("specificBook", specificBook)
-  console.log("data", data)
-
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -94,17 +91,6 @@ function BookInventory({
         }
       }
     },
-    // {
-    //   header: "Inicial",
-    //   accessorKey: "inicial"
-    // },
-    // {
-    //   header: "Nuevos ingresos",
-    //   accessorKey: "extraTransfers",
-    //   Cell: ({row}) => {
-    //     return (<div>{row.original.extraTransfers || "-"}</div>)
-    //   }
-    // },
     {
       header: "Copías",
       Cell: ({row}) => {
@@ -119,13 +105,6 @@ function BookInventory({
         }
       },
     },
-    // {
-    //   header: "Impresiónes",
-    //   size: 100,
-    //   Cell: ({row}) => {
-    //     return (<div>{row.original.bookstoreId === 1 && impressions ? impressions : 0}</div>)
-    //   },
-    // },
     {
       header: "Vendidos",
       Cell: ({row}) => {
@@ -281,8 +260,8 @@ function BookInventory({
         setSoldTotal(data.total.ventas)
         setGivenToAuthorTotal(data.total.entregadosAlAutor)
         setReturnsTotal(data.total.returns)
-        setImpressions(data.thatBookImpressions)
-        setEntregadosDelAutorTotal(specificBook.total.entregadosDelAutor)
+        setImpressions(data.total.thatBookImpressions)
+        setEntregadosDelAutorTotal(data.total.entregadosDelAutor)
       }
 
     } catch (error) {
@@ -315,12 +294,12 @@ function BookInventory({
     setModalOpen(true);
   }
 
-  function closeModal(globalFilter, reload, alertMessage, alertType) {
+  async function closeModal(globalFilter, reload, alertMessage, alertType) {
     setModalOpen(false);
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      getBookInventories();
+      await getBookInventories();
       setForceRender(prev => !prev);
     }
     if (alertMessage) {
@@ -345,7 +324,6 @@ function BookInventory({
         isBookInventoryOpen={isBookInventoryOpen}
         setBookInventoryOpen={setBookInventoryOpen}
         impressions={impressions}
-        // ref={inventoryTotalRef}
         setModalType={setModalType}
         openModal={openModal}
         setRetreat={setRetreat}

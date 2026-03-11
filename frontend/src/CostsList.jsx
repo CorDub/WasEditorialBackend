@@ -58,7 +58,7 @@ function CostsLists() {
             header: "Fecha",
             accessorKey: "date",
             Cell: ({row}) => (
-                <div>{changeDateFormat(row.original.date, "dayFirst")}</div>
+                <div>{changeDateFormat(row.original.dateStr, "dayFirst")}</div>
             )
         },
         {

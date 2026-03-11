@@ -67,6 +67,8 @@ function AddingCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         }
         const expectationsDateStr = {
             type: "string",
+            presence: "not empty",
+            range: "no future"
         }
 
         const errorsAmount = checkForErrors("Monto", parseInt(amount), expectationsAmount, amountRef, "o");

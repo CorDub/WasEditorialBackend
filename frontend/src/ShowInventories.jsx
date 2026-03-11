@@ -132,7 +132,7 @@ function ShowInventories({
           >
           <p className="author-inventory-label">Inventario total inicial 
             {!showTotal && (
-              <span className="author-inventory-date">{changeDateFormat(inventories.impressions[0].dateStr, "fullDate") || ""}</span>
+              <span className="author-inventory-date">{changeDateFormat(inventories.impressions[0].dateStr, "dayFirst") || ""}</span>
             )}
           </p>
           {/* {!showTotal && (
@@ -158,7 +158,7 @@ function ShowInventories({
                   return (
                     <div key={index} className="author-inventory-impressions">
                       {/* <p className="author-inventory-date">({convertISOString(impression.date)})</p> */}
-                      <p className="author-inventory-date">{changeDateFormat(impression.dateStr, "fullDate")}</p>
+                      <p className="author-inventory-date">{changeDateFormat(impression.dateStr, "dayFirst")}</p>
                       <p className="author-inventory-date">{impression.quantity}</p>
                     </div>
                   )

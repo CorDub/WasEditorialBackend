@@ -38,6 +38,8 @@ function AuthorInventory(){
     setShowTotal(true);
   },[])
 
+  console.log("bookInventories", booksInventories)
+
   async function fetchInventories() {
     try {
       const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");

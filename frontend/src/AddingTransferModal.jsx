@@ -209,6 +209,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     //   presence: "not empty",
     //   value: countries
     // }
+    const expectationsDateStr = {
+      presence: "not empty",
+      type: "string",
+      range: "no future"
+    }
     let totalQuantities = 0;
     const quantityElements = document.querySelectorAll('.transfer-quantity');
 
@@ -228,6 +233,18 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         );
         if (errorsBookstore.length > 0) {
           errorsList.push(errorsBookstore);
+        };
+
+        const dateStrRef = document.getElementById(`fecha-${i}`);
+        const errorsDateStr = checkForErrors(
+          "Fecha",
+          bookstoresToTransfer[i].fecha,
+          expectationsDateStr,
+          dateStrRef,
+          "a"
+        )
+        if (errorsDateStr.length > 0) {
+          errorsList.push(errorsDateStr);
         };
 
         // const countryRef = document.getElementById(`country-select-${i}`);

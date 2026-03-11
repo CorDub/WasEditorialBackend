@@ -13,7 +13,7 @@ function Impression({impression, setModalType, openModal, book}) {
   const [completeImpression, setCompleteImpression] = useState(null);
 
   useEffect(() => {
-    const formattedDate = changeDateFormat(impression.dateStr, "yearFirstSlash")
+    const formattedDate = changeDateFormat(impression.dateStr, "dayFirst")
     setDate(formattedDate)
   }, [impression])
 

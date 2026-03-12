@@ -102,12 +102,12 @@ function AuthorSales() {
 
   const fetchSales = async (forceFetch) => {
     try {
-      const cachedAuthorSalesData = sessionStorage.getItem("authorSalesData");
-      if (cachedAuthorSalesData && !forceFetch) {
-        setSalesData(JSON.parse(cachedAuthorSalesData));
-        processMonthlyData(JSON.parse(cachedAuthorSalesData).sales, selectedBook);
-        return
-      }
+      // const cachedAuthorSalesData = sessionStorage.getItem("authorSalesData");
+      // if (cachedAuthorSalesData && !forceFetch) {
+      //   setSalesData(JSON.parse(cachedAuthorSalesData));
+      //   processMonthlyData(JSON.parse(cachedAuthorSalesData).sales, selectedBook);
+      //   return
+      // }
 
       setLoading(true);
       setError(null);
@@ -129,7 +129,7 @@ function AuthorSales() {
       }
 
       const data = await response.json();
-      sessionStorage.setItem("authorSalesData", JSON.stringify(data));
+      // sessionStorage.setItem("authorSalesData", JSON.stringify(data));
       setSalesData(data);
       processMonthlyData(data.sales, selectedBook);
     } catch (error) {

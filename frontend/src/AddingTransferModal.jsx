@@ -236,9 +236,10 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         };
 
         const dateStrRef = document.getElementById(`fecha-${i}`);
+        console.log("bookstoresToTransfer[i].fecha", bookstoresToTransfer[i])
         const errorsDateStr = checkForErrors(
           "Fecha",
-          bookstoresToTransfer[i].fecha,
+          date,
           expectationsDateStr,
           dateStrRef,
           "a"

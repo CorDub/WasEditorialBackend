@@ -38,17 +38,15 @@ function AuthorInventory(){
     setShowTotal(true);
   },[])
 
-  console.log("bookInventories", booksInventories)
-
   async function fetchInventories() {
     try {
-      const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");
-      const cachedAuthorBookInventoriesTotals = sessionStorage.getItem("authorBookInventoriesTotals");
-      if (cachedAuthorInventoriesTotals) {
-        setInventories(JSON.parse(cachedAuthorInventoriesTotals));
-        setBooksInventories(JSON.parse(cachedAuthorBookInventoriesTotals));
-        return
-      }
+      // const cachedAuthorInventoriesTotals = sessionStorage.getItem("authorInventoriesTotals");
+      // const cachedAuthorBookInventoriesTotals = sessionStorage.getItem("authorBookInventoriesTotals");
+      // if (cachedAuthorInventoriesTotals) {
+      //   setInventories(JSON.parse(cachedAuthorInventoriesTotals));
+      //   setBooksInventories(JSON.parse(cachedAuthorBookInventoriesTotals));
+      //   return
+      // }
 
       const response = await fetch(`${baseURL}/api/author/authorInventories`, {
         method: "GET",
@@ -60,9 +58,9 @@ function AuthorInventory(){
 
       if (response.ok) {
         const data = await response.json();
-        sessionStorage.setItem("authorInventoriesTotals", JSON.stringify(data));
+        // sessionStorage.setItem("authorInventoriesTotals", JSON.stringify(data));
         setInventories(data);
-        sessionStorage.setItem("authorBookInventoriesTotals", JSON.stringify(data.bookInventories));
+        // sessionStorage.setItem("authorBookInventoriesTotals", JSON.stringify(data.bookInventories));
         setBooksInventories(data.bookInventories);
       }
     } catch (error) {

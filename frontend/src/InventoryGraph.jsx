@@ -23,11 +23,11 @@ function InventoryGraph({
 
   async function fetchAllAuthorInventories() {
     try {
-      const cachedGraphInventoryData = sessionStorage.getItem("graphInventoryData");
-      if (cachedGraphInventoryData) {
-        setData(JSON.parse(cachedGraphInventoryData));
-        return
-      }
+      // const cachedGraphInventoryData = sessionStorage.getItem("graphInventoryData");
+      // if (cachedGraphInventoryData) {
+      //   setData(JSON.parse(cachedGraphInventoryData));
+      //   return
+      // }
 
       setLoading(true);
       const response = await fetch(`${baseURL}/api/author/completeInventory`, {
@@ -41,7 +41,7 @@ function InventoryGraph({
       if (response.ok) {
         const parsedData = await response.json();
         filterData(parsedData, scope, selectedBookId);
-        sessionStorage.setItem("graphInventoryData", JSON.stringify(parsedData));
+        // sessionStorage.setItem("graphInventoryData", JSON.stringify(parsedData));
         setData(parsedData);
         setLoading(false);
       } else {

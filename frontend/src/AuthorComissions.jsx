@@ -69,13 +69,13 @@ function AuthorCommissions() {
   async function fetchPayments() {
     try {
       // check cache (but skip if forceRender is true)
-      const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
-      if (cachedAuthorPayments && !forceRender) {
-        console.log("cache hit");
-        setPayments(JSON.parse(cachedAuthorPayments));
-        setPaymentInfo(JSON.parse(cachedAuthorPayments)[0]);
-        return
-      }
+      // const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
+      // if (cachedAuthorPayments && !forceRender) {
+      //   console.log("cache hit");
+      //   setPayments(JSON.parse(cachedAuthorPayments));
+      //   setPaymentInfo(JSON.parse(cachedAuthorPayments)[0]);
+      //   return
+      // }
 
       console.log("refetch");
       const response = await fetch(`${baseURL}/api/author/payments`, {
@@ -88,7 +88,7 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
-        sessionStorage.setItem("authorPayments", JSON.stringify(data));
+        // sessionStorage.setItem("authorPayments", JSON.stringify(data));
         // console.log("cache storage");
         // console.log("data", data)
         // console.log("data[0]", data[0])

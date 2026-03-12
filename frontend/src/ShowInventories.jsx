@@ -166,9 +166,23 @@ function ShowInventories({
               })}
             </>
           )}
+        {inventories.summary.entregadosDelAutor && (
+          <div className="author-inventory-line"
+            ref={givenRef}
+            // onClick={() => {
+            //   declareActive(givenRef, "given", setGivenToAuthorOpen),
+            //   setExclusions("")}}
+            >
+            <p className="author-inventory-label">Libros entregados del autor</p>
+            <p className="author-inventory-number">{inventories.summary.entregadosDelAutor || 0}</p>
+          </div>
+        )}
         <div className="author-inventory-line ail-bold">
-          <p className="author-inventory-label">Copias impresas totales</p>
-          <p className="author-inventory-label">{(inventories.summary.impressions + inventories.summary.initial) || 0}</p>
+          <p className="author-inventory-label">Copias totales</p>
+          <p className="author-inventory-label">{(
+            inventories.summary.impressions 
+            + inventories.summary.entregadosDelAutor
+            + inventories.summary.initial) || 0}</p>
         </div>
         <div className="author-inventory-line"
           ref={givenRef}

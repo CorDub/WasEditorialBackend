@@ -76,7 +76,7 @@ export async function getInventoriesByBook(req, res) {
         impressionInicial: 0,
         extraImpressions: 0,
         ventas: 0,
-        entregadosDelAutor: 0,
+        // entregadosDelAutor: 0,
         entregadosAlAutor: 0,
         disponibles: 0,
         type: "book"
@@ -88,7 +88,7 @@ export async function getInventoriesByBook(req, res) {
       //2.1 impressions
       const impressions = getTotalWasImpressions(inventory);
       scaffold.impressionInicial += impressions.impressionInicial
-      scaffold.entregadosDelAutor += impressions.entregadosDelAutor
+      scaffold.extraImpressions += impressions.entregadosDelAutor
       scaffold.extraImpressions += impressions.extraImpressions
 
       //2.2 ventas
@@ -117,7 +117,7 @@ export async function getInventoriesByBook(req, res) {
         book.impressionInicial 
         + book.extraImpressions
         - book.ventas
-        + book.entregadosDelAutor
+        // + book.entregadosDelAutor
         - book.entregadosAlAutor
       finalRes.push(bookWithDisponibles)     
     }

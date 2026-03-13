@@ -112,7 +112,7 @@ export async function getWasInventories(prismaClient, inputsId) {
     extraImpressions: 0,
     returns: 0,
     transfers: 0,
-    entregadosDelAutor: 0,
+    // entregadosDelAutor: 0,
     entregadosAlAutor: 0,
     ventas: 0,
     disponibles: 0,
@@ -134,7 +134,7 @@ export async function getWasInventories(prismaClient, inputsId) {
       extraImpressions: 0,
       returns: 0,
       transfers: 0,
-      entregadosDelAutor: 0,
+      // entregadosDelAutor: 0,
       entregadosAlAutor: 0,
       ventas: 0,
       disponibles: 0,
@@ -152,10 +152,10 @@ export async function getWasInventories(prismaClient, inputsId) {
     const impressionsRes = getTotalWasImpressions(inventory) 
     specific.inicial += impressionsRes.impressionInicial
     specific.extraImpressions += impressionsRes.extraImpressions
-    specific.entregadosDelAutor += impressionsRes.entregadosDelAutor
+    specific.extraImpressions += impressionsRes.entregadosDelAutor
     total.inicial += impressionsRes.impressionInicial
     total.extraImpressions += impressionsRes.extraImpressions
-    total.entregadosDelAutor += impressionsRes.entregadosDelAutor
+    total.extraImpressions += impressionsRes.entregadosDelAutor
 
     //2.3: sales
     const salesRes = getTotalSales(inventory);
@@ -174,8 +174,8 @@ export async function getWasInventories(prismaClient, inputsId) {
     //2.5: copias
     specific.copias = 
       specific.inicial +
-      specific.extraImpressions +
-      specific.entregadosDelAutor -
+      specific.extraImpressions -
+      // specific.entregadosDelAutor -
       specific.transfers
     total.copias += specific.copias
     

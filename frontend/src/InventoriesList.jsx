@@ -32,7 +32,7 @@ function InventoriesList() {
     "extraImpressions": true, 
     "copias": false,
     "returns": true,
-    "entregadosDelAutor": true,
+    // "entregadosDelAutor": true,
     "entregadosAlAutor": true,
     "transfers": true,
     "ventas": true,
@@ -53,7 +53,7 @@ function InventoriesList() {
       )}
     },
     {
-      header: "Impresión / Ingreso inicial",
+      header: isInventoryTypeBook ? "Impresión inicial" : "Impresión / Ingreso inicial",
       size: 100,
       accessorKey: "initial",
       Cell: ({row}) => {
@@ -63,7 +63,7 @@ function InventoriesList() {
       }
     },
     {
-      header: "Nuevas impresiónes / ingresos",
+      header: isInventoryTypeBook ? "Nuveas impresiónes" : "Nuevas impresiónes / ingresos",
       size: 100,
       accessorKey: "extraImpressions",
       Cell: ({row}) => {
@@ -75,12 +75,12 @@ function InventoriesList() {
       accessorKey: "copias",
       size: 100
     },
-    {
-      header: "Entregados del autor",
-      accessorKey: "entregadosDelAutor",
-      size: 100,
-      Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
-    },
+    // {
+    //   header: "Entregados del autor",
+    //   accessorKey: "entregadosDelAutor",
+    //   size: 100,
+    //   Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
+    // },
     {
       header: "Ingresados a otras librerias",
       accessorKey: "transfers",
@@ -284,7 +284,7 @@ function InventoriesList() {
         "extraImpressions": true, 
         "copias": false,
         "returns": false,
-        "entregadosDelAutor": true,
+        // "entregadosDelAutor": true,
         "entregadosAlAutor": true,
         "transfers": false,
         "ventas": true,
@@ -297,7 +297,7 @@ function InventoriesList() {
         "extraImpressions": true, 
         "copias": false,
         "returns": true,
-        "entregadosDelAutor": true,
+        // "entregadosDelAutor": true,
         "entregadosAlAutor": true,
         "transfers": true,
         "ventas": true,

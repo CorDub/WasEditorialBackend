@@ -132,7 +132,7 @@ export function handleWasInventories(wasInventories) {
     extraImpressions: 0,
     returns: 0,
     transfers: 0,
-    entregadosDelAutor: 0,
+    // entregadosDelAutor: 0,
     entregadosAlAutor: 0,
     ventas: 0,
     disponibles: 0,
@@ -150,7 +150,7 @@ export function handleWasInventories(wasInventories) {
     const impressionsRes = getTotalWasImpressions(inventory) 
     wasTotal.impressionInicial += impressionsRes.impressionInicial
     wasTotal.extraImpressions += impressionsRes.extraImpressions
-    wasTotal.entregadosDelAutor += impressionsRes.entregadosDelAutor
+    wasTotal.extraImpressions += impressionsRes.entregadosDelAutor
 
     //step 2: sales
     wasTotal.ventas += getTotalSales(inventory)
@@ -164,8 +164,8 @@ export function handleWasInventories(wasInventories) {
     //step 4: copias
     wasTotal.copias = 
       wasTotal.impressionInicial +
-      wasTotal.extraImpressions +
-      wasTotal.entregadosDelAutor -
+      wasTotal.extraImpressions -
+      // wasTotal.entregadosDelAutor -
       wasTotal.transfers
 
     //step5: disponible

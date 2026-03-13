@@ -35,6 +35,7 @@ function TableActions ({
   const [isPaymentsTooltipOpen, setPaymentsTooltipOpen] = useState(false);
   const [isCostTooltipOpen, setCostTooltipOpen] = useState(false);
   const [isEditBookPricesTooltipOpen, setEditBookPricesTooltipOpen] = useState(false);
+  const [isNewImpressionTooltipOpen, setNewImpressionTooltipOpen] = useState(false)
 
   useEffect(() => {
     if (row.original.bookstoreId === 1) {
@@ -121,6 +122,11 @@ function TableActions ({
 
   function editBookPrices() {
     openModal("editBookPrices", row.original);
+  } 
+
+  function addNewImpression() {
+    setModalType("impression");
+    openModal("adding", row.original)
   } 
 
   return(
@@ -250,6 +256,14 @@ function TableActions ({
                 onMouseLeave={() => setSendTooltipOpen(!isSendTooltipOpen)}/>
               {isSendTooltipOpen && (
                 <div className="ta-tooltip">Ingreso a librería</div>)}
+              <FontAwesomeIcon icon={faArrowDown}
+                className='ta-button ta-transfer-send'
+                id={`ta-transfer-${row.index}`}
+                onClick={addNewImpression}
+                onMouseEnter={() => setNewImpressionTooltipOpen(!isSendTooltipOpen)}
+                onMouseLeave={() => setNewImpressionTooltipOpen(!isSendTooltipOpen)}/>
+              {isNewImpressionTooltipOpen && (
+                <div className="ta-tooltip">Nueva impresión</div>)}
               <FontAwesomeIcon icon={faPersonArrowUpFromLine}
                 className='ta-button ta-givenToAuthor'
                 id={`ta-transfer-${row.index}`}
@@ -258,14 +272,14 @@ function TableActions ({
                 onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
               {isGivenToAuthorTooltipOpen && (
                 <div className="ta-tooltip">Entrega al autor</div>)}
-              <FontAwesomeIcon icon={faPersonArrowDownToLine}
+              {/* <FontAwesomeIcon icon={faPersonArrowDownToLine}
                 className='ta-button ta-receivedFromAuthor'
                 id={`ta-transfer-${row.index}`}
                 onClick={transferFromAuthor}
                 onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
                 onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
               {isReceivedFromAuthorTooltipOpen && (
-                <div className="ta-tooltip">Entrega del autor</div>)}
+                <div className="ta-tooltip">Entrega del autor</div>)} */}
             </>
             :
             <>

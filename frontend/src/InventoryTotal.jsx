@@ -128,12 +128,12 @@ function InventoryTotal({
             {(type === "bookstore" && selectedBookstoreId !== 1) &&
               <div className="inventory-total-details">Nuevos ingresos: {extraTransfersTotal}</div>
             }
-            {(type === "bookstore" && selectedBookstoreId === 1) &&
+            {/* {(type === "bookstore" && selectedBookstoreId === 1) &&
               <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
             }
             {(type === "book") &&
               <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
-            }
+            } */}
             {(type === "bookstore" && selectedBookstoreId === 1) &&
               <div className="inventory-total-details">Transferidos: {transfersTotal}</div>
             }

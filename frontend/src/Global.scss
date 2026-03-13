@@ -162,6 +162,19 @@ a {
   font-size: 0.85rem;
 }
 
+.modal-form-checkbox-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  margin-bottom: 0.5rem;
+}
+
+.checkbox-input {
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
 .modal-form-upload {
   display: flex;
   flex-direction: column;

@@ -56,10 +56,6 @@ function BookstoreInventory({
     pageSize: 30
   })
 
-  console.log("specificBookstore", specificBookstore)
-  console.log("selectedBookstoreId", selectedBookstoreId)
-  console.log("data", data)
-
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -76,6 +72,11 @@ function BookstoreInventory({
             type={"inventory"}/>
         </div>
       ),
+      muiTableBodyCellProps: {
+        sx: {
+          overflow: 'visible'
+        }
+      }
     },
     {
       header: "Libro",

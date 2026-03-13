@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-// import Tooltip from "./Tooltip";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faCircleXmark, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
@@ -15,10 +12,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [bookstoreNamesList, setBookstoresNamesList] = useState([]);
   // const [tooltipMessage, setTooltipMessage] = useState("");
-  const [x, setX] = useState(null);
-  const [y, setY] = useState(null);
+  // const [x, setX] = useState(null);
+  // const [y, setY] = useState(null);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
+  const [bookstoreId, setBookstoreId] = useState(0);
+  const [quantity, setQuantity] = useState(0);
   const [date, setDate] = useState(today());
   
   useEffect(() => {
@@ -67,31 +66,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   useEffect(() => {
     fetchExistingBookstores();
   }, [clickedRow]);
-
-  function toggleTooltip(message, elementId) {
-    if (x === null || y === null) {
-      const element = document.getElementById(elementId);
-      const elementRect = element.getBoundingClientRect();
-      setY(elementRect.top);
-      setX(elementRect.left);
-      // setTooltipMessage(message);
-    } else {
-      setY(null);
-      setX(null);
-      // setTooltipMessage("");
-    }
-  }
-
-  function addOtherBookstore() {
-    setBookstoresToTransfer([...bookstoresToTransfer, 0]);
-  }
-
-  function removeOtherBookstore(indexToRemove) {
-    setBookstoresToTransfer(bookstoresToTransfer.filter((_, index)=> index !== indexToRemove));
-    setX(null);
-    setY(null);
-    // setTooltipMessage("");
-  }
 
   function dropDownChange(e, input_index, type) {
     // copies the current bookstoresToTransfer
@@ -204,11 +178,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive",
       maximum: clickedRow.current
     }
-    // const expectationsCountry = {
-    //   type: "string",
-    //   presence: "not empty",
-    //   value: countries
-    // }
     const expectationsDateStr = {
       presence: "not empty",
       type: "string",
@@ -299,15 +268,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           },
           credentials: "include",
           body: JSON.stringify({
-            // bookstoreTo: bookstoresToTransfer[i].name,
             bookstoreToId: bookstoresToTransfer[i].bookstoreId,
-            // bookstoreFromId: clickedRow.bookstoreId,
             quantity: bookstoresToTransfer[i].quantity,
             inventoryFromId: clickedRow.id,
-            // bookId: clickedRow.bookId,
             type: transferType,
             dateStr: bookstoresToTransfer[i].fecha
-            // country: bookstoresToTransfer[i].country
           }),
         });
 
@@ -329,10 +294,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       console.error(error);
     }
   }
-
-  // useEffect(() => {
-  //   console.log(bookstoresToTransfer)
-  // }, [bookstoresToTransfer])
 
   return(
     <div className="modal-proper">

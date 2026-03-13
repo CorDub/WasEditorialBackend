@@ -260,8 +260,8 @@ function TableActions ({
                 className='ta-button ta-transfer-send'
                 id={`ta-transfer-${row.index}`}
                 onClick={addNewImpression}
-                onMouseEnter={() => setNewImpressionTooltipOpen(!isSendTooltipOpen)}
-                onMouseLeave={() => setNewImpressionTooltipOpen(!isSendTooltipOpen)}/>
+                onMouseEnter={() => setNewImpressionTooltipOpen(!isNewImpressionTooltipOpen)}
+                onMouseLeave={() => setNewImpressionTooltipOpen(!isNewImpressionTooltipOpen)}/>
               {isNewImpressionTooltipOpen && (
                 <div className="ta-tooltip">Nueva impresión</div>)}
               <FontAwesomeIcon icon={faPersonArrowUpFromLine}

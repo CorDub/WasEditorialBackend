@@ -1,6 +1,7 @@
 import { validateInput } from "./validations.js"
 import crypto from 'crypto';
 import { execSync } from "node:child_process";
+import { getDateCutStr, today } from "./utils.js";
 
 export async function createAuthor(
   prisma,
@@ -217,7 +218,7 @@ export async function createSale(
   {
     quantity = 10,
     isDeleted = false,
-    date = new Date(),
+    dateStr = today(),
     createdAt = new Date()
   } = {}
 ) {
@@ -239,7 +240,7 @@ export async function createSale(
       },
       quantity: quantity,
       isDeleted: isDeleted,
-      date: date,
+      dateStr: dateStr,
       createdAt : createdAt
     }
   })
@@ -252,7 +253,7 @@ export async function createKindleSale(
   bookId,
   paymentsIdList,
   {
-    datePay = null,
+    datePayStr = null,
     quantityEbook = 100,
     quantityPod = 100,
     regalias = 1000,
@@ -260,9 +261,9 @@ export async function createKindleSale(
     createdAt = new Date()
   } = {}
 ) {
-  const validDatePay = datePay == null ? new Date() : datePay;
-  const validDateCut = new Date(validDatePay);
-  validDateCut.setMonth(validDateCut.getMonth() - 2);
+  const validDatePay = datePayStr == null ? today() : datePayStr;
+  const validDateCut = getDateCutStr(validDatePay);
+  // validDateCut.setMonth(validDateCut.getMonth() - 2);
 
   const validPaymentIdList = []
   for (const element of paymentsIdList) {
@@ -282,8 +283,8 @@ export async function createKindleSale(
       },
       quantityEbook: quantityEbook,
       quantityPod: quantityPod,
-      dateCut: validDateCut,
-      datePay: validDatePay,
+      dateCutStr: validDateCut,
+      datePayStr: validDatePay,
       regalias: regalias,
       isDeleted: isDeleted,
       createdAt : createdAt
@@ -300,7 +301,7 @@ export async function createImpression(
     quantity = 1000,
     isDeleted=false,
     note=null,
-    date=new Date(),
+    dateStr=today(),
     createdAt = new Date(),
     authorDelivery = false
   } = {}
@@ -311,7 +312,7 @@ export async function createImpression(
       quantity: quantity,
       isDeleted: isDeleted,
       note: note,
-      date: date,
+      dateStr: dateStr,
       createdAt : createdAt,
       authorDelivery: authorDelivery
     }
@@ -328,7 +329,8 @@ export async function createTransfer(
     quantity=100,
     type="send",
     note=null,
-    deliveryDate=null,
+    // deliveryDate=null,
+    dateStr=null,
     place=null,
     person=null,
     isDeleted=false,
@@ -342,7 +344,8 @@ export async function createTransfer(
       toInventoryId: toInventoryId,
       type: type,
       note: note,
-      deliveryDate: deliveryDate ? deliveryDate : new Date(),
+      // deliveryDate: deliveryDate ? deliveryDate : new Date(),
+      dateStr: dateStr ? dateStr : null,
       place: place,
       person: person,
       isDeleted: isDeleted,
@@ -360,7 +363,7 @@ export async function createCost(
   {
     amount = 100,
     note = null,
-    date = new Date(),
+    dateStr = today(),
     isDeleted = false,
     createdAt = new Date()
   } = {}
@@ -371,7 +374,7 @@ export async function createCost(
       bookId: bookId,
       amount: amount,
       note: note,
-      date: date,
+      dateStr: dateStr,
       isDeleted: isDeleted,
       createdAt : createdAt
     }

@@ -231,3 +231,14 @@ export function getOtherInventory(inventory) {
   
   return scaffold
 }
+
+export function getInventoryDerived(inventory) {
+  let res; 
+  if (inventory.bookstoreId === 1) {
+    res = getWasInventory(inventory)
+  } else {
+    res = getOtherInventory(inventory)
+  }
+
+  return res
+}

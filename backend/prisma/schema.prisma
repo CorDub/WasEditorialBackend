@@ -118,8 +118,8 @@ model Inventory {
   bookstoreId   Int
   country       String?
   price         Float?     @default(379)
-  initial       Int
-  current       Int
+  initial       Int?
+  current       Int?
   returns       Int        @default(0)
   givenToAuthor Int        @default(0)
   sales         Sale[]

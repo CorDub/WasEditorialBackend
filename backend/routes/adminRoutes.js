@@ -16,6 +16,7 @@ import { prisma } from "../prisma/client.js";
 import multer from "multer";
 import { validateInput } from "../validations.js";
 import { validateInputs } from "./../utils.js";
+import { getInventoryDerived } from "./admin/inventories/inventoryHelpers.js";
 
 const upload = multer();
 const router = express.Router();
@@ -2447,7 +2448,12 @@ export async function addSale(req, res) {
         },
         include: {
           bookstore: true,
-          book: true
+          book: {
+            impressions: true
+          },
+          sales: true,
+          transfersFrom: true,
+          transfersTo: true
         }
       });
 
@@ -2457,6 +2463,14 @@ export async function addSale(req, res) {
       }
 
       if (selectedInventory.current < inputs.quantity) {
+        res.status(400).json(
+          { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
+        );
+        return;
+      }
+
+      const derived = getInventoryDerived(selectedInventory) 
+      if (derived.disponibles < inputs.quantity) {
         res.status(400).json(
           { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
         );
@@ -2996,11 +3010,27 @@ export async function addTransfer(req, res) {
       const currentInventoryFrom = await tx.inventory.findUnique({
         where: {
           id: inputs.inventoryFromId,
+        },
+        include: {
+          book: {
+            include: {
+              impressions: true
+            }
+          },
+          bookstore: true,
+          sales: true,
+          transfersFrom: true,
+          transfersTo: true
         }
       });
 
       if (currentInventoryFrom.isDeleted) {
         throw new Error("deleted inventory from")
+      }
+
+      const derived = getInventoryDerived(currentInventoryFrom)
+      if (derived.disponibles < inputs.quantity) {
+        return res.status(400).json({message: `No hay sufficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
       }
 
       // Route 1 : delivered to Author
@@ -3058,7 +3088,8 @@ export async function addTransfer(req, res) {
             bookId: currentInventoryFrom.bookId,
             bookstoreId: inputs.bookstoreToId,
             initial: inputs.quantity,
-            current: inputs.quantity
+            current: inputs.quantity,
+            price: currentInventoryFrom.price
           }
         });
 
@@ -3073,7 +3104,8 @@ export async function addTransfer(req, res) {
           data: {
             isDeleted: false,
             current: inputs.quantity,
-            initial: inputs.quantity
+            initial: inputs.quantity,
+            price: currentInventoryFrom.price
           }
         });
 

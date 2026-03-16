@@ -142,7 +142,21 @@ function BookInventory({
     {
       header: "Entregados al autor",
       Cell: ({row}) => (
-        <div>{row.original.entregadosAlAutor}</div>
+        <div>{row.original.entregadosAlAutor ? row.original.entregadosAlAutor : "-"}</div>
+      ),
+      muiTableBodyCellProps: {
+        sx: {
+          fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      }
+    },
+    {
+      header: "Devoluciónes del autor",
+      Cell: ({row}) => (
+        <div>{row.original.entregadosDelAutor ? row.original.entregadosDelAutor : "-" }</div>
       ),
       muiTableBodyCellProps: {
         sx: {

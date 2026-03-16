@@ -978,85 +978,85 @@ router.post("/sendInvoice", upload.fields([
 
 
 
-export async function getCompleteInventory(req, res) {
-  try {
-    if (!req.session.user_id) {
-      return res.status(401).json({message: "Unauthorized"})
-    }
+// export async function getCompleteInventory(req, res) {
+//   try {
+//     if (!req.session.user_id) {
+//       return res.status(401).json({message: "Unauthorized"})
+//     }
 
-    const prismaClient = req.prisma || prisma
+//     const prismaClient = req.prisma || prisma
 
-    const allAuthorInventories = await prismaClient.inventory.findMany({
-      where: {
-        isDeleted: false,
-        book: {
-          users: {
-            some: {
-              id: req.session.user_id
-            }
-          }
-        }
-      },
-      select: {
-        book: {
-          select: {
-            id: true,
-            title: true,
-          },
-        },
-        bookstore: {
-          select: {
-            id: true,
-            name: true,
-          }
-        },
-        country: true,
-        price: true,
-        current: true,
-        returns: true,
-        givenToAuthor: true,
-        sales: {
-          select: {
-            isDeleted: true,
-            quantity: true
-          }
-        }
-      }
-    });
+//     const allAuthorInventories = await prismaClient.inventory.findMany({
+//       where: {
+//         isDeleted: false,
+//         book: {
+//           users: {
+//             some: {
+//               id: req.session.user_id
+//             }
+//           }
+//         }
+//       },
+//       select: {
+//         book: {
+//           select: {
+//             id: true,
+//             title: true,
+//           },
+//         },
+//         bookstore: {
+//           select: {
+//             id: true,
+//             name: true,
+//           }
+//         },
+//         country: true,
+//         price: true,
+//         current: true,
+//         returns: true,
+//         givenToAuthor: true,
+//         sales: {
+//           select: {
+//             isDeleted: true,
+//             quantity: true
+//           }
+//         }
+//       }
+//     });
 
-    let inventoriesWithSales = [];
-    for (const inventory of allAuthorInventories) {
-      let totalSold = 0;
-      for (const sale of inventory.sales) {
-        if (sale.isDeleted) {continue}
+//     let inventoriesWithSales = [];
+//     for (const inventory of allAuthorInventories) {
+//       let totalSold = 0;
+//       for (const sale of inventory.sales) {
+//         if (sale.isDeleted) {continue}
 
-        totalSold += sale.quantity
-      }
+//         totalSold += sale.quantity
+//       }
 
-      inventoriesWithSales.push({
-        book: {
-          id: inventory.book.id,
-          title: inventory.book.title
-        },
-        bookstore: {
-          id: inventory.bookstore.id,
-          name: inventory.bookstore.name
-        },
-        country: inventory.country,
-        current: inventory.current,
-        givenToAuthor: inventory.givenToAuthor,
-        returns: inventory.returns,
-        sold: totalSold
-      })
-    }
+//       inventoriesWithSales.push({
+//         book: {
+//           id: inventory.book.id,
+//           title: inventory.book.title
+//         },
+//         bookstore: {
+//           id: inventory.bookstore.id,
+//           name: inventory.bookstore.name
+//         },
+//         country: inventory.country,
+//         current: inventory.current,
+//         givenToAuthor: inventory.givenToAuthor,
+//         returns: inventory.returns,
+//         sold: totalSold
+//       })
+//     }
 
-    res.status(200).json(inventoriesWithSales);
-  } catch (error) {
-    console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
-    res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})
-  }
-}
-router.get("/completeInventory", getCompleteInventory)
+//     res.status(200).json(inventoriesWithSales);
+//   } catch (error) {
+//     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
+//     res.status(500).json({error: "a server error occurred while fetching the complete inventory status of the author"})
+//   }
+// }
+// router.get("/completeInventory", getCompleteInventory)
 
 
 export default router;

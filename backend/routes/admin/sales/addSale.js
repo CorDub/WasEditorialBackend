@@ -1,8 +1,12 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { 
-  validateInputs 
+  validateInputs,
+  getForMonthStr 
 } from "../../../utils.js" 
+import {
+  getInventoryDerived
+} from "../inventories/inventoryHelpers.js"
 const router = express.Router();
 
 export async function addSale(req, res) {
@@ -30,7 +34,9 @@ export async function addSale(req, res) {
         include: {
           bookstore: true,
           book: {
-            impressions: true
+            include: {
+              impressions: true
+            }
           },
           sales: true,
           transfersFrom: true,
@@ -93,6 +99,7 @@ export async function addSale(req, res) {
               forMonth: saleForMonth
             }
           })
+          paymentIds.push({"id": recreatedPayment.id})
         };
 
         if (!existingPayment) {
@@ -102,7 +109,6 @@ export async function addSale(req, res) {
               forMonth: saleForMonth,
             }
           });
-
           paymentIds.push({"id": createdPayment.id})
         }
       }

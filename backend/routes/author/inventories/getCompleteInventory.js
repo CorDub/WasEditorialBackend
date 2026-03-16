@@ -69,6 +69,7 @@ export async function getCompleteInventory(req, res) {
         currentForThisInventory = wasRes.disponibles
         returnsForThisInventory = wasRes.returns
         givenToAuthorForThisInventory = wasRes.entregadosAlAutor
+        givenToAuthorForThisInventory -= wasRes.entregadosDelAutor
       } else {
         const otherRes = getOtherInventory(inventory)
         currentForThisInventory = otherRes.disponibles

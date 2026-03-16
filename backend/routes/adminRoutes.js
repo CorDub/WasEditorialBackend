@@ -2828,9 +2828,36 @@ export async function addImpression(req, res) {
       id: parseInt(req.body.id),
       note: req.body.note,
       dateStr: req.body.dateStr,
-      authorDelivery: req.body.authorDelivery
+      authorDelivery: req.body.authorDelivery ? true : false
     }
     validateInputs(inputs);
+
+    const wasInventory = await prisma.inventory.findUnique({
+      where: {
+        bookId_bookstoreId: {
+          bookId: inputs.id,
+          bookstoreId: 1,
+        }
+      },
+      include: {
+        book: {
+          include: {
+            impressions: true
+          }
+        },
+        sales: true,
+        transfersFrom: true,
+        transfersTo: true
+      }
+    });
+    
+    if (inputs.authorDelivery) {
+      const derived = getInventoryDerived(wasInventory)
+      if ((derived.entregadosDelAutor + inputs.quantity) > derived.entregadosAlAutor) {
+        res.status(400).json({message: "No se puede regresar mas libros que han estados entregados al autor"})
+        return;
+      }
+    } 
 
     const prismaClient = req.prisma || prisma
 
@@ -2844,15 +2871,6 @@ export async function addImpression(req, res) {
           authorDelivery: inputs.authorDelivery
         }
       })
-
-      const wasInventory = await tx.inventory.findUnique({
-        where: {
-          bookId_bookstoreId: {
-            bookId: inputs.id,
-            bookstoreId: 1,
-          }
-        }
-      });
 
       if (!wasInventory) {
         res.status(400).json({message: "Este libro no existe en la bodega Was"})

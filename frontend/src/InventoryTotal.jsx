@@ -101,7 +101,7 @@ function InventoryTotal({
               </div>
             }
 
-            {impressions && type === "book" &&
+            {!!impressions && type === "book" &&
               (<div className="bookstore-inventory-total-impressions"
                 onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
                 <div className="adding-impression">
@@ -128,12 +128,6 @@ function InventoryTotal({
             {(type === "bookstore" && selectedBookstoreId !== 1) &&
               <div className="inventory-total-details">Nuevos ingresos: {extraTransfersTotal}</div>
             }
-            {/* {(type === "bookstore" && selectedBookstoreId === 1) &&
-              <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
-            }
-            {(type === "book") &&
-              <div className="inventory-total-details">Entregados del autor: {entregadosDelAutorTotal}</div>
-            } */}
             {(type === "bookstore" && selectedBookstoreId === 1) &&
               <div className="inventory-total-details">Transferidos: {transfersTotal}</div>
             }
@@ -144,6 +138,12 @@ function InventoryTotal({
             }
             {type === "book" &&
               <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+            }
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Devoluciónes del autor: {entregadosDelAutorTotal}</div>
+            }
+            {(type === "book") &&
+              <div className="inventory-total-details">Devoluciónes del autor: {entregadosDelAutorTotal}</div>
             }
             <div className="inventory-total-details">Disponibles: {
               currentTotal

@@ -32,7 +32,7 @@ function InventoriesList() {
     "extraImpressions": true, 
     "copias": false,
     "returns": true,
-    // "entregadosDelAutor": true,
+    "entregadosDelAutor": true,
     "entregadosAlAutor": true,
     "transfers": true,
     "ventas": true,
@@ -75,12 +75,6 @@ function InventoriesList() {
       accessorKey: "copias",
       size: 100
     },
-    // {
-    //   header: "Entregados del autor",
-    //   accessorKey: "entregadosDelAutor",
-    //   size: 100,
-    //   Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
-    // },
     {
       header: "Ingresados a otras librerias",
       accessorKey: "transfers",
@@ -109,6 +103,12 @@ function InventoriesList() {
       size: 100,
       accessorKey: "entregadosAlAutor",
       Cell: ({row}) => ( row.original.entregadosAlAutor || "-")
+    },
+    {
+      header: "Devoluciónes del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 100,
+      Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
     },
     {
       header: "Disponibles",

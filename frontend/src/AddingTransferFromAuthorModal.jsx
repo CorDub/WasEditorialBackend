@@ -14,6 +14,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   const [note, setNote] = useState('');
   const [dateStr, setDateStr] = useState(today());
   const quantityRef = useRef();
+  const dateStrRef = useRef();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -44,23 +45,29 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
       quantityRef,
       "a"
     )
+    //aditional check for not being over current entregados al autor
+    const currentDevoluciones = clickedRow.entregadosDelAutor
+    if ((currentDevoluciones + quantity) > clickedRow.entregadosAlAutor) {
+      errorsQuantity.push("El autor no puede regresar mas libros que le han entregados")
+    }
 
-    if (errorsQuantity.length > 0) {
-      errorsList.push(errorsQuantity);
-    };
+    const expectationsDateStr = {
+      type: "string",
+      presence: "not empty",
+      range: "no future"
+    }
+    const errorsDateStr = checkForErrors("La fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+
+    const errorInputs = [errorsQuantity, errorsDateStr];
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+      }
+    }
 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
   }
-
-  // function properDate(deliveryDate) {
-  //   const dateToUse = deliveryDate === "" ? new Date().toISOString() : deliveryDate
-  //   const properDate = DateTime
-  //     .fromISO(dateToUse, {zone: "America/Mexico_City"})
-  //     // .set({ hour: 12, minute: 0, second: 0})
-  //     .toUTC()
-  //   return properDate
-  // }
 
   async function sendToServer() {
     try {
@@ -120,6 +127,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         <input
           type="date"
           placeholder="Fecha"
+          ref={dateStrRef}
           className="global-input transfer-quantity"
           onChange={(e) => setDateStr(e.target.value)}
           value={dateStr}/>

@@ -272,14 +272,18 @@ function TableActions ({
                 onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
               {isGivenToAuthorTooltipOpen && (
                 <div className="ta-tooltip">Entrega al autor</div>)}
-              {/* <FontAwesomeIcon icon={faPersonArrowDownToLine}
-                className='ta-button ta-receivedFromAuthor'
-                id={`ta-transfer-${row.index}`}
-                onClick={transferFromAuthor}
-                onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
-                onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
-              {isReceivedFromAuthorTooltipOpen && (
-                <div className="ta-tooltip">Entrega del autor</div>)} */}
+              {row.original.entregadosAlAutor > 0 && (
+                <>
+                <FontAwesomeIcon icon={faPersonArrowDownToLine}
+                  className='ta-button ta-receivedFromAuthor'
+                  id={`ta-transfer-${row.index}`}
+                  onClick={transferFromAuthor}
+                  onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
+                  onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
+                {isReceivedFromAuthorTooltipOpen && (
+                  <div className="ta-tooltip">Devolución del autor</div>)}
+                </>
+              )}
             </>
             :
             <>

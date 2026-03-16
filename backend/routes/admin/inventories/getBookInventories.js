@@ -89,7 +89,7 @@ export async function getBookInventory(req, res) {
       copias: 0,
       impressionInicial: 0,
       extraImpressions: 0,
-      // entregadosDelAutor: 0,
+      entregadosDelAutor: 0,
       entregadosAlAutor: 0,
       ventas: 0,
       disponibles: 0,
@@ -110,7 +110,7 @@ export async function getBookInventory(req, res) {
         total.copias += results.copias
         total.impressionInicial += results.inicial
         total.extraImpressions += results.extraImpressions
-        // total.extraImpressions += results.entregadosDelAutor
+        total.entregadosDelAutor += results.entregadosDelAutor
         total.entregadosAlAutor += results.entregadosAlAutor
         total.ventas += results.ventas
         total.disponibles += results.disponibles
@@ -150,7 +150,7 @@ export function getWasInventoryForThisBook(inventory) {
     extraImpressions: 0,
     returns: 0,
     transfers: 0,
-    // entregadosDelAutor: 0,
+    entregadosDelAutor: 0,
     entregadosAlAutor: 0,
     ventas: 0,
     disponibles: 0,
@@ -164,13 +164,14 @@ export function getWasInventoryForThisBook(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   scaffold.inicial += impressionsRes.impressionInicial
   scaffold.extraImpressions += impressionsRes.extraImpressions
-  scaffold.extraImpressions += impressionsRes.entregadosDelAutor
+  scaffold.entregados += impressionsRes.entregadosDelAutor
+  scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   let thatBookImpressions = []
   for (const impression of inventory.book.impressions) {
-    // if (impression.authorDelivery) {
-    //   continue
-    // }
+    if (impression.authorDelivery) {
+      continue
+    }
     thatBookImpressions.push(impression)
   }
   scaffold.thatBookImpressions = thatBookImpressions
@@ -188,8 +189,8 @@ export function getWasInventoryForThisBook(inventory) {
   //5: copias
   scaffold.copias = 
     scaffold.inicial +
-    scaffold.extraImpressions -
-    // scaffold.entregadosDelAutor -
+    scaffold.extraImpressions +
+    scaffold.entregadosDelAutor -
     scaffold.transfers
   
   //6: disponibles

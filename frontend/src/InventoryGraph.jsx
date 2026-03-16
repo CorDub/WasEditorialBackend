@@ -52,6 +52,7 @@ function InventoryGraph({
       console.log(error);
     }
   }
+  console.log("data", data)
 
   // fetch all inventories with relevant data on load
   useEffect(() => {

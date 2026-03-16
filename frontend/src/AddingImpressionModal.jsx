@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
@@ -14,16 +14,12 @@ function AddingImpressionModal({
   const quantityRef = useRef();
   const dateStrRef = useRef();
   const noteRef = useRef();
-  const entregaDelAutorRef = useRef();
+  // const entregaDelAutorRef = useRef();
   const [quantity, setQuantity] = useState(null);
   const [dateStr, setDateStr] = useState(today());
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState([]);
-  const [entregaDelAutor, setEntregaDelAutor] = useState(false);
-
-  useEffect(() => {
-    console.log(entregaDelAutor)
-  }, [entregaDelAutor])
+  // const [entregaDelAutor, setEntregaDelAutor] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -82,9 +78,8 @@ function AddingImpressionModal({
         body: JSON.stringify({
           id: clickedRow.id,
           quantity: quantity,
-          note: entregaDelAutor ? "- Entrega del autor - " + note : note,
+          note: note,
           dateStr: dateStr,
-          authorDelivery: entregaDelAutor
         }),
       });
 
@@ -118,14 +113,14 @@ function AddingImpressionModal({
           en el inventario de WAS Editorial.</p>
       </div>
       <form className="global-form">
-        <div className="modal-form-checkbox-line">
+        {/* <div className="modal-form-checkbox-line">
           <label className="modal-form-checkbox-label">¿Entrega del autor?</label>
           <input 
           type="checkbox"
           ref={entregaDelAutorRef}
           className="checkbox-input"
           onChange={(e) => setEntregaDelAutor(e.target.checked)}/>
-          </div>
+          </div> */}
         <input
           type="text"
           placeholder="Cantidad"

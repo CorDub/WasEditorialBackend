@@ -116,7 +116,7 @@ export async function getAuthorInventories (req, res) {
     //group and format data
     let overallInitialTotal = 0;
     let overallNewImpressions = 0;
-    let overallEntregadosDelAutor = 0;
+    // let overallEntregadosDelAutor = 0;
     let overallSoldTotal = 0;
     let overallInventoryInBookstores = 0;
     let overallInventoryInWas = 0;
@@ -130,7 +130,7 @@ export async function getAuthorInventories (req, res) {
 
       let initialTotal = 0;
       let newImpressionsTotal = 0;
-      let entregadosDelAutorTotal = 0;
+      // let entregadosDelAutorTotal = 0;
       let soldTotal = 0;
       let givenToAuthorTotal = 0;
       let remainingTotal = 0;
@@ -144,7 +144,7 @@ export async function getAuthorInventories (req, res) {
           const res = getWasInventoryForThisBook(inventory) 
           overallInitialTotal += res.inicial
           overallNewImpressions += res.extraImpressions
-          overallEntregadosDelAutor += res.entregadosDelAutor
+          overallEntregadosAlAutor -= res.entregadosDelAutor
           overallSoldTotal += res.ventas
           overallInventoryInWas += res.disponibles
           overallEntregadosAlAutor += res.entregadosAlAutor
@@ -152,7 +152,7 @@ export async function getAuthorInventories (req, res) {
 
           initialTotal += res.inicial
           newImpressionsTotal += res.extraImpressions
-          entregadosDelAutorTotal += res.entregadosDelAutor
+          givenToAuthorTotal -= res.entregadosDelAutor
           soldTotal += res.ventas
           givenToAuthorTotal += res.entregadosAlAutor
           remainingTotal += res.disponibles
@@ -178,7 +178,7 @@ export async function getAuthorInventories (req, res) {
         summary: {
           bookstores: bookstoresCopies,
           was: wasCopies,
-          entregadosDelAutor: entregadosDelAutorTotal,
+          // entregadosDelAutor: entregadosDelAutorTotal,
           givenToAuthor: givenToAuthorTotal,
           initial: initialTotal,
           impressions: newImpressionsTotal,
@@ -193,7 +193,7 @@ export async function getAuthorInventories (req, res) {
       summary: {
         initial: overallInitialTotal,
         impressions: overallNewImpressions,
-        entregadosDelAutor: overallEntregadosDelAutor,
+        // entregadosDelAutor: overallEntregadosDelAutor,
         sold: overallSoldTotal,
         givenToAuthor: overallEntregadosAlAutor,
         total: overallRemainingTotal,

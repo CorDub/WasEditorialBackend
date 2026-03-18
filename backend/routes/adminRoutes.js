@@ -903,7 +903,7 @@ export async function addBook(req, res) {
           data: {
             bookId: new_book.id,
             bookstoreId: 1,
-            country: "México",
+            // country: "México",
             price: inputs.price,
             initial: inputs.quantity,
             current: inputs.quantity

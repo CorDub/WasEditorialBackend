@@ -105,7 +105,7 @@ function InventoriesList() {
       Cell: ({row}) => ( row.original.entregadosAlAutor || "-")
     },
     {
-      header: "Devoluciónes del autor",
+      header: "Devoluciones del autor",
       accessorKey: "entregadosDelAutor",
       size: 100,
       Cell: ({row}) => ( row.original.entregadosDelAutor || '-')

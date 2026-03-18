@@ -2464,12 +2464,12 @@ export async function addSale(req, res) {
         return;
       }
 
-      if (selectedInventory.current < inputs.quantity) {
-        res.status(400).json(
-          { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
-        );
-        return;
-      }
+      // if (selectedInventory.current < inputs.quantity) {
+      //   res.status(400).json(
+      //     { message: "El inventario tiene menos libros disponibles que la cantidad entrada."}
+      //   );
+      //   return;
+      // }
 
       const derived = getInventoryDerived(selectedInventory) 
       if (derived.disponibles < inputs.quantity) {

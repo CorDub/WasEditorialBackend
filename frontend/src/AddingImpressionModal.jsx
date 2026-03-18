@@ -76,7 +76,7 @@ function AddingImpressionModal({
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
+          id: clickedRow.bookId,
           quantity: quantity,
           note: note,
           dateStr: dateStr,

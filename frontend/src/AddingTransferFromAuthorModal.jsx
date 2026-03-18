@@ -47,7 +47,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     )
     //aditional check for not being over current entregados al autor
     const currentDevoluciones = clickedRow.entregadosDelAutor
-    if ((currentDevoluciones + quantity) > clickedRow.entregadosAlAutor) {
+    if ((currentDevoluciones + parseInt(quantity)) > clickedRow.entregadosAlAutor) {
       errorsQuantity.push("El autor no puede regresar mas libros que le han entregados")
     }
 
@@ -107,10 +107,10 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva entrega del autor</p>
+        <p>Nueva devolución del autor</p>
         <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
-      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor está considerada como una impresión y sera visible en las impresiónes.</p>
+      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p>
       <form
         onSubmit={handleSubmit}
         className="global-form">

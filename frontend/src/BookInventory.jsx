@@ -43,6 +43,8 @@ function BookInventory({
     pageSize: 30
   })
 
+  console.log("data", data)
+
   // slides down the top of the table
   useEffect(() => {
     if (inventoryTotalRef.current) {
@@ -57,10 +59,12 @@ function BookInventory({
     }
   }, [modalType, isModalOpen])
 
+  console.log("")
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
-      size: 50,
+      size: 150,
       Cell: ({row}) => (
         <div style={{overflow:"visible"}}>
           <TableActions
@@ -82,6 +86,7 @@ function BookInventory({
     {
       header: "Librería",
       accessorKey:'name',
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -92,10 +97,11 @@ function BookInventory({
       }
     },
     {
-      header: "Copías",
+      header: "Inicial",
       Cell: ({row}) => {
-        return (<div>{row.original.copias}</div>)
+        return (<div>{row.original.inicial}</div>)
       },
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -104,12 +110,27 @@ function BookInventory({
           textOverflow: "ellipsis"
         }
       },
+    },
+    {
+      header: "Nuevas impresiones / ingresos",
+      Cell: ({row}) => {
+        return (<div>{row.original.extraImpressions || row.original.extraTransfers}</div>)
+      },
+      size: 150
+    },
+    {
+      header: "Ingresos a otras librerías",
+      Cell: ({row}) => {
+        return (<div>{row.original.transfers || "-"}</div>)
+      },
+      size: 150
     },
     {
       header: "Vendidos",
       Cell: ({row}) => {
         return (<div>{row.original.ventas}</div>)
       },
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -119,6 +140,7 @@ function BookInventory({
         }
       }
     },
+
     {
       header: "Devueltos",
       Cell: ({row}) => (
@@ -130,6 +152,7 @@ function BookInventory({
             `- ${row.original.returns}`
           }</div>
       ),
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -144,6 +167,7 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.entregadosAlAutor ? row.original.entregadosAlAutor : "-"}</div>
       ),
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -154,10 +178,11 @@ function BookInventory({
       }
     },
     {
-      header: "Devoluciónes del autor",
+      header: "Devoluciones del autor",
       Cell: ({row}) => (
         <div>{row.original.entregadosDelAutor ? row.original.entregadosDelAutor : "-" }</div>
       ),
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
@@ -172,6 +197,7 @@ function BookInventory({
       Cell: ({row}) => (
         <div>{row.original.disponibles}</div>
       ),
+      size: 150,
       muiTableBodyCellProps: {
         sx: {
           fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,

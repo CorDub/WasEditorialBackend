@@ -140,10 +140,10 @@ function InventoryTotal({
               <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
             }
             {(type === "bookstore" && selectedBookstoreId === 1) &&
-              <div className="inventory-total-details">Devoluciónes del autor: {entregadosDelAutorTotal}</div>
+              <div className="inventory-total-details">Devoluciones del autor: {entregadosDelAutorTotal}</div>
             }
             {(type === "book") &&
-              <div className="inventory-total-details">Devoluciónes del autor: {entregadosDelAutorTotal}</div>
+              <div className="inventory-total-details">Devoluciones del autor: {entregadosDelAutorTotal}</div>
             }
             <div className="inventory-total-details">Disponibles: {
               currentTotal

@@ -2449,7 +2449,9 @@ export async function addSale(req, res) {
         include: {
           bookstore: true,
           book: {
-            impressions: true
+            include: {
+              impressions: true
+            }
           },
           sales: true,
           transfersFrom: true,
@@ -3003,191 +3005,191 @@ router.patch('/impression/:id', updateImpression);
 
 /// Transfer route
 
-export async function addTransfer(req, res) {
-  try {
-    const inputs = {
-      // bookstoreTo: req.body.bookstoreTo,
-      bookstoreToId: req.body.bookstoreToId ? parseInt(req.body.bookstoreToId) : null,
-      // bookstoreFromId: parseInt(req.body.bookstoreFromId),
-      quantity: parseInt(req.body.quantity),
-      inventoryFromId: parseInt(req.body.inventoryFromId),
-      // bookId: parseInt(req.body.bookId),
-      type: req.body.type,
-      note: req.body.note || null,
-      // deliveryDate: req.body.deliveryDate ? new Date(req.body.deliveryDate) : null,
-      dateStrOptional: req.body.dateStr || null,
-      place: req.body.place || null,
-      person: req.body.person || null
-    }
-    validateInputs(inputs);
+// export async function addTransfer(req, res) {
+//   try {
+//     const inputs = {
+//       // bookstoreTo: req.body.bookstoreTo,
+//       bookstoreToId: req.body.bookstoreToId ? parseInt(req.body.bookstoreToId) : null,
+//       // bookstoreFromId: parseInt(req.body.bookstoreFromId),
+//       quantity: parseInt(req.body.quantity),
+//       inventoryFromId: parseInt(req.body.inventoryFromId),
+//       // bookId: parseInt(req.body.bookId),
+//       type: req.body.type,
+//       note: req.body.note || null,
+//       // deliveryDate: req.body.deliveryDate ? new Date(req.body.deliveryDate) : null,
+//       dateStrOptional: req.body.dateStr || null,
+//       place: req.body.place || null,
+//       person: req.body.person || null
+//     }
+//     validateInputs(inputs);
 
-    const prismaClient = req.prisma || prisma
+//     const prismaClient = req.prisma || prisma
 
-    // Start by getting the inventoryFrom
-    await prismaClient.$transaction(async (tx) => {
-      const currentInventoryFrom = await tx.inventory.findUnique({
-        where: {
-          id: inputs.inventoryFromId,
-        },
-        include: {
-          book: {
-            include: {
-              impressions: true
-            }
-          },
-          bookstore: true,
-          sales: true,
-          transfersFrom: true,
-          transfersTo: true
-        }
-      });
+//     // Start by getting the inventoryFrom
+//     await prismaClient.$transaction(async (tx) => {
+//       const currentInventoryFrom = await tx.inventory.findUnique({
+//         where: {
+//           id: inputs.inventoryFromId,
+//         },
+//         include: {
+//           book: {
+//             include: {
+//               impressions: true
+//             }
+//           },
+//           bookstore: true,
+//           sales: true,
+//           transfersFrom: true,
+//           transfersTo: true
+//         }
+//       });
 
-      if (currentInventoryFrom.isDeleted) {
-        throw new Error("deleted inventory from")
-      }
+//       if (currentInventoryFrom.isDeleted) {
+//         throw new Error("deleted inventory from")
+//       }
 
-      const derived = getInventoryDerived(currentInventoryFrom)
-      if (derived.disponibles < inputs.quantity) {
-        return res.status(400).json({message: `No hay sufficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
-      }
+//       const derived = getInventoryDerived(currentInventoryFrom)
+//       if (derived.disponibles < inputs.quantity) {
+//         return res.status(400).json({message: `No hay sufficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
+//       }
 
-      // Route 1 : delivered to Author
-      if (inputs.type === "send" && !inputs.bookstoreToId) {
-        const inventoryFrom = await tx.inventory.findUnique({where: {id: inputs.inventoryFromId}})
-        if (inventoryFrom.bookstoreId !== 1) {
-          return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde el inventario de la bodega Was"})
-        }
+//       // Route 1 : delivered to Author
+//       if (inputs.type === "send" && !inputs.bookstoreToId) {
+//         const inventoryFrom = await tx.inventory.findUnique({where: {id: inputs.inventoryFromId}})
+//         if (inventoryFrom.bookstoreId !== 1) {
+//           return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde el inventario de la bodega Was"})
+//         }
 
-        const newTransferToAuthor = await tx.transfer.create({
-          data: {
-            fromInventoryId: inputs.inventoryFromId,
-            quantity: inputs.quantity,
-            note: inputs.note,
-            dateStr: inputs.dateStrOptional,
-            place: inputs.place,
-            person: inputs.person
-          }
-        });
+//         const newTransferToAuthor = await tx.transfer.create({
+//           data: {
+//             fromInventoryId: inputs.inventoryFromId,
+//             quantity: inputs.quantity,
+//             note: inputs.note,
+//             dateStr: inputs.dateStrOptional,
+//             place: inputs.place,
+//             person: inputs.person
+//           }
+//         });
 
-        if(newTransferToAuthor) {
-          const updatedFromInventory = await tx.inventory.update({
-            where: {id: currentInventoryFrom.id},
-            data: {
-              givenToAuthor: currentInventoryFrom.givenToAuthor + inputs.quantity,
-              current: currentInventoryFrom.current - inputs.quantity
-            }
-          });
-        };
+//         if(newTransferToAuthor) {
+//           const updatedFromInventory = await tx.inventory.update({
+//             where: {id: currentInventoryFrom.id},
+//             data: {
+//               givenToAuthor: currentInventoryFrom.givenToAuthor + inputs.quantity,
+//               current: currentInventoryFrom.current - inputs.quantity
+//             }
+//           });
+//         };
 
-        res.status(200).json(newTransferToAuthor);
-        return;
-      }
+//         res.status(200).json(newTransferToAuthor);
+//         return;
+//       }
 
-      // Route 2: Return and Send
-      // Get the inventoryTo if it exists
-      let currentInventoryTo = await tx.inventory.findUnique({
-        where: {
-          bookId_bookstoreId: {
-            bookId: currentInventoryFrom.bookId,
-            bookstoreId: inputs.bookstoreToId
-          },
-        }
-      });
+//       // Route 2: Return and Send
+//       // Get the inventoryTo if it exists
+//       let currentInventoryTo = await tx.inventory.findUnique({
+//         where: {
+//           bookId_bookstoreId: {
+//             bookId: currentInventoryFrom.bookId,
+//             bookstoreId: inputs.bookstoreToId
+//           },
+//         }
+//       });
 
-      if (inputs.type === "return" && (!currentInventoryTo || currentInventoryTo.isDeleted)) {
-        throw new Error("arrival inventory doesn't exist");
-      }
+//       if (inputs.type === "return" && (!currentInventoryTo || currentInventoryTo.isDeleted)) {
+//         throw new Error("arrival inventory doesn't exist");
+//       }
 
-      //if it doesn't exist create it
-      let created;
-      if (!currentInventoryTo) {
-        const newInventoryTo = await tx.inventory.create({
-          data: {
-            bookId: currentInventoryFrom.bookId,
-            bookstoreId: inputs.bookstoreToId,
-            initial: inputs.quantity,
-            current: inputs.quantity,
-            price: currentInventoryFrom.price
-          }
-        });
+//       //if it doesn't exist create it
+//       let created;
+//       if (!currentInventoryTo) {
+//         const newInventoryTo = await tx.inventory.create({
+//           data: {
+//             bookId: currentInventoryFrom.bookId,
+//             bookstoreId: inputs.bookstoreToId,
+//             initial: inputs.quantity,
+//             current: inputs.quantity,
+//             price: currentInventoryFrom.price
+//           }
+//         });
 
-        currentInventoryTo = newInventoryTo
-        created = true;
-      }
+//         currentInventoryTo = newInventoryTo
+//         created = true;
+//       }
 
-      // if it's soft deleted recover it
-      if (currentInventoryTo && currentInventoryTo.isDeleted) {
-        const recoveredInventoryTo = await tx.inventory.update({
-          where: {id: currentInventoryTo.id},
-          data: {
-            isDeleted: false,
-            current: inputs.quantity,
-            initial: inputs.quantity,
-            price: currentInventoryFrom.price
-          }
-        });
+//       // if it's soft deleted recover it
+//       if (currentInventoryTo && currentInventoryTo.isDeleted) {
+//         const recoveredInventoryTo = await tx.inventory.update({
+//           where: {id: currentInventoryTo.id},
+//           data: {
+//             isDeleted: false,
+//             current: inputs.quantity,
+//             initial: inputs.quantity,
+//             price: currentInventoryFrom.price
+//           }
+//         });
 
-        currentInventoryTo = recoveredInventoryTo;
-        created = true;
-      }
+//         currentInventoryTo = recoveredInventoryTo;
+//         created = true;
+//       }
 
-      // 5-Create the actual transfer now that you got the proper inventory To and From
-      const newTransfer = await tx.transfer.create({
-        data: {
-          fromInventoryId: inputs.inventoryFromId,
-          toInventoryId: parseInt(currentInventoryTo.id),
-          quantity: inputs.quantity,
-          type: inputs.type
-        }
-      });
+//       // 5-Create the actual transfer now that you got the proper inventory To and From
+//       const newTransfer = await tx.transfer.create({
+//         data: {
+//           fromInventoryId: inputs.inventoryFromId,
+//           toInventoryId: parseInt(currentInventoryTo.id),
+//           quantity: inputs.quantity,
+//           type: inputs.type
+//         }
+//       });
 
-      // If it's a send - update both From and To inventories
-      if (newTransfer.type === "send") {
-        const updatedInventoryFrom = await tx.inventory.update({
-          where: {id: inputs.inventoryFromId},
-          data: {
-            current: currentInventoryFrom.current - inputs.quantity,
-          }
-        });
-        // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
-        if (!created) {
-          const updatedInventoryTo = await tx.inventory.update({
-            where: {id: currentInventoryTo.id},
-            data: {
-              current: currentInventoryTo.current + inputs.quantity,
-            }
-          });
-        }
-      // If it's a return - same process
-      } else {
-        const updatedInventoryFrom = await tx.inventory.update({
-          where: {id: inputs.inventoryFromId},
-          data: {
-            current: currentInventoryFrom.current - inputs.quantity,
-            returns: currentInventoryFrom.returns + inputs.quantity,
-          }
-        });
+//       // If it's a send - update both From and To inventories
+//       if (newTransfer.type === "send") {
+//         const updatedInventoryFrom = await tx.inventory.update({
+//           where: {id: inputs.inventoryFromId},
+//           data: {
+//             current: currentInventoryFrom.current - inputs.quantity,
+//           }
+//         });
+//         // update inventoryTo if you ddn't just created or recovered it (they would already be updated)
+//         if (!created) {
+//           const updatedInventoryTo = await tx.inventory.update({
+//             where: {id: currentInventoryTo.id},
+//             data: {
+//               current: currentInventoryTo.current + inputs.quantity,
+//             }
+//           });
+//         }
+//       // If it's a return - same process
+//       } else {
+//         const updatedInventoryFrom = await tx.inventory.update({
+//           where: {id: inputs.inventoryFromId},
+//           data: {
+//             current: currentInventoryFrom.current - inputs.quantity,
+//             returns: currentInventoryFrom.returns + inputs.quantity,
+//           }
+//         });
 
-        if (!created) {
-          const updatedInventoryTo = await tx.inventory.update({
-            where: {id: currentInventoryTo.id},
-            data: {
-              current: currentInventoryTo.current + inputs.quantity,
-              returns: currentInventoryTo.returns + inputs.quantity,
-            }
-          });
-        }
-      }
+//         if (!created) {
+//           const updatedInventoryTo = await tx.inventory.update({
+//             where: {id: currentInventoryTo.id},
+//             data: {
+//               current: currentInventoryTo.current + inputs.quantity,
+//               returns: currentInventoryTo.returns + inputs.quantity,
+//             }
+//           });
+//         }
+//       }
 
-    res.status(200).json(newTransfer)
-    })
+//     res.status(200).json(newTransfer)
+//     })
 
-  } catch (error) {
-    console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
-    res.status(500).json({error: "a server error occurred while creating the transfer"})
-  }
-}
-router.post('/transfer', addTransfer);
+//   } catch (error) {
+//     console.error("\n ERROR WHILE CREATING TRANSFER \n", error);
+//     res.status(500).json({error: "a server error occurred while creating the transfer"})
+//   }
+// }
+// router.post('/transfer', addTransfer);
 
 
 /// Payments routes

@@ -10,6 +10,7 @@ import newInventoriesByBookstoreRoute from "./routes/admin/inventories/getInvent
 import newInventoriesByBookRoute from "./routes/admin/inventories/getInventoriesByBook.js";
 import newBookstoreInventoryRoute from "./routes/admin/inventories/getBookstoreInventory.js";
 import newBookInventoryRoute from "./routes/admin/inventories/getBookInventories.js";
+import newAddTransferRoute from "./routes/admin/transfers/addTransfers.js";
 import authorRoutes from "./routes/authorRoutes.js";
 import newGetAuthorInventoriesRoute from "./routes/author/inventories/getAuthorInventories.js";
 import newGetCompleteInventoryRoute from "./routes/author/inventories/getCompleteInventory.js";
@@ -121,6 +122,7 @@ app.use('/api/admin', authenticateAdmin, newInventoriesByBookstoreRoute);
 app.use('/api/admin', authenticateAdmin, newInventoriesByBookRoute);
 app.use('/api/admin', authenticateAdmin, newBookstoreInventoryRoute);
 app.use('/api/admin', authenticateAdmin, newBookInventoryRoute);
+app.use('/api/admin', authenticateAdmin, newAddTransferRoute);
 app.use('/api/superadmin', authenticateSuperAdmin, superAdminRoutes);
 app.use("/api/user", userRoutes);
 

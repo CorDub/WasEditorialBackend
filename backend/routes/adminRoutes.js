@@ -2360,9 +2360,10 @@ export async function getSales(req, res) {
         updatedAt: true,
         dateStr: true
       },
-      orderBy: {
-        dateStr: "desc"
-      }
+      orderBy: [
+        { dateStr: "desc" },
+        { updatedAt: "desc"}
+      ]
     });
 
     sales.map((sale) => {

@@ -110,7 +110,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         <p>Nueva devolución del autor</p>
         <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
-      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p>
+      {/* <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p> */}
       <form
         onSubmit={handleSubmit}
         className="global-form">

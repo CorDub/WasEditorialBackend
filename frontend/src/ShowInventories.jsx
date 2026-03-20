@@ -166,17 +166,6 @@ function ShowInventories({
               })}
             </>
           )}
-        {inventories.summary.entregadosDelAutor && (
-          <div className="author-inventory-line"
-            ref={givenRef}
-            // onClick={() => {
-            //   declareActive(givenRef, "given", setGivenToAuthorOpen),
-            //   setExclusions("")}}
-            >
-            <p className="author-inventory-label">Libros entregados del autor</p>
-            <p className="author-inventory-number">{inventories.summary.entregadosDelAutor || 0}</p>
-          </div>
-        )}
         <div className="author-inventory-line ail-bold">
           <p className="author-inventory-label">Copias totales</p>
           <p className="author-inventory-label">{(
@@ -190,8 +179,26 @@ function ShowInventories({
           //   setExclusions("")}}
           >
           <p className="author-inventory-label">Libros entregados al autor</p>
-          <p className="author-inventory-number">{inventories.summary.givenToAuthor || 0}</p>
+          <p className="author-inventory-number">{inventories.summary.givenToAuthor - inventories.summary.entregadosDelAutor || 0}</p>
         </div>
+        {!showTotal 
+          && inventories.summary.entregadosDelAutor > 0 && (
+          <div className="author-inventory-entregados"
+            ref={givenRef}
+            // onClick={() => {
+            //   declareActive(givenRef, "given", setGivenToAuthorOpen),
+            //   setExclusions("")}}
+            >
+            <div className="author-inventory-impressions">
+              <p className="author-inventory-date">Entregados</p>
+              <p className="author-inventory-date">{inventories.summary.givenToAuthor}</p>
+            </div>
+            <div className="author-inventory-impressions">
+              <p className="author-inventory-date">Devueltos</p>
+              <p className="author-inventory-date">{`- ${inventories.summary.entregadosDelAutor}`}</p>
+            </div>
+          </div>
+        )}
         <div className="author-inventory-line"
           ref={soldRef}
           // onClick={() => {

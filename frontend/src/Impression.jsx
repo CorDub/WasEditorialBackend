@@ -38,7 +38,7 @@ function Impression({impression, setModalType, openModal, book}) {
 
   useEffect(() => {
     setCompleteImpression({...impression, bookId: book.id})
-  }, [book])
+  }, [book, impression])
 
   return(
     <div className="impression">

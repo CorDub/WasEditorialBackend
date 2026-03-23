@@ -2,7 +2,6 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { convertISOString } from "../../backend/utils";
 
 function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -14,6 +13,8 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [dateStr, setDateStr] = useState(clickedRow.dateStr);
   const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
+
+  console.log("clickedRow", clickedRow)
 
   async function handleSubmit(e) {
     e.preventDefault();

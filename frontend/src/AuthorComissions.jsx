@@ -64,7 +64,7 @@ function AuthorCommissions() {
       }
       setDemandPaymentPossible("available");
     }
-  }, [salesByPayments, activeMonth, paymentInfo, forceRender])
+  }, [salesByPayments, activeMonth, paymentInfo])
 
   async function fetchPayments() {
     try {
@@ -77,7 +77,6 @@ function AuthorCommissions() {
       //   return
       // }
 
-      console.log("refetch");
       const response = await fetch(`${baseURL}/api/author/payments`, {
         method: "GET",
         headers: {
@@ -89,12 +88,8 @@ function AuthorCommissions() {
       if (response.ok) {
         const data = await response.json();
         // sessionStorage.setItem("authorPayments", JSON.stringify(data));
-        // console.log("cache storage");
-        // console.log("data", data)
-        // console.log("data[0]", data[0])
         setPayments(data);
-        setPaymentInfo(data[0]);
-        setForceRender(false);
+        setPaymentInfo(data[activeMonth]);
       };
     } catch(error) {
       console.log("Error when fetching the data", error);
@@ -108,12 +103,7 @@ function AuthorCommissions() {
   function closeModal(reload, alertMessage, alertType) {
     setModalOpen(false);
     if (reload === true) {
-      setPaymentInfo(prev => ({
-        ...prev,
-        status: "solicited"
-        }));
-      // setForceRender(true);
-      setDemandPaymentPossible("solicited")
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
@@ -159,11 +149,9 @@ function AuthorCommissions() {
             preferredFontSize={user.font_size}
             setPaymentInfo={setPaymentInfo}/>
           <DemandPaymentButton
-            paymentInfo={paymentInfo}
+            isDemandPaymentPossible={isDemandPaymentPossible}
             setModalOpen={setModalOpen}
-            salesByPayments={salesByPayments}
-            activeMonth={activeMonth}
-            forceRender={forceRender}/>
+            />
         </div>
 
         <div className="author-commissions-right-side">

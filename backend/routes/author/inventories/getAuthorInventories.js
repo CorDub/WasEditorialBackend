@@ -52,6 +52,12 @@ export async function getAuthorInventories (req, res) {
                     title: true,
                     id: true,
                     impressions: {
+                      where: {
+                        isDeleted: false
+                      },
+                      orderBy: {
+                        dateStr: "asc"
+                      },
                       select: {
                         isDeleted: true,
                         quantity: true,

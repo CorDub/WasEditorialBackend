@@ -29,6 +29,7 @@ function ShowInventories({
   const availableRef = useRef();
   // const trialRef = useRef();
   const [isWasPerCountryOpen, setWasPerCountryOpen] = useState(false);
+  console.log("inventories", inventories)
 
   //ensure that totalRef is the default so that something is displayed
   useEffect(() => {

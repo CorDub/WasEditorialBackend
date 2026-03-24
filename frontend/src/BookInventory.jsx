@@ -112,7 +112,7 @@ function BookInventory({
     {
       header: "Nuevas impresiones / ingresos",
       Cell: ({row}) => {
-        return (<div>{row.original.extraImpressions || row.original.extraTransfers}</div>)
+        return (<div>{row.original.extraImpressions || row.original.extraTransfers || "-"}</div>)
       },
       size: 150
     },

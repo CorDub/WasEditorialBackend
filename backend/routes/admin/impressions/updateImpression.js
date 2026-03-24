@@ -1,6 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { validateInputs } from "../../../utils.js" 
+import { validateInputs } from "../../../utils.js";
+import { getInventoryDerived } from "../inventories/inventoryHelpers.js"; 
 const router = express.Router();
 
 export async function updateImpression(req, res) {
@@ -19,6 +20,50 @@ export async function updateImpression(req, res) {
     await prismaClient.$transaction(async (tx) => {
       // const currentImpression = await tx.impression.findUnique({ where: {id: inputs.id}});
       // const diff = inputs.quantity - currentImpression.quantity;
+      
+      //1. Check if deleting the impression would make the available copies for this book negative in WAS
+      const thisImpression = await tx.impression.findUnique({
+        where: {
+          id: inputs.id
+        }
+      })
+      
+      // we only check if the new number is smaller than previous, adding more copies is fine
+      let left = 0
+      if (thisImpression.quantity > inputs.quantity) {
+        left = thisImpression.quantity - inputs.quantity;
+
+        const thisBookWASInventory = await tx.inventory.findUnique({
+          where: {
+            bookId_bookstoreId: {
+              bookId: thisImpression.bookId,
+              bookstoreId: 1
+            }
+          },
+          include: {
+            book: {
+              include: {
+                impressions: true
+              }
+            },
+            bookstore: true,
+            sales: true,
+            transfersFrom: true,
+            transfersTo: true
+          }
+        })
+
+        if (!thisBookWASInventory || thisBookWASInventory.isDeleted) {
+          throw new Error("Este libro no tiene inventario de WAS")
+        }
+
+        const derived = getInventoryDerived(thisBookWASInventory)
+
+        if (derived.disponibles < left) {
+          res.status(400).json({message: "No se puede reducir la cantidad de libros imprimidos a menos de lo que queda disponible en el inventario de WAS de este libro."})
+          return
+        }
+      }
 
       const updatedImpression = await tx.impression.update({
         where: {id: inputs.id},

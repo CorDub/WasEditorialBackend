@@ -1,5 +1,17 @@
+import express from "express";
+import { prisma } from "../../../prisma/client.js";
+import { 
+  validateInputs,
+  getForMonthStr,
+  getForMonth 
+} from "../../../utils.js" 
+import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
+
+const router = express.Router();
+
 export async function updateSale(req, res) {
   try {
+    //1. validate inputs
     const inputs = {
       id: parseInt(req.params.id),
       bookId: parseInt(req.body.book),
@@ -12,11 +24,26 @@ export async function updateSale(req, res) {
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
-      const selectedInventory = await tx.inventory.findUnique({where : {
-        bookId_bookstoreId: {
-          bookId : inputs.bookId,
-          bookstoreId: inputs.bookstoreId,
-        }}});
+      //2. get the affected inventory and previous sale
+      const selectedInventory = await tx.inventory.findUnique({
+        where : {
+          bookId_bookstoreId: {
+            bookId : inputs.bookId,
+            bookstoreId: inputs.bookstoreId,
+          }
+        },
+        include: {
+          book: {
+            include: {
+              impressions: true
+            }
+          },
+          bookstore: true,
+          sales: true,
+          transfersFrom: true,
+          transfersTo: true
+        }
+      });
 
       if (!selectedInventory || selectedInventory.isDeleted) {
         res.status(400).json({ message: "No existe un inventario con esta combinación de titulo y librería"});
@@ -32,7 +59,8 @@ export async function updateSale(req, res) {
             include: {
               book: {
                 include: {
-                  users: true
+                  users: true,
+                  impressions: true
                 }
               },
               bookstore: true
@@ -47,109 +75,35 @@ export async function updateSale(req, res) {
         return;
       }
 
+      //3. get payments attached to sale
       let previousSalePayments = []
       for (const payment of previousSale.payments) {
         previousSalePayments.push({"id": payment.id})
       }
 
+      //4. Check that you're not entering a sale that is more than remaining books in the inventory.
       let quantityUpdate = previousSale.quantity - inputs.quantity;
 
-      if ((selectedInventory.current + quantityUpdate) < 0) {
-        res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
-        return;
+      // if ((selectedInventory.current + quantityUpdate) < 0) {
+      //   res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
+      //   return;
+      // }
+
+      const derived = getInventoryDerived(selectedInventory) 
+      if ((derived.disponibles + quantityUpdate) < 0) {
+        return res.status(400).json({message: `No hay sufficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
       }
 
+      //5. Check that the sale is attached to the correct payments if the date has been updated
       let recipientPayments = []
       if (getForMonthStr(inputs.dateStr) !== getForMonthStr(previousSale.dateStr)) {
         for (const user of previousSale.inventory.book.users) {
-          const existingPayment = await prismaClient.payment.findUnique({
-            where: {
-              userId_forMonth: {
-                userId: user.id,
-                forMonth: getForMonthStr(inputs.dateStr)
-              }
-            }
-          })
-
-          if (!existingPayment) {
-            const createdPayment = await prismaClient.payment.create({
-              data: {
-                userId: user.id,
-                forMonth: getForMonthStr(inputs.dateStr)
-              }
-            })
-            recipientPayments.push({"id": createdPayment.id})
-            continue;
-          }
-
-          if (existingPayment && existingPayment.isDeleted) {
-            const deletedPayment = await prismaClient.payment.delete({where: {id: existingPayment.id}})
-            const recreatedPayment = await prismaClient.payment.create({
-              data: {
-                userId: user.id,
-                forMonth: getForMonthStr(inputs.dateStr)
-              }
-            });
-            recipientPayments.push({"id": recreatedPayment.id});
-            continue;
-          }
-
-          if (existingPayment && !existingPayment.isDeleted && existingPayment.status === "created") {
-            recipientPayments.push({"id": existingPayment.id});
-            continue;
-          }
-
-          if (existingPayment
-            && !existingPayment.isDeleted
-            && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
-
-            let currentForMonthDate = new Date(existingPayment.forMonth + "-01")
-            let nextPaymentDate = new Date(currentForMonthDate)
-            nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
-
-            let nextPayment = await prismaClient.payment.findUnique({where: {
-              userId_forMonth: {
-                userId: user.id,
-                forMonth: getForMonth(nextPaymentDate)
-              }
-            }})
-
-            let paymentEncountered = false;
-            while(nextPayment) {
-              if (nextPayment.isDeleted
-              || nextPayment.status === "solicited"
-              || nextPayment.status === "paid") {
-                nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
-                nextPayment = await prismaClient.payment.findUnique({where: {
-                  userId_forMonth: {
-                    userId: user.id,
-                    forMonth: getForMonth(nextPaymentDate)
-                  }
-                }})
-                continue;
-
-              } else {
-                paymentEncountered = true;
-                recipientPayments.push({"id": nextPayment.id})
-                break;
-              }
-            }
-
-            if (!paymentEncountered) {
-              const newPayment = await prismaClient.payment.create({
-                data: {
-                  userId: user.id,
-                  forMonth: getForMonth(nextPaymentDate)
-                }
-              })
-
-              recipientPayments.push({"id": newPayment.id});
-              continue;
-            }
-          }
+          const validPayment = await getValidPayment(user, inputs.dateStr, tx)
+          recipientPayments.push({"id": validPayment})
         };
       }
 
+      //6. Fnally update the sale
       const updatedSale = await tx.sale.update({
         where: {id: inputs.id},
         data: {
@@ -176,12 +130,12 @@ export async function updateSale(req, res) {
       });
 
       if (updatedSale) {
-        const updatedInventory = await tx.inventory.update({
-          where: {id: selectedInventory.id},
-          data: {
-            current: (selectedInventory.current + previousSale.quantity) - inputs.quantity
-          }
-        });
+        // const updatedInventory = await tx.inventory.update({
+        //   where: {id: selectedInventory.id},
+        //   data: {
+        //     current: (selectedInventory.current + previousSale.quantity) - inputs.quantity
+        //   }
+        // });
 
         res.status(200).json({message: "Successfully updated sale"});
       } else {
@@ -199,3 +153,102 @@ export async function updateSale(req, res) {
   }
 }
 router.patch('/sale/:id', updateSale);
+
+
+export async function getValidPayment(user, dateStr, prismaClient) {
+  //1. check if there is an existing pa&yment for this user for the new date
+  const existingPayment = await prismaClient.payment.findUnique({
+    where: {
+      userId_forMonth: {
+        userId: user.id,
+        forMonth: getForMonthStr(dateStr)
+      }
+    }
+  })
+
+  //2. if the payment doesn't exist create it
+  if (!existingPayment) {
+    const createdPayment = await prismaClient.payment.create({
+      data: {
+        userId: user.id,
+        forMonth: getForMonthStr(dateStr)
+      }
+    })
+    // recipientPayments.push({"id": createdPayment.id})
+    return createdPayment.id
+  }
+
+  //3. if it exist but is flagged as deleted, delete it and recreate it
+  if (existingPayment && existingPayment.isDeleted) {
+    const deletedPayment = await prismaClient.payment.delete({where: {id: existingPayment.id}})
+    const recreatedPayment = await prismaClient.payment.create({
+      data: {
+        userId: user.id,
+        forMonth: getForMonthStr(dateStr)
+      }
+    });
+    // recipientPayments.push({"id": recreatedPayment.id});
+    return recreatedPayment.id
+  }
+
+  //4. if it exists and its status is "created", return the id
+  if (existingPayment && !existingPayment.isDeleted && existingPayment.status === "created") {
+    // recipientPayments.push({"id": existingPayment.id});
+    return existingPayment.id
+  }
+
+  //5. if it exists but its status is either "paid" or "solicited"
+  if (existingPayment
+    && !existingPayment.isDeleted
+    && (existingPayment.status === "paid" || existingPayment.status === "solicited")) {
+    
+    //5.1 find the next one chronologically that exist and is not paid or solicited
+    let currentForMonthDate = new Date(existingPayment.forMonth + "-01")
+    let nextPaymentDate = new Date(currentForMonthDate)
+    nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+
+    let nextPayment = await prismaClient.payment.findUnique({where: {
+      userId_forMonth: {
+        userId: user.id,
+        forMonth: getForMonth(nextPaymentDate)
+      }
+    }})
+
+    let paymentEncountered = false;
+    while(nextPayment) {
+      if (nextPayment.isDeleted
+      || nextPayment.status === "solicited"
+      || nextPayment.status === "paid") {
+        nextPaymentDate.setMonth(nextPaymentDate.getMonth() +1)
+        nextPayment = await prismaClient.payment.findUnique({where: {
+          userId_forMonth: {
+            userId: user.id,
+            forMonth: getForMonth(nextPaymentDate)
+          }
+        }})
+        continue;
+
+      } else {
+        paymentEncountered = true;
+        // recipientPayments.push({"id": nextPayment.id})
+        return nextPayment.id
+        // break;
+      }
+    }
+
+    //5.2 if there's no existing valid nextPayment, create one
+    if (!paymentEncountered) {
+      const newPayment = await prismaClient.payment.create({
+        data: {
+          userId: user.id,
+          forMonth: getForMonth(nextPaymentDate)
+        }
+      })
+
+      // recipientPayments.push({"id": newPayment.id});
+      return newPayment.id
+    }
+  }
+}
+
+export default router;

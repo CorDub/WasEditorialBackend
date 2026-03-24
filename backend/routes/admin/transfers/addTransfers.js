@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { twelveMonthsAgo, validateInputs } from "../../../utils.js" 
+import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
 const router = express.Router();
 

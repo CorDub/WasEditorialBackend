@@ -424,3 +424,21 @@ export function createTestDB(templateName = "wasBackend_test_template") {
 export function dropTestDB(dbName) {
   execSync(`dropdb ${dbName}`, { stdio: "inherit" });
 }
+
+export async function truncateAll(prisma) {
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE
+      "User",
+      "Inventory",
+      "Transfer",
+      "Sale",
+      "Book",
+      "Bookstore",
+      "Category",
+      "KindleSale",
+      "Impression",
+      "Payment",
+      "Cost"
+    RESTART IDENTITY CASCADE;
+  `)
+}

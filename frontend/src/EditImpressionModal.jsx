@@ -36,9 +36,9 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "positive"
     }
     const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
-    
+
     const expectationsDateStr = {
-      type: "datetime",
+      type: "string",
       presence: "not empty",
       range: "no future"
     }

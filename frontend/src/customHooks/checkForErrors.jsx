@@ -77,6 +77,9 @@ function checkForErrors(
         break;
 
       case "length":
+        if (fieldValue === null) {
+          break;
+        }
         if (fieldValue.length > fieldExpectations.length) {
           errorList.push(`${fieldName} no puede tener mas de ${fieldExpectations.length} caracteres`);
         };

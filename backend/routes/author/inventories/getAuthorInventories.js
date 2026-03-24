@@ -105,9 +105,10 @@ export async function getAuthorInventories (req, res) {
               where: {
                 isDeleted: false
               },
-              orderBy: {
-                dateStr: "asc"
-              },
+              orderBy: [
+                {dateStr: "asc"},
+                {updatedAt: "asc"}
+              ],
               select: {
                 quantity: true,
                 authorDelivery: true,

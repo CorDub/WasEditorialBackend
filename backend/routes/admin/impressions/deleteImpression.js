@@ -1,13 +1,11 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { validateInputs } from "../../../utils.js" 
+import { validateInputs } from "../../../utils.js";
+import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
 const router = express.Router();
 
 export async function deleteImpression(req, res) {
   try {
-    // const impression_id = parseInt(req.params.id);
-    // const book_id = parseInt(req.query.book_id);
-    // const quantity = parseInt(req.query.quantity);
     const inputs = {
       id: parseInt(req.params.id)
     }
@@ -15,31 +13,51 @@ export async function deleteImpression(req, res) {
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
+      //1. Check if deleting the impression would make the available copies for this book negative in WAS
+      const thisImpression = await tx.impression.findUnique({
+        where: {
+          id: inputs.id
+        }
+      })
+      
+      const thisBookWASInventory = await tx.inventory.findUnique({
+        where: {
+          bookId_bookstoreId: {
+            bookId: thisImpression.bookId,
+            bookstoreId: 1
+          }
+        },
+        include: {
+          book: {
+            include: {
+              impressions: true
+            }
+          },
+          bookstore: true,
+          sales: true,
+          transfersFrom: true,
+          transfersTo: true
+        }
+      })
+
+      if (!thisBookWASInventory || thisBookWASInventory.isDeleted) {
+        throw new Error("Este libro no tiene inventario de WAS")
+      }
+
+      const derived = getInventoryDerived(thisBookWASInventory)
+
+      if (derived.disponibles < thisImpression.quantity) {
+        res.status(400).json({message: "La cantidad de libros imprimidos en esta impresión es superior a la que queda disponible en el inventario de WAS de este libro."})
+        return
+      }
+
+      //2. mark the impression as deleted
       const updatedImpression = await tx.impression.update({
         where: {id: inputs.id},
         data: {
           isDeleted: true
         }
       })
-
-      const wasInventory = await tx.inventory.findUnique({
-        where: {
-          bookId_bookstoreId: {
-            bookId: updatedImpression.bookId,
-            bookstoreId: 1
-          }
-        }
-      });
-
-      // if (wasInventory && !wasInventory.isDeleted) {
-      //   const updatedInventory = await tx.inventory.update({
-      //     where: {id: wasInventory.id},
-      //     data: {
-      //       current: wasInventory.current - updatedImpression.quantity,
-      //       // initial: wasInventory.initial - updatedImpression.quantity
-      //     }
-      //   })
-      // }
 
     res.status(200).json(updatedImpression);
     })

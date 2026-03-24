@@ -15,7 +15,8 @@ import {
   createTestDB,
   dropTestDB,
   deleteFromDB,
-  createTransfer
+  createTransfer,
+  truncateAll
 } from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 
@@ -33,24 +34,6 @@ afterAll(async() => {
   await prisma.$disconnect();
   dropTestDB(testDBName);
 })
-
-async function truncateAll() {
-  await prisma.$executeRawUnsafe(`
-    TRUNCATE TABLE
-      "User",
-      "Inventory",
-      "Transfer",
-      "Sale",
-      "Book",
-      "Bookstore",
-      "Category",
-      "KindleSale",
-      "Impression",
-      "Payment",
-      "Cost"
-    RESTART IDENTITY CASCADE;
-  `)
-}
 
 
 describe("adding a valid sale", () => {
@@ -88,7 +71,7 @@ describe("adding a valid sale", () => {
   })
 
   afterAll(async() => {
-    await truncateAll();
+    await truncateAll(prisma);
   })
 
   it("should return status 201", async() => {
@@ -165,7 +148,7 @@ describe("adding a sale for a multi-authors book", () => {
   })
 
   afterAll(async() => {
-    await truncateAll();
+    await truncateAll(prisma);
   })
 
   it("should create a new Payment for every author of the book if it does not exist", async() => {
@@ -221,7 +204,7 @@ describe("adding a sale larger than the remaining inventory", () => {
   })
 
   afterAll(async() => {
-    await truncateAll();
+    await truncateAll(prisma);
     mute.mockRestore();
   })
 
@@ -283,7 +266,7 @@ describe("adding a sale but the payment is deleted", () => {
   })
 
   afterAll(async() => {
-    await truncateAll();
+    await truncateAll(prisma);
     mute.mockRestore();
   })
 

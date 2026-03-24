@@ -289,7 +289,7 @@ describe("getAuthorInventories returns the correct values", async () => {
       expect(bookResult.impressions.length).toBeGreaterThan(0);
       for (const impression of bookResult.impressions) {
         expect(impression).toHaveProperty("quantity");
-        expect(impression).toHaveProperty("date");
+        expect(impression).toHaveProperty("dateStr");
       }
     });
   });

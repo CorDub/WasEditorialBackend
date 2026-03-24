@@ -77,17 +77,17 @@ describe("getCompleteInventory returns the correct values", async () => {
     impression = await createImpression(prisma, book.id, { quantity: 500, date: new Date("2025-01-01") });
     impression2 = await createImpression(prisma, book.id, { quantity: 100 });
     deletedImpression = await createImpression(prisma, book.id, { quantity: 999, isDeleted: true });
-    entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
 
     // book transfers out of WAS
     transferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 100 });
     transferTo2 = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 50 });
     deletedTransferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 5, isDeleted: true });
 
-    // entregado al autor
-    entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2 });
+    // entregados al autor
+    entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 12 });
     deletedEntregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2, isDeleted: true });
+    entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
+    deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
 
     // return from other back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });
@@ -138,9 +138,9 @@ describe("getCompleteInventory returns the correct values", async () => {
 
   // book / WAS:
   //   impressionInicial=500, extraImpressions=100, entregadosDelAutor=10
-  //   transfers=150, entregadosAlAutor=2, returns=20, ventas=3
-  //   copias = 500+100+10-150 = 460
-  //   current (disponibles) = 460 - 3 + 20 - 2 = 475
+  //   transfers=150, entregadosAlAutor=12, returns=20, ventas=3
+  //   copias = 500+100-150 = 450
+  //   current (disponibles) = 450 - 3 + 20 - 12 + 10 = 465
   // book / other:
   //   inicial=100, extraTransfers=50, returns=20, ventas=3
   //   copias = 150, current (disponibles) = 150 - 20 - 3 = 127
@@ -213,7 +213,7 @@ describe("getCompleteInventory returns the correct values", async () => {
     });
 
     it("should return correct current (disponibles)", () => {
-      expect(wasResult.current).toBe(475);
+      expect(wasResult.current).toBe(465);
     });
 
     it("should return correct returns", () => {

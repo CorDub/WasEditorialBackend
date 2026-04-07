@@ -99,7 +99,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           quantity: parseInt(quantity),
           category: category,
           authors: authors,
-          date: today()
+          dateStr: today()
         }),
       });
 

@@ -6,7 +6,7 @@ import {
   createTestDB, 
   dropTestDB 
 } from "../../testUtils.js";
-import { deleteAdmin } from "../../routes/superAdminRoutes.js";
+import { deleteAdmin } from "../../routes/superadmin/deleteAdmin.js";
 
 vi.mock('../../mailer.js', () => ({
   sendSetPasswordMail: vi.fn(),

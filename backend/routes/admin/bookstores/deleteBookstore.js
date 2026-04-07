@@ -1,5 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { softDeleteInventoriesOnCascade } from "../softDelete/softDelete.js";
+import { validateInputs } from "../../../utils.js";
 const router = express.Router();
 
 export async function deleteBookstore(req, res) {
@@ -7,6 +9,7 @@ export async function deleteBookstore(req, res) {
     const inputs = {
       "id": parseInt(req.params.id)
     }
+    validateInputs(inputs)
 
     const prismaClient = req.prisma || prisma
 

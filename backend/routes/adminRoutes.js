@@ -2835,6 +2835,8 @@ export async function addImpression(req, res) {
     }
     validateInputs(inputs);
 
+    const prismaClient = req.prisma || prisma
+
     const wasInventory = await prisma.inventory.findUnique({
       where: {
         bookId_bookstoreId: {
@@ -2861,8 +2863,6 @@ export async function addImpression(req, res) {
         return;
       }
     } 
-
-    const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
       const createdImpression = await tx.impression.create({

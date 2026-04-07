@@ -58,8 +58,21 @@ test("validates email format correctly", () => {
 })
 
 test("validates phone format correctly", () => {
-  expect(validateInput("phone", '5561356226')).toStrictEqual([])
-  expect(validateInput("phone", "05561356226")).toStrictEqual([["phone", '05561356226', "format"]])
+  // Valid: 6-14 digits only
+  expect(validateInput("phone", '5561356226')).toStrictEqual([])   // 10 digits ✓
+  expect(validateInput("phone", '123456')).toStrictEqual([])        // 6 digits (min) ✓
+  expect(validateInput("phone", '12345678901234')).toStrictEqual([]) // 14 digits (max) ✓
+
+  // Invalid: too short, too long
+  expect(validateInput("phone", '12345')).toStrictEqual([["phone", '12345', "format"]])           // 5 digits (too short) ✗
+  expect(validateInput("phone", '123456789012345')).toStrictEqual([["phone", '123456789012345', "format"]]) // 15 digits (too long) ✗
+  expect(validateInput("phone", '05561356226')).toStrictEqual([])   // 11 digits, all digits ✓  <-- now VALID
+
+  // Invalid: non-digit characters
+  expect(validateInput("phone", '556135622a')).toStrictEqual([["phone", '556135622a', "format"]])   // letter ✗
+  expect(validateInput("phone", '+5561356226')).toStrictEqual([["phone", '+5561356226', "format"]]) // + sign ✗
+  expect(validateInput("phone", '556-135-6226')).toStrictEqual([["phone", '556-135-6226', "format"]]) // dashes ✗
+  expect(validateInput("phone", '5561 3562 26')).toStrictEqual([["phone", '5561 3562 26', "format"]]) // spaces 
 })
 
 test('validates value correctly', () => {

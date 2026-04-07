@@ -1,6 +1,17 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { validateInputs } from "../../../utils.js";
+import { 
+  softDeleteInventoriesOnCascade,
+  softDeleteCostsOnCascade,
+  softDeleteImpressionsOnCascade 
+} from "../softDelete/softDelete.js";
 const router = express.Router();
+import { 
+  softDeleteInventoriesOnCascade,
+  softDeleteCostsOnCascade,
+  softDeleteImpressionsOnCascade, 
+} from "../softDelete/softDelete.js"
 
 export async function deleteBook(req, res) {
   try {

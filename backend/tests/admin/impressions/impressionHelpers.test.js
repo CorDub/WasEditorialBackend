@@ -1,5 +1,5 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { checkRemainingAvailablesForThisBook } from "../../../routes/admin/impressions/impressionHelpers.js";
+import { validateAuthorReturn } from "../../../routes/admin/impressions/impressionHelpers.js";
 import {
   createCategory,
   createAuthor,
@@ -12,7 +12,7 @@ import {
   createTransfer,
   createTestDB,
   dropTestDB,
-  truncateAll
+  truncateAll,
 } from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 
@@ -32,91 +32,65 @@ afterAll(async() => {
 })
 
 
-
-describe(`checkRemainingAvailablesForThisBook works as expected when not enough remaining`, async() => {
+describe(`validateAuthorReturn - less returns than delivered`, async() => {
   let author;
   let category;
   let book;
   let impression;
   let bookstore;
-  let bookstore2;
   let inventory;
-  let inventory2;
-  let transfer;
-  let payment;
-  let sale;
-  let sale2;
-  
+  let transferToAutor;
+  let transferFromAuthor;
+
   beforeAll(async() => {
     author = await createAuthor(prisma)
     category = await createCategory(prisma)
     book = await createBook(prisma, [author.id])
-    impression = await createImpression(prisma, book.id, {quantity: 1000})
     bookstore = await createBookstore(prisma)
-    bookstore2 = await createBookstore(prisma)
+    impression = await createImpression(prisma, book.id)
     inventory = await createInventory(prisma, book.id, bookstore.id)
-    inventory2 = await createInventory(prisma, book.id, bookstore2.id)
-    transfer = await createTransfer(prisma, inventory.id, {toInventoryId: inventory2.id, quantity: 500})
-    payment = await createPayment(prisma, author.id, "2026-03")
-    sale = await createSale(prisma, inventory.id, [payment.id], {quantity: 500})
-    sale2 = await createSale(prisma, inventory2.id, [payment.id], {quantity: 300})
-
-    // 1 book 2 inventories with 500 inicial each
-    // inventory has 0 disponibles
-    // inventory2 has 200 disponibles
-    // total disponibles is 200
+    transferToAutor = await createTransfer(prisma, inventory.id, {quantity: 10})
+    transferFromAuthor = await createImpression(prisma, book.id, {authorDelivery: true, quantity: 2})
   })
 
   afterAll(async() => {
     await truncateAll(prisma)
-  })
+  }) 
 
-  it(`should return false when there is less available copies in total than in the impression`, async() => {
-    const res = await checkRemainingAvailablesForThisBook(prisma, impression.id)
-    expect(res).toBe(false)
+  it(`should return true`, async() => {
+    const res = await validateAuthorReturn(prisma, book.id, 4)
+    expect(res).toBe(true)
   })
 })
 
-describe(`checkRemainingAvailablesForThisBook works as expected when there are enough copies remaining`, async() => {
+
+describe(`validateAuthorReturn - more returns than delivered`, async() => {
   let author;
   let category;
   let book;
   let impression;
   let bookstore;
-  let bookstore2;
   let inventory;
-  let inventory2;
-  let transfer;
-  let payment;
-  // let sale;
-  // let sale2;
-  
+  let transferToAutor;
+  let transferFromAuthor;
+
   beforeAll(async() => {
     author = await createAuthor(prisma)
     category = await createCategory(prisma)
     book = await createBook(prisma, [author.id])
-    impression = await createImpression(prisma, book.id, {quantity: 1000})
     bookstore = await createBookstore(prisma)
-    bookstore2 = await createBookstore(prisma)
+    impression = await createImpression(prisma, book.id)
     inventory = await createInventory(prisma, book.id, bookstore.id)
-    inventory2 = await createInventory(prisma, book.id, bookstore2.id)
-    transfer = await createTransfer(prisma, inventory.id, {toInventoryId: inventory2.id, quantity: 500})
-    payment = await createPayment(prisma, author.id, "2026-03")
-    // sale = await createSale(prisma, inventory.id, [payment.id], {quantity: 500})
-    // sale2 = await createSale(prisma, inventory2.id, [payment.id], {quantity: 300})
-
-    // 1 book 2 inventories with 500 inicial each
-    // inventory has 500 disponibles
-    // inventory2 has 500 disponibles
-    // total disponibles is 1000
+    transferToAutor = await createTransfer(prisma, inventory.id, {quantity: 10})
+    transferFromAuthor = await createImpression(prisma, book.id, {authorDelivery: true, quantity: 2})
   })
 
   afterAll(async() => {
     await truncateAll(prisma)
-  })
+  }) 
 
-  it(`should return true when there are enough available copies in total`, async() => {
-    const res = await checkRemainingAvailablesForThisBook(prisma, impression.id)
-    expect(res).toBe(true)
+  it(`should return false`, async() => {
+    const res = await validateAuthorReturn(prisma, book.id, 10)
+    expect(res).toBe(false)
   })
 })

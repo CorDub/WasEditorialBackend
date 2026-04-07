@@ -18,9 +18,6 @@ export async function updateImpression(req, res) {
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
-      // const currentImpression = await tx.impression.findUnique({ where: {id: inputs.id}});
-      // const diff = inputs.quantity - currentImpression.quantity;
-      
       //1. Check if deleting the impression would make the available copies for this book negative in WAS
       const thisImpression = await tx.impression.findUnique({
         where: {
@@ -73,25 +70,6 @@ export async function updateImpression(req, res) {
           note: inputs.note
         }
       });
-
-      // const wasInventory = await tx.inventory.findUnique({
-      //   where: {
-      //     bookId_bookstoreId: {
-      //       bookId: inputs.bookId,
-      //       bookstoreId: 1
-      //     }
-      //   }
-      // });
-
-      // if (wasInventory && !wasInventory.isDeleted) {
-      //   const updatedInventory = await tx.inventory.update({
-      //     where: {id: wasInventory.id},
-      //     data: {
-      //       current: wasInventory.current + diff,
-      //       initial: wasInventory.initial + diff
-      //     }
-      //   })
-      // }
 
       res.status(200).json(updatedImpression);
     })

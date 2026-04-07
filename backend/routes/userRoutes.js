@@ -90,7 +90,9 @@ router.post('/reset', getReset)
 export async function getUserExtra(req, res) {
   try {
     const user_id = req.session.user_id;
-    if (!user_id) { return }
+    if (!user_id) { 
+      return res.status(401).json({message: "Unauthorized"})
+    }
     const prismaClient = req.prisma || prisma
 
     const user = await prismaClient.user.findUnique({where: {id: user_id}});
@@ -115,6 +117,7 @@ export async function getUserExtra(req, res) {
     res.status(200).json(user_send);
   } catch (error) {
     console.error("Error retrieving info: ", error)
+    return res.status(500).json({message: "Error retrieving info"})
   }
 }
 router.get('/user_extra', getUserExtra)

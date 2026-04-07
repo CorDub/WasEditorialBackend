@@ -1,5 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { validateInputs } from "../../../utils.js";
+import { validateInput } from "../../../validations.js";
 const router = express.Router();
 
 export async function addBook(req, res) {
@@ -11,7 +13,7 @@ export async function addBook(req, res) {
       "isbn": req.body.isbn !== "" ? req.body.isbn : null,
       "quantity": parseInt(req.body.quantity),
       "categoryId": parseInt(req.body.category),
-      "dateStr": req.body.date
+      "dateStr": req.body.dateStr
     }
     validateInputs(inputs)
 

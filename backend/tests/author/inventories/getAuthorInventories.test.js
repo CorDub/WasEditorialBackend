@@ -310,4 +310,20 @@ describe("getAuthorInventories returns the correct values", async () => {
       expect(errRes.json).toHaveBeenCalledWith({ error: expect.any(String) });
     });
   });
+
+  describe("impressions ordering and filtering", () => {
+    it("should return impressions ordered ascending by date with no deleted impressions for each book", () => {
+      for (const entry of results.bookInventories) {
+        // No deleted impressions
+        for (const impression of entry.impressions) {
+          expect(impression.isDeleted).toBeFalsy();
+        }
+
+        // Ordered ascending by dateStr
+        for (let i = 1; i < entry.impressions.length; i++) {
+          expect(entry.impressions[i].dateStr >= entry.impressions[i - 1].dateStr).toBe(true);
+        }
+      }
+    });
+  });
 });

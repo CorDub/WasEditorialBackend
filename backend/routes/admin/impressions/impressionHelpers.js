@@ -1,16 +1,12 @@
-import { getInventoryDerived } from "../inventories/inventoryHelpers";
+import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
 
-export async function checkRemainingAvailablesForThisBook(tx, impressionId) {
-  const selectedImpression = await tx.impression.findUnique({
+export async function validateAuthorReturn(tx, bookId, quantity) {
+  const wasInventory = await tx.inventory.findUnique({
     where: {
-      id: impressionId
-    }
-  })
-
-  //1.2 Get all inventories with the book for this impression
-  const allThisBookInventories = await tx.inventory.findMany({
-    where: {
-      bookId: selectedImpression.bookId
+      bookId_bookstoreId: {
+        bookId: bookId,
+        bookstoreId: 1,
+      }
     },
     include: {
       book: {
@@ -18,24 +14,15 @@ export async function checkRemainingAvailablesForThisBook(tx, impressionId) {
           impressions: true
         }
       },
-      bookstore: true,
       sales: true,
       transfersFrom: true,
       transfersTo: true
     }
   });
 
-  //1.3 get a total of available copies for all these inventories
-  let totalDisponibles = 0
-  for (const inventory of allThisBookInventories) {
-    const derived = getInventoryDerived(inventory)
-    totalDisponibles += derived.disponibles
-  }
-
-  //1.4 finally check
-  if (totalDisponibles < selectedImpression.quantity) {
+  const derived = getInventoryDerived(wasInventory)
+  if ((derived.entregadosDelAutor + quantity) > derived.entregadosAlAutor) {
     return false
-  } else {
-    return true
   }
+  return true
 }

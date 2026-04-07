@@ -9,8 +9,8 @@
 //         }
 //     });
 
-import { prisma } from "../prisma/client";
-import { calculateAuthorRevenue, generateMonthKeysForRange, getForMonth } from "../utils";
+import { prisma } from "../../prisma/client";
+import { calculateAuthorRevenue, generateMonthKeysForRange, getForMonth } from "../../utils";
 
 //     res.status(200).json(books);
 //   } catch (error) {

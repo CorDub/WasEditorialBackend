@@ -1,5 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { validateInputs } from "../../../utils.js";
+import { sendWelcomeMail } from "../../../mailer.js";
 const router = express.Router();
 
 export async function addAuthor(req, res) {

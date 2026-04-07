@@ -277,7 +277,10 @@ describe("getWasInventoryForThisBook returns the correct values", async() => {
   // ventas             = 3    (2 + 1, deleted excluded)
   // disponibles        = 490 - 3 + 20 - 2 = 505
 
-  it(`should return an object containing 15 keys: name, copias, inicial, extraImpressions, returns, transfers, entregadosDelAutor, entregadosAlAutor, ventas, disponibles, bookstoreId`, () => {
+  it(`should return an object containing 15 keys: 
+    name, copias, inicial, extraImpressions, returns, 
+    transfers, entregadosDelAutor, entregadosAlAutor, 
+    ventas, disponibles, bookstoreId`, () => {
     expect(Object.keys(result)).toHaveLength(15);
     expect(result).toHaveProperty('name');
     expect(result).toHaveProperty('title');

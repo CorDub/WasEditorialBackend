@@ -164,7 +164,7 @@ export function getWasInventoryForThisBook(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   scaffold.inicial += impressionsRes.impressionInicial
   scaffold.extraImpressions += impressionsRes.extraImpressions
-  scaffold.entregados += impressionsRes.entregadosDelAutor
+  // scaffold.entregados += impressionsRes.entregadosDelAutor
   scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   let thatBookImpressions = []
@@ -199,7 +199,7 @@ export function getWasInventoryForThisBook(inventory) {
     scaffold.ventas +
     scaffold.returns -
     scaffold.entregadosAlAutor
-  
+
   return scaffold
 }
 

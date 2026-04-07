@@ -1,5 +1,5 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { getAuthorSales } from "../../routes/authorRoutes.js";
+import { getAuthorSales } from "../../../routes/author/sales/getAuthorSales.js";
 import {
   createCategory,
   createAuthor,
@@ -13,10 +13,10 @@ import {
   createCost,
   createTestDB,
   dropTestDB,
-  deleteFromDB
-} from "../../testUtils.js";
+  deleteFromDB,
+  truncateAll,
+} from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
-import * as mailer from "../../mailer.js"
 
 let prisma;
 let testDBName;
@@ -61,16 +61,16 @@ describe(`get author sales with valid parameters`, () => {
     payment1 = await createPayment(prisma, author.id, "2025-10")
     payment2 = await createPayment(prisma, author.id, "2025-09")
     payment3 = await createPayment(prisma, author.id, "2023-10")
-    sale1 = await createSale(prisma, inventory1.id, [payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    sale2 = await createSale(prisma, inventory2.id, [payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    deletedSale = await createSale(prisma, inventory1.id, [payment1.id], {quantity: 10, isDeleted: true, date: new Date("2025-10-02")})
-    sale3 = await createSale(prisma, inventory3.id, [payment2.id], {quantity: 10, date: new Date("2025-09-02")})
-    sale4 = await createSale(prisma, inventory4.id, [payment2.id], {quantity: 10, date: new Date("2025-09-02")})
-    outOfRangeSale = await createSale(prisma, inventory1.id, [payment3.id], {quantity: 10, date: new Date("2023-10-02")})
-    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100})
-    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-09-02"), regalias: 100})
-    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2023-10-02"), regalias: 100})
-    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100, isDeleted: true})
+    sale1 = await createSale(prisma, inventory1.id, [payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    sale2 = await createSale(prisma, inventory2.id, [payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    deletedSale = await createSale(prisma, inventory1.id, [payment1.id], {quantity: 10, isDeleted: true, dateStr: "2025-10-02"})
+    sale3 = await createSale(prisma, inventory3.id, [payment2.id], {quantity: 10, dateStr: "2025-09-02"})
+    sale4 = await createSale(prisma, inventory4.id, [payment2.id], {quantity: 10, dateStr: "2025-09-02"})
+    outOfRangeSale = await createSale(prisma, inventory1.id, [payment3.id], {quantity: 10, dateStr: "2023-10-02"})
+    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100})
+    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-09-02", regalias: 100})
+    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2023-10-02", regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100, isDeleted: true})
 
     // Sale 1 : comission was over the min (price 379) - 189.5 per book - 1895 total
     // Sale 2 : comission regalias (price 379) - 75.8 per book - 758 total
@@ -84,8 +84,8 @@ describe(`get author sales with valid parameters`, () => {
         user_id: author.id
       },
       query: {
-        startDate: new Date("2025-01-01"),
-        endDate: new Date("2025-11-04")
+        startDateStr: "2025-01-01",
+        endDateStr: "2025-11-04"
       },
       prisma: prisma
     }
@@ -94,6 +94,10 @@ describe(`get author sales with valid parameters`, () => {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
     }
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
   })
 
   it(`should return a status 200`, async() => {
@@ -108,7 +112,7 @@ describe(`get author sales with valid parameters`, () => {
   })
 
   it(`should correctly sum up the quantity of all sales excluding deleted or out of range`, async() => {
-    expect(jsonRes.totalSales).toBe(60)
+    expect(jsonRes.totalSales).toBe(40)
   })
 
   it(`should correctly sum up sales value excluding deleted or out of range`, async() => {
@@ -138,8 +142,8 @@ describe(`get author sales with valid parameters`, () => {
       }
     }
 
-    expect(book1totalQuantity).toBe(30)
-    expect(book2totalQuantity).toBe(20)
+    expect(book1totalQuantity).toBe(20)
+    expect(book2totalQuantity).toBe(10)
     expect(book3totalQuantity).toBe(10)
     expect(book1Value).toBe(4458.5)
     expect(book2Value).toBe(858)
@@ -176,23 +180,23 @@ describe(`get author sale without being logged in`, async() => {
     payment1 = await createPayment(prisma, author.id, "2025-10")
     payment2 = await createPayment(prisma, author.id, "2025-09")
     payment3 = await createPayment(prisma, author.id, "2023-10")
-    sale1 = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    sale2 = await createSale(prisma, inventory2.id, [ payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    deletedSale = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, isDeleted: true, date: new Date("2025-10-02")})
-    sale3 = await createSale(prisma, inventory1.id, [ payment2.id], {quantity: 10, date: new Date("2025-09-02")})
-    sale4 = await createSale(prisma, inventory1.id, [ payment3.id], {quantity: 10, date: new Date("2023-10-02")})
-    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100})
-    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-09-02"), regalias: 100})
-    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2023-10-02"), regalias: 100})
-    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100, isDeleted: true})
+    sale1 = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    sale2 = await createSale(prisma, inventory2.id, [ payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    deletedSale = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, isDeleted: true, dateStr: "2025-10-02"})
+    sale3 = await createSale(prisma, inventory1.id, [ payment2.id], {quantity: 10, dateStr: "2025-09-02"})
+    sale4 = await createSale(prisma, inventory1.id, [ payment3.id], {quantity: 10, dateStr: "2023-10-02"})
+    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100})
+    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-09-02", regalias: 100})
+    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2023-10-02", regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100, isDeleted: true})
 
     mockReq = {
       session: {
         user_id: null
       },
       query: {
-        startDate: new Date("2025-01-01"),
-        endDate: new Date("2025-11-04")
+        startDateStr: "2025-01-01",
+        endDateStr: "2025-11-04"
       },
       prisma: prisma
     }
@@ -207,6 +211,7 @@ describe(`get author sale without being logged in`, async() => {
 
   afterAll(async() => {
     mute.mockRestore()
+    await truncateAll(prisma)
   })
 
   it(`should return a status 401`, async() => {
@@ -245,23 +250,23 @@ describe(`get author sale with invalid parameters`, async() => {
     payment1 = await createPayment(prisma, author.id, "2025-10")
     payment2 = await createPayment(prisma, author.id, "2025-09")
     payment3 = await createPayment(prisma, author.id, "2023-10")
-    sale1 = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    sale2 = await createSale(prisma, inventory2.id, [ payment1.id], {quantity: 10, date: new Date("2025-10-02")})
-    deletedSale = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, isDeleted: true, date: new Date("2025-10-02")})
-    sale3 = await createSale(prisma, inventory1.id, [ payment2.id], {quantity: 10, date: new Date("2025-09-02")})
-    sale4 = await createSale(prisma, inventory1.id, [ payment3.id], {quantity: 10, date: new Date("2023-10-02")})
-    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100})
-    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-09-02"), regalias: 100})
-    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2023-10-02"), regalias: 100})
-    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePay: new Date("2025-10-02"), regalias: 100, isDeleted: true})
+    sale1 = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    sale2 = await createSale(prisma, inventory2.id, [ payment1.id], {quantity: 10, dateStr: "2025-10-02"})
+    deletedSale = await createSale(prisma, inventory1.id, [ payment1.id], {quantity: 10, isDeleted: true, dateStr: "2025-10-02"})
+    sale3 = await createSale(prisma, inventory1.id, [ payment2.id], {quantity: 10, dateStr: "2025-09-02"})
+    sale4 = await createSale(prisma, inventory1.id, [ payment3.id], {quantity: 10, dateStr: "2023-10-02"})
+    kindleSale1 = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100})
+    kindleSale2 = await createKindleSale(prisma, book2.id, [payment2.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-09-02", regalias: 100})
+    kindleSale3 = await createKindleSale(prisma, book1.id, [payment3.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2023-10-02", regalias: 100})
+    deletedKindleSale = await createKindleSale(prisma, book1.id, [payment1.id], {quantityEbook: 5, quantityPod: 5, datePayStr: "2025-10-02", regalias: 100, isDeleted: true})
 
     mockReq = {
       session: {
         user_id: author.id
       },
       query: {
-        startDate: new Date("2025-10-02"),
-        endDate: new Date("2025-09-02")
+        startDateStr: "2025-10-02",
+        endDateStr: "2025-09-02"
       },
       prisma: prisma
     }
@@ -276,6 +281,7 @@ describe(`get author sale with invalid parameters`, async() => {
 
   afterAll(async() => {
     mute.mockRestore()
+    await truncateAll(prisma)
   })
 
   it(`should return a status 400`, async() => {

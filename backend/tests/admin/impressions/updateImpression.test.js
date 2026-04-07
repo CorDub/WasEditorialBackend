@@ -1,5 +1,6 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import { updateImpression } from "../../../routes/admin/impressions/updateImpression.js";
+import { getInventoryDerived } from "../../../routes/admin/inventories/inventoryHelpers.js";
 import {
   createCategory,
   createAuthor,
@@ -115,6 +116,7 @@ describe(`updating an impression with invalid parameters`, async() => {
   let bodegaWasBookstore;
   let bodegaWasInventory, inventory2;
   let newImpression, newImpression2;
+  // let transfer;
 
   beforeAll(async() => {
     category1 = await createCategory(prisma);
@@ -125,7 +127,7 @@ describe(`updating an impression with invalid parameters`, async() => {
     bodegaWasInventory = await createInventory(prisma, newBook.id, 1, {initial: 2000, current:3000});
     inventory2 = await createInventory(prisma, newBook2.id, 1, {initial: 1000, current:500});
     newImpression = await createImpression(prisma, newBook.id, {quantity: 1000, note: "this is a note", dateStr: '2025-11-04'})
-    newImpression2 = await createImpression(prisma, newBook2.id, {quantity: 1000, note: "this is a note", dateStr: '2025-11-04'})
+    newImpression2 = await createImpression(prisma, newBook2.id, {quantity: 500, note: "this is a note", dateStr: '2025-11-04'})
 
     mockReq = {
       params: {
@@ -162,7 +164,7 @@ describe(`updating an impression with invalid parameters`, async() => {
     const jsonResponse = mockRes.json.mock.calls[0][0]
     expect(jsonResponse).toStrictEqual({error: "A server error occurred while creating the impression"});
     const updatedImpression = await prisma.impression.findUnique({where: {id: newImpression2.id}});
-    expect(updatedImpression.quantity).toBe(1000);
+    expect(updatedImpression.quantity).toBe(500);
     expect(updatedImpression.note).toBe("this is a note");
     expect(updatedImpression.dateStr).toEqual("2025-11-04")
   })
@@ -173,11 +175,20 @@ describe(`updating an impression with invalid parameters`, async() => {
         id: inventory2.id
       },
       include: {
-        bookstore: true
+        bookstore: true,
+        book: {
+          include: {
+            impressions: true
+          }
+        },
+        sales: true,
+        transfersFrom: true,
+        transfersTo: true
       }
     })
     expect(updatedWasInventory.bookstore.name).toBe("WAS Editorial");
-    expect(updatedWasInventory.current).toBe(500);
+    const updatedWasInventoryDerived = getInventoryDerived(updatedWasInventory)
+    expect(updatedWasInventoryDerived.disponibles).toBe(500);
   })
 })
 

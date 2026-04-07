@@ -1,6 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
+import { validateAuthorReturn } from "./impressionHelpers.js";
 const router = express.Router();
 
 
@@ -18,6 +19,14 @@ export async function addImpression(req, res) {
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
+      if (inputs.authorDelivery) {
+        const valid = validateAuthorReturn(tx, inputs.id, inputs.quantity)
+        if (!valid) {
+          res.status(400).json({message: "No se puede regresar mas libros que han estados entregados al autor"})
+          return;
+        }
+      }
+
       const createdImpression = await tx.impression.create({
         data: {
           bookId: inputs.id,
@@ -28,29 +37,6 @@ export async function addImpression(req, res) {
         }
       })
 
-      // const wasInventory = await tx.inventory.findUnique({
-      //   where: {
-      //     bookId_bookstoreId: {
-      //       bookId: inputs.id,
-      //       bookstoreId: 1,
-      //     }
-      //   }
-      // });
-
-      // if (!wasInventory) {
-      //   res.status(400).json({message: "Este libro no existe en la bodega Was"})
-      //   return;
-      // }
-
-      // if (!wasInventory.isDeleted) {
-      //   const updatedInventory = await tx.inventory.update({
-      //     where: {id: wasInventory.id},
-      //     data: {
-      //       current: wasInventory.current + inputs.quantity,
-      //       // initial: wasInventory.initial + quantity
-      //     }
-      //   })
-      // };
       res.status(201).json(createdImpression);
     })
 

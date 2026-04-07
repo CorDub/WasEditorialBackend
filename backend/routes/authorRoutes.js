@@ -217,7 +217,6 @@ export async function getAuthorInventories (req, res) {
         },
         impressions: impressionsData
       })
-      console.log("impressionsData", impressionsData)
     }
 
     const packagedData = {

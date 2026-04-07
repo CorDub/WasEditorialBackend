@@ -1,5 +1,6 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { validateInputs } from "../../../utils.js";
 const router = express.Router();
 
 export async function deleteCategory(req, res) {

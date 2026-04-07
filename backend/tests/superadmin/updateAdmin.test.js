@@ -6,11 +6,7 @@ import {
   createTestDB, 
   dropTestDB 
 } from "../../testUtils.js";
-import { updateAdmin } from "../../routes/superAdminRoutes.js";
-
-vi.mock('../../mailer.js', () => ({
-  sendSetPasswordMail: vi.fn(),
-}));
+import { updateAdmin } from "../../routes/superadmin/updateAdmin.js";
 
 let prisma;
 let testDBName;
@@ -41,7 +37,10 @@ describe("updating an admin with valid parameters", () => {
         first_name: "New",
         last_name: "Admin",
         email: "new.admin@gmail.com",
-        role: "admin"
+        role: "admin",
+        // phonePrefix: "+52",
+        // phone: "5561356226",
+        // birthday: "22121988"
       }
     })
 
@@ -53,7 +52,10 @@ describe("updating an admin with valid parameters", () => {
         "firstName": "Updated",
         "lastName": 'Admin',
         "email": "updated.admin@gmail.com",
-        "role": "admin"
+        "role": "admin",
+        // "phonePrefix": "+44",
+        // "phone": "5784956212",
+        // "birthday": "13121988"
       },
       prisma: prisma
     }
@@ -81,6 +83,9 @@ describe("updating an admin with valid parameters", () => {
     expect(updatedAdmin.last_name).toBe("Admin");
     expect(updatedAdmin.email).toBe("updated.admin@gmail.com");
     expect(updatedAdmin.role).toBe("admin");
+    // expect(updatedAdmin.phonePrefix).toBe("+44");
+    // expect(updatedAdmin.phone).toBe("5784956212");
+    // expect(updatedAdmin.birthday).toBe("13121988");
   })
 })
 
@@ -95,7 +100,10 @@ describe("updating an admin with invalid parameters", () => {
         first_name: "New",
         last_name: "Admin",
         email: "new.admin@gmail.com",
-        role: "admin"
+        role: "admin",
+        phonePrefix: "+52",
+        phone: "5561356226",
+        birthday: "22121988"
       }
     })
 
@@ -141,6 +149,9 @@ describe("updating an admin with invalid parameters", () => {
     expect(updatedAdmin.last_name).toBe("Admin");
     expect(updatedAdmin.email).toBe("new.admin@gmail.com");
     expect(updatedAdmin.role).toBe("admin");
+    expect(updatedAdmin.phonePrefix).toBe("+52");
+    expect(updatedAdmin.phone).toBe("5561356226");
+    expect(updatedAdmin.birthday).toBe("22121988");
   })
 })
 
@@ -199,5 +210,4 @@ describe("updating a deleted admin", () => {
     expect(notUpdatedAdmin.role).toBe("admin")
     expect(notUpdatedAdmin.isDeleted).toBe(true)
   })
-  
 })

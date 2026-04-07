@@ -219,7 +219,7 @@ model Cost {
   bookId    Int
   note      String?
   date      DateTime @default(now())
-  dateStr   String
+  dateStr   String?
   amount    Float
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())

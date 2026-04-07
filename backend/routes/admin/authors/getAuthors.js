@@ -10,7 +10,7 @@ export async function getAuthors(req, res) {
 
     const users = await prismaClient.user.findMany({
       where: {
-        role: Role.author,
+        role: "author",
         isDeleted: false,
       },
       select: {

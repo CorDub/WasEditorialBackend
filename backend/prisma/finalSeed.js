@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 const authorsPath = path.join(__dirname, 'finalAuthorList.json');
 const booksPath = path.join(__dirname, "finalBooksList.json");
-const additionalBooksPath = path.join(__dirname, "secondBooks.json");
+const additionalBooksPath = path.join(__dirname, "thirdBooks.json");
 
 const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
 const booksRaw = await fs.readFile(booksPath, 'utf-8');
@@ -160,6 +160,14 @@ async function addAdditionalBookFromDB(book) {
             data: {
               first_name: book.authors[i].first_name,
               last_name: book.authors[i].last_name,
+              email: book.authors[i].email ? book.authors[i].email : null,
+              phonePrefix: book.authors[i].phonePrefix ? book.authors[i].phonePrefix : "+52",
+              phone: book.authors[i].phone ? book.authors[i].phone : null,
+              birthday: book.authors[i].birthday ? book.authors[i].birthday : null,
+              clabe: book.authors[i].clabe ? book.authors[i].clabe : null,
+              name_bank_account: book.authors[i].name_bank_account ? book.authors[i].name_bank_account : null,
+              bank: book.authors[i].bank ? book.authors[i].bank : null,
+              swift: book.authors[i].swift ? book.authors[i].swift : null
             }
           })
         }
@@ -177,6 +185,7 @@ async function addAdditionalBookFromDB(book) {
       })
 
       if (!existingBook) {
+        console.log(`Book : ${book.title}, isbn: ${book.isbn}`)
         const new_book = await tx.book.create({
           data: {
             title: book.title,
@@ -187,7 +196,8 @@ async function addAdditionalBookFromDB(book) {
             mainAuthor: authors[0].id,
             category: {
               connect: {"id": book.category}
-            }
+            },
+            isbn: book.isbn ? book.isbn : null
           }
         });
 
@@ -361,9 +371,9 @@ async function main() {
 
     //Add all books
     // await Promise.all(books.map(book => addBookFromDB(book)));
-    for (const book of books) {
-      await addBookFromDB(book);
-    }
+    // for (const book of books) {
+    //   await addBookFromDB(book);
+    // }
 
     for (const book of additionalBooks) {
       await addAdditionalBookFromDB(book);

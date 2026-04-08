@@ -123,7 +123,7 @@
     "category": 1,
     "quantity": 1,
     "pasta": "Blanda",
-    "isbn": "9786078974061"
+    "isbn": null
   },
   {
     "title": "Reconfiguraci\u00f3n financiera",
@@ -207,7 +207,7 @@
     "category": 1,
     "quantity": 1,
     "pasta": "Blanda",
-    "isbn": "9789689739234"
+    "isbn": null
   },
   {
     "title": "Pon a trabajar tu segundo cerebro",
@@ -627,7 +627,7 @@
     "category": 1,
     "quantity": 1,
     "pasta": "Blanda",
-    "isbn": "9786079982072"
+    "isbn": null
   },
   {
     "title": "Los 5 pilares del emprendimiento",
@@ -3176,7 +3176,7 @@
     "category": 1,
     "quantity": 1,
     "pasta": "Blanda",
-    "isbn": "9786078974825"
+    "isbn": null
   },
   {
     "title": "El prop\u00f3sito de la oveja negra",
@@ -5611,7 +5611,7 @@
     "category": 1,
     "quantity": 1,
     "pasta": "Blanda",
-    "isbn": "9786078974726"
+    "isbn": null
   },
   {
     "title": "Tu historia no esta escrita",
@@ -7326,29 +7326,8 @@
     "title": "Despu\u00e9s del d\u00eda 10",
     "authors": [
       {
-        "first_name": "Carlos Paez",
-        "last_name": "nan",
-        "email": null,
-        "phonePrefix": null,
-        "phone": null,
-        "birthday": null,
-        "clabe": null,
-        "name_bank_account": null,
-        "bank": null,
-        "swift": null
-      }
-    ],
-    "category": 1,
-    "quantity": 1,
-    "pasta": "Blanda",
-    "isbn": null
-  },
-  {
-    "title": "nan",
-    "authors": [
-      {
-        "first_name": "nan",
-        "last_name": "nan",
+        "first_name": "Carlos",
+        "last_name": "Paez",
         "email": null,
         "phonePrefix": null,
         "phone": null,

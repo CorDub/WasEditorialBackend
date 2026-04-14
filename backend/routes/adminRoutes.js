@@ -802,7 +802,7 @@ export async function addBook(req, res) {
       "isbn": req.body.isbn !== "" ? req.body.isbn : null,
       "quantity": parseInt(req.body.quantity),
       "categoryId": parseInt(req.body.category),
-      "dateStr": req.body.date
+      "dateStr": req.body.dateStr
     }
     validateInputs(inputs)
 
@@ -2570,6 +2570,7 @@ router.post('/sale', addSale)
 
 export async function updateSale(req, res) {
   try {
+    console.log("wrong route called")
     const inputs = {
       id: parseInt(req.params.id),
       bookId: parseInt(req.body.book),

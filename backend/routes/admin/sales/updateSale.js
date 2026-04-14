@@ -11,6 +11,7 @@ const router = express.Router();
 
 export async function updateSale(req, res) {
   try {
+    console.log("correct route called")
     //1. validate inputs
     const inputs = {
       id: parseInt(req.params.id),
@@ -84,11 +85,6 @@ export async function updateSale(req, res) {
       //4. Check that you're not entering a sale that is more than remaining books in the inventory.
       let quantityUpdate = previousSale.quantity - inputs.quantity;
 
-      // if ((selectedInventory.current + quantityUpdate) < 0) {
-      //   res.status(400).json({ message: "El inventario tiene menos libros que la cantidad entrada."});
-      //   return;
-      // }
-
       const derived = getInventoryDerived(selectedInventory) 
       if ((derived.disponibles + quantityUpdate) < 0) {
         return res.status(400).json({message: `No hay sufficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
@@ -130,13 +126,6 @@ export async function updateSale(req, res) {
       });
 
       if (updatedSale) {
-        // const updatedInventory = await tx.inventory.update({
-        //   where: {id: selectedInventory.id},
-        //   data: {
-        //     current: (selectedInventory.current + previousSale.quantity) - inputs.quantity
-        //   }
-        // });
-
         res.status(200).json({message: "Successfully updated sale"});
       } else {
         if (String(error).includes(("Unique constraint failed on the fields: (`bookId`,`bookstoreId`)"))) {
@@ -153,6 +142,7 @@ export async function updateSale(req, res) {
   }
 }
 router.patch('/sale/:id', updateSale);
+
 
 
 export async function getValidPayment(user, dateStr, prismaClient) {

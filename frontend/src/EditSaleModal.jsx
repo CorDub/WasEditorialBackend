@@ -2,7 +2,6 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
-import { convertISOString } from "../../backend/utils";
 
 function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
@@ -14,11 +13,9 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const [bookId, setBookId] = useState(clickedRow.inventory.bookId);
   const [bookstore, setBookstore] = useState(clickedRow.inventory.bookstore.name);
   const [bookstoreId, setBookstoreId] = useState(clickedRow.inventory.bookstoreId);
-  // const [country, setCountry] = useState(clickedRow.inventory.country);
   const [quantity, setQuantity] = useState(clickedRow.quantity);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  // const countryRef = useRef();
   const quantityRef = useRef();
   const dateStrRef = useRef();
   const [dateStr, setDateStr] = useState(clickedRow.dateStr);
@@ -113,72 +110,8 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     }
   }
 
-  // function dropDownChange(e, input_name, input_index) {
-
-  //   const inputs = {
-  //     "Book": {
-  //       "function": setBook,
-  //       "element": bookRef
-  //     },
-  //     "Bookstore": {
-  //       "function": setBookstore,
-  //       "element": bookstoreRef
-  //     },
-  //     // "Country": {
-  //     //   "function": setCountry,
-  //     //   "element": countryRef
-  //     // }
-  //   }
-
-  //   if (input_index !== undefined) {
-  //     inputs[input_name]["function"](input_index, e);
-  //     if (e.target.value === "null") {
-  //       if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-  //         inputs[input_name]["element"].current.classList.remove("selected")
-  //       };
-  //       return;
-  //     } else {
-  //       // inputs[input_name]["function"](input_index, e);
-  //       if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-  //         inputs[input_name]["element"].current.classList.add("selected")
-  //       };
-  //       return;
-  //     }
-  //   };
-
-  //   if (e.target.value === "null") {
-  //     inputs[input_name]["function"](null);
-  //     if (inputs[input_name]["element"].current.classList.contains("selected") === true) {
-  //       inputs[input_name]["element"].current.classList.remove("selected")
-  //     };
-  //   } else {
-  //     inputs[input_name]["function"](e.target.value);
-  //     if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
-  //       inputs[input_name]["element"].current.classList.add("selected")
-  //     };
-  //   };
-  // }
-
   function checkInputs() {
     let errorsList = []
-    // const expectationsBook = {
-    //   presence: "not empty",
-    //   type: "string",
-    //   length: 100,
-    //   value: bookTitlesList
-    // };
-    // const expectationsBookstore = {
-    //   presence: "not empty",
-    //   type: "string",
-    //   length: 50,
-    //   value: bookstoreNamesList
-    // };
-    // const expectationsPais = {
-    //   type: "string",
-    //   presence: "not empty",
-    //   length: 50,
-    //   value: countries
-    // };
     const expectationsCantidad = {
       presence: "not empty",
       type: "number",
@@ -190,9 +123,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       range: "no future"
     }
 
-    // const errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
-    // const errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
-    // const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
     const errorsQuantity = checkForErrors("Cantidad", parseInt(quantity), expectationsCantidad, quantityRef, "a");
     const errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, 'a');
     const errorInputs = [errorsQuantity, errorsDateStr];
@@ -228,10 +158,8 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         },
         credentials: "include",
         body: JSON.stringify({
-          // id: clickedRow.id,
           book: bookId,
           bookstore: bookstoreId,
-          // country: country,
           quantity: parseInt(quantity),
           dateStr: dateStr
         }),
@@ -265,33 +193,6 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         <p>*Campos obligatorios</p>
       </div>
       <form className="global-form">
-        {/* <div className="modal-form-line">
-          <label className="modal-form-label">Título *</label>
-          <select onChange={(e) => dropDownChange(e, "Book")}
-            className="select-global" ref={bookRef}>
-            {existingBooks && existingBooks.map((book, index) => (
-              <option key={index} value={book.title}>{book.title}</option>
-            ))}
-          </select>
-        </div>
-        <div className="modal-form-line">
-          <label className="modal-form-label">Librería *</label>
-          <select onChange={(e) => dropDownChange(e, "Bookstore")}
-            className="select-global" ref={bookstoreRef}>
-            {existingBookstores && existingBookstores.map((bookstore, index) => (
-              <option key={index} value={bookstore.title}>{bookstore.name}</option>
-            ))}
-          </select>
-        </div> */}
-        {/* <div className="modal-form-line">
-          <label className="modal-form-label">País *</label>
-          <select onChange={(e) => dropDownChange(e, "Country")}
-            className="select-global" ref={countryRef}>
-            {countries && countries.map((country, index) => (
-              <option key={index} value={country}>{country}</option>
-            ))}
-          </select>
-        </div> */}
         <div className="modal-form-line">
           <label className="modal-form-label">Cantidad *</label>
           <input type="text" placeholder="Cantidad vendida" className="global-input"

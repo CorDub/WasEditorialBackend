@@ -7,7 +7,7 @@ const router = express.Router();
 export async function deleteImpression(req, res) {
   try {
     const inputs = {
-      id: parseInt(req.params.id)
+      id: parseInt(req.params.id),
     }
     validateInputs(inputs);
     const prismaClient = req.prisma || prisma

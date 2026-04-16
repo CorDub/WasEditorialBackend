@@ -14,8 +14,6 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
 
-  console.log("clickedRow", clickedRow)
-
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors([]);

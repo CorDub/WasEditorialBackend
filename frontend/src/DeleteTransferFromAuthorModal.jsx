@@ -1,12 +1,12 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 
-function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteTransfer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/transfer/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/impression/${clickedRow.id}?authorDelivery=true`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
@@ -18,14 +18,8 @@ function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         const alertMessage = `El movimiento ha sido eliminada con exito`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
-        if (response.status === 400) {
-          const decodedResponse = await response.json()
-          const alertMessage = decodedResponse.error;
-          closeModal(pageIndex, globalFilter, false, alertMessage, "error");
-        } else {
-          const alertMessage = `No se pudó eliminar el movimiento.`;
-          closeModal(pageIndex, globalFilter, false, alertMessage, "error");
-        }
+        const alertMessage = `No se pudó eliminar el movimiento.`;
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -33,10 +27,12 @@ function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
+  console.log("clickedRow", clickedRow)
+
   return(
     <div className="modal-proper">
       <div className="delmod-confirm">
-        <p>{`¿Está seguro que quiere eliminar el movimiento de ${clickedRow.quantity} libros de ${clickedRow.fromInventory.book.title} del ${clickedRow.dateStr}?`}</p>
+        <p>{`¿Está seguro que quiere eliminar el movimiento de ${clickedRow.quantity} libros de ${clickedRow.book.title} del ${clickedRow.dateStr}?`}</p>
       </div>
       <div className="modal-actions">
         <button className='blue-button modal-button'
@@ -48,4 +44,4 @@ function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   )
 }
 
-export default DeleteTransferModal;
+export default DeleteTransferFromAuthorModal;

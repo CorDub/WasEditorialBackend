@@ -57,8 +57,6 @@ function BookInventory({
     }
   }, [modalType, isModalOpen])
 
-  console.log("")
-
   const columns = useMemo(() => [
     {
       header: "Acciones",

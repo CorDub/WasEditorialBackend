@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 // import InventoriesContext from "./InventoriesContext";
-import SearchResults from "./SearchResults";
+// import SearchResults from "./SearchResults";
 
 function AdminNavbar({
     active,
@@ -56,23 +56,28 @@ function AdminNavbar({
       return;
     }
 
-    if (active === "ventas") {
+    if (active === "transfers") {
       buttons[5].classList.add("active-button");
+      return;
+    }
+
+    if (active === "ventas") {
+      buttons[6].classList.add("active-button");
       return;
     };
 
     if (active === "kindle") {
-      buttons[6].classList.add("active-button");
+      buttons[7].classList.add("active-button");
       return
     }
 
     if (active === "payments") {
-      buttons[7].classList.add("active-button");
+      buttons[8].classList.add("active-button");
       return;
     }
 
     if (active === "costs") {
-      buttons[8].classList.add("active-button");
+      buttons[9].classList.add("active-button");
       return;
     }
   }
@@ -80,29 +85,6 @@ function AdminNavbar({
   useEffect(() => {
     declareButtonActive(active);
   }, [active])
-
-  // function getListOfInventories() {
-  //   let inventoryNames = [];
-  //   for (const inventory of inventories) {
-  //     const names = inventoryNames.map(item => item.name)
-
-  //     if (!names.includes(inventory.book.title)) {
-  //       inventoryNames.push({name: inventory.book.title, type: 'book'})
-  //     }
-
-  //     if (!names.includes(inventory.bookstore.name)) {
-  //       inventoryNames.push({name:inventory.bookstore.name, type: "bookstore"})
-  //     }
-  //   }
-  //   setinventoryNames(inventoryNames);
-  // }
-
-  // useEffect(() => {
-  //   if (!inventories) {
-  //     fetchInventories();
-  //   }
-  //   getListOfInventories();
-  // }, [inventories])
 
   useEffect(() => {
     if (active === "inventories") {
@@ -165,35 +147,8 @@ function AdminNavbar({
       <Link to='/admin/books' className="navbar-button">Libros</Link>
       <Link to='/admin/bookstores' className="navbar-button">Librerías</Link>
       <Link to='/admin/categories' className="navbar-button">Categorias</Link>
-      {/* {active === "inventories" ?
-        <>
-          <input
-            type="text"
-            className="navbar-input"
-            placeholder="Busca un inventario"
-            ref={searchBarRef}
-            value={searchTerms}
-            onChange={(e) => setSearchTerms(e.target.value)}
-            ></input>
-          {searchTerms ?
-            <SearchResults
-              searchResults={searchResults}
-              searchBarRef={searchBarRef}
-              setBookstoreInventoryOpen={setBookstoreInventoryOpen}
-              setSelectedBookstore={setSelectedBookstore}
-              setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
-              setSelectedBook={setSelectedBook}
-              setSelectedBookId={setSelectedBookId}
-              setBookInventoryOpen={setBookInventoryOpen}
-              retreat={retreat}
-              setRetreat={setRetreat}
-              setSearchTerms={setSearchTerms}/> :
-            null
-          }
-        </>:
-        <Link to='/api/admin/inventories' className="navbar-button">Inventarios</Link>
-      } */}
       <Link to='/admin/inventories-list' className="navbar-button">Inventarios</Link>
+      <Link to='/admin/transfers' className="navbar-button">Movimientos</Link>
       <Link to='/admin/sales' className="navbar-button">Ventas</Link>
       <Link to='/admin/kindle' className="navbar-button">Kindle</Link>
       <Link to='/admin/payments' className="navbar-button">Pagos</Link>

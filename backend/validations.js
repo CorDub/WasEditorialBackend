@@ -269,6 +269,9 @@ export function validateInput(inputName, inputValue) {
       ['presence', 'not empty'],
       ['type', 'number']
     ],
+    'inventoryToId': [
+      ['type', 'number or null']
+    ],
     'type': [
       ['type', 'string'],
       ['value', ['send', 'return', ]]

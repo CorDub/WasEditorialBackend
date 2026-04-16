@@ -1,20 +1,24 @@
 import { useState, useRef } from "react";
-import checkForErrors from "./customHooks/checkForErrors";
-import ErrorsList from "./ErrorsList";
-import useCheckAdmin from "./customHooks/useCheckAdmin";
-// import { DateTime } from "luxon";
-import { today } from "../../backend/utils.js";
+import checkForErrors from "./customHooks/checkForErrors.jsx";
+import ErrorsList from "./ErrorsList.jsx";
+import useCheckAdmin from "./customHooks/useCheckAdmin.jsx";
 
-function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [errors, setErrors] = useState([]);
-  const [quantity, setQuantity] = useState(0);
-  const [note, setNote] = useState('');
-  const [dateStr, setDateStr] = useState(today());
+  const [quantity, setQuantity] = useState(clickedRow.quantity);
+  const [note, setNote] = useState(cleanNote());
+  const [dateStr, setDateStr] = useState(clickedRow.dateStr);
   const quantityRef = useRef();
   const dateStrRef = useRef();
+
+  function cleanNote() {
+    const len = clickedRow.note.length
+    const cleanedNote = clickedRow.note.substring(27, len)
+    return cleanedNote
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -71,15 +75,15 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impression`, {
-        method: "POST",
+      const response = await fetch(`${baseURL}/api/admin/impression/${clickedRow.id}`, {
+        method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
           quantity: quantity,
-          id: clickedRow.bookId,
+          book_id: clickedRow.bookId,
           note: "- Devolución del autor - " + note,
           dateStr: dateStr,
           authorDelivery: true
@@ -94,10 +98,10 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           return;
         }
         const alertMessage = 'No se pudó registrar una nueva entrega del autor.';
-        closeModal(globalFilter, false, alertMessage, "error");
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const alertMessage = `Una nueva entrega del autor ha sido registrada.`;
-        closeModal(globalFilter, true, alertMessage, "confirmation");
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
     } catch(error) {
       console.error(error);
@@ -107,7 +111,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva devolución del autor</p>
+        <p>Editar devolución del autor</p>
         <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
       {/* <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p> */}
@@ -122,7 +126,8 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           className="global-input transfer-quantity"
           ref={quantityRef}
-          onChange={(e) => setQuantity(e.target.value)}>
+          onChange={(e) => setQuantity(e.target.value)}
+          value={quantity}>
         </input>
         <input
           type="date"
@@ -135,17 +140,18 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           type="text"
           placeholder="Comentario (opcional)"
           className="global-input"
-          onChange={(e) => setNote(e.target.value)}/>
+          onChange={(e) => setNote(e.target.value)}
+          value={note}/>
 
         <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
-          <button type='submit' className="blue-button">Añadir</button>
+          <button type='submit' className="blue-button">Editar</button>
         </div>
       </form>
     </div>
   )
 }
 
-export default AddingTransferFromAuthorModal;
+export default EditTransferFromAuthorModal;

@@ -12,6 +12,7 @@ export async function updateImpression(req, res) {
       bookId: parseInt(req.body.book_id),
       note: req.body.note,
       dateStr: req.body.dateStr,
+      authorDelivery: req.body.authorDelivery ? true : false
     }
     validateInputs(inputs)
 

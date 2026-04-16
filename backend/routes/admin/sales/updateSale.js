@@ -11,7 +11,6 @@ const router = express.Router();
 
 export async function updateSale(req, res) {
   try {
-    console.log("correct route called")
     //1. validate inputs
     const inputs = {
       id: parseInt(req.params.id),

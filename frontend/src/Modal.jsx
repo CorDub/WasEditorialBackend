@@ -12,10 +12,13 @@ import AddingImpressionModal from './AddingImpressionModal';
 import EditImpressionModal from './EditImpressionModal';
 import DeleteImpressionModal from './DeleteImpressionModal';
 import AddingTransferModal from './AddingTransferModal';
-// import EditTransferModal from './EditTransferModal';
+import EditTransferModal from './EditTransferModal';
 import DeleteTransferModal from './DeleteTransferModal';
 import AddingTransferToAuthorModal from './AddingTransferToAuthorModal';
+import EditTransferToAuthorModal from './EditTransferToAuthorModal';
 import AddingTransferFromAuthorModal from './AddingTransferFromAuthorModal';
+import EditTransferFromAuthorModal from './EditTransferFromAuthorModal';
+import DeleteTransferFromAuthorModal from './DeleteTransferFromAuthorModal';
 import AddingAuthorModal from './AddingAuthorModal';
 import AddingMultipleAuthorsModal from './AddingMultipleAuthorsModal';
 import EditAuthorModal from './EditAuthorModal';
@@ -78,14 +81,18 @@ function Modal({
     },
     transfer: {
       adding: AddingTransferModal,
-      // edit: EditTransferModal,
+      edit: EditTransferModal,
       delete: DeleteTransferModal
     },
     transferToAuthor: {
       adding: AddingTransferToAuthorModal,
+      edit: EditTransferToAuthorModal,
+      delete: DeleteTransferModal
     },
     transferFromAuthor: {
       adding: AddingTransferFromAuthorModal,
+      edit: EditTransferFromAuthorModal,
+      delete: DeleteTransferFromAuthorModal
     },
     author: {
       adding: AddingAuthorModal,

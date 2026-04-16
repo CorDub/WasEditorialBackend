@@ -3,24 +3,23 @@ import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import "./AddingTransferModal.scss"
-import { today } from "../../backend/utils.js";
 
-function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+function EditTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [bookstoreNamesList, setBookstoresNamesList] = useState([]);
   const [errors, setErrors] = useState([]);
   const [transferType, setTransferType] = useState('');
-  const [bookstoreId, setBookstoreId] = useState(0);
-  const [quantity, setQuantity] = useState(0);
-  const [date, setDate] = useState(today());
+  const [bookstoreId, setBookstoreId] = useState(clickedRow.toInventory.bookstoreId);
+  const [quantity, setQuantity] = useState(clickedRow.quantity);
+  const [date, setDate] = useState(clickedRow.dateStr);
   const bookstoreIdRef = useRef();
   const quantityRef = useRef();
   const dateRef = useRef();
   
   useEffect(() => {
-    if (clickedRow.bookstoreId === 1) {
+    if (clickedRow.fromInventory.bookstoreId === 1) {
       setTransferType('send')
     } else {
       setTransferType('return')
@@ -84,11 +83,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     let errorsList = []
 
     // Set expectations for each field being tested
-    const expectationsBookstore = {
-      type: "number",
-      presence: "not empty",
-      // value: bookstoreNamesList
-    }
+    // const expectationsBookstore = {
+    //   type: "number",
+    //   presence: "not empty",
+    //   // value: bookstoreNamesList
+    // }
     const expectationsQuantity = {
       type: "number",
       presence: "not empty",
@@ -102,16 +101,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
 
     if (transferType === "send") {
-      const errorsBookstore = checkForErrors(
-        "Librería",
-        bookstoreId,
-        expectationsBookstore,
-        bookstoreIdRef,
-        'a'
-      );
-      if (errorsBookstore.length > 0) {
-        errorsList.push(errorsBookstore);
-      };
+      // const errorsBookstore = checkForErrors(
+      //   "Librería",
+      //   bookstoreId,
+      //   expectationsBookstore,
+      //   bookstoreIdRef,
+      //   'a'
+      // );
+      // if (errorsBookstore.length > 0) {
+      //   errorsList.push(errorsBookstore);
+      // };
       
       const errorsDateStr = checkForErrors(
         "Fecha",
@@ -149,16 +148,16 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/transfer`, {
-        method: "POST",
+      const response = await fetch(`${baseURL}/api/admin/transfer/${clickedRow.id}`, {
+        method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          bookstoreToId: bookstoreId,
+          toInventoryId: clickedRow.toInventoryId,
           quantity: quantity,
-          inventoryFromId: clickedRow.id,
+          inventoryFromId: clickedRow.fromInventoryId,
           type: transferType,
           dateStr: date
         }),
@@ -171,11 +170,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó crear un nuevo movimiento.';
-        closeModal(globalFilter, false, alertMessage, "error");
+        const alertMessage = error.error || 'No se pudó editar este movimiento.';
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
-        const alertMessage = `Un nuevo movimiento ha sido creado.`;
-        closeModal(globalFilter, true, alertMessage, "confirmation");
+        const alertMessage = `El movimiento ha sido editado.`;
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
     } catch(error) {
       console.error(error);
@@ -185,8 +184,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>{transferType && transferType === "send" ? 'Ingreso a librería' : 'Nueva devolución'}</p>
-        <p className="form-subtitle">{clickedRow && clickedRow.name }</p>
+        <p>{transferType && transferType === "send" ? 'Editar ingreso a librería' : 'Editar devolución'}</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.name}</p>
       </div>
       <div className="campos-obligatorios">
         <p>*Campos obligatorios</p>
@@ -198,7 +197,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           <>
             <div
               className="centered-entrega">
-              <select
+              {/* <select
                 className="global-input"
                 ref={bookstoreIdRef}
                 onChange={(e) => setBookstoreId(e.target.value)}
@@ -214,7 +213,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                     {bookstore.name}
                   </option>
                   ))};
-              </select>
+              </select> */}
               <input
                 type="date"
                 className="global-input"
@@ -227,12 +226,20 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 placeholder="Cantidad*"
                 className="global-input transfer-quantity"
                 ref={quantityRef}
-                onChange={(e) => setQuantity(e.target.value)}>
+                onChange={(e) => setQuantity(e.target.value)}
+                value={quantity}>
               </input>
             </div>
           </>)
           :
           <>
+            <input
+              type="date"
+              className="global-input"
+              ref={dateRef}
+              onChange={(e) => setDate(e.target.value)}
+              value={date}>
+            </input>
             <input
               type='text'
               placeholder="Cantidad"
@@ -241,7 +248,8 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
               className="global-input transfer-quantity"
               ref={quantityRef}
-              onChange={(e) => setQuantity(e.target.value)}>
+              onChange={(e) => setQuantity(e.target.value)}
+              value={quantity}>
             </input>
           </>
         }
@@ -250,11 +258,11 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
-          <button type='submit' className="blue-button">Añadir</button>
+          <button type='submit' className="blue-button">Editar</button>
         </div>
       </form>
     </div>
   )
 }
 
-export default AddingTransferModal;
+export default EditTransferModal;

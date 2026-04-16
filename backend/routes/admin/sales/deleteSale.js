@@ -9,7 +9,6 @@ export async function deleteSale(req, res) {
   try {
     const inputs = {
       id: parseInt(req.params.id),
-      inventoryId: parseInt(req.query.inventory_id),
     }
     validateInputs(inputs);
 

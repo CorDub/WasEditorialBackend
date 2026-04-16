@@ -70,7 +70,6 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           dateStr: dateStr,
           place: place,
           person: person,
-          country: clickedRow.country
         }),
       });
 

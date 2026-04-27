@@ -105,19 +105,19 @@ function ProfilePageBankDetails({
 
     const expectations = [
       {
-        string: "La CLABE",
+        string: "CLABE",
         value: clabe,
         expectations: expectationsClabe,
         ref: clabeRef
       },
       {
-        string: "El titular",
+        string: "Titular",
         value: accountHolderName,
         expectations: expectationsAccountHolder,
         ref: accountHolderRef
       },
       {
-        string: "El banco",
+        string: "Banco",
         value: bankName,
         expectations: expectationsBank,
         ref: bankRef
@@ -125,7 +125,7 @@ function ProfilePageBankDetails({
     ]
     if (newSwift.length > 0) {
       expectations.push({
-        string: "El codigo swift",
+        string: "Código swift",
         value: newSwift,
         expectations: expectationsSwift,
         ref: swiftRef

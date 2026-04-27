@@ -159,7 +159,7 @@ function ProfilePageBankDetails({
         ? <div className="profile-page-bank-details-open">
             <div className="ppbd-details">
               <div className="ppbd-detail">
-                <label className="ppbd-label">CLABE</label>
+                <label className="ppbd-label">CLABE o cuenta bancaria</label>
                 <input
                   type="text"
                   className="global-input profile-page-input ppbd-input"

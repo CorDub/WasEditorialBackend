@@ -518,7 +518,12 @@ export function validateInput(inputName, inputValue) {
           }
 
           const validClabeRegex = /^\s*\d{3}[-\s]?\d{3}[-\s]?\d{11}[-\s]?\d{1}\s*$/
-          if (!validClabeRegex.test(inputValue)) {
+          const validBankAccount = /^\d{10,16}$/
+
+          const isClabe = validClabeRegex.test(inputValue)
+          const isBankAccount = validBankAccount.test(inputValue)
+
+          if (!isClabe && !isBankAccount) {
             errors.push([inputName, inputValue, "format"])
             return errors
           }

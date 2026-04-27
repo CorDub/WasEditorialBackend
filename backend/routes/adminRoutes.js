@@ -52,7 +52,21 @@ export async function getAuthors(req, res) {
       ]
     });
 
-    res.json(users);
+    let usersBankAccount =  []
+    for (const user of users) {
+      if (user.clabe && user.clabe.length < 18) {
+        const userWithBankAccount = {
+          ...user,
+          clabe: "",
+          bank_account_number: user.clabe
+        }
+        usersBankAccount.push(userWithBankAccount)
+      } else {
+        usersBankAccount.push(user)
+      }
+    }
+
+    res.json(usersBankAccount);
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at users route"});

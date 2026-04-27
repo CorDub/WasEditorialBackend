@@ -87,6 +87,11 @@ function AuthorsList() {
       accessorKey: "clabe"
     }, 
     {
+      header: "Cuenta bancaria",
+      size: 50,
+      accessorKey: "bank_account_number"
+    },
+    {
       header: "Nombre del titular",
       size: 50,
       accessorKey: "name_bank_account"

@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 const authorsPath = path.join(__dirname, 'finalAuthorList.json');
 const booksPath = path.join(__dirname, "finalBooksList.json");
-const additionalBooksPath = path.join(__dirname, "thirdBooks.json");
+const additionalBooksPath = path.join(__dirname, "fourthBooks.json");
 
 const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
 const booksRaw = await fs.readFile(booksPath, 'utf-8');
@@ -46,98 +46,101 @@ function today() {
   return new Date().toISOString().split('T')[0]
 }
 
-async function addBookFromDB(book) {
-  try {
-    const preparedBook = {
-      title: book.title,
-      isbn: book.isbn,
-      pasta: book.pasta,
-      price: 379,
-      quantity: book.quantity,
-    }
+// async function addBookFromDB(book) {
+//   try {
+//     const preparedBook = {
+//       title: book.title,
+//       isbn: book.isbn,
+//       pasta: book.pasta,
+//       price: 379,
+//       quantity: book.quantity,
+//     }
     
-    //find main Author if it exist
-    await prisma.$transaction(async (tx) => {
-      const mainAuthor = await tx.user.findUnique({
-        where: {
-          first_name_last_name: {
-            first_name: book.first_name,
-            last_name: book.last_name
-          }
-        }
-      })
+//     //find main Author if it exist
+//     await prisma.$transaction(async (tx) => {
+//       const mainAuthor = await tx.user.findUnique({
+//         where: {
+//           first_name_last_name: {
+//             first_name: book.first_name,
+//             last_name: book.last_name
+//           }
+//         }
+//       })
 
-      if (!mainAuthor) {
-        console.error("main author not found")
-        throw new Error ("the main author was not found", {cause: {error, book}});
-      }
+//       if (!mainAuthor) {
+//         console.error("main author not found")
+//         throw new Error ("the main author was not found", {cause: {error, book}});
+//       }
 
-      preparedBook["mainAuthor"] = mainAuthor.id
-      preparedBook["authors"] = [{"id":mainAuthor.id}]
+//       preparedBook["mainAuthor"] = mainAuthor.id
+//       preparedBook["authors"] = [{"id":mainAuthor.id}]
 
-      // now find the category
-      let bookCategory;
-      for (const author of authors) {
-        if (author.full_name !== book.author_name) {
-          continue
-        } else {
-          bookCategory = author.categoryId
-        }
-      }
+//       // now find the category
+//       let bookCategory;
+//       for (const author of authors) {
+//         if (author.full_name !== book.author_name) {
+//           continue
+//         } else {
+//           bookCategory = author.categoryId
+//         }
+//       }
 
-      if (!bookCategory) {
-        console.log("Category not found ", book)
-        throw new Error ("the categoryId was not identified", {cause: {error, book}});
-      }
+//       if (!bookCategory) {
+//         console.log("Category not found ", book)
+//         throw new Error ("the categoryId was not identified", {cause: {error, book}});
+//       }
 
-      preparedBook["categoryId"] = bookCategory
+//       preparedBook["categoryId"] = bookCategory
 
-      //create the book using the normal logic
-      const new_book = await tx.book.create({
-        data: {
-          title: preparedBook.title,
-          pasta: preparedBook.pasta,
-          isbn: preparedBook.isbn,
-          users: {
-            connect: preparedBook.authors,
-          },
-          mainAuthor: preparedBook.mainAuthor,
-          category: {
-            connect: {"id": preparedBook.categoryId}
-          }
-        }
-      });
+//       //create the book using the normal logic
+//       const new_book = await tx.book.create({
+//         data: {
+//           title: preparedBook.title,
+//           pasta: preparedBook.pasta,
+//           isbn: preparedBook.isbn,
+//           users: {
+//             connect: preparedBook.authors,
+//           },
+//           mainAuthor: preparedBook.mainAuthor,
+//           category: {
+//             connect: {"id": preparedBook.categoryId}
+//           }
+//         }
+//       });
 
-      let new_impression;
-      if (new_book) {
-        new_impression = await tx.impression.create({
-          data: {
-            bookId: new_book.id,
-            quantity: preparedBook.quantity,
-            dateStr: today()
-          }
-        })
-      };
+//       let new_impression;
+//       if (new_book) {
+//         new_impression = await tx.impression.create({
+//           data: {
+//             bookId: new_book.id,
+//             quantity: preparedBook.quantity,
+//             dateStr: today()
+//           }
+//         })
+//       };
 
-      let new_inventory;
-      if (new_impression) {
-        new_inventory = await tx.inventory.create({
-          data: {
-            bookId: new_book.id,
-            bookstoreId: 1,
-            price: preparedBook.price,
-            initial: preparedBook.quantity,
-            current: preparedBook.quantity
-          }
-        })
-      }
-    })
+//       let new_inventory;
+//       if (new_impression) {
+//         new_inventory = await tx.inventory.create({
+//           data: {
+//             bookId: new_book.id,
+//             bookstoreId: 1,
+//             price: preparedBook.price,
+//             initial: preparedBook.quantity,
+//             current: preparedBook.quantity
+//           }
+//         })
+//       }
+//     })
     
-  } catch(error) {
-    console.error(error);
-    throw new Error ("error while creating Book", {cause: {error, book}});
-  }
-}
+//   } catch(error) {
+//     console.error(error);
+//     throw new Error ("error while creating Book", {cause: {error, book}});
+//   }
+// }
+
+let processed = 0
+let duplicate = 0
 
 async function addAdditionalBookFromDB(book) {
   try {
@@ -183,6 +186,10 @@ async function addAdditionalBookFromDB(book) {
           }
         }
       })
+      if (existingBook) {
+        console.log("Duplicate")
+        duplicate += 1
+      }
 
       if (!existingBook) {
         console.log(`Book : ${book.title}, isbn: ${book.isbn}`)
@@ -225,7 +232,12 @@ async function addAdditionalBookFromDB(book) {
           })
         }
 
-        console.log(`successfully added book ${book.title}`)
+        if (new_inventory) {
+          console.log(`successfully added book ${book.title}`)
+          processed += 1
+        } else {
+          console.log(`Couldn't add ${book.title}`)
+        }
       }
     })
     
@@ -357,7 +369,7 @@ async function main() {
     })
 
     //Add all authors
-    await Promise.all(authors.map(author => addAuthorFromDB(author)));
+    // await Promise.all(authors.map(author => addAuthorFromDB(author)));
 
     //Create the Was bookstore
     await prisma.bookstore.create({
@@ -378,6 +390,9 @@ async function main() {
     for (const book of additionalBooks) {
       await addAdditionalBookFromDB(book);
     }
+    console.log('Total books loaded:', additionalBooks.length);
+    console.log(`processed ${processed} books`);
+    console.log(`duplicates ${duplicate}`)
 
   } catch (error) {
     console.error("Something's wrong mate", error);

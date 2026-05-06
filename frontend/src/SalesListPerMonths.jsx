@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { 
   twelveMonthsAgo, 
   applyFilters, 
-  mexicoDate,
   getForMonthStr,
   localISODateTwelveMonthsAgo,
   today 

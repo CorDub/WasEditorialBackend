@@ -11,13 +11,13 @@
         "birthday": "3041988",
         "clabe": "012320029711217077",
         "name_bank_account": "Adriana Vega Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962085"
+    "isbn": "9786075962085",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00c1mate",
@@ -31,13 +31,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079875930"
+    "isbn": "9786079875930",
+    "pasta": "Blanda"
   },
   {
     "title": "Lider Irreverente",
@@ -51,13 +51,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de emprender y saber vivir",
@@ -71,13 +71,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Historia de nuestra se\u00f1ora de San Juan de los Lagos y el culto de esta milagrosa imagen",
@@ -91,13 +91,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Recl\u00fatALE",
@@ -111,13 +111,13 @@
         "birthday": "16081986",
         "clabe": "012320004829113538",
         "name_bank_account": "482911353",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717942"
+    "isbn": "9789689717942",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo salir de la cubeta de cangrejos",
@@ -131,13 +131,13 @@
         "birthday": "31081983",
         "clabe": "014180565806188140",
         "name_bank_account": "Oscar Alejandro V\u00e1zquez Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988610"
+    "isbn": "9786075988610",
+    "pasta": "Blanda"
   },
   {
     "title": "Conectando con la energ\u00eda de la abundancia",
@@ -151,13 +151,13 @@
         "birthday": "2081972",
         "clabe": "002180701481524526",
         "name_bank_account": "Alejandro G\u00f3mez Medina",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948580"
+    "isbn": "9786079948580",
+    "pasta": "Blanda"
   },
   {
     "title": "Emprende sin morir en el intento",
@@ -171,13 +171,13 @@
         "birthday": "31081983",
         "clabe": "014180565806188140",
         "name_bank_account": "Oscar Alejandro V\u00e1zquez Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948566"
+    "isbn": "9786079948566",
+    "pasta": "Blanda"
   },
   {
     "title": "Mapa de riqueza",
@@ -191,13 +191,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786076991626"
+    "isbn": "9786076991626",
+    "pasta": "Blanda"
   },
   {
     "title": "Mentalidad de riqueza extrema",
@@ -211,13 +211,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Reconfiguraci\u00f3n financiera",
@@ -231,13 +231,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786076991602"
+    "isbn": "9786076991602",
+    "pasta": "Blanda"
   },
   {
     "title": "477 frases de poder",
@@ -251,13 +251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El alma de una marca",
@@ -271,13 +271,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739494"
+    "isbn": "9789689739494",
+    "pasta": "Blanda"
   },
   {
     "title": "El \u00e9xito es una decisi\u00f3n",
@@ -291,13 +291,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739227"
+    "isbn": "9789689739227",
+    "pasta": "Blanda"
   },
   {
     "title": "De techos a sue\u00f1os",
@@ -311,13 +311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El futuro de los negocios",
@@ -331,13 +331,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739234"
+    "isbn": "9789689739234",
+    "pasta": "Blanda"
   },
   {
     "title": "Franquicia blindada",
@@ -351,13 +351,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941776"
+    "isbn": "9786075941776",
+    "pasta": "Blanda"
   },
   {
     "title": "Intencionalidad blindada",
@@ -371,13 +371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948597"
+    "isbn": "9786079948597",
+    "pasta": "Blanda"
   },
   {
     "title": "Pon a trabajar tu segundo cerebro",
@@ -391,13 +391,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El emprendedor de la familia",
@@ -411,13 +411,13 @@
         "birthday": "30082001",
         "clabe": "638180010194952000",
         "name_bank_account": "Miguel Alonso Lozano Gonz\u00e1lez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717270"
+    "isbn": "9789689717270",
+    "pasta": "Blanda"
   },
   {
     "title": "La valent\u00eda de una mujer",
@@ -431,13 +431,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974177"
+    "isbn": "9786078974177",
+    "pasta": "Blanda"
   },
   {
     "title": "Lo que ni los siglos pudieron destruir",
@@ -451,13 +451,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Rescatada por la fe",
@@ -471,13 +471,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974443"
+    "isbn": "9786078974443",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus lentes, tu realidad",
@@ -491,13 +491,13 @@
         "birthday": "3061987",
         "clabe": "012597004641731125",
         "name_bank_account": "Ana Llely Carachure Hern\u00e1ndez",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739579"
+    "isbn": "9789689739579",
+    "pasta": "Blanda"
   },
   {
     "title": "Descubre el poder de tu templo interior",
@@ -511,13 +511,13 @@
         "birthday": "13061986",
         "clabe": "012320027544796961",
         "name_bank_account": "Ana Cristina Espinosa L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739432"
+    "isbn": "9789689739432",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu actitud, tu superpoder",
@@ -531,13 +531,13 @@
         "birthday": "7041984",
         "clabe": "012180015497382100",
         "name_bank_account": "Ana Georgina Luna Covarubias",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717447"
+    "isbn": "9789689717447",
+    "pasta": "Blanda"
   },
   {
     "title": "Responsabilidad emocional",
@@ -551,13 +551,13 @@
         "birthday": "9121975",
         "clabe": "012180015559064584",
         "name_bank_account": "Ana Laura Mungu\u00eda Romero",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974375"
+    "isbn": "9786078974375",
+    "pasta": "Blanda"
   },
   {
     "title": "Relevos de vida",
@@ -571,13 +571,13 @@
         "birthday": "16031988",
         "clabe": "012760027917852652",
         "name_bank_account": "Ana Lourdes Silva Gaxiola",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739302"
+    "isbn": "9789689739302",
+    "pasta": "Blanda"
   },
   {
     "title": "Finanzas con prop\u00f3sito",
@@ -591,13 +591,13 @@
         "birthday": "23121997",
         "clabe": "638180000135042000",
         "name_bank_account": "Ana Yazmin L\u00f3pez L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717454"
+    "isbn": "9789689717454",
+    "pasta": "Blanda"
   },
   {
     "title": "De la esclavitud a la abundancia",
@@ -611,13 +611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "365 d\u00edas para amarme",
@@ -631,13 +631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974580"
+    "isbn": "9786078974580",
+    "pasta": "Blanda"
   },
   {
     "title": "De boxeador a empresario",
@@ -651,13 +651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974627"
+    "isbn": "9786078974627",
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo en tacones",
@@ -671,13 +671,13 @@
         "birthday": "3021972",
         "clabe": "002320700679613990",
         "name_bank_account": "Ma. Ang\u00e9lica Cruz Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739166"
+    "isbn": "9789689739166",
+    "pasta": "Blanda"
   },
   {
     "title": "Reconectando",
@@ -691,13 +691,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982748"
+    "isbn": "9786075982748",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu luneta azul",
@@ -711,13 +711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739173"
+    "isbn": "9789689739173",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta tu magia interior",
@@ -731,13 +731,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974436"
+    "isbn": "9786078974436",
+    "pasta": "Blanda"
   },
   {
     "title": "El dinero y t\u00fa, sin importar la edad",
@@ -751,13 +751,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717539"
+    "isbn": "9789689717539",
+    "pasta": "Blanda"
   },
   {
     "title": "Los ni\u00f1os s\u00ed vienen con manual",
@@ -771,13 +771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982065"
+    "isbn": "9786079982065",
+    "pasta": "Blanda"
   },
   {
     "title": "Redise\u00f1ando mi vida",
@@ -791,13 +791,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Los 5 pilares del emprendimiento",
@@ -811,13 +811,13 @@
         "birthday": "16061983",
         "clabe": "072650006266817370",
         "name_bank_account": "Armando ricardo varela lopez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974740"
+    "isbn": "9786078974740",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus mejores d\u00edas est\u00e1n por venir",
@@ -831,13 +831,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941707"
+    "isbn": "9786075941707",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQui\u00e9n soy? \u00bfA qu\u00e9 vengo?",
@@ -851,13 +851,13 @@
         "birthday": "25081975",
         "clabe": "021320040650675100",
         "name_bank_account": "SALVADOR ARTURO JIMENEZ ROCHA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941738"
+    "isbn": "9786075941738",
+    "pasta": "Blanda"
   },
   {
     "title": "Conquista tu vida",
@@ -871,13 +871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974665"
+    "isbn": "9786078974665",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQuieres m\u00e1s?",
@@ -891,13 +891,13 @@
         "birthday": "11011972",
         "clabe": null,
         "name_bank_account": "Belkis Carrillo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717072"
+    "isbn": "9789689717072",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo ser yo una buena pareja",
@@ -911,13 +911,13 @@
         "birthday": "11011972",
         "clabe": null,
         "name_bank_account": "Belkis Carrillo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717102"
+    "isbn": "9789689717102",
+    "pasta": "Blanda"
   },
   {
     "title": "La vida en mis manos",
@@ -931,13 +931,13 @@
         "birthday": "25021975",
         "clabe": "638180010141546000",
         "name_bank_account": "Beneda Carrasco Virrueta",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717461"
+    "isbn": "9789689717461",
+    "pasta": "Blanda"
   },
   {
     "title": "Sin filtros",
@@ -951,13 +951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Yo me encargo",
@@ -971,13 +971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739258"
+    "isbn": "9789689739258",
+    "pasta": "Blanda"
   },
   {
     "title": "Despu\u00e9s del d\u00eda diez",
@@ -991,13 +991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El heredero",
@@ -1011,13 +1011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Vuela y lib\u00e9rate de tus propias cadenas",
@@ -1031,13 +1031,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "M\u00e1s all\u00e1 del espejo",
@@ -1051,13 +1051,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717720"
+    "isbn": "9789689717720",
+    "pasta": "Blanda"
   },
   {
     "title": "El miedo no da de comer",
@@ -1071,13 +1071,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974207"
+    "isbn": "9786078974207",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQue pasar\u00eda si creyeras en ti?",
@@ -1091,13 +1091,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Esa voz",
@@ -1111,13 +1111,13 @@
         "birthday": "25041994",
         "clabe": "638180010159322000",
         "name_bank_account": "Cecilia Galindo Loera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974276"
+    "isbn": "9786078974276",
+    "pasta": "Blanda"
   },
   {
     "title": "Creando mi realidad",
@@ -1131,13 +1131,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941721"
+    "isbn": "9786075941721",
+    "pasta": "Blanda"
   },
   {
     "title": "Sam Loto",
@@ -1151,13 +1151,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo en seguridad y salud en el trabajo",
@@ -1171,13 +1171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974818"
+    "isbn": "9786078974818",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfY si nunca fuiste oruga?",
@@ -1191,13 +1191,13 @@
         "birthday": "2111972",
         "clabe": null,
         "name_bank_account": "CESAR SUAREZ URIBE",
-        "swift": "COLOCOBMXXX",
-        "pasta": "Blanda"
+        "swift": "COLOCOBMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El dinero premia a quien sabe usarlo y castiga a quien no",
@@ -1211,13 +1211,13 @@
         "birthday": "11101989",
         "clabe": "012910004692081003",
         "name_bank_account": "C\u00e9sar Adri\u00e1n Rodr\u00edguez vega",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739531"
+    "isbn": "9789689739531",
+    "pasta": "Blanda"
   },
   {
     "title": "Realidad 0.0",
@@ -1231,13 +1231,13 @@
         "birthday": "2111972",
         "clabe": null,
         "name_bank_account": "CESAR SUAREZ URIBE",
-        "swift": "COLOCOBMXXX",
-        "pasta": "Blanda"
+        "swift": "COLOCOBMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717980"
+    "isbn": "9789689717980",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de hablar en p\u00fablico",
@@ -1251,13 +1251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de vivir con prop\u00f3sito",
@@ -1271,13 +1271,13 @@
         "birthday": "14101976",
         "clabe": "012180001975526458",
         "name_bank_account": "Christian Borbolla Ballesca",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739005"
+    "isbn": "9789689739005",
+    "pasta": "Blanda"
   },
   {
     "title": "Despertar",
@@ -1291,13 +1291,13 @@
         "birthday": "15031977",
         "clabe": "072240004148461997",
         "name_bank_account": "Cinthya Guadalupe Sifuentes Gonz\u00e1lez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717478"
+    "isbn": "9789689717478",
+    "pasta": "Blanda"
   },
   {
     "title": "Coffee time with Jesus",
@@ -1311,13 +1311,13 @@
         "birthday": "4021972",
         "clabe": "072320012187217548",
         "name_bank_account": "Carlos Alberto Hern\u00e1ndez Paredes",
-        "swift": "MENOMXMTXXX",
-        "pasta": "Blanda"
+        "swift": "MENOMXMTXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717133"
+    "isbn": "9789689717133",
+    "pasta": "Blanda"
   },
   {
     "title": "La mujer m\u00e1s feliz del mundo",
@@ -1331,13 +1331,13 @@
         "birthday": "6011982",
         "clabe": "127333013772485000",
         "name_bank_account": "Claudia Miriam Michel Bravo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717225"
+    "isbn": "9789689717225",
+    "pasta": "Blanda"
   },
   {
     "title": "Superando al ex con chismecito y gatis",
@@ -1351,13 +1351,13 @@
         "birthday": "21011983",
         "clabe": "021180064082461421",
         "name_bank_account": "Claudia Elizabeth Rocha De la Rosa",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717485"
+    "isbn": "9789689717485",
+    "pasta": "Blanda"
   },
   {
     "title": "Hackeado",
@@ -1371,13 +1371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717416"
+    "isbn": "9789689717416",
+    "pasta": "Blanda"
   },
   {
     "title": "La f\u00f3rmula para ganar tu primer mill\u00f3n de d\u00f3lares",
@@ -1391,13 +1391,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Vende como shark",
@@ -1411,13 +1411,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974061"
+    "isbn": "9786078974061",
+    "pasta": "Blanda"
   },
   {
     "title": "Conecta con el ser",
@@ -1431,13 +1431,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974399"
+    "isbn": "9786078974399",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Pr\u00e9miate a ti mismo!",
@@ -1451,13 +1451,13 @@
         "birthday": "13121977",
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "De start-up a scale-up",
@@ -1471,13 +1471,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Dise\u00f1a tu libertad",
@@ -1491,13 +1491,13 @@
         "birthday": "10121993",
         "clabe": "012320004595277533",
         "name_bank_account": "jose daniel Jacobo ahumada",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739036"
+    "isbn": "9789689739036",
+    "pasta": "Blanda"
   },
   {
     "title": "Los 7 retiros del Cristo interior",
@@ -1511,13 +1511,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Scaling up",
@@ -1531,13 +1531,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9780986019562"
+    "isbn": "9780986019562",
+    "pasta": "Blanda"
   },
   {
     "title": "La alquimia de un encierro",
@@ -1551,13 +1551,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717409"
+    "isbn": "9789689717409",
+    "pasta": "Blanda"
   },
   {
     "title": "Cu\u00eddate mucho, divi\u00e9rtete m\u00e1s",
@@ -1571,13 +1571,13 @@
         "birthday": "23041968",
         "clabe": "072580011622679178",
         "name_bank_account": "David Fidel Hern\u00e1ndez Gonz\u00e1lez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982762"
+    "isbn": "9786075982762",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte oculto de dominar tu mente y transformar la realidad",
@@ -1591,13 +1591,13 @@
         "birthday": "23121990",
         "clabe": "661610001529444000",
         "name_bank_account": "David de Alba Gayt\u00e1n",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974252"
+    "isbn": "9786078974252",
+    "pasta": "Blanda"
   },
   {
     "title": "Hazlo irresistible, hazlo inolvidable",
@@ -1611,13 +1611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717393"
+    "isbn": "9789689717393",
+    "pasta": "Blanda"
   },
   {
     "title": "Si\u00e9ntete m\u00e1s joven y sin dolor en 3 minutos",
@@ -1631,13 +1631,13 @@
         "birthday": "6101974",
         "clabe": "044686256013287154",
         "name_bank_account": "david absalon sanchez solis",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717737"
+    "isbn": "9789689717737",
+    "pasta": "Blanda"
   },
   {
     "title": "Total meditation",
@@ -1651,13 +1651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Amantes de una dama en peligro de extinci\u00f3n",
@@ -1671,13 +1671,13 @@
         "birthday": "11051980",
         "clabe": "12441015754236200",
         "name_bank_account": "DENISE S\u00c1NCHEZ G\u00d3MEZ",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Tiembla de placer",
@@ -1691,13 +1691,13 @@
         "birthday": "31121994",
         "clabe": "723969000012845000",
         "name_bank_account": "Denisse Adriana Garza Rend\u00f3n",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962030"
+    "isbn": "9786075962030",
+    "pasta": "Blanda"
   },
   {
     "title": "El poder de la lectura",
@@ -1711,13 +1711,13 @@
         "birthday": "15121989",
         "clabe": "012180015938722311",
         "name_bank_account": "Brenda Diana Coto Casado",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717492"
+    "isbn": "9789689717492",
+    "pasta": "Blanda"
   },
   {
     "title": "Inspiraci\u00f3n p\u00fadrete",
@@ -1731,13 +1731,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Reflejos ocultos",
@@ -1751,13 +1751,13 @@
         "birthday": "16081986",
         "clabe": "638180010198330000",
         "name_bank_account": "Diana Mart\u00ednez Partida",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988641"
+    "isbn": "9786075988641",
+    "pasta": "Blanda"
   },
   {
     "title": "Diario de gratitud",
@@ -1771,13 +1771,13 @@
         "birthday": "17051989",
         "clabe": "002680901515449070",
         "name_bank_account": "Diana Paulina Gonz\u00e1lez Olvera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974054"
+    "isbn": "9786078974054",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus \u00faltimas 24 horas",
@@ -1791,13 +1791,13 @@
         "birthday": "17051989",
         "clabe": "002680901515449070",
         "name_bank_account": "Diana Paulina Gonz\u00e1lez Olvera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989082"
+    "isbn": "9786075989082",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus \u00faltimas 24 horas mal impreso",
@@ -1811,13 +1811,13 @@
         "birthday": "17051989",
         "clabe": "002680901515449070",
         "name_bank_account": "Diana Paulina Gonz\u00e1lez Olvera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Tus \u00faltimas 24 hrs pasta dura",
@@ -1831,13 +1831,13 @@
         "birthday": "17051989",
         "clabe": "002680901515449070",
         "name_bank_account": "Diana Paulina Gonz\u00e1lez Olvera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Por mi culpa",
@@ -1851,13 +1851,13 @@
         "birthday": "30061971",
         "clabe": "012580015407744500",
         "name_bank_account": "DORALY MAYORGA QUIROGA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739470"
+    "isbn": "9789689739470",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Esc\u00fachame! \u00a1no estoy muerto!",
@@ -1871,13 +1871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982041"
+    "isbn": "9786079982041",
+    "pasta": "Blanda"
   },
   {
     "title": "Resonancia primal",
@@ -1891,13 +1891,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974610"
+    "isbn": "9786078974610",
+    "pasta": "Blanda"
   },
   {
     "title": "Primal Resonance",
@@ -1911,13 +1911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Activa tus superpoderes",
@@ -1931,13 +1931,13 @@
         "birthday": "5031998",
         "clabe": "012580004688492858",
         "name_bank_account": "Eduardo Rodriguez Cruz",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717997"
+    "isbn": "9789689717997",
+    "pasta": "Blanda"
   },
   {
     "title": "Agenda, Revistas y cat\u00e1logos",
@@ -1951,13 +1951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Bienvenido a mi mundo",
@@ -1971,13 +1971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717065"
+    "isbn": "9789689717065",
+    "pasta": "Blanda"
   },
   {
     "title": "Coraje en la obscuridad",
@@ -1991,13 +1991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Cruzando Fronteras",
@@ -2011,13 +2011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988672"
+    "isbn": "9786075988672",
+    "pasta": "Blanda"
   },
   {
     "title": "D\u00e9jame contarte",
@@ -2031,13 +2031,13 @@
         "birthday": "8031976",
         "clabe": "012180028351879300",
         "name_bank_account": "Elizabeth Orea S\u00e1nchez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739111"
+    "isbn": "9789689739111",
+    "pasta": "Blanda"
   },
   {
     "title": "Marka la diferencia",
@@ -2051,13 +2051,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717157"
+    "isbn": "9789689717157",
+    "pasta": "Blanda"
   },
   {
     "title": "Vendedor imparable",
@@ -2071,13 +2071,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974269"
+    "isbn": "9786078974269",
+    "pasta": "Blanda"
   },
   {
     "title": "1,2,3 por m\u00ed, todo empieza por aqu\u00ed",
@@ -2091,13 +2091,13 @@
         "birthday": "1111980",
         "clabe": "638180000121588000",
         "name_bank_account": "Emily Chavez Daumas",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974450"
+    "isbn": "9786078974450",
+    "pasta": "Blanda"
   },
   {
     "title": "La consciencia de ser padres con H",
@@ -2111,13 +2111,13 @@
         "birthday": "1111980",
         "clabe": "638180000121588000",
         "name_bank_account": "Emily Chavez Daumas",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9798397545099"
+    "isbn": "9798397545099",
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo para alto desempe\u00f1o",
@@ -2131,13 +2131,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Espejos del alma",
@@ -2151,13 +2151,13 @@
         "birthday": "10021981",
         "clabe": null,
         "name_bank_account": "Erika Restrepo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739463"
+    "isbn": "9789689739463",
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo vestido de mujer",
@@ -2171,13 +2171,13 @@
         "birthday": "27041972",
         "clabe": "002320077920716570",
         "name_bank_account": "GEORGINA ERIKA TORRES MONTANO",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948559"
+    "isbn": "9786079948559",
+    "pasta": "Blanda"
   },
   {
     "title": "Tira la l\u00e1mpara y saca al genio",
@@ -2191,13 +2191,13 @@
         "birthday": "10081978",
         "clabe": "072180004027998700",
         "name_bank_account": "Erika Urosa Moreno",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739456"
+    "isbn": "9789689739456",
+    "pasta": "Blanda"
   },
   {
     "title": "La esponja de acero",
@@ -2211,13 +2211,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717508"
+    "isbn": "9789689717508",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta tu medicina natural y domina tu destino financiero",
@@ -2231,13 +2231,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717966"
+    "isbn": "9789689717966",
+    "pasta": "Blanda"
   },
   {
     "title": "Mi mundo de fantas\u00eda",
@@ -2251,13 +2251,13 @@
         "birthday": "19031981",
         "clabe": "012222015478957070",
         "name_bank_account": "Berenice Esmeralda Salas Valle",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717096"
+    "isbn": "9789689717096",
+    "pasta": "Blanda"
   },
   {
     "title": "Punto ciego",
@@ -2271,13 +2271,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941769"
+    "isbn": "9786075941769",
+    "pasta": "Blanda"
   },
   {
     "title": "Libertad financiera acelerada",
@@ -2291,13 +2291,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974313"
+    "isbn": "9786078974313",
+    "pasta": "Blanda"
   },
   {
     "title": "Relaciones conscientes",
@@ -2311,13 +2311,13 @@
         "birthday": "29091968",
         "clabe": "021180064047225700",
         "name_bank_account": "Jos\u00e9 Fabi\u00e1n Zepeda L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717515"
+    "isbn": "9789689717515",
+    "pasta": "Blanda"
   },
   {
     "title": "De corderita obediente a mujer independiente",
@@ -2331,13 +2331,13 @@
         "birthday": "6081970",
         "clabe": "005101252669198920",
         "name_bank_account": "Fabiola Gonz\u00e1lez Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739272"
+    "isbn": "9789689739272",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de amarme",
@@ -2351,13 +2351,13 @@
         "birthday": "19051980",
         "clabe": null,
         "name_bank_account": "Maria Fabiola Passariello",
-        "swift": "WFBIUS6S",
-        "pasta": "Blanda"
+        "swift": "WFBIUS6S"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739210"
+    "isbn": "9789689739210",
+    "pasta": "Blanda"
   },
   {
     "title": "Los colores de atik",
@@ -2371,13 +2371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Networth king",
@@ -2391,13 +2391,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Por algo y para algo",
@@ -2411,13 +2411,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El gran salto emprendedor",
@@ -2431,13 +2431,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717089"
+    "isbn": "9789689717089",
+    "pasta": "Blanda"
   },
   {
     "title": "Mictl\u00e1n",
@@ -2451,13 +2451,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948535"
+    "isbn": "9786079948535",
+    "pasta": "Blanda"
   },
   {
     "title": "Cuidar con amor",
@@ -2471,13 +2471,13 @@
         "birthday": "19041965",
         "clabe": "002180023475482543",
         "name_bank_account": "Gabriela Jimenez Porta",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717522"
+    "isbn": "9789689717522",
+    "pasta": "Blanda"
   },
   {
     "title": "Divine health",
@@ -2491,13 +2491,13 @@
         "birthday": "7101970",
         "clabe": null,
         "name_bank_account": "Gabriela Castillo",
-        "swift": "CITIUS33XXX",
-        "pasta": "Blanda"
+        "swift": "CITIUS33XXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739098"
+    "isbn": "9789689739098",
+    "pasta": "Blanda"
   },
   {
     "title": "Redes de \u00e9xito",
@@ -2511,13 +2511,13 @@
         "birthday": "27061968",
         "clabe": "012680014074101100",
         "name_bank_account": "Eduardo Venegas Camarena",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974283"
+    "isbn": "9786078974283",
+    "pasta": "Blanda"
   },
   {
     "title": "Reconecta con tu historia",
@@ -2531,13 +2531,13 @@
         "birthday": "15022001",
         "clabe": "012180015540244546",
         "name_bank_account": "Gemma Mart\u00edn del Campo Mora",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717348"
+    "isbn": "9789689717348",
+    "pasta": "Blanda"
   },
   {
     "title": "El abogado DeMente",
@@ -2551,13 +2551,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739487"
+    "isbn": "9789689739487",
+    "pasta": "Blanda"
   },
   {
     "title": "Instante br\u00fajula",
@@ -2571,13 +2571,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717669"
+    "isbn": "9789689717669",
+    "pasta": "Blanda"
   },
   {
     "title": "Pepitas de oro para el alma",
@@ -2591,13 +2591,13 @@
         "birthday": "4111957",
         "clabe": null,
         "name_bank_account": "Gerardo Reyes",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717829"
+    "isbn": "9789689717829",
+    "pasta": "Blanda"
   },
   {
     "title": "La magia de renacer",
@@ -2611,13 +2611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988696"
+    "isbn": "9786075988696",
+    "pasta": "Blanda"
   },
   {
     "title": "Emo$ionalmente independiente",
@@ -2631,13 +2631,13 @@
         "birthday": "12121984",
         "clabe": "072680012615229900",
         "name_bank_account": "Maria Guadalupe Rueda Acosta",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717683"
+    "isbn": "9789689717683",
+    "pasta": "Blanda"
   },
   {
     "title": "La magia de creer en ti",
@@ -2651,13 +2651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974993"
+    "isbn": "9786078974993",
+    "pasta": "Blanda"
   },
   {
     "title": "Bienes ra\u00edces sin trampa",
@@ -2671,13 +2671,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717867"
+    "isbn": "9789689717867",
+    "pasta": "Blanda"
   },
   {
     "title": "Ascenso y oscuridad: punto de no retorno",
@@ -2691,13 +2691,13 @@
         "birthday": "25101977",
         "clabe": null,
         "name_bank_account": "Guillermo Alejandro Mujica Arevalo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739395"
+    "isbn": "9789689739395",
+    "pasta": "Blanda"
   },
   {
     "title": "El camino secreto para emprender con \u00e9xito",
@@ -2711,13 +2711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941745"
+    "isbn": "9786075941745",
+    "pasta": "Blanda"
   },
   {
     "title": "Cambias o cambias",
@@ -2731,13 +2731,13 @@
         "birthday": "17021973",
         "clabe": "012180014135625300",
         "name_bank_account": "Gustavo Eugenio Beltran Mu\u00f1oz",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739425"
+    "isbn": "9789689739425",
+    "pasta": "Blanda"
   },
   {
     "title": "La buena suerte s\u00ed existe",
@@ -2751,13 +2751,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "La perla de gran valor",
@@ -2771,13 +2771,13 @@
         "birthday": "14041973",
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717904"
+    "isbn": "9789689717904",
+    "pasta": "Blanda"
   },
   {
     "title": "El capitalista humano",
@@ -2791,13 +2791,13 @@
         "birthday": "27121980",
         "clabe": "012452029482640317",
         "name_bank_account": "Hugo Gorostieta Rojas",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717744"
+    "isbn": "9789689717744",
+    "pasta": "Blanda"
   },
   {
     "title": "Uno en un mill\u00f3n",
@@ -2811,13 +2811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El gran proveedor",
@@ -2831,13 +2831,13 @@
         "birthday": "27031970",
         "clabe": "127180013144631604",
         "name_bank_account": "Ignacio Hern\u00e1ndez Jim\u00e9nez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717287"
+    "isbn": "9789689717287",
+    "pasta": "Blanda"
   },
   {
     "title": "La jaula invisible",
@@ -2851,13 +2851,13 @@
         "birthday": "1052073",
         "clabe": "004169161442871580",
         "name_bank_account": "Mar\u00eda Imelda \u00c1lvarez Arellano",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717751"
+    "isbn": "9789689717751",
+    "pasta": "Blanda"
   },
   {
     "title": "Cuentos para ni\u00f1os so\u00f1adores",
@@ -2871,13 +2871,13 @@
         "birthday": "10081961",
         "clabe": "012680015393064363",
         "name_bank_account": "Irma Edith Rocha Sosa",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988665"
+    "isbn": "9786075988665",
+    "pasta": "Blanda"
   },
   {
     "title": "Una mirada hacia adentro",
@@ -2891,13 +2891,13 @@
         "birthday": "16051969",
         "clabe": "072320005586362852",
         "name_bank_account": "Irma Elizabeth Mondrag\u00f3n L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717607"
+    "isbn": "9789689717607",
+    "pasta": "Blanda"
   },
   {
     "title": "Lo que los hombres piensan",
@@ -2911,13 +2911,13 @@
         "birthday": "9011971",
         "clabe": "127180001803871000",
         "name_bank_account": "Isaac Dabbah Portilla",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717201"
+    "isbn": "9789689717201",
+    "pasta": "Blanda"
   },
   {
     "title": "La vida es linda",
@@ -2931,13 +2931,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Mujeres iluminando mujeres",
@@ -2951,13 +2951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717027"
+    "isbn": "9789689717027",
+    "pasta": "Blanda"
   },
   {
     "title": "Escala Next Level",
@@ -2971,13 +2971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Pornograf\u00eda: una adicci\u00f3n silenciosa",
@@ -2991,13 +2991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974368"
+    "isbn": "9786078974368",
+    "pasta": "Blanda"
   },
   {
     "title": "Autoestima",
@@ -3011,13 +3011,13 @@
         "birthday": "26061978",
         "clabe": null,
         "name_bank_account": "Itala Ureta Ch\u00e1vez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786120091586"
+    "isbn": "9786120091586",
+    "pasta": "Blanda"
   },
   {
     "title": "Antes empleado, hoy millonario",
@@ -3031,13 +3031,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Cuenta con ellas",
@@ -3051,13 +3051,13 @@
         "birthday": "2011982",
         "clabe": null,
         "name_bank_account": "Ivan Madrigal Duran",
-        "swift": "BSNJCRSJXXX",
-        "pasta": "Blanda"
+        "swift": "BSNJCRSJXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739418"
+    "isbn": "9789689739418",
+    "pasta": "Blanda"
   },
   {
     "title": "Vocaci\u00f3n y riqueza",
@@ -3071,13 +3071,13 @@
         "birthday": "26041980",
         "clabe": "21180063209743400",
         "name_bank_account": "Ivan Carmona Maury",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739012"
+    "isbn": "9789689739012",
+    "pasta": "Blanda"
   },
   {
     "title": "Atravesando el velo",
@@ -3091,13 +3091,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739104"
+    "isbn": "9789689739104",
+    "pasta": "Blanda"
   },
   {
     "title": "Las cuatro puertas de la abundancia",
@@ -3111,13 +3111,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717553"
+    "isbn": "9789689717553",
+    "pasta": "Blanda"
   },
   {
     "title": "Ser ser humano es lo que nos une a todos",
@@ -3131,13 +3131,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974764"
+    "isbn": "9786078974764",
+    "pasta": "Blanda"
   },
   {
     "title": "Todo eres t\u00fa",
@@ -3151,13 +3151,13 @@
         "birthday": "16011980",
         "clabe": "14691606179443400",
         "name_bank_account": "Jacqueline Moguel Kanarek",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974559"
+    "isbn": "9786078974559",
+    "pasta": "Blanda"
   },
   {
     "title": "Amar excepcionalmente",
@@ -3171,13 +3171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079977832"
+    "isbn": "9786079977832",
+    "pasta": "Blanda"
   },
   {
     "title": "Birthing Leaders",
@@ -3191,13 +3191,13 @@
         "birthday": "14011978",
         "clabe": null,
         "name_bank_account": "Ordey SA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974092"
+    "isbn": "9786078974092",
+    "pasta": "Blanda"
   },
   {
     "title": "Los l\u00edderes mueren. (Los movimientos no)",
@@ -3211,13 +3211,13 @@
         "birthday": "14011978",
         "clabe": null,
         "name_bank_account": "Ordey SA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982034"
+    "isbn": "9786079982034",
+    "pasta": "Blanda"
   },
   {
     "title": "Nace un l\u00edder",
@@ -3231,13 +3231,13 @@
         "birthday": "14011978",
         "clabe": null,
         "name_bank_account": "Ordey SA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974016"
+    "isbn": "9786078974016",
+    "pasta": "Blanda"
   },
   {
     "title": "Redes de Liderazgo",
@@ -3251,13 +3251,13 @@
         "birthday": "14011978",
         "clabe": null,
         "name_bank_account": "Ordey SA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9781976761126"
+    "isbn": "9781976761126",
+    "pasta": "Blanda"
   },
   {
     "title": "Indomable pero resiliente",
@@ -3271,13 +3271,13 @@
         "birthday": "20042025",
         "clabe": "002180700568649448",
         "name_bank_account": "JARUMI VEYRAND YAMAKAWA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717218"
+    "isbn": "9789689717218",
+    "pasta": "Blanda"
   },
   {
     "title": "Lidera fuera de la caja",
@@ -3291,13 +3291,13 @@
         "birthday": "17041980",
         "clabe": null,
         "name_bank_account": "Javier del \u00e1ngel Reyes villa",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941790"
+    "isbn": "9786075941790",
+    "pasta": "Blanda"
   },
   {
     "title": "No te salgas de la fila",
@@ -3311,13 +3311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717232"
+    "isbn": "9789689717232",
+    "pasta": "Blanda"
   },
   {
     "title": "Reflejos del alma",
@@ -3331,13 +3331,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988634"
+    "isbn": "9786075988634",
+    "pasta": "Blanda"
   },
   {
     "title": "El magnetismo del amor",
@@ -3351,13 +3351,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982700"
+    "isbn": "9786075982700",
+    "pasta": "Blanda"
   },
   {
     "title": "La vida empieza muchas veces",
@@ -3371,13 +3371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717621"
+    "isbn": "9789689717621",
+    "pasta": "Blanda"
   },
   {
     "title": "Recupera tu energ\u00eda: menos toxinas, m\u00e1s vida",
@@ -3391,13 +3391,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717324"
+    "isbn": "9789689717324",
+    "pasta": "Blanda"
   },
   {
     "title": "Tao del amor",
@@ -3411,13 +3411,13 @@
         "birthday": "8121954",
         "clabe": "002680700956865224",
         "name_bank_account": "JORGE GARCIA ZENTENO",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974726"
+    "isbn": "9786078974726",
+    "pasta": "Blanda"
   },
   {
     "title": "Diario de una mujer magn\u00e9tica",
@@ -3431,13 +3431,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974863"
+    "isbn": "9786078974863",
+    "pasta": "Blanda"
   },
   {
     "title": "Efecto inspiraci\u00f3n",
@@ -3451,13 +3451,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974221"
+    "isbn": "9786078974221",
+    "pasta": "Blanda"
   },
   {
     "title": "El que tenga tienda que no la atienda",
@@ -3471,13 +3471,13 @@
         "birthday": "30081969",
         "clabe": "012180015686169378",
         "name_bank_account": "Jesus Rivas Salinas",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982793"
+    "isbn": "9786075982793",
+    "pasta": "Blanda"
   },
   {
     "title": "El que tenga tienda que no la pierda",
@@ -3491,13 +3491,13 @@
         "birthday": "30081969",
         "clabe": "012180015686169378",
         "name_bank_account": "Jesus Rivas Salinas",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717546"
+    "isbn": "9789689717546",
+    "pasta": "Blanda"
   },
   {
     "title": "Gamechangers",
@@ -3511,13 +3511,13 @@
         "birthday": "21101976",
         "clabe": "2320089155077440",
         "name_bank_account": "JESUS GUSTAVO COCHEGRUS JAIME",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717874"
+    "isbn": "9789689717874",
+    "pasta": "Blanda"
   },
   {
     "title": "De lo ordinario a lo extraordinario",
@@ -3531,13 +3531,13 @@
         "birthday": "17121957",
         "clabe": null,
         "name_bank_account": "Jesus Alberto Santacruz Santacruz",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982779"
+    "isbn": "9786075982779",
+    "pasta": "Blanda"
   },
   {
     "title": "Siempre hay algo que vender",
@@ -3551,13 +3551,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739548"
+    "isbn": "9789689739548",
+    "pasta": "Blanda"
   },
   {
     "title": "Amor bonito",
@@ -3571,13 +3571,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974337"
+    "isbn": "9786078974337",
+    "pasta": "Blanda"
   },
   {
     "title": "Conquista tu mundo",
@@ -3591,13 +3591,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974351"
+    "isbn": "9786078974351",
+    "pasta": "Blanda"
   },
   {
     "title": "De v\u00edctima a conquistador",
@@ -3611,13 +3611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974344"
+    "isbn": "9786078974344",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu relaci\u00f3n m\u00e1s importante",
@@ -3631,13 +3631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974320"
+    "isbn": "9786078974320",
+    "pasta": "Blanda"
   },
   {
     "title": "Transforma tu mente y transformar\u00e1s tu vida",
@@ -3651,13 +3651,13 @@
         "birthday": "8111985",
         "clabe": "014150220009633900",
         "name_bank_account": "Jona Willian Rodriguez Tscha",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739524"
+    "isbn": "9789689739524",
+    "pasta": "Blanda"
   },
   {
     "title": "De carb\u00f3n a diamante",
@@ -3671,13 +3671,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "28X F\u00f3rmula para ser",
@@ -3691,13 +3691,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717898"
+    "isbn": "9789689717898",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Llama la atenci\u00f3n!",
@@ -3711,13 +3711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974306"
+    "isbn": "9786078974306",
+    "pasta": "Blanda"
   },
   {
     "title": "Agenda Club Sinerg\u00e9ticos",
@@ -3731,13 +3731,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Comunica m\u00e1s",
@@ -3751,13 +3751,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717881"
+    "isbn": "9789689717881",
+    "pasta": "Blanda"
   },
   {
     "title": "Energizers",
@@ -3771,13 +3771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Energizers English",
@@ -3791,13 +3791,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Sinerg\u00e9ticos",
@@ -3811,13 +3811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962078"
+    "isbn": "9786075962078",
+    "pasta": "Blanda"
   },
   {
     "title": "Sinerg\u00e9ticos pasta dura",
@@ -3831,13 +3831,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Dura"
   },
   {
     "title": "Agenda wewow",
@@ -3851,13 +3851,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "La vida es un rompecabezas",
@@ -3871,13 +3871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739128"
+    "isbn": "9789689739128",
+    "pasta": "Blanda"
   },
   {
     "title": "Turismo con prop\u00f3sito",
@@ -3891,13 +3891,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717676"
+    "isbn": "9789689717676",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Atr\u00e9vete! Haz crecer tu empresa",
@@ -3911,13 +3911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739517"
+    "isbn": "9789689739517",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta tu genialidad",
@@ -3931,13 +3931,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974702"
+    "isbn": "9786078974702",
+    "pasta": "Blanda"
   },
   {
     "title": "El poder est\u00e1 en ti",
@@ -3951,13 +3951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "The power is in you",
@@ -3971,13 +3971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Un legado para tu presente",
@@ -3991,13 +3991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717331"
+    "isbn": "9789689717331",
+    "pasta": "Blanda"
   },
   {
     "title": "El todo. La gente",
@@ -4011,13 +4011,13 @@
         "birthday": "24021968",
         "clabe": "012680001089633630",
         "name_bank_account": "Jos\u00e9 Ortega Servin",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717713"
+    "isbn": "9789689717713",
+    "pasta": "Blanda"
   },
   {
     "title": "El prop\u00f3sito de la oveja negra",
@@ -4031,13 +4031,13 @@
         "birthday": "22091996",
         "clabe": "002180702127988690",
         "name_bank_account": "Jos\u00e9 Fernando Montes Arias",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982786"
+    "isbn": "9786075982786",
+    "pasta": "Blanda"
   },
   {
     "title": "Logradores",
@@ -4051,13 +4051,13 @@
         "birthday": "2081976",
         "clabe": "012420029251321776",
         "name_bank_account": "Jos\u00e9 Luis Gonz\u00e1lez P\u00e9rez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739180"
+    "isbn": "9789689739180",
+    "pasta": "Blanda"
   },
   {
     "title": "M\u00e1s all\u00e1 del dinero",
@@ -4071,13 +4071,13 @@
         "birthday": "18111969",
         "clabe": "030381749602902019",
         "name_bank_account": "jose manuel de leon gutierrez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974214"
+    "isbn": "9786078974214",
+    "pasta": "Blanda"
   },
   {
     "title": "R\u00e1faga financiera",
@@ -4091,13 +4091,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739029"
+    "isbn": "9789689739029",
+    "pasta": "Blanda"
   },
   {
     "title": "Mam\u00e1, Pap\u00e1 me hiciste adict@ \u00a1Ay\u00fadame, te necesito!",
@@ -4111,13 +4111,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9789689739159"
+    "isbn": "9789689739159",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo crece el dinero",
@@ -4131,13 +4131,13 @@
         "birthday": "12011987",
         "clabe": "12180015076904400",
         "name_bank_account": "Josue Abraham Mejia Espejel",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941752"
+    "isbn": "9786075941752",
+    "pasta": "Blanda"
   },
   {
     "title": "Horchata intelectual",
@@ -4151,13 +4151,13 @@
         "birthday": "4011976",
         "clabe": "42180010017512000",
         "name_bank_account": "JOSUE VAZQUEZ REYNA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962092"
+    "isbn": "9786075962092",
+    "pasta": "Blanda"
   },
   {
     "title": "El camino del golfista consciente",
@@ -4171,13 +4171,13 @@
         "birthday": "21111975",
         "clabe": "12650004532243800",
         "name_bank_account": "JUAN G\u00d3MEZ NU\u00d1EZ",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El camino del golfista consciente PD",
@@ -4191,13 +4191,13 @@
         "birthday": "21111975",
         "clabe": "12650004532243800",
         "name_bank_account": "JUAN G\u00d3MEZ NU\u00d1EZ",
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739074"
+    "isbn": "9789689739074",
+    "pasta": "Dura"
   },
   {
     "title": "El camino del padre",
@@ -4211,13 +4211,13 @@
         "birthday": "21111975",
         "clabe": "12650004532243800",
         "name_bank_account": "JUAN G\u00d3MEZ NU\u00d1EZ",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "L\u00edderes desarrollando l\u00edderes",
@@ -4231,13 +4231,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Si vas a so\u00f1ar, hazlo en grande",
@@ -4251,13 +4251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982010"
+    "isbn": "9786079982010",
+    "pasta": "Dura"
   },
   {
     "title": "Tu calabaza gigante",
@@ -4271,13 +4271,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941714"
+    "isbn": "9786075941714",
+    "pasta": "Dura"
   },
   {
     "title": "C\u00f3mo escribir un libro extraordinario",
@@ -4291,13 +4291,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982072"
+    "isbn": "9786079982072",
+    "pasta": "Blanda"
   },
   {
     "title": "Letras en acci\u00f3n",
@@ -4311,13 +4311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974573"
+    "isbn": "9786078974573",
+    "pasta": "Blanda"
   },
   {
     "title": "Impuestos al \u00e9xito",
@@ -4331,13 +4331,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982731"
+    "isbn": "9786075982731",
+    "pasta": "Blanda"
   },
   {
     "title": "Marca tu momento",
@@ -4351,13 +4351,13 @@
         "birthday": "2301982",
         "clabe": "014180606077933193",
         "name_bank_account": "JUAN XAVIER GARCIA RODRIGUEZ",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739241"
+    "isbn": "9789689739241",
+    "pasta": "Blanda"
   },
   {
     "title": "V\u00e9ndelo todo ChatIAndo",
@@ -4371,13 +4371,13 @@
         "birthday": "23111982",
         "clabe": null,
         "name_bank_account": "Juan Manuel Gaviria",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9789689739319"
+    "isbn": "9789689739319",
+    "pasta": "Blanda"
   },
   {
     "title": "E x (PN + HS)365  Convi\u00e9rtete en Inge Ching\u00f3n",
@@ -4391,13 +4391,13 @@
         "birthday": "27022975",
         "clabe": "2028701551548280",
         "name_bank_account": "Julio C\u00e9sar Rodr\u00edguez Pasos",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739296"
+    "isbn": "9789689739296",
+    "pasta": "Blanda"
   },
   {
     "title": "Gladiador legendario",
@@ -4411,13 +4411,13 @@
         "birthday": "3021986",
         "clabe": "44320256051310300",
         "name_bank_account": "Julio C\u00e9sar Candanosa Fuentes",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717195"
+    "isbn": "9789689717195",
+    "pasta": "Blanda"
   },
   {
     "title": "Leo, la leyenda del b\u00e9isbol",
@@ -4431,13 +4431,13 @@
         "birthday": "12031980",
         "clabe": null,
         "name_bank_account": "Julio Castillo Tito",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739135"
+    "isbn": "9789689739135",
+    "pasta": "Blanda"
   },
   {
     "title": "Gu\u00eda del emprendedor",
@@ -4451,13 +4451,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El sendero de la magia moderna",
@@ -4471,13 +4471,13 @@
         "birthday": "3081978",
         "clabe": "2190701061386620",
         "name_bank_account": "KARLA L PIZARRO LERMA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717256"
+    "isbn": "9789689717256",
+    "pasta": "Blanda"
   },
   {
     "title": "Renuncia y v\u00e9ndete",
@@ -4491,13 +4491,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717034"
+    "isbn": "9789689717034",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Sac\u00fadete! El estancamiento... \u00a1Apesta!",
@@ -4511,13 +4511,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739562"
+    "isbn": "9789689739562",
+    "pasta": "Blanda"
   },
   {
     "title": "Sonrisa perfecta",
@@ -4531,13 +4531,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974290"
+    "isbn": "9786078974290",
+    "pasta": "Blanda"
   },
   {
     "title": "Sanar con energ\u00eda",
@@ -4551,13 +4551,13 @@
         "birthday": "19031986",
         "clabe": "2180081900509640",
         "name_bank_account": "Laura janeth sanchez chavez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717690"
+    "isbn": "9789689717690",
+    "pasta": "Blanda"
   },
   {
     "title": "La magia de ser t\u00fa",
@@ -4571,13 +4571,13 @@
         "birthday": "19041964",
         "clabe": null,
         "name_bank_account": "LEONOR VERDUGO ARALUCE",
-        "swift": "BBVAESMMXXX",
-        "pasta": "Blanda"
+        "swift": "BBVAESMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974498"
+    "isbn": "9786078974498",
+    "pasta": "Blanda"
   },
   {
     "title": "El renacer",
@@ -4591,13 +4591,13 @@
         "birthday": "13041966",
         "clabe": "012180015355342989",
         "name_bank_account": "Maria Guadalupe Leti Rodriguez Campos",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974412"
+    "isbn": "9786078974412",
+    "pasta": "Blanda"
   },
   {
     "title": "S\u00e9 un producto ganador",
@@ -4611,13 +4611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974825"
+    "isbn": "9786078974825",
+    "pasta": "Blanda"
   },
   {
     "title": "Luces en la tormenta",
@@ -4631,13 +4631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789804373749"
+    "isbn": "9789804373749",
+    "pasta": "Blanda"
   },
   {
     "title": "Convi\u00e9rtete en un profesional",
@@ -4651,13 +4651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982096"
+    "isbn": "9786079982096",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta tu grandeza",
@@ -4671,13 +4671,13 @@
         "birthday": "11111976",
         "clabe": null,
         "name_bank_account": "Lorena Aurelluk",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717058"
+    "isbn": "9789689717058",
+    "pasta": "Blanda"
   },
   {
     "title": "Salamanca de mis amores",
@@ -4691,13 +4691,13 @@
         "birthday": "5051952",
         "clabe": "012180015403493188",
         "name_bank_account": "Lucrecia Margarita Flores Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739326"
+    "isbn": "9789689739326",
+    "pasta": "Blanda"
   },
   {
     "title": "Un lugar cerca de la Luna",
@@ -4711,13 +4711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974139"
+    "isbn": "9786078974139",
+    "pasta": "Blanda"
   },
   {
     "title": "El poder de un sue\u00f1o",
@@ -4731,13 +4731,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Toma una Pausa",
@@ -4751,13 +4751,13 @@
         "birthday": "8061979",
         "clabe": "12180012808221200",
         "name_bank_account": "Luis Daniel Guzman Venado",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974955"
+    "isbn": "9786078974955",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo reinventarte con prop\u00f3sito",
@@ -4771,13 +4771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739449"
+    "isbn": "9789689739449",
+    "pasta": "Blanda"
   },
   {
     "title": "Escucha a tu alma",
@@ -4791,13 +4791,13 @@
         "birthday": "25081956",
         "clabe": "072180012195568238",
         "name_bank_account": "Luisa R\u00edos Aguirre.",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989037"
+    "isbn": "9786075989037",
+    "pasta": "Blanda"
   },
   {
     "title": "Enciende el escenario",
@@ -4811,13 +4811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974160"
+    "isbn": "9786078974160",
+    "pasta": "Blanda"
   },
   {
     "title": "7 ingredientes infalibles para un restaurante de \u00e9xito",
@@ -4831,13 +4831,13 @@
         "birthday": "19032026",
         "clabe": "44020256041938800",
         "name_bank_account": "Mar\u00eda Guadalupe Arias Vieyra",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974122"
+    "isbn": "9786078974122",
+    "pasta": "Blanda"
   },
   {
     "title": "No vendes comida, vendes emociones",
@@ -4851,13 +4851,13 @@
         "birthday": "19032026",
         "clabe": "44020256041938800",
         "name_bank_account": "Mar\u00eda Guadalupe Arias Vieyra",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974924"
+    "isbn": "9786078974924",
+    "pasta": "Blanda"
   },
   {
     "title": "Desde tu piel",
@@ -4871,13 +4871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Donde nacen las alas",
@@ -4891,13 +4891,13 @@
         "birthday": "9011966",
         "clabe": "072610006307676740",
         "name_bank_account": "MACRINA RAMIREZ REYES",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717263"
+    "isbn": "9789689717263",
+    "pasta": "Blanda"
   },
   {
     "title": "LifeHacks que no te ense\u00f1an de los negocios",
@@ -4911,13 +4911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717911"
+    "isbn": "9789689717911",
+    "pasta": "Blanda"
   },
   {
     "title": "El salto cu\u00e1ntico del alma",
@@ -4931,13 +4931,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Resiliencia: el arte de renacer",
@@ -4951,13 +4951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717935"
+    "isbn": "9789689717935",
+    "pasta": "Blanda"
   },
   {
     "title": "Duelo migratorio",
@@ -4971,13 +4971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739043"
+    "isbn": "9789689739043",
+    "pasta": "Blanda"
   },
   {
     "title": "Abriendo el alma",
@@ -4991,13 +4991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Cayendo y levant\u00e1ndose",
@@ -5011,13 +5011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Del dolor al prop\u00f3sito",
@@ -5031,13 +5031,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Devocional de una mujer",
@@ -5051,13 +5051,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Apasionada por Dios",
@@ -5071,13 +5071,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Mujer empoderada",
@@ -5091,13 +5091,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Un coraz\u00f3n procesado, resanado y restaurado",
@@ -5111,13 +5111,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "A trav\u00e9s de tus ojos",
@@ -5131,13 +5131,13 @@
         "birthday": "13051976",
         "clabe": "72180008201492200",
         "name_bank_account": "Mar\u00eda del Carmen Cruz Dom\u00ednguez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717577"
+    "isbn": "9789689717577",
+    "pasta": "Blanda"
   },
   {
     "title": "Conexiones: tu camino al \u00e9xito",
@@ -5151,13 +5151,13 @@
         "birthday": "4021974",
         "clabe": "2470058200226710",
         "name_bank_account": "Mar\u00eda G\u00f3mez P\u00e9rez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717294"
+    "isbn": "9789689717294",
+    "pasta": "Blanda"
   },
   {
     "title": "Descubre tu prop\u00f3sito",
@@ -5171,13 +5171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948528"
+    "isbn": "9786079948528",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de desaparecer tu dolor",
@@ -5191,13 +5191,13 @@
         "birthday": "2011971",
         "clabe": "137180104994184000",
         "name_bank_account": "Mar\u00eda Isabel Garc\u00e9s Ch\u00e1vez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717249"
+    "isbn": "9789689717249",
+    "pasta": "Blanda"
   },
   {
     "title": "Taxes sin miedo",
@@ -5211,13 +5211,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717386"
+    "isbn": "9789689717386",
+    "pasta": "Blanda"
   },
   {
     "title": "Cuando un \u00e1ngel te toca",
@@ -5231,13 +5231,13 @@
         "birthday": "9022026",
         "clabe": null,
         "name_bank_account": "Mariana Yarce Giraldo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717560"
+    "isbn": "9789689717560",
+    "pasta": "Blanda"
   },
   {
     "title": "Mentalidad digital",
@@ -5251,13 +5251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974658"
+    "isbn": "9786078974658",
+    "pasta": "Blanda"
   },
   {
     "title": "La dieta mediterr\u00e1nea con sabor a M\u00e9xico",
@@ -5271,13 +5271,13 @@
         "birthday": "27061967",
         "clabe": "021180040609017586",
         "name_bank_account": "Marina Isabel Rodriguez Palencia",
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974849"
+    "isbn": "9786078974849",
+    "pasta": "Dura"
   },
   {
     "title": "La dieta mediterr\u00e1nea con sabor a M\u00e9xico",
@@ -5291,13 +5291,13 @@
         "birthday": "27061967",
         "clabe": "021180040609017586",
         "name_bank_account": "Marina Isabel Rodriguez Palencia",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "100 razones para emprender en el mercado en red",
@@ -5311,13 +5311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "De cero a inversionista con inteligencia artificial",
@@ -5331,13 +5331,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717928"
+    "isbn": "9789689717928",
+    "pasta": "Blanda"
   },
   {
     "title": "Del duelo a la reconexi\u00f3n",
@@ -5351,13 +5351,13 @@
         "birthday": "19071978",
         "clabe": null,
         "name_bank_account": "Marisol Tafolla Lemus",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717638"
+    "isbn": "9789689717638",
+    "pasta": "Blanda"
   },
   {
     "title": "Trozos de mi Alma",
@@ -5371,13 +5371,13 @@
         "birthday": "19071978",
         "clabe": null,
         "name_bank_account": "Marisol Tafolla Lemus",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717140"
+    "isbn": "9789689717140",
+    "pasta": "Blanda"
   },
   {
     "title": "Ok, hablemos de amor",
@@ -5391,13 +5391,13 @@
         "birthday": "9031990",
         "clabe": "14180605646982200",
         "name_bank_account": "Mark Achar Samra",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079964153"
+    "isbn": "9786079964153",
+    "pasta": "Blanda"
   },
   {
     "title": "Ok, hablemos de trabajo",
@@ -5411,13 +5411,13 @@
         "birthday": "9031990",
         "clabe": "14180605646982200",
         "name_bank_account": "Mark Achar Samra",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974672"
+    "isbn": "9786078974672",
+    "pasta": "Blanda"
   },
   {
     "title": "Entre la herida y la luz",
@@ -5431,13 +5431,13 @@
         "birthday": "14101985",
         "clabe": "30225900028578500",
         "name_bank_account": "MARTHA FABIOLA PEREZ PEDROZA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717652"
+    "isbn": "9789689717652",
+    "pasta": "Blanda"
   },
   {
     "title": "H\u00e1bitos SOS",
@@ -5451,13 +5451,13 @@
         "birthday": "24111968",
         "clabe": "2078470800013350",
         "name_bank_account": "Martha Alicia D\u00edaz Moll",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717645"
+    "isbn": "9789689717645",
+    "pasta": "Blanda"
   },
   {
     "title": "El precio de emigrar",
@@ -5471,13 +5471,13 @@
         "birthday": "14102023",
         "clabe": "14028606341059600",
         "name_bank_account": "Martha Erendira Navarro Garc\u00eda Travesi",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974733"
+    "isbn": "9786078974733",
+    "pasta": "Blanda"
   },
   {
     "title": "Una vida con prop\u00f3sito",
@@ -5491,13 +5491,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de vender caro y persuadir",
@@ -5511,13 +5511,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974757"
+    "isbn": "9786078974757",
+    "pasta": "Blanda"
   },
   {
     "title": "Pap\u00e1 por elecci\u00f3n",
@@ -5531,13 +5531,13 @@
         "birthday": "29031980",
         "clabe": "72320013507721500",
         "name_bank_account": "Mauricio Mendoza Meza",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717300"
+    "isbn": "9789689717300",
+    "pasta": "Blanda"
   },
   {
     "title": "Los 12 secretos del mill\u00f3n de d\u00f3lares",
@@ -5551,13 +5551,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El camino del networker",
@@ -5571,13 +5571,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717188"
+    "isbn": "9789689717188",
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo DMENT",
@@ -5591,13 +5591,13 @@
         "birthday": "17031980",
         "clabe": "012680028554661563",
         "name_bank_account": "Miguel Angel Lara Martinez",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717591"
+    "isbn": "9789689717591",
+    "pasta": "Blanda"
   },
   {
     "title": "So\u00f1ar XL",
@@ -5611,13 +5611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974115"
+    "isbn": "9786078974115",
+    "pasta": "Blanda"
   },
   {
     "title": "El \u00e9xito es tu derecho",
@@ -5631,13 +5631,13 @@
         "birthday": "21031976",
         "clabe": "012617012137524459",
         "name_bank_account": "Minerva Mart\u00ednez Miguel",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974429"
+    "isbn": "9786078974429",
+    "pasta": "Blanda"
   },
   {
     "title": "Canta tan fuerte que no escuches a tus demonios",
@@ -5651,13 +5651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717317"
+    "isbn": "9789689717317",
+    "pasta": "Blanda"
   },
   {
     "title": "Cocinando sue\u00f1os",
@@ -5671,13 +5671,13 @@
         "birthday": "1111971",
         "clabe": "44180001010213700",
         "name_bank_account": "Miriam Gonz\u00e1lez Larrion",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989006"
+    "isbn": "9786075989006",
+    "pasta": "Blanda"
   },
   {
     "title": "Cocinando sue\u00f1os",
@@ -5691,13 +5691,13 @@
         "birthday": "1111971",
         "clabe": "44180001010213700",
         "name_bank_account": "Miriam Gonz\u00e1lez Larrion",
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Dura"
   },
   {
     "title": "Sin acci\u00f3n, \u00a1no hay Para\u00edso!",
@@ -5711,13 +5711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717379"
+    "isbn": "9789689717379",
+    "pasta": "Blanda"
   },
   {
     "title": "Mujer guerrera",
@@ -5731,13 +5731,13 @@
         "birthday": "19111973",
         "clabe": "012180015459551524",
         "name_bank_account": "Monica Laris Barros",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717782"
+    "isbn": "9789689717782",
+    "pasta": "Blanda"
   },
   {
     "title": "La civilizaci\u00f3n del amor",
@@ -5751,13 +5751,13 @@
         "birthday": "13041982",
         "clabe": "44180256054164600",
         "name_bank_account": "M\u00f3nica Viviana Arias Arcila",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974009"
+    "isbn": "9786078974009",
+    "pasta": "Blanda"
   },
   {
     "title": "Naciste para la grandeza",
@@ -5771,13 +5771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974634"
+    "isbn": "9786078974634",
+    "pasta": "Blanda"
   },
   {
     "title": "Los secretos detr\u00e1s del perfil",
@@ -5791,13 +5791,13 @@
         "birthday": "19071982",
         "clabe": "112180000035649000",
         "name_bank_account": "Nadia Hussain Miranda \u00f1",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739067"
+    "isbn": "9789689739067",
+    "pasta": "Blanda"
   },
   {
     "title": "Ventas de adentro hacia afuera",
@@ -5811,13 +5811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982755"
+    "isbn": "9786075982755",
+    "pasta": "Blanda"
   },
   {
     "title": "Del punto A al punto G",
@@ -5831,13 +5831,13 @@
         "birthday": "12101977",
         "clabe": null,
         "name_bank_account": "Nanette Torres",
-        "swift": "BPPRPRSX",
-        "pasta": "Blanda"
+        "swift": "BPPRPRSX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974771"
+    "isbn": "9786078974771",
+    "pasta": "Blanda"
   },
   {
     "title": "Fortaleza inquebrantable",
@@ -5851,13 +5851,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988689"
+    "isbn": "9786075988689",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de sanar",
@@ -5871,13 +5871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974894"
+    "isbn": "9786078974894",
+    "pasta": "Blanda"
   },
   {
     "title": "La llave del creador",
@@ -5891,13 +5891,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974870"
+    "isbn": "9786078974870",
+    "pasta": "Blanda"
   },
   {
     "title": "T\u00fa eres tu propio sanador",
@@ -5911,13 +5911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974887"
+    "isbn": "9786078974887",
+    "pasta": "Blanda"
   },
   {
     "title": "El circo de las emociones",
@@ -5931,13 +5931,13 @@
         "birthday": "9041970",
         "clabe": "012580001200144435",
         "name_bank_account": "Psailor Businesses SA de CV, RFC: PBU210803921",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "So\u00f1ar, creer y crear",
@@ -5951,13 +5951,13 @@
         "birthday": "9041970",
         "clabe": "012580001200144435",
         "name_bank_account": "Psailor Businesses SA de CV, RFC: PBU210803921",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989068"
+    "isbn": "9786075989068",
+    "pasta": "Blanda"
   },
   {
     "title": "Negrito",
@@ -5971,13 +5971,13 @@
         "birthday": "6121975",
         "clabe": "62822008466409200",
         "name_bank_account": "Nester leao Contreras pi\u00f1a",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739050"
+    "isbn": "9789689739050",
+    "pasta": "Blanda"
   },
   {
     "title": "23 cent\u00edmetros de emprendimiento",
@@ -5991,13 +5991,13 @@
         "birthday": "15101980",
         "clabe": "012180015587611640",
         "name_bank_account": "Nicolas Enrique Robles Flores",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988658"
+    "isbn": "9786075988658",
+    "pasta": "Blanda"
   },
   {
     "title": "De que el trabajo te rompa, a que t\u00fa la rompas en el trabajo",
@@ -6011,13 +6011,13 @@
         "birthday": "12081980",
         "clabe": "12180015209719600",
         "name_bank_account": "Blanca Noemi Zozaya Franco",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974641"
+    "isbn": "9786078974641",
+    "pasta": "Blanda"
   },
   {
     "title": "Lib\u00e9rate",
@@ -6031,13 +6031,13 @@
         "birthday": "6061981",
         "clabe": "012180015649891463",
         "name_bank_account": "Noreyda Coronado",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717799"
+    "isbn": "9789689717799",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de ser t\u00fa",
@@ -6051,13 +6051,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974795"
+    "isbn": "9786078974795",
+    "pasta": "Blanda"
   },
   {
     "title": "El bosque encantado",
@@ -6071,13 +6071,13 @@
         "birthday": "14021967",
         "clabe": null,
         "name_bank_account": "Nubia Suarez Tello",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Cronoviajes On\u00edricos",
@@ -6091,13 +6091,13 @@
         "birthday": "14041976",
         "clabe": "12180015590329600",
         "name_bank_account": "OMAR PEREZ AGUIRRE",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717126"
+    "isbn": "9789689717126",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta y construye tu \u00e9xito",
@@ -6111,13 +6111,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9798992086508"
+    "isbn": "9798992086508",
+    "pasta": "Blanda"
   },
   {
     "title": "Osolohtli",
@@ -6131,13 +6131,13 @@
         "birthday": null,
         "clabe": "002320038055805094",
         "name_bank_account": "Oscar Alejandro Lomel\u00ed Camacho",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974511"
+    "isbn": "9786078974511",
+    "pasta": "Blanda"
   },
   {
     "title": "Rompe tus cadenas",
@@ -6151,13 +6151,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982724"
+    "isbn": "9786075982724",
+    "pasta": "Blanda"
   },
   {
     "title": "Entre dos mundos",
@@ -6171,13 +6171,13 @@
         "birthday": "7051953",
         "clabe": "21320040619446100",
         "name_bank_account": "Oscar Javier L\u00f3pez Mancila",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974528"
+    "isbn": "9786078974528",
+    "pasta": "Blanda"
   },
   {
     "title": "M\u00e1s all\u00e1 del silencio",
@@ -6191,13 +6191,13 @@
         "birthday": "7051953",
         "clabe": "21320040619446100",
         "name_bank_account": "Oscar Javier L\u00f3pez Mancila",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717362"
+    "isbn": "9789689717362",
+    "pasta": "Blanda"
   },
   {
     "title": "Alphabiotismo",
@@ -6211,13 +6211,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717805"
+    "isbn": "9789689717805",
+    "pasta": "Blanda"
   },
   {
     "title": "De mantenida a millonaria",
@@ -6231,13 +6231,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "La historia que te cuentas",
@@ -6251,13 +6251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9781647891985"
+    "isbn": "9781647891985",
+    "pasta": "Blanda"
   },
   {
     "title": "Rose gold",
@@ -6271,13 +6271,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Silver Agenda",
@@ -6291,13 +6291,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Spiral agenda",
@@ -6311,13 +6311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El camino de la longevidad",
@@ -6331,13 +6331,13 @@
         "birthday": "25081963",
         "clabe": "12225015122766800",
         "name_bank_account": "Maria Patricia Moreno Pe\u00f1afiel",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974467"
+    "isbn": "9786078974467",
+    "pasta": "Blanda"
   },
   {
     "title": "Sana las ra\u00edces",
@@ -6351,13 +6351,13 @@
         "birthday": "16041969",
         "clabe": "12320015521720100",
         "name_bank_account": "Patricia Verdugo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974535"
+    "isbn": "9786078974535",
+    "pasta": "Blanda"
   },
   {
     "title": "Alquimia personal",
@@ -6371,13 +6371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974146"
+    "isbn": "9786078974146",
+    "pasta": "Blanda"
   },
   {
     "title": "Placer sin l\u00edmite",
@@ -6391,13 +6391,13 @@
         "birthday": "17031975",
         "clabe": "2680701039717120",
         "name_bank_account": "PATRICIA GONZALEZ ORTEGA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982058"
+    "isbn": "9786079982058",
+    "pasta": "Blanda"
   },
   {
     "title": "Impact X",
@@ -6411,13 +6411,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "La cobija m\u00e1gica",
@@ -6431,13 +6431,13 @@
         "birthday": "13011975",
         "clabe": "2320068354693850",
         "name_bank_account": "Pedro vergara espinosa",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "La cobija m\u00e1gica cuentos completos",
@@ -6451,13 +6451,13 @@
         "birthday": "13011975",
         "clabe": "2320068354693850",
         "name_bank_account": "Pedro vergara espinosa",
-        "swift": null,
-        "pasta": "Dura"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739203"
+    "isbn": "9789689739203",
+    "pasta": "Dura"
   },
   {
     "title": "Equipos que fluyen",
@@ -6471,13 +6471,13 @@
         "birthday": "22061970",
         "clabe": null,
         "name_bank_account": "Pepe Cabello",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974856"
+    "isbn": "9786078974856",
+    "pasta": "Blanda"
   },
   {
     "title": "La grandeza est\u00e1 dentro de ti",
@@ -6491,13 +6491,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974382"
+    "isbn": "9786078974382",
+    "pasta": "Blanda"
   },
   {
     "title": "Ni\u00f1a americana",
@@ -6511,13 +6511,13 @@
         "birthday": "30101960",
         "clabe": "012680001998626330",
         "name_bank_account": "Raciel Trejo Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786078974474"
+    "isbn": "9786078974474",
+    "pasta": "Blanda"
   },
   {
     "title": "X\u00f3chitl G\u00e1lvez. Soy cabrona y media",
@@ -6531,13 +6531,13 @@
         "birthday": "30101960",
         "clabe": "012680001998626330",
         "name_bank_account": "Raciel Trejo Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 2,
     "quantity": 1,
-    "isbn": "9786075989020"
+    "isbn": "9786075989020",
+    "pasta": "Blanda"
   },
   {
     "title": "El camino del pe\u00f3n",
@@ -6551,13 +6551,13 @@
         "birthday": "7051979",
         "clabe": "72320011036050500",
         "name_bank_account": "Rafael Montes de Oca Manriquez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974948"
+    "isbn": "9786078974948",
+    "pasta": "Blanda"
   },
   {
     "title": "El poder de la inspiraci\u00f3n",
@@ -6571,13 +6571,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717164"
+    "isbn": "9789689717164",
+    "pasta": "Blanda"
   },
   {
     "title": "Anecdotario",
@@ -6591,13 +6591,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974900"
+    "isbn": "9786078974900",
+    "pasta": "Blanda"
   },
   {
     "title": "El ABC del MLM",
@@ -6611,13 +6611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974108"
+    "isbn": "9786078974108",
+    "pasta": "Blanda"
   },
   {
     "title": "El viaje hacia tu mejor versi\u00f3n",
@@ -6631,13 +6631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717423"
+    "isbn": "9789689717423",
+    "pasta": "Blanda"
   },
   {
     "title": "La envoltura y el regalo",
@@ -6651,13 +6651,13 @@
         "birthday": "12101970",
         "clabe": "14180570072223500",
         "name_bank_account": "Ricardo Calder\u00f3n de la Barca Guerra",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717010"
+    "isbn": "9789689717010",
+    "pasta": "Blanda"
   },
   {
     "title": "De vivir a dieta a vivir en paz",
@@ -6671,13 +6671,13 @@
         "birthday": "5041973",
         "clabe": "14560568218845700",
         "name_bank_account": "Roc\u00edo Flores Vel\u00e1zquez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717775"
+    "isbn": "9789689717775",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00daltimo partido sin l\u00edmite de tiempo",
@@ -6691,13 +6691,13 @@
         "birthday": "17051958",
         "clabe": "012180011093838678",
         "name_bank_account": "Esperanza Roc\u00edo L\u00f3pez Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717959"
+    "isbn": "9789689717959",
+    "pasta": "Blanda"
   },
   {
     "title": "Yo soy la primera dama",
@@ -6711,13 +6711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962054"
+    "isbn": "9786075962054",
+    "pasta": "Blanda"
   },
   {
     "title": "Agenda Harmonie",
@@ -6731,13 +6731,13 @@
         "birthday": "15041991",
         "clabe": "133320000126259000",
         "name_bank_account": "Rodrigo Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974597"
+    "isbn": "9786078974597",
+    "pasta": "Blanda"
   },
   {
     "title": "De jefe insoportable a l\u00edder inspirador en 90 d\u00edas",
@@ -6751,13 +6751,13 @@
         "birthday": "14021964",
         "clabe": "002610900704391655",
         "name_bank_account": "RODRIGO DEL VAL MART\u00cdN",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974801"
+    "isbn": "9786078974801",
+    "pasta": "Blanda"
   },
   {
     "title": "Businesscoach",
@@ -6771,13 +6771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079879129"
+    "isbn": "9786079879129",
+    "pasta": "Blanda"
   },
   {
     "title": "Investorcoach",
@@ -6791,13 +6791,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079879105"
+    "isbn": "9786079879105",
+    "pasta": "Blanda"
   },
   {
     "title": "Moneycoach",
@@ -6811,13 +6811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079879112"
+    "isbn": "9786079879112",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu historia no est\u00e1 escrita",
@@ -6831,13 +6831,13 @@
         "birthday": "8101966",
         "clabe": null,
         "name_bank_account": "Br\u00edgido Torres",
-        "swift": "WFBIUS6SXXX",
-        "pasta": "Blanda"
+        "swift": "WFBIUS6SXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974931"
+    "isbn": "9786078974931",
+    "pasta": "Blanda"
   },
   {
     "title": "Mentores Millonarios",
@@ -6851,13 +6851,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974153"
+    "isbn": "9786078974153",
+    "pasta": "Blanda"
   },
   {
     "title": "Del suelo a las alturas",
@@ -6871,13 +6871,13 @@
         "birthday": "26061978",
         "clabe": null,
         "name_bank_account": "Mejora Continua LLC",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717973"
+    "isbn": "9789689717973",
+    "pasta": "Blanda"
   },
   {
     "title": "El despertar de la dragona",
@@ -6891,13 +6891,13 @@
         "birthday": "26061978",
         "clabe": null,
         "name_bank_account": "Mejora Continua LLC",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974504"
+    "isbn": "9786078974504",
+    "pasta": "Blanda"
   },
   {
     "title": "Equipos invencibles",
@@ -6911,13 +6911,13 @@
         "birthday": "30101979",
         "clabe": "72320011606995400",
         "name_bank_account": "Serpiente Star SA de CV",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974719"
+    "isbn": "9786078974719",
+    "pasta": "Blanda"
   },
   {
     "title": "Marketing que s\u00ed vende",
@@ -6931,13 +6931,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974832"
+    "isbn": "9786078974832",
+    "pasta": "Blanda"
   },
   {
     "title": "El primer d\u00eda del resto de mi vida",
@@ -6951,13 +6951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Metamorfosis en el liderazgo",
@@ -6971,13 +6971,13 @@
         "birthday": "13091972",
         "clabe": "012180015902342251",
         "name_bank_account": "Sandra Angelica Ballesteros Palacios",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941783"
+    "isbn": "9786075941783",
+    "pasta": "Blanda"
   },
   {
     "title": "El ser completo",
@@ -6991,13 +6991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717614"
+    "isbn": "9789689717614",
+    "pasta": "Blanda"
   },
   {
     "title": "S\u00edntomas de juventud",
@@ -7011,13 +7011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739081"
+    "isbn": "9789689739081",
+    "pasta": "Blanda"
   },
   {
     "title": "Mujer de lujo",
@@ -7031,13 +7031,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974788"
+    "isbn": "9786078974788",
+    "pasta": "Blanda"
   },
   {
     "title": "Al l\u00edmite",
@@ -7051,13 +7051,13 @@
         "birthday": "25021982",
         "clabe": "012320001427685500",
         "name_bank_account": "Sebasti\u00e1n Hermosillo Ceballos",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717584"
+    "isbn": "9789689717584",
+    "pasta": "Blanda"
   },
   {
     "title": "El cuadrante de la vida",
@@ -7071,13 +7071,13 @@
         "birthday": "1051983",
         "clabe": "012680004565210024",
         "name_bank_account": "Sergio Leon Hernandez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982027"
+    "isbn": "9786079982027",
+    "pasta": "Blanda"
   },
   {
     "title": "Lidera como rockstar",
@@ -7091,13 +7091,13 @@
         "birthday": "9071985",
         "clabe": "002222901319396623",
         "name_bank_account": "SERGIO FRANCISCO NAVA PATRON",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9798891847811"
+    "isbn": "9798891847811",
+    "pasta": "Blanda"
   },
   {
     "title": "Mujer Virtuosa",
@@ -7111,13 +7111,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988603"
+    "isbn": "9786075988603",
+    "pasta": "Blanda"
   },
   {
     "title": "Pleno",
@@ -7131,13 +7131,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Metamorfosis consciente",
@@ -7151,13 +7151,13 @@
         "birthday": "18091963",
         "clabe": "012180015353238422",
         "name_bank_account": "Sof\u00eda Mu\u00f1iz Rangel",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988627"
+    "isbn": "9786075988627",
+    "pasta": "Blanda"
   },
   {
     "title": "Agenda millonaria/Libreta millonaria",
@@ -7171,13 +7171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Los milagros del amor",
@@ -7191,13 +7191,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Tu rareza es tu grandeza",
@@ -7211,13 +7211,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717812"
+    "isbn": "9789689717812",
+    "pasta": "Blanda"
   },
   {
     "title": "La magia de mi vida",
@@ -7231,13 +7231,13 @@
         "birthday": "1101961",
         "clabe": "072650008966887352",
         "name_bank_account": "SUSANA RIVERA VAZQUEZ",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739555"
+    "isbn": "9789689739555",
+    "pasta": "Blanda"
   },
   {
     "title": "Un tren viaja al olvido",
@@ -7251,13 +7251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974917"
+    "isbn": "9786078974917",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfC\u00f3mo ayudar al familiar adicto?",
@@ -7271,13 +7271,13 @@
         "birthday": "12071986",
         "clabe": "012760001958247378",
         "name_bank_account": "AMOR Y CONVICCION",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9798304621885"
+    "isbn": "9798304621885",
+    "pasta": "Blanda"
   },
   {
     "title": "100 d\u00edas orando por mi hijo adicto",
@@ -7291,13 +7291,13 @@
         "birthday": "12071986",
         "clabe": "012760001958247378",
         "name_bank_account": "AMOR Y CONVICCION",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739197"
+    "isbn": "9789689739197",
+    "pasta": "Blanda"
   },
   {
     "title": "Adicto a mis sue\u00f1os",
@@ -7311,13 +7311,13 @@
         "birthday": "12071986",
         "clabe": "012760001958247378",
         "name_bank_account": "AMOR Y CONVICCION",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079972103"
+    "isbn": "9786079972103",
+    "pasta": "Blanda"
   },
   {
     "title": "El ladr\u00f3n",
@@ -7331,13 +7331,13 @@
         "birthday": "12071986",
         "clabe": "012760001958247378",
         "name_bank_account": "AMOR Y CONVICCION",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9781513643199"
+    "isbn": "9781513643199",
+    "pasta": "Blanda"
   },
   {
     "title": "Vitamina espiritual",
@@ -7351,13 +7351,13 @@
         "birthday": "12071986",
         "clabe": "012760001958247378",
         "name_bank_account": "AMOR Y CONVICCION",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079972110"
+    "isbn": "9786079972110",
+    "pasta": "Blanda"
   },
   {
     "title": "Desde el fuego interno, al mundo entero",
@@ -7371,13 +7371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717843"
+    "isbn": "9789689717843",
+    "pasta": "Blanda"
   },
   {
     "title": "Semiversal",
@@ -7391,13 +7391,13 @@
         "birthday": "19071976",
         "clabe": "012470015204279088",
         "name_bank_account": "EDGAR ULISES OSORIO BAEZA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717171"
+    "isbn": "9789689717171",
+    "pasta": "Blanda"
   },
   {
     "title": "Deja que te lo cuente",
@@ -7411,13 +7411,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Empiece a escalar",
@@ -7431,13 +7431,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Mujer sin l\u00edmite",
@@ -7451,13 +7451,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739289"
+    "isbn": "9789689739289",
+    "pasta": "Blanda"
   },
   {
     "title": "Neuroabundancia",
@@ -7471,13 +7471,13 @@
         "birthday": "2011970",
         "clabe": "127180001041849000",
         "name_bank_account": "Veronica del Castillo Negrete Trillo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989044"
+    "isbn": "9786075989044",
+    "pasta": "Blanda"
   },
   {
     "title": "Romper la barrera rosa",
@@ -7491,13 +7491,13 @@
         "birthday": "19031975",
         "clabe": "137320105183857000",
         "name_bank_account": "Julia Ver\u00f3nica Alcal\u00e1 moreno",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717355"
+    "isbn": "9789689717355",
+    "pasta": "Blanda"
   },
   {
     "title": "Brilla de nuevo",
@@ -7511,13 +7511,13 @@
         "birthday": "7071990",
         "clabe": "012663011579915419",
         "name_bank_account": "Miriam Ver\u00f3nica Santos L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717041"
+    "isbn": "9789689717041",
+    "pasta": "Blanda"
   },
   {
     "title": "Camino al \u00e9xito",
@@ -7531,13 +7531,13 @@
         "birthday": "7071990",
         "clabe": "012663011579915419",
         "name_bank_account": "Miriam Ver\u00f3nica Santos L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974962"
+    "isbn": "9786078974962",
+    "pasta": "Blanda"
   },
   {
     "title": "D\u00f3nde est\u00e1n mi poder y mis sue\u00f1os",
@@ -7551,13 +7551,13 @@
         "birthday": "7071990",
         "clabe": "012663011579915419",
         "name_bank_account": "Miriam Ver\u00f3nica Santos L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974979"
+    "isbn": "9786078974979",
+    "pasta": "Blanda"
   },
   {
     "title": "El poder de tu transformaci\u00f3n",
@@ -7571,13 +7571,13 @@
         "birthday": "7071990",
         "clabe": "012663011579915419",
         "name_bank_account": "Miriam Ver\u00f3nica Santos L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Psicolog\u00eda ganadora del emprendedor",
@@ -7591,13 +7591,13 @@
         "birthday": "7071990",
         "clabe": "012663011579915419",
         "name_bank_account": "Miriam Ver\u00f3nica Santos L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974986"
+    "isbn": "9786078974986",
+    "pasta": "Blanda"
   },
   {
     "title": "De invisible a invencible",
@@ -7611,13 +7611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo Coco",
@@ -7631,13 +7631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Si vas a tirar la toalla, que sea en la playa",
@@ -7651,13 +7651,13 @@
         "birthday": "30101974",
         "clabe": "012180015144446685",
         "name_bank_account": "Yamel Patricia Lara Cos",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717706"
+    "isbn": "9789689717706",
+    "pasta": "Blanda"
   },
   {
     "title": "Electr\u00f3n y Prot\u00f3n",
@@ -7671,13 +7671,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El secreto de aprender a invertir",
@@ -7691,13 +7691,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948573"
+    "isbn": "9786079948573",
+    "pasta": "Blanda"
   },
   {
     "title": "Keep it simple",
@@ -7711,13 +7711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "One Million a Year Doesn't Hurt",
@@ -7731,13 +7731,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974078"
+    "isbn": "9786078974078",
+    "pasta": "Blanda"
   },
   {
     "title": "Simplicidad",
@@ -7751,13 +7751,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974542"
+    "isbn": "9786078974542",
+    "pasta": "Blanda"
   },
   {
     "title": "The millonare way agenda",
@@ -7771,13 +7771,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "The Secret of Learning to Invest",
@@ -7791,13 +7791,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974085"
+    "isbn": "9786078974085",
+    "pasta": "Blanda"
   },
   {
     "title": "Un mill\u00f3n al a\u00f1o no hace da\u00f1o",
@@ -7811,13 +7811,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962047"
+    "isbn": "9786075962047",
+    "pasta": "Blanda"
   },
   {
     "title": "Mentes Millonarias",
@@ -7831,13 +7831,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974689"
+    "isbn": "9786078974689",
+    "pasta": "Blanda"
   },
   {
     "title": "De ceniza a voz",
@@ -7851,13 +7851,13 @@
         "birthday": "28011974",
         "clabe": "012180015254590366",
         "name_bank_account": "Yolanda Atayde Mejia",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717850"
+    "isbn": "9789689717850",
+    "pasta": "Blanda"
   },
   {
     "title": "El Networker Millonario",
@@ -7871,13 +7871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982089"
+    "isbn": "9786079982089",
+    "pasta": "Blanda"
   },
   {
     "title": "La viajera",
@@ -7891,13 +7891,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075989099"
+    "isbn": "9786075989099",
+    "pasta": "Blanda"
   },
   {
     "title": "Rompiendo l\u00edmites",
@@ -7911,13 +7911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974566"
+    "isbn": "9786078974566",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00a1Auxilio! Se me perdi\u00f3 la felicidad",
@@ -7931,13 +7931,13 @@
         "birthday": "3041988",
         "clabe": "012320029711217077",
         "name_bank_account": "Adriana Vega Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075962085"
+    "isbn": "9786075962085",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00c1mate",
@@ -7951,13 +7951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079875930"
+    "isbn": "9786079875930",
+    "pasta": "Blanda"
   },
   {
     "title": "Lider Irreverente",
@@ -7971,13 +7971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de emprender y saber vivir",
@@ -7991,13 +7991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Historia de nuestra se\u00f1ora de San Juan de los Lagos y el culto de esta milagrosa imagen",
@@ -8011,13 +8011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Recl\u00fatALE",
@@ -8031,13 +8031,13 @@
         "birthday": "16081986",
         "clabe": "012320004829113538",
         "name_bank_account": "482911353",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717942"
+    "isbn": "9789689717942",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo salir de la cubeta de cangrejos",
@@ -8051,13 +8051,13 @@
         "birthday": "31081983",
         "clabe": "014180565806188140",
         "name_bank_account": "Oscar Alejandro V\u00e1zquez Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075988610"
+    "isbn": "9786075988610",
+    "pasta": "Blanda"
   },
   {
     "title": "Conectando con la energ\u00eda de la abundancia",
@@ -8071,13 +8071,13 @@
         "birthday": "2081972",
         "clabe": "002180701481524526",
         "name_bank_account": "Alejandro G\u00f3mez Medina",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948580"
+    "isbn": "9786079948580",
+    "pasta": "Blanda"
   },
   {
     "title": "Emprende sin morir en el intento",
@@ -8091,13 +8091,13 @@
         "birthday": "31081983",
         "clabe": "014180565806188140",
         "name_bank_account": "Oscar Alejandro V\u00e1zquez Hern\u00e1ndez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948566"
+    "isbn": "9786079948566",
+    "pasta": "Blanda"
   },
   {
     "title": "Mapa de riqueza",
@@ -8111,13 +8111,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786076991626"
+    "isbn": "9786076991626",
+    "pasta": "Blanda"
   },
   {
     "title": "Mentalidad de riqueza extrema",
@@ -8131,13 +8131,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Reconfiguraci\u00f3n financiera",
@@ -8151,13 +8151,13 @@
         "birthday": "13011978",
         "clabe": "021180040616620000",
         "name_bank_account": "CAPACITACION EMPRESARIAL ENFOCADA A RESULTADOS",
-        "swift": "BIMEMXMMXXX",
-        "pasta": "Blanda"
+        "swift": "BIMEMXMMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786076991602"
+    "isbn": "9786076991602",
+    "pasta": "Blanda"
   },
   {
     "title": "477 frases de poder",
@@ -8171,13 +8171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El alma de una marca",
@@ -8191,13 +8191,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739494"
+    "isbn": "9789689739494",
+    "pasta": "Blanda"
   },
   {
     "title": "El \u00e9xito es una decisi\u00f3n",
@@ -8211,13 +8211,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739227"
+    "isbn": "9789689739227",
+    "pasta": "Blanda"
   },
   {
     "title": "De techos a sue\u00f1os",
@@ -8231,13 +8231,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El futuro de los negocios",
@@ -8251,13 +8251,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739234"
+    "isbn": "9789689739234",
+    "pasta": "Blanda"
   },
   {
     "title": "Franquicia blindada",
@@ -8271,13 +8271,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941776"
+    "isbn": "9786075941776",
+    "pasta": "Blanda"
   },
   {
     "title": "Intencionalidad blindada",
@@ -8291,13 +8291,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079948597"
+    "isbn": "9786079948597",
+    "pasta": "Blanda"
   },
   {
     "title": "Pon a trabajar tu segundo cerebro",
@@ -8311,13 +8311,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El emprendedor de la familia",
@@ -8331,13 +8331,13 @@
         "birthday": "30082001",
         "clabe": "638180010194952000",
         "name_bank_account": "Miguel Alonso Lozano Gonz\u00e1lez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717270"
+    "isbn": "9789689717270",
+    "pasta": "Blanda"
   },
   {
     "title": "La valent\u00eda de una mujer",
@@ -8351,13 +8351,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974177"
+    "isbn": "9786078974177",
+    "pasta": "Blanda"
   },
   {
     "title": "Lo que ni los siglos pudieron destruir",
@@ -8371,13 +8371,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Rescatada por la fe",
@@ -8391,13 +8391,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974443"
+    "isbn": "9786078974443",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus lentes, tu realidad",
@@ -8411,13 +8411,13 @@
         "birthday": "3061987",
         "clabe": "012597004641731125",
         "name_bank_account": "Ana Llely Carachure Hern\u00e1ndez",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739579"
+    "isbn": "9789689739579",
+    "pasta": "Blanda"
   },
   {
     "title": "Descubre el poder de tu templo interior",
@@ -8431,13 +8431,13 @@
         "birthday": "13061986",
         "clabe": "012320027544796961",
         "name_bank_account": "Ana Cristina Espinosa L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739432"
+    "isbn": "9789689739432",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu actitud, tu superpoder",
@@ -8451,13 +8451,13 @@
         "birthday": "7041984",
         "clabe": "012180015497382100",
         "name_bank_account": "Ana Georgina Luna Covarubias",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717447"
+    "isbn": "9789689717447",
+    "pasta": "Blanda"
   },
   {
     "title": "Responsabilidad emocional",
@@ -8471,13 +8471,13 @@
         "birthday": "9121975",
         "clabe": "012180015559064584",
         "name_bank_account": "Ana Laura Mungu\u00eda Romero",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974375"
+    "isbn": "9786078974375",
+    "pasta": "Blanda"
   },
   {
     "title": "Relevos de vida",
@@ -8491,13 +8491,13 @@
         "birthday": "16031988",
         "clabe": "012760027917852652",
         "name_bank_account": "Ana Lourdes Silva Gaxiola",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739302"
+    "isbn": "9789689739302",
+    "pasta": "Blanda"
   },
   {
     "title": "Finanzas con prop\u00f3sito",
@@ -8511,13 +8511,13 @@
         "birthday": "23121997",
         "clabe": "638180000135042000",
         "name_bank_account": "Ana Yazmin L\u00f3pez L\u00f3pez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717454"
+    "isbn": "9789689717454",
+    "pasta": "Blanda"
   },
   {
     "title": "De la esclavitud a la abundancia",
@@ -8531,13 +8531,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "365 d\u00edas para amarme",
@@ -8551,13 +8551,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974580"
+    "isbn": "9786078974580",
+    "pasta": "Blanda"
   },
   {
     "title": "De boxeador a empresario",
@@ -8571,13 +8571,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974627"
+    "isbn": "9786078974627",
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo en tacones",
@@ -8591,13 +8591,13 @@
         "birthday": "3021972",
         "clabe": "002320700679613990",
         "name_bank_account": "Ma. Ang\u00e9lica Cruz Garc\u00eda",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739166"
+    "isbn": "9789689739166",
+    "pasta": "Blanda"
   },
   {
     "title": "Reconectando",
@@ -8611,13 +8611,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075982748"
+    "isbn": "9786075982748",
+    "pasta": "Blanda"
   },
   {
     "title": "Tu luneta azul",
@@ -8631,13 +8631,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739173"
+    "isbn": "9789689739173",
+    "pasta": "Blanda"
   },
   {
     "title": "Despierta tu magia interior",
@@ -8651,13 +8651,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974436"
+    "isbn": "9786078974436",
+    "pasta": "Blanda"
   },
   {
     "title": "El dinero y t\u00fa, sin importar la edad",
@@ -8671,13 +8671,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717539"
+    "isbn": "9789689717539",
+    "pasta": "Blanda"
   },
   {
     "title": "Los ni\u00f1os s\u00ed vienen con manual",
@@ -8691,13 +8691,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786079982065"
+    "isbn": "9786079982065",
+    "pasta": "Blanda"
   },
   {
     "title": "Redise\u00f1ando mi vida",
@@ -8711,13 +8711,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Los 5 pilares del emprendimiento",
@@ -8731,13 +8731,13 @@
         "birthday": "16061983",
         "clabe": "072650006266817370",
         "name_bank_account": "Armando ricardo varela lopez",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974740"
+    "isbn": "9786078974740",
+    "pasta": "Blanda"
   },
   {
     "title": "Tus mejores d\u00edas est\u00e1n por venir",
@@ -8751,13 +8751,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941707"
+    "isbn": "9786075941707",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQui\u00e9n soy? \u00bfA qu\u00e9 vengo?",
@@ -8771,13 +8771,13 @@
         "birthday": "25081975",
         "clabe": "021320040650675100",
         "name_bank_account": "SALVADOR ARTURO JIMENEZ ROCHA",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941738"
+    "isbn": "9786075941738",
+    "pasta": "Blanda"
   },
   {
     "title": "Conquista tu vida",
@@ -8791,13 +8791,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974665"
+    "isbn": "9786078974665",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQuieres m\u00e1s?",
@@ -8811,13 +8811,13 @@
         "birthday": "11011972",
         "clabe": null,
         "name_bank_account": "Belkis Carrillo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717072"
+    "isbn": "9789689717072",
+    "pasta": "Blanda"
   },
   {
     "title": "C\u00f3mo ser yo una buena pareja",
@@ -8831,13 +8831,13 @@
         "birthday": "11011972",
         "clabe": null,
         "name_bank_account": "Belkis Carrillo",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717102"
+    "isbn": "9789689717102",
+    "pasta": "Blanda"
   },
   {
     "title": "La vida en mis manos",
@@ -8851,13 +8851,13 @@
         "birthday": "25021975",
         "clabe": "638180010141546000",
         "name_bank_account": "Beneda Carrasco Virrueta",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717461"
+    "isbn": "9789689717461",
+    "pasta": "Blanda"
   },
   {
     "title": "Sin filtros",
@@ -8871,13 +8871,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Yo me encargo",
@@ -8891,13 +8891,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739258"
+    "isbn": "9789689739258",
+    "pasta": "Blanda"
   },
   {
     "title": "Despu\u00e9s del d\u00eda diez",
@@ -8911,13 +8911,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El heredero",
@@ -8931,13 +8931,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Vuela y lib\u00e9rate de tus propias cadenas",
@@ -8951,13 +8951,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "M\u00e1s all\u00e1 del espejo",
@@ -8971,13 +8971,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717720"
+    "isbn": "9789689717720",
+    "pasta": "Blanda"
   },
   {
     "title": "El miedo no da de comer",
@@ -8991,13 +8991,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974207"
+    "isbn": "9786078974207",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfQue pasar\u00eda si creyeras en ti?",
@@ -9011,13 +9011,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Esa voz",
@@ -9031,13 +9031,13 @@
         "birthday": "25041994",
         "clabe": "638180010159322000",
         "name_bank_account": "Cecilia Galindo Loera",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974276"
+    "isbn": "9786078974276",
+    "pasta": "Blanda"
   },
   {
     "title": "Creando mi realidad",
@@ -9051,13 +9051,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786075941721"
+    "isbn": "9786075941721",
+    "pasta": "Blanda"
   },
   {
     "title": "Sam Loto",
@@ -9071,13 +9071,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "Liderazgo en seguridad y salud en el trabajo",
@@ -9091,13 +9091,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9786078974818"
+    "isbn": "9786078974818",
+    "pasta": "Blanda"
   },
   {
     "title": "\u00bfY si nunca fuiste oruga?",
@@ -9111,13 +9111,13 @@
         "birthday": "2111972",
         "clabe": null,
         "name_bank_account": "CESAR SUAREZ URIBE",
-        "swift": "COLOCOBMXXX",
-        "pasta": "Blanda"
+        "swift": "COLOCOBMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El dinero premia a quien sabe usarlo y castiga a quien no",
@@ -9131,13 +9131,13 @@
         "birthday": "11101989",
         "clabe": "012910004692081003",
         "name_bank_account": "C\u00e9sar Adri\u00e1n Rodr\u00edguez vega",
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739531"
+    "isbn": "9789689739531",
+    "pasta": "Blanda"
   },
   {
     "title": "Realidad 0.0",
@@ -9151,13 +9151,13 @@
         "birthday": "2111972",
         "clabe": null,
         "name_bank_account": "CESAR SUAREZ URIBE",
-        "swift": "COLOCOBMXXX",
-        "pasta": "Blanda"
+        "swift": "COLOCOBMXXX"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689717980"
+    "isbn": "9789689717980",
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de hablar en p\u00fablico",
@@ -9171,13 +9171,13 @@
         "birthday": null,
         "clabe": null,
         "name_bank_account": null,
-        "swift": null,
-        "pasta": "Blanda"
+        "swift": null
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": null
+    "isbn": null,
+    "pasta": "Blanda"
   },
   {
     "title": "El arte de vivir con prop\u00f3sito",
@@ -9191,12 +9191,12 @@
         "birthday": "14101976",
         "clabe": "012180001975526458",
         "name_bank_account": "Christian Borbolla Ballesca",
-        "swift": "BCMRMXMMPYM",
-        "pasta": "Blanda"
+        "swift": "BCMRMXMMPYM"
       }
     ],
     "category": 1,
     "quantity": 1,
-    "isbn": "9789689739005"
+    "isbn": "9789689739005",
+    "pasta": "Blanda"
   }
 ]

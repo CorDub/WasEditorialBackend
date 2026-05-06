@@ -8,7 +8,6 @@ import {
   generateMonthKeysForRange,
   generateMonthKeysForRangeStr,
   getAuthorString,
-  mexicoDate,
   getForMonthStr,
   today
 } from './../utils.js';
@@ -2449,7 +2448,6 @@ export async function addSale(req, res) {
     }
     validateInputs(inputs);
 
-    // const dateMexico = mexicoDate(req.body.date, "midday");
     const prismaClient = req.prisma || prisma
 
     let createdSale;

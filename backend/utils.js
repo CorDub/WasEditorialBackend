@@ -1,5 +1,4 @@
 import { validateInput } from './validations.js';
-import { DateTime } from "luxon";
 
 export function calculateAuthorRevenue(
   category_type,
@@ -390,34 +389,34 @@ export function avoidTimeshift(strDate) {
   return res
 }
 
-export function mexicoDate(ingressDate, period) {
-  let date;
-  if (period === "start") {
-    date = DateTime
-    .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
-    .startOf("day")
-    .toUTC()
-    .toJSDate();
-  } else if (period === "end") {
-    date = DateTime
-    .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
-    .endOf("day")
-    .toUTC()
-    .toJSDate();
-  // } else if (period === "midday") {
-  //   date = DateTime
-  //   .fromFormat(ingressDate, "yyyy-MM-dd", {zone:"America/Mexico_City"})
-  //   .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
-  //   .toUTC()
-  //   .toJSDate();
-  } else if (period === "midday") {
-    date = DateTime
-    .fromISO(ingressDate, { zone: "utc" })
-    .setZone("America/Mexico_City")
-    .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
-    .toUTC()
-    .toJSDate();
-  }
+// export function mexicoDate(ingressDate, period) {
+//   let date;
+//   if (period === "start") {
+//     date = DateTime
+//     .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
+//     .startOf("day")
+//     .toUTC()
+//     .toJSDate();
+//   } else if (period === "end") {
+//     date = DateTime
+//     .fromISO(ingressDate.toISOString(), {zone:"America/Mexico_City"})
+//     .endOf("day")
+//     .toUTC()
+//     .toJSDate();
+//   // } else if (period === "midday") {
+//   //   date = DateTime
+//   //   .fromFormat(ingressDate, "yyyy-MM-dd", {zone:"America/Mexico_City"})
+//   //   .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+//   //   .toUTC()
+//   //   .toJSDate();
+//   } else if (period === "midday") {
+//     date = DateTime
+//     .fromISO(ingressDate, { zone: "utc" })
+//     .setZone("America/Mexico_City")
+//     .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+//     .toUTC()
+//     .toJSDate();
+//   }
 
   return date
 }

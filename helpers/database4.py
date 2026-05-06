@@ -173,13 +173,6 @@ for index, row in was_df.iterrows():
     if swiftCode == "0":
         swiftCode = None
 
-    ##Pasta
-    pasta = None
-    if not pd.isna(row["Pasta"]):
-        str_pasta = str(row["Pasta"]).strip()
-        if str_pasta == "Blanda" or str_pasta == "Dura":
-            pasta = str_pasta
-
     ## assignment
     authors[0].update({
         "email": correo,
@@ -190,7 +183,7 @@ for index, row in was_df.iterrows():
         "name_bank_account": nombreDelTitular,
         # "bank": banco,
         "swift": swiftCode,
-        "pasta": pasta
+        
     })
 
     ##ISBN
@@ -200,13 +193,21 @@ for index, row in was_df.iterrows():
         isbn_str = isbnRaw.replace("-", "")
         if isbn_str.isdigit():
             isbn = isbn_str
+
+    ##Pasta
+    pasta = None
+    if not pd.isna(row["Pasta"]):
+        str_pasta = str(row["Pasta"]).strip()
+        if str_pasta == "Blanda" or str_pasta == "Dura":
+            pasta = str_pasta
     
     books.append({
         "title": title,
         "authors": authors,
         "category": categoria,
         "quantity": 1,
-        "isbn": isbn
+        "isbn": isbn,
+        "pasta": pasta
     })
 
 with open("fourthBooks.json", "w") as json_file:

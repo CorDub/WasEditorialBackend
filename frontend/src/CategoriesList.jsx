@@ -154,7 +154,7 @@ function CategoriesList() {
         setData(dataCategories);
         setLoading(false);
       } else {
-        console.log("There was an error fetching categories:", response.status);
+        console.error("There was an error fetching categories:", response.status);
       };
 
     } catch(error) {
@@ -179,7 +179,7 @@ function CategoriesList() {
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);

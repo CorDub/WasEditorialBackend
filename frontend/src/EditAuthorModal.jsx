@@ -104,7 +104,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           checkForServerErrors(error.message);
           return;
@@ -194,8 +193,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       validity: "birthday valid"
     }
 
-    console.log("fullBirthday", birthday)
-
     const errorsFirstName = checkForErrors("Nombre", firstName, firstNameExpectations, firstNameRef, "o")
     const errorsLastName = checkForErrors("Apellido", lastName, lastNameExpectations, lastNameRef, "a")
     const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o" )
@@ -218,8 +215,6 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       errorsBirthdayYear,
       errorsFullBirthday
     ]
-
-    console.log("errorInputs", errorInputs);
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {

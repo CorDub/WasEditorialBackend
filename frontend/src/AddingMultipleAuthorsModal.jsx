@@ -46,7 +46,7 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

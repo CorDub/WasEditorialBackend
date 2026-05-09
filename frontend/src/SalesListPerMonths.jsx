@@ -66,7 +66,7 @@ function SalesListPerMonths() {
         setAuthorsInMonth(data[data.length-1].authors)
       }
     } catch(error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -149,7 +149,7 @@ function SalesListPerMonths() {
       setFilteredData(filteredData)
 
     } catch(error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

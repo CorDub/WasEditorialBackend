@@ -130,7 +130,7 @@ function SuperAdminNavbar({
         setInventoryNames(data);
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

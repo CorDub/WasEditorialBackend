@@ -71,7 +71,6 @@ function AuthorCommissions() {
       // check cache (but skip if forceRender is true)
       // const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
       // if (cachedAuthorPayments && !forceRender) {
-      //   console.log("cache hit");
       //   setPayments(JSON.parse(cachedAuthorPayments));
       //   setPaymentInfo(JSON.parse(cachedAuthorPayments)[0]);
       //   return
@@ -92,7 +91,7 @@ function AuthorCommissions() {
         setPaymentInfo(data[activeMonth]);
       };
     } catch(error) {
-      console.log("Error when fetching the data", error);
+      console.error("Error when fetching the data", error);
     }
   }
 
@@ -126,7 +125,7 @@ function AuthorCommissions() {
         setSalesByPayments(salesByPayments);
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

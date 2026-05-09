@@ -46,7 +46,6 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
       });
 
       if (response.ok === false) {
-        console.log(response.status);
         const alertMessage = 'No se pude registrar una nueva librería.';
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {

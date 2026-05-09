@@ -72,7 +72,6 @@ function checkForErrors(
           }
           addErrorClass(fieldRef);
         } else {
-          console.log("A collection type has been passed into the field")
           return;
         }
         break;
@@ -176,7 +175,7 @@ function checkForErrors(
         break;
 
       default:
-        console.log("Unkown expectation error");
+        console.error("Unkown expectation error");
         return;
     }
   }

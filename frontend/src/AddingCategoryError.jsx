@@ -40,7 +40,7 @@ function AddingCategoryError({errorList, setErrorList}) {
       case 53:
         return (<p className="login-error">El descuento debe estar entre 0 y 100.</p>)
       default:
-        console.log('Unknown error')
+        console.error('Unknown error')
         return;
     }
   }

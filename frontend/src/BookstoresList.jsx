@@ -151,7 +151,7 @@ function BookstoresList() {
         setData(dataBookstores);
         setLoading(false);
       } else {
-        console.log("There was an error fetching bookstores:", response.status);
+        console.error("There was an error fetching bookstores:", response.status);
       };
 
     } catch(error) {
@@ -176,7 +176,7 @@ function BookstoresList() {
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);

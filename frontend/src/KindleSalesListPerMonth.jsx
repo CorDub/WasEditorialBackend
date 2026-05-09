@@ -57,7 +57,7 @@ function KindleSalesListPerMonth() {
         setAuthorsInMonth(data[data.length-1].authors)
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

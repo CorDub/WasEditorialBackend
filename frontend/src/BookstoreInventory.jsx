@@ -292,7 +292,7 @@ function BookstoreInventory({
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -315,7 +315,7 @@ function BookstoreInventory({
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);

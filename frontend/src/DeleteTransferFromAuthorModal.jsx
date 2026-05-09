@@ -27,8 +27,6 @@ function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
     }
   }
 
-  console.log("clickedRow", clickedRow)
-
   return(
     <div className="modal-proper">
       <div className="delmod-confirm">

@@ -1,8 +1,5 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import "./DemandPaymentModal.scss";
-// import UserContext from "./UserContext";
-// import { useEffect } from "react";
-// import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import formatNumber from "./customHooks/formatNumber.jsx";
 
@@ -62,7 +59,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
     } else if (type === "constancia") {
       setConstancia(file)
     } else {
-      console.log("Unknown type passed : ", type);
+      console.error("Unknown type passed : ", type);
     }
   }
 
@@ -105,7 +102,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       }
 
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -154,7 +151,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
   //     };
 
   //   } catch(error) {
-  //     console.log(error)
+  //     console.error(error)
   //   }
   // }
 

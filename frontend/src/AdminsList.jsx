@@ -140,7 +140,7 @@ function AdminsList() {
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);
@@ -175,7 +175,7 @@ function AdminsList() {
         setData(data);
         setLoading(false);
       } else {
-        console.log("response was not ok:", response.status);
+        console.error("response was not ok:", response.status);
       };
 
     } catch (error) {

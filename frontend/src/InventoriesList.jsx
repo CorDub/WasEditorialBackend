@@ -226,7 +226,7 @@ function InventoriesList() {
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -245,7 +245,7 @@ function InventoriesList() {
         setData(data);
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -269,7 +269,7 @@ function InventoriesList() {
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

@@ -34,7 +34,7 @@ function ForgottenPasswordPage() {
       });
 
       if (response.ok === false) {
-        return console.log(response.status);
+        return console.error(response.status);
       };
 
       if (response.status === 204) {

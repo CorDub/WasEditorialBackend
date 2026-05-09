@@ -22,7 +22,7 @@ function DeleteCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 closeModal(globalFilter, false, alertMessage, "error");
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

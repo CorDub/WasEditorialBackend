@@ -61,7 +61,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           {"id": clickedRow.inventory.bookId, "title": clickedRow.inventory.book.title})
         setExistingBooks(existingBooksCopy);
       } else {
-        console.log("There was an error fetching existing books:", response.status)
+        console.error("There was an error fetching existing books:", response.status)
       }
 
     } catch (error) {
@@ -102,7 +102,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           {"id": clickedRow.inventory.bookstoreId, "name": clickedRow.inventory.bookstore.name})
         setExistingBookstores(existingBookstoreCopy);
       } else {
-        console.log("There was an error fetching the exisiting bookstores:", response.status)
+        console.error("There was an error fetching the exisiting bookstores:", response.status)
       }
 
     } catch (error) {

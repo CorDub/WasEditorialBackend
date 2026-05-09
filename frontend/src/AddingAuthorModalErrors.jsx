@@ -29,7 +29,7 @@ function AddingAuthorModalErrors({ errors, setErrors }) {
       case 62:
         return (<p className="login-error">Por favor elige una categoría en la lista.</p>)
       default:
-        console.log("Unkown error")
+        console.error("Unkown error")
         return;
     }
   }

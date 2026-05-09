@@ -73,7 +73,6 @@ function EditBookPricesModal({
   }
 
   async function sendToServer() {
-    console.log(prices);
     try {
       const response = await fetch(`${baseURL}/api/admin/book/${clickedRow.id}/prices`, {
         method: "PATCH",
@@ -94,7 +93,7 @@ function EditBookPricesModal({
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

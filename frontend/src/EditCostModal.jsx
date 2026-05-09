@@ -33,7 +33,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 setExistingBooks(data);
             }
         } catch (error) {
-            console.log("Error while fetching existing books:", error);
+            console.error("Error while fetching existing books:", error);
         }
     }
     
@@ -111,7 +111,7 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 closeModal(globalFilter, false, alertMessage, "error")
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

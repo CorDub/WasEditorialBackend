@@ -171,7 +171,7 @@ function TransfersList() {
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);
@@ -205,10 +205,7 @@ function TransfersList() {
         const data = await response.json();
         setData(data);
         setLoading(false);
-      } else {
-        console.log("response was not ok:", response.status);
-      };
-
+      } 
     } catch (error) {
       console.error("Error when fetching transfers in frontend:", error);
     }

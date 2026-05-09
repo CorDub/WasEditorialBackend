@@ -40,7 +40,7 @@ function ProfilePageSlider({
         setForceRender(prev => !prev);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     setEditOpen(false);

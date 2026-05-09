@@ -1,4 +1,3 @@
-// import nodemailer from 'nodemailer';
 import { setResetPasswordCode } from './passwordUtils.js';
 import { prisma } from "./prisma/client.js"
 import { Resend } from "resend";
@@ -16,15 +15,6 @@ export function getResend() {
   }
   return resend;
 }
-
-// var transport = nodemailer.createTransport({
-//   host: "sandbox.smtp.mailtrap.io",
-//   port: 2525,
-//   auth: {
-//     user: "e8e5d7d660317a",
-//     pass: "8e6e2b6f11ca69"
-//   }
-// });
 
 async function sendEmail({ to, subject, text, html, attachments }) {
   // if (process.env.NODE_ENV !== "production") {
@@ -65,7 +55,6 @@ async function sendEmail({ to, subject, text, html, attachments }) {
 
 export async function sendSetPasswordMail(email, name, password) {
   try {
-    // const user = await prisma.user.findUnique({where: {email: email}});
     await sendEmail({
       to: email,
       subject: 'Código de confirmación para su cuenta de Was Editorial',
@@ -78,7 +67,7 @@ export async function sendSetPasswordMail(email, name, password) {
       No comparte esta contraseña con otras personas. Was Editorial y sus empleadores nunca se la pidieran.`
     });
   } catch(error) {
-    console.log("Error while trying to send the password email:", error);
+    console.error("Error while trying to send the password email:", error);
   }
 }
 
@@ -95,7 +84,7 @@ export async function sendWelcomeMail(email, name) {
       `
     })
   } catch(error) {
-    console.log("Error while sending the welcome mail:", error);
+    console.error("Error while sending the welcome mail:", error);
   }
 }
 

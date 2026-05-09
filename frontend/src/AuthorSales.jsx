@@ -40,7 +40,6 @@ function AuthorSales() {
         : sales.filter(sale => sale.book_id === parseInt(bookId));
 
       filteredSales.forEach(sale => {
-        console.log("sale", sale)
         const date = sale.dateStr;
         // const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         const monthKey = getForMonthStr(date);

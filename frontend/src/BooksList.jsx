@@ -165,7 +165,7 @@ function BooksList() {
         setData(dataBooks);
         // setLoading(false);
       } else {
-        console.log("There was an error fetching books:", response.status);
+        console.error("There was an error fetching books:", response.status);
       };
 
     } catch(error) {
@@ -196,7 +196,7 @@ function BooksList() {
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);

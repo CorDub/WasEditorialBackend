@@ -158,7 +158,7 @@ function CostsLists() {
             setModalType("cost");
             break;
         default:
-            console.log("Unknown error")
+            console.error("Unknown error")
             return;
         }
         setModalOpen(true);
@@ -191,7 +191,7 @@ function CostsLists() {
                 setData(data);
             }
         } catch(error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

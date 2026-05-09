@@ -85,7 +85,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
           setExistingCategoryNumbers(categoryNumbers);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
 

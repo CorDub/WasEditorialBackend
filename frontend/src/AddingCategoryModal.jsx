@@ -40,7 +40,7 @@ function AddingCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }
       }
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

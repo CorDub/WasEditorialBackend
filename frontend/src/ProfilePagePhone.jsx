@@ -108,7 +108,7 @@ function ProfilePagePhone(
       }
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

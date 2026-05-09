@@ -86,7 +86,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         const data = await response.json();
         setExistingBooks(data);
       } else {
-        console.log("There was an error fetching existing books:", response.status)
+        console.error("There was an error fetching existing books:", response.status)
       }
 
     } catch (error) {
@@ -108,7 +108,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         const data = await response.json();
         setExistingBookstores(data);
       } else {
-        console.log("There was an error fetching the exisiting bookstores:", response.status)
+        console.error("There was an error fetching the exisiting bookstores:", response.status)
       }
 
     } catch (error) {
@@ -251,7 +251,6 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;

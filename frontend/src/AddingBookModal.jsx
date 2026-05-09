@@ -74,7 +74,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
           setExistingCategories(categoryNumbers);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
 
@@ -105,7 +105,6 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         const error = await response.json();
-        // console.log(error.message === "Este ISBN ya existe");
         if (error.message === "Este ISBN ya existe") {
           closeModal(pageIndex, globalFilter, false, error.message, "error")
           return;

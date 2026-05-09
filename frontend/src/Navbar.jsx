@@ -72,7 +72,7 @@ function Navbar({
                   active={active}
                   preferredFontSize={user.font_size}/>
       default:
-        console.log('Unkown error')
+        console.error('Unkown error')
         return;
     }
   }

@@ -7,7 +7,7 @@ function AddingBookstoreErrorList({ errorList, setErrorList }) {
       case 11:
         return (<p className="login-error">El nombre de la librería no puede estar vacío.</p>)
       default:
-        console.log('Unknown error')
+        console.error('Unknown error')
         return;
     }
   }

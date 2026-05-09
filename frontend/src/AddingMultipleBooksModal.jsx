@@ -35,7 +35,6 @@ function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFil
         const responseData = await response.json();
         if (responseData.failed.length > 0) {
           const alertMessage = `Los siguientes libros no pudieron estar añadidos`;
-          console.log(responseData)
           closeModal(pageIndex, globalFilter, true, alertMessage, "warning", responseData.failed);
         } else {
           const alertMessage = `Los libros han estado añadidos con exito.`;
@@ -46,7 +45,7 @@ function AddingMultipleBooksModal({ clickedRow, closeModal, pageIndex, globalFil
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
     } catch(error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

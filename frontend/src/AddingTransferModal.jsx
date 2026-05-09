@@ -59,7 +59,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       }
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -166,7 +166,6 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;

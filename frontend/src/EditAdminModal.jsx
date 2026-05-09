@@ -55,7 +55,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;

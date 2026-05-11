@@ -1,10 +1,12 @@
 import { setResetPasswordCode } from './passwordUtils.js';
 import { prisma } from "./prisma/client.js"
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 // const resend = new Resend(process.env.RESEND_API_KEY);
 
 let resend;
+let mailtrap;
 
 export function getResend() {
   if (!resend) {
@@ -16,40 +18,63 @@ export function getResend() {
   return resend;
 }
 
+export function getMailtrap() {
+  if (!mailtrap) {
+    mailtrap = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
+      }
+    });
+  }
+
+  return mailtrap
+}
+
 async function sendEmail({ to, subject, text, html, attachments }) {
-  // if (process.env.NODE_ENV !== "production") {
-  //   return ("test environment - no email sent")
-  // }
   try {
     if (process.env.NODE_ENV === "development") {
       console.log("no email sent for test")
       return ("test environment - no email sent")
+
+    } else if (process.env.NODE_ENV === "staging") {
+      const finalTo = process.env.STAGING_EMAIL_REDIRECT
+
+      const transport = getMailtrap()
+      const info = await transport.sendMail({
+        from: '"WAS Staging" <no-reply@plataformawas.xyz>',
+        to: finalTo,
+        subject: subject,
+        text: text,
+        html: html,
+        attachments: attachments
+      });
+
+      console.log("Message sent:", info.messageId);
+
+    } else if (process.env.NODE_ENV === "production") {
+      const resend = getResend();
+
+      const {data, error} = await resend.emails.send({
+        from: '"WAS Editorial" <no-reply@plataformawas.xyz>',
+        to: to,
+        subject,
+        text,
+        html,
+        attachments,
+      });
+
+      if (error) {
+        throw new Error (JSON.stringify(error))
+      }
+
+      return data;
     }
-
-    const isStaging = process.env.NODE_ENV === "staging"
-
-    const finalTo = isStaging
-      ? process.env.STAGING_EMAIL_REDIRECT
-      : to
-
-    const resend = getResend();
-
-    const {data, error} = await resend.emails.send({
-      from: '"WAS Editorial" <no-reply@plataformawas.xyz>',
-      to: finalTo,
-      subject,
-      text,
-      html,
-      attachments,
-    });
-
-    if (error) {
-      throw new Error (JSON.stringify(error))
-    }
-
-    return data;
   } catch(error) {
     console.error(error)
+    throw error
   }
 }
 
@@ -73,13 +98,20 @@ export async function sendSetPasswordMail(email, name, password) {
 
 export async function sendWelcomeMail(email, name) {
   try {
+    let siteUrl;
+    if (process.env.NODE_ENV != "production") {
+      siteUrl = process.env.STAGING_APP_URL
+    } else {
+      siteUrl = process.env.PRODUCTION_APP_URL
+    }
+
     await sendEmail({
       to: email,
       subject: `Bienvenido en la pagina de autores de WAS`,
       html: `<p>Hola ${name}, \n</p>
       <p>Abrimos tu cuenta en la pagina para autores de WAS Editorial donde vas a poder seguir las ventas y
       resultados de tus libros.</p>
-      <a href="https://plataformawaseditorialstaging.onrender.com/">Entra</a>
+      <a href="${siteUrl}">Entra</a>
       <p>Solo haga clic en "Primera visita o olvidó su contraseña" para empezar el proceso de ingreso.</p>
       `
     })
@@ -92,6 +124,8 @@ export async function sendResetPasswordMail(to, name) {
   try {
     const codigo = Math.floor(Math.random()* 900000 + 100000);
     const user = await prisma.user.findUnique({where: {email: to}});
+    if (!user) throw new Error(`User not found for email: ${to}`);
+    setResetPasswordCode(user.id, codigo);
     await sendEmail({
       to,
       subject: 'Código de confirmación para su cuenta de Was Editorial',
@@ -102,8 +136,6 @@ export async function sendResetPasswordMail(to, name) {
       No comparte este codigó con otras personas. Was Editorial y sus empleadores nunca se lo pidieran.
       Ese codigo estará valido 24 horas.`
     });
-
-    setResetPasswordCode(user.id, codigo);
 
   } catch(error) {
     console.error('Error sending the set password email:', error);

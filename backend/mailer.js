@@ -58,7 +58,7 @@ async function sendEmail({ to, subject, text, html, attachments }) {
       const resend = getResend();
 
       const {data, error} = await resend.emails.send({
-        from: '"WAS Editorial" <no-reply@plataformawas.xyz>',
+        from: '"WAS Editorial" <no-reply@distribucionwas.com>',
         to: to,
         subject,
         text,

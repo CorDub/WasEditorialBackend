@@ -2,44 +2,81 @@ import useCheckUser from "./customHooks/useCheckUser";
 import { useEffect, useState, useContext } from "react";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
-import Table from "./Table";
 import CommissionMonthSelector from "./CommissionMonthSelector";
 import "./AuthorCommissions.scss"
+import Modal from "./Modal";
+import Alert from "./Alert";
+import TableBookstores from "./TableBookstores";
+import { isForMonthNextMonth } from "../../backend/utils";
+import DemandPaymentButton from "./DemandPaymentButton";
 
 function AuthorCommissions() {
   useCheckUser();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
+  const [isDemandPaymentPossible, setDemandPaymentPossible] = useState(true);
+  const [isDemandPaymentTooltipOpen, setDemandPaymentTooltipPossible] = useState('available');
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("payment");
+  const [modalAction, setModalAction] = useState("demand");
+  const [forceRender, setForceRender] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [salesByPayments, setSalesByPayments] = useState([]);
 
-  async function fetchAuthorBookSales() {
-    try {
-      const response = await fetch("http://localhost:3000/author/monthlySales", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include"
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // setDataByMonths(Object.entries(data));
-        setDataByMonths(data);
-      };
-    } catch(error) {
-      console.log("Error when fetching the data", error);
-    }
-  }
-
+  // set the status of payment
   useEffect(() => {
-    fetchAuthorBookSales();
-  }, [])
+    if (paymentInfo != null) {
+      if (paymentInfo.status === "solicited") {
+        setDemandPaymentPossible("solicited");
+        return;
+      }
+      if (paymentInfo.status === "paid") {
+        setDemandPaymentPossible("paid");
+        return;
+      }
+      if (paymentInfo.status === "noVentas") {
+        setDemandPaymentPossible("noVentas");
+        return;
+      }
+      if (paymentInfo.amount < 0) {
+        setDemandPaymentPossible("negativeAmount");
+        return;
+      }
+    }
+
+    if (salesByPayments.length > 0 && Number.isInteger(activeMonth)) {
+      const now = new Date();
+      const year = String(now.getFullYear());
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const currentActiveMonth = year + "-" + month
+      if (currentActiveMonth === salesByPayments[activeMonth].forMonth) {
+        setDemandPaymentPossible("currentMonth");
+        return;
+      }
+      if ((isForMonthNextMonth(currentActiveMonth, salesByPayments[activeMonth].forMonth)) && now.getDate() < 10) {
+        setDemandPaymentPossible("tooEarlyInTheNextMonth");
+        return;
+      }
+      setDemandPaymentPossible("available");
+    }
+  }, [salesByPayments, activeMonth, paymentInfo])
 
   async function fetchPayments() {
     try {
-      const response = await fetch("http://localhost:3000/author/payments", {
+      // check cache (but skip if forceRender is true)
+      // const cachedAuthorPayments = sessionStorage.getItem("authorPayments");
+      // if (cachedAuthorPayments && !forceRender) {
+      //   setPayments(JSON.parse(cachedAuthorPayments));
+      //   setPaymentInfo(JSON.parse(cachedAuthorPayments)[0]);
+      //   return
+      // }
+
+      const response = await fetch(`${baseURL}/api/author/payments`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -49,30 +86,89 @@ function AuthorCommissions() {
 
       if (response.ok) {
         const data = await response.json();
+        // sessionStorage.setItem("authorPayments", JSON.stringify(data));
         setPayments(data);
+        setPaymentInfo(data[activeMonth]);
       };
     } catch(error) {
-      console.log("Error when fetching the data", error);
+      console.error("Error when fetching the data", error);
     }
   }
 
   useEffect(() => {
     fetchPayments();
+  }, [forceRender])
+
+  function closeModal(reload, alertMessage, alertType) {
+    setModalOpen(false);
+    if (reload === true) {
+      setForceRender(prev => !prev);
+    }
+    if (alertMessage) {
+      setAlertMessage(alertMessage);
+      setAlertType(alertType);
+    }
+  }
+
+  async function fetchSalesByPayments() {
+    try {
+      const response = await fetch(`${baseURL}/api/author/monthlySalesByPayments`, {
+        method: "GET",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const salesByPayments = await response.json();
+        setSalesByPayments(salesByPayments);
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchSalesByPayments()
   }, [])
 
   return(
-    <div className="author-commissions">
+    <div className="author-commissions"
+      style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar
         subNav={user && user.role}
         active={"comisiones"} />
-      <CommissionMonthSelector
-        activeMonth={activeMonth}
-        setActiveMonth={setActiveMonth}
-        payments={payments}/>
-      <Table
-        data={dataByMonths}
-        activeMonth={activeMonth}
-        setActiveMonth={setActiveMonth}/>
+      <div className="contain">
+        <div className="author-comissions-left-side">
+          <CommissionMonthSelector
+            activeMonth={activeMonth}
+            setActiveMonth={setActiveMonth}
+            payments={payments}
+            preferredFontSize={user.font_size}
+            setPaymentInfo={setPaymentInfo}/>
+          <DemandPaymentButton
+            isDemandPaymentPossible={isDemandPaymentPossible}
+            setModalOpen={setModalOpen}
+            />
+        </div>
+
+        <div className="author-commissions-right-side">
+          <TableBookstores
+            salesByPayments={salesByPayments}
+            activeMonth={activeMonth}/>
+        </div>
+      </div>
+      {isModalOpen && <Modal
+          paymentInfo={paymentInfo}
+          modalType={modalType}
+          modalAction={modalAction}
+          closeModal={closeModal}/>}
+      <Alert
+        message={alertMessage}
+        type={alertType}
+        setAlertMessage={setAlertMessage}
+        setAlertType={setAlertType}/>
     </div>
   )
 }

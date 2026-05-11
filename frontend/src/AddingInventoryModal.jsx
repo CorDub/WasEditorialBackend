@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -73,7 +74,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/existingBooks', {
+      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +86,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         const data = await response.json();
         setExistingBooks(data);
       } else {
-        console.log("There was an error fetching existing books:", response.status)
+        console.error("There was an error fetching existing books:", response.status)
       }
 
     } catch (error) {
@@ -95,7 +96,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function fetchExistingBookstores() {
     try {
-      const response = await fetch("http://localhost:3000/admin/existingBookstores", {
+      const response = await fetch(`${baseURL}/api/admin/existingBookstores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +108,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
         const data = await response.json();
         setExistingBookstores(data);
       } else {
-        console.log("There was an error fetching the exisiting bookstores:", response.status)
+        console.error("There was an error fetching the exisiting bookstores:", response.status)
       }
 
     } catch (error) {
@@ -200,13 +201,13 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
     let errorInputs;
     let errorsBookstore;
     let errorsBook;
-    const errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-    const errorsInicial = checkForErrors("Cantidad inicial", inicial, expectationsInicial, inicialRef);
+    const errorsPais = checkForErrors("El pais", country, expectationsPais, countryRef, "o");
+    const errorsInicial = checkForErrors("La cantidad inicial", inicial, expectationsInicial, inicialRef, "a");
     if (clickedRow.book) {
-      errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
+      errorsBookstore = checkForErrors("La libreria", bookstore, expectationsBookstore, bookstoreRef, "a");
       errorInputs = [errorsBookstore, errorsPais, errorsInicial];
     } else {
-      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
+      errorsBook = checkForErrors("El libro", book, expectationsBook, bookRef, "o");
       errorInputs = [errorsBook, errorsPais, errorsInicial];
     }
 
@@ -234,7 +235,7 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventory', {
+      const response = await fetch(`${baseURL}/api/admin/inventory`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -250,7 +251,6 @@ function AddingInventoryModal({clickedRow, closeModal, pageIndex, globalFilter})
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;

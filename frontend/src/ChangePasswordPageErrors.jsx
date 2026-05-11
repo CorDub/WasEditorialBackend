@@ -18,7 +18,7 @@ function ChangePasswordPageErrors({ errorList, setErrorList }) {
       case 14:
         return (<p className="login-error">La contraseña no puede estar la misma que la precedente.</p>)
       default:
-        console.log('Unknown error')
+        console.error('Unknown error')
         return;
     }
   }

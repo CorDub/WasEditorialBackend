@@ -1,0 +1,25 @@
+.profile-page-bank-details-open {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0 0.5rem 0;
+  width: 100%;
+}
+
+.ppbd-details {
+  width: 100%;
+}
+
+.ppbd-detail {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0 0.25rem 0;
+}
+
+.ppbd-label {
+  padding-bottom: 0.25rem;
+}
+
+.ppbd-input {
+  width: 100%;
+}

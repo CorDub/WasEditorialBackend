@@ -1,29 +1,34 @@
-import { useContext, useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import useCheckAdmin from './customHooks/useCheckAdmin';
-import InventoriesContext from "./InventoriesContext";
 import "./BookstoreInventory.scss";
-// import BookstoreInventoryBook from "./BookstoreInventoryBook";
 import InventoryTotal from "./InventoryTotal";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import TableActions from "./TableActions";
 import Alert from "./Alert";
 import Modal from "./Modal";
-import ProgressBar from "./ProgressBar";
 
 function BookstoreInventory({
-    selectedBookstore,
     selectedBookstoreNoSpaces,
     selectedLogo,
     isBookstoreInventoryOpen,
-    setBookstoreInventoryOpen}) {
+    setBookstoreInventoryOpen,
+    preferredFontSize,
+    specificBookstore,
+    setSpecificBookstoreOpen}) {
   useCheckAdmin();
-  const { inventories, fetchInventories } = useContext(InventoriesContext);
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const bookstoreInventoryRef = useRef()
+  const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreId, setSelectedBookstoreId] = useState(0);
+  const [impressions, setImpressions] = useState(0);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [initialTotal, setInitialTotal] = useState(0);
   const [returnsTotal, setReturnsTotal] = useState(0);
   const [soldTotal, setSoldTotal] = useState(0);
+  const [entregadosDelAutorTotal, setEntregadosDelAutorTotal] = useState(0);
+  const [transfersTotal, setTransfersTotal] = useState(0);
+  const [extraTransfersTotal, setExtraTransfersTotal] = useState(0);
   const [givenToAuthorTotal, setGivenToAuthorTotal] = useState(0);
   const [clickedRow, setClickedRow] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -34,12 +39,29 @@ function BookstoreInventory({
   const [alertType, setAlertType] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const [isTableActionsOpen, setTableActionsOpen] = useState(false);
+  const [columnVisibility, setColumnVisibility] = useState({
+    "name": true,
+    "initial": true,
+    "impressions": true, 
+    "extraTransfers": false,
+    "copias": false,
+    "returns": true,
+    "entregadosDelAutor": true,
+    "entregadosAlAutor": true,
+    "transfers": true,
+    "ventas": true,
+  });
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
 
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
-        <div>
+        <div style={{position:"relative", overflow:"visible !important"}}>
           <TableActions
             key={isTableActionsOpen}
             openModal={openModal}
@@ -50,148 +72,95 @@ function BookstoreInventory({
             type={"inventory"}/>
         </div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '3%'
-        }
-      },
       muiTableBodyCellProps: {
         sx: {
-          width: '3%'
+          overflow: 'visible'
         }
       }
     },
     {
       header: "Libro",
-      accessorKey:'book.title',
-      muiTableHeadCellProps: {
-        sx: {
-          width: '7%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '7%'
-        }
-      }
+      maxSize: 200,
+      accessorKey:'name',
     },
     {
-      header: "Vendidos",
+      header: "Inicial",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => {
-        return (<div>{row.original.totalSales} / {row.original.initial}</div>)
+        return (<div>{row.original.inicial}</div>)
       },
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
+    },
+    {
+      id: "impressions",
+      header: "Nuevas impresiónes",
+      size: 50,
+      Cell: ({row}) => {
+        return (<div>{row.original.extraImpressions}</div>)
       },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%'
-        }
-      }
+    },
+    {
+      header: "Nuevos ingresos",
+      accessorKey: "extraTransfers",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null
+    },
+    {
+      header: "Entregados del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 50
+    },
+    {
+      header: "Ingresados a otra librerías",
+      accessorKey: "transfers",
+      size: 50
     },
     {
       header: "Devueltos",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => (
-        <div>{row.original.returns} / {row.original.initial}</div>
+        <div>{row.original.returns}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%'
-        }
-      }
     },
     {
+      header: "Vendidos",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
+      Cell: ({row}) => {
+        return (<div>{row.original.ventas}</div>)
+      },
+    },
+    {
+      id: "entregadosAlAutor",
+      size: 50,
       header: "Entregados al autor",
       Cell: ({row}) => (
-        <div>{row.original.givenToAuthor} / {row.original.initial}</div>
+        <div>{row.original.entregadosAlAutor}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%'
-        }
-      }
     },
     {
+      id: "disponibles",
       header: "Disponibles",
+      size: specificBookstore.total.bookstoreId === 1 ? 50 : null,
       Cell: ({row}) => (
-        <div>{row.original.current - row.original.returns} / {row.original.initial}</div>
+        <div>{row.original.disponibles}</div>
       ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%'
-        }
-      }
     },
-    {
-      header: "País",
-      accessorKey: "country",
-      muiTableHeadCellProps: {
-        sx: {
-          width: '5%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '5%'
-        }
-      }
-    },
-    {
-      header: "Progreso",
-      Cell: ({row}) => (
-        <ProgressBar
-          current={row.original.current}
-          initial={row.original.initial}
-          returns={row.original.returns}
-          sold={row.original.totalSales}
-          given={row.original.givenToAuthor} />
-      ),
-      muiTableHeadCellProps: {
-        sx: {
-          width: '10%'
-        }
-      },
-      muiTableBodyCellProps: {
-        sx: {
-          width: '10%'
-        }
-      }
-    }
   ], [isTableActionsOpen]);
   const table = useMaterialReactTable({
     columns,
     data,
+    localization: {
+      noRecordsToDisplay: 'Descargando datos'
+    },
     enableDensityToggle: false,
-    enablePagination: false,
+    enablePagination: true,
     enableFullScreenToggle: false,
-    enableRowVirtualization: true,
-    renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <button onClick={() => openModal("adding", {bookstore: selectedBookstore})} className="blue-button table-button">Añadir nuevo inventario</button>
-      </div>
-    ),
+    enableRowVirtualization: false,
     initialState: {
       density: 'compact',
     },
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { pagination, globalFilter, columnVisibility },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -205,7 +174,7 @@ function BookstoreInventory({
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '72vh',
+        maxHeight: '65vh',
         overflowY: 'auto'
       }
     },
@@ -222,8 +191,12 @@ function BookstoreInventory({
     },
     muiTableBodyCellProps: {
       sx: {
-        overflow: "visible"
-      }
+        position: "relative",
+        fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem) !important`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      },
     },
     muiTopToolbarProps: {
       sx: {
@@ -237,39 +210,90 @@ function BookstoreInventory({
     }
   });
 
+  // ensures the modalType is reset to the correct one after you add a transfer
   useEffect(() => {
-    if (!inventories) {
-      fetchInventories();
+    if (!isModalOpen) {
+      setModalType("inventory");
     }
-    selectRelevantInventories();
-  }, [inventories])
+  }, [modalType, isModalOpen])
 
-  function selectRelevantInventories() {
-    const relevantInventories = [];
-    let currentTotal = 0;
-    let initialTotal = 0;
-    let returnsTotal = 0;
-    let givenToAuthorTotal = 0;
-    let soldTotal = 0;
-    for (const inventory of inventories) {
-      if (inventory.bookstore.name === selectedBookstore) {
-        relevantInventories.push(inventory);
-        currentTotal += inventory.current;
-        initialTotal += inventory.initial;
-        returnsTotal += inventory.returns;
-        givenToAuthorTotal += inventory.givenToAuthor;
-        for (const sale of inventory.sales) {
-          soldTotal += sale.quantity
-        }
+  useEffect(() => {
+    if (specificBookstore) {
+      setData(specificBookstore.specifics)
+      setSelectedBookstoreId(specificBookstore.total.bookstoreId)
+      setSelectedBookstore(specificBookstore.total.name)
+      setCurrentTotal(specificBookstore.total.disponibles)
+      setInitialTotal(specificBookstore.total.inicial)
+      setSoldTotal(specificBookstore.total.ventas)
+      setGivenToAuthorTotal(specificBookstore.total.entregadosAlAutor)
+      setReturnsTotal(specificBookstore.total.returns)
+      setImpressions(specificBookstore.total.extraImpressions)
+      setEntregadosDelAutorTotal(specificBookstore.total.entregadosDelAutor)
+      setTransfersTotal(specificBookstore.total.transfers)
+      setExtraTransfersTotal(specificBookstore.total.extraTransfers)
+
+      if (specificBookstore.total.bookstoreId === 1) {
+        setColumnVisibility(
+          {
+            "name": true,
+            "initial": true,
+            "impressions": true, 
+            "extraTransfers": false,
+            "copias": false,
+            "returns": true,
+            "entregadosDelAutor": true,
+            "entregadosAlAutor": true,
+            "transfers": true,
+            "ventas": true,
+          })
+      } else {
+        setColumnVisibility(
+          {
+            "name": true,
+            "initial": true,
+            "impressions": false, 
+            "extraTransfers": true,
+            "copias": false,
+            "returns": true,
+            "entregadosDelAutor": false,
+            "entregadosAlAutor": false,
+            "transfers": false,
+            "ventas": true,
+          }
+        )
       }
     }
-    setCurrentTotal(currentTotal);
-    setInitialTotal(initialTotal);
-    setReturnsTotal(returnsTotal);
-    setGivenToAuthorTotal(givenToAuthorTotal);
-    setSoldTotal(soldTotal);
-    const sortedRelevantInventories = relevantInventories.sort((a, b) => b.current - a.current);
-    setData(sortedRelevantInventories);
+  }, [specificBookstore])
+
+  async function getBookstoreInventories() {
+    try {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore/${selectedBookstoreId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setData(data.specifics)
+        setSelectedBookstoreId(data.total.bookstoreId)
+        setSelectedBookstore(data.total.name)
+        setCurrentTotal(data.total.disponibles)
+        setInitialTotal(data.total.inicial)
+        setSoldTotal(data.total.ventas)
+        setGivenToAuthorTotal(data.total.entregadosAlAutor)
+        setReturnsTotal(data.total.returns)
+        setImpressions(data.total.extraImpressions)
+        setEntregadosDelAutorTotal(data.total.entregadosDelAutor)
+        setTransfersTotal(data.total.transfers)
+        setExtraTransfersTotal(data.total.extraTransfers)
+      }
+
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
@@ -291,7 +315,7 @@ function BookstoreInventory({
         setModalAction("delete");
         break;
       default:
-        console.log("Unknown error")
+        console.error("Unknown error")
         return;
     }
     setModalOpen(true);
@@ -303,8 +327,8 @@ function BookstoreInventory({
     setTableActionsOpen(prev => !prev);
     globalFilter && setGlobalFilter(globalFilter);
     if (reload === true) {
-      fetchInventories();
-      setForceRender(!forceRender);
+      getBookstoreInventories();
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
@@ -315,9 +339,11 @@ function BookstoreInventory({
   return (
     <div
       className="bookstore-inventory"
-      ref={bookstoreInventoryRef}>
+      ref={bookstoreInventoryRef}
+      style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.5rem)`}}>
       <InventoryTotal
         selectedBookstore={selectedBookstore}
+        selectedBookstoreId={selectedBookstoreId}
         selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
         selectedLogo={selectedLogo}
         currentTotal={currentTotal}
@@ -325,8 +351,14 @@ function BookstoreInventory({
         returnsTotal={returnsTotal}
         givenToAuthorTotal={givenToAuthorTotal}
         soldTotal={soldTotal}
+        entregadosDelAutorTotal={entregadosDelAutorTotal}
+        transfersTotal={transfersTotal}
+        extraTransfersTotal={extraTransfersTotal}
         isBookstoreInventoryOpen={isBookstoreInventoryOpen}
-        setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>
+        setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+        preferredFontSize={preferredFontSize}
+        setSpecificBookstoreOpen={setSpecificBookstoreOpen}
+        impressions={impressions}/>
       {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
           closeModal={closeModal} globalFilter={globalFilter} />}
       {data && <MaterialReactTable table={table}/>}

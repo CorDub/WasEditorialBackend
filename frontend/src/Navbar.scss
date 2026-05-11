@@ -64,3 +64,36 @@
 .navbar-input:focus-visible {
   outline: none;
 }
+
+.navbar-logout {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-profile {
+  margin-right: 1em;
+}
+
+.navbar-profile-icon {
+  color: #4E5981;
+  border-radius: 50%;
+  background-color: #E2E2E2;
+  padding: 0.5rem;
+  width: 9px;
+  height: 9px;
+}
+
+.navbar-profile-icon-active {
+  color: #4E5981;
+  border-radius: 50%;
+  background-color: white;
+  padding: 0.5rem;
+  width: 9px;
+  height: 9px;
+  box-shadow: 1px 1px 5px rgba(255, 255, 255, 0.5);
+}
+
+.navbar-profile-icon:hover {
+  cursor: pointer;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+}

@@ -4,19 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { changeDateFormat } from "../../backend/utils";
 
 function Impression({impression, setModalType, openModal, book}) {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState('');
   const [isActionsOpen, setActionsOpen] = useState(false);
   const impressionGearRef = useRef();
   const [completeImpression, setCompleteImpression] = useState(null);
 
-  console.log(impression)
-
-  useEffect(() =>{
-    const date = new Date(impression.createdAt);
-    const formattedDate = date.toLocaleDateString();
-    setDate(formattedDate);
+  useEffect(() => {
+    const formattedDate = changeDateFormat(impression.dateStr, "dayFirst")
+    setDate(formattedDate)
   }, [impression])
 
   function openActions() {
@@ -40,7 +38,7 @@ function Impression({impression, setModalType, openModal, book}) {
 
   useEffect(() => {
     setCompleteImpression({...impression, bookId: book.id})
-  }, [book])
+  }, [book, impression])
 
   return(
     <div className="impression">
@@ -62,7 +60,7 @@ function Impression({impression, setModalType, openModal, book}) {
             onClick={openDeleteModal}/>
         </div>}
       <div className="impression-info">
-        {date} - {impression.quantity} copias {impression.note}
+        {date} - {impression.quantity} copias {impression.note && ` - ${impression.note}`}
       </div>
     </div>
   )

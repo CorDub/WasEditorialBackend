@@ -6,6 +6,7 @@ import ErrorsList from "./ErrorsList";
 import Alert from './Alert';
 
 function ForgottenPasswordPage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [correo1, setCorreo1] = useState("")
   const [correo2, setCorreo2] = useState("")
   const navigate = useNavigate();
@@ -18,20 +19,22 @@ function ForgottenPasswordPage() {
   async function sendToServer() {
     try {
       if (correo1 !== correo2) {
-        // return alert("Los correos ingresados no eran los mismos.");
         setErrors(prev => [...prev, "Los correos ingresados no eran los mismos."])
       }
 
-      const response = await fetch(`http://localhost:3000/api/user?email=${correo1}`, {
-        method: "GET",
+      const response = await fetch(`${baseURL}/api/user/reset`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
+        body: JSON.stringify({
+          email: correo1
+        })
       });
 
       if (response.ok === false) {
-        return console.log(response.status);
+        return console.error(response.status);
       };
 
       if (response.status === 204) {
@@ -91,7 +94,7 @@ function ForgottenPasswordPage() {
           className="global-input" ref={email2Ref}
           onChange={(e) => setCorreo2(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors} />
-        <button type="submit" className="blue-button">Submit</button>
+        <button type="submit" className="blue-button" style={{marginTop: "0.5rem"}}>Ingresar</button>
       </form>
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>

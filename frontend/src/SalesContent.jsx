@@ -1,8 +1,14 @@
 import useCheckUser from "./customHooks/useCheckUser";
 import { Label, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import formatNumber from "./customHooks/formatNumber.jsx"
 
-const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
+const SalesContent = ({
+  salesData,
+  selectedBook,
+  monthlyData,
+  preferredFontSize }) => {
   useCheckUser();
+
   const selectedBookSales = selectedBook === 'total'
     ? salesData.totalSales
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.quantity || 0;
@@ -11,32 +17,52 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
     ? salesData.totalValue
     : salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.value || 0;
 
+  const selectedBookTitle = salesData.bookSales.find(book => book.bookId === parseInt(selectedBook))?.title || "";
+
   return (
     <div id="author-sales-content">
       <div id="author-sales-content-left">
         <div id="total-sales">
           <h3>Libros vendidos</h3>
           <p>{selectedBookSales} libros</p>
-          <p className="sales-value">$ {selectedBookValue.toLocaleString()}</p>
+          <p className="sales-value">{formatNumber(selectedBookValue)}</p>
+          <p style={{fontWeight: "400", fontSize:"14px", marginTop:'0.5rem', fontStyle:"italic"}}>Este reporte no contiene datos de ventas en Kindle</p>
         </div>
         <div id="books-sold">
-          {selectedBook === 'total' && (
-            <ul>
+          {selectedBook === 'total'
+            ? <ul>
               {salesData.bookSales.map(book => (
-                <li key={book.bookId} className='books-sold-item'>
-                  {book.title}: {book.quantity} libros <span>($ {book.value.toLocaleString()})</span>
+                <li key={book.bookId}
+                  className='books-sold-item'
+                  style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
+                  title={`${book.title}: ${book.quantity} libros (${formatNumber(book.value)})`}>
+                    <div>
+                      <div style={{fontWeight: "bold"}}>{book.title}</div>
+                      <div>{book.quantity} libros - <span>{formatNumber(book.value)}</span></div>
+                    </div>
                 </li>
               ))}
             </ul>
-          )}
+            : <ul>
+              <li className="books-sold-item"
+                style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
+                title={`${selectedBook}: ${selectedBookSales} libros (${formatNumber(selectedBookValue)})`}>
+                <div>
+                  <div style={{fontWeight: "bold"}}>{selectedBookTitle}</div>
+                  <div>{selectedBookSales} libros - <span>{formatNumber(selectedBookValue)}</span></div>
+                </div>
+              </li>
+            </ul>
+          }
         </div>
       </div>
       <div id="author-sales-content-right">
         <div id="sales-chart">
           <div className="chart-header">
-            <h3>Ventas mensuales</h3>
+            <h3>Ventas</h3>
           </div>
-          <ResponsiveContainer width="100%" height={400}>
+          {monthlyData && (
+            <ResponsiveContainer width="100%" height={400}>
             <LineChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -50,7 +76,7 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                tickFormatter={(value) => value.toLocaleString()}
+                tickFormatter={(value) => "$ " + value.toLocaleString()}
                 >
                 <Label
                   value="Valor de ventas ($)"
@@ -59,7 +85,24 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
                   angle={0}
                 />
               </YAxis>
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const quantity = payload.find(p => p.name === 'Libros vendidos')?.value ?? 0;
+                    const value = payload[0].payload.value ?? 0; // From data
+
+                    return (
+                      <div style={{ background: "#fff", padding: "8px", border: "1px solid #ccc" }}>
+                        <p><strong>{label}</strong></p>
+                        <p>Libros vendidos: {quantity}</p>
+                        <p>Valor de ventas: {formatNumber(value)}</p>
+                      </div>
+                    );
+                  }
+
+                  return null;
+                }}
+              />
               <Legend />
               <Line
                 yAxisId="left"
@@ -68,15 +111,16 @@ const SalesContent = ({ salesData, selectedBook, monthlyData }) => {
                 stroke="#8884d8"
                 name="Libros vendidos"
               />
-              <Line
+              {/* <Line
                 yAxisId="right"
                 type="monotone"
                 dataKey="value"
                 stroke="#82ca9d"
                 name="Valor de ventas ($)"
-              />
+              /> */}
             </LineChart>
           </ResponsiveContainer>
+          )}
         </div>
       </div>
     </div>

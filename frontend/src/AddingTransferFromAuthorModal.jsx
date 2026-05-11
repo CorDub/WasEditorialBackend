@@ -2,14 +2,19 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
+// import { DateTime } from "luxon";
+import { today } from "../../backend/utils.js";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
+
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
+  const [dateStr, setDateStr] = useState(today());
   const quantityRef = useRef();
+  const dateStrRef = useRef();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -31,20 +36,34 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
       type: "number",
       presence: "not empty",
       range: "positive",
-      maximum: clickedRow.current
     }
 
     const errorsQuantity = checkForErrors(
-      "La cantidad",
+      "Cantidad",
       quantity,
       expectationsQuantity,
-      quantityRef
+      quantityRef,
+      "a"
     )
+    //aditional check for not being over current entregados al autor
+    const currentDevoluciones = clickedRow.entregadosDelAutor
+    if ((currentDevoluciones + parseInt(quantity)) > clickedRow.entregadosAlAutor) {
+      errorsQuantity.push("El autor no puede regresar mas libros que le han entregados")
+    }
 
-    if (errorsQuantity.length > 0) {
-      errorsList.push(errorsQuantity);
-    };
-    console.log("errorsQuantity", errorsQuantity);
+    const expectationsDateStr = {
+      type: "string",
+      presence: "not empty",
+      range: "no future"
+    }
+    const errorsDateStr = checkForErrors("La fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+
+    const errorInputs = [errorsQuantity, errorsDateStr];
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+      }
+    }
 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
@@ -52,7 +71,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/impression', {
+      const response = await fetch(`${baseURL}/api/admin/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -61,13 +80,14 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         body: JSON.stringify({
           quantity: quantity,
           id: clickedRow.bookId,
-          note: "- Entrega del autor - " + note
+          note: "- Devolución del autor - " + note,
+          dateStr: dateStr,
+          authorDelivery: true
         }),
       });
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -86,20 +106,30 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   return(
     <div className="modal-proper">
       <div className="form-title">
-        <p>Nueva entrega del autor</p>
-        <p>{clickedRow && clickedRow.book.title }</p>
+        <p>Nueva devolución del autor</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
-      <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una entrega del autor es considerada como una impression y sera visible en las impresiones</p>
+      {/* <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p> */}
       <form
         onSubmit={handleSubmit}
         className="global-form">
         <input
           type='text'
           placeholder="Cantidad"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           className="global-input transfer-quantity"
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}>
         </input>
+        <input
+          type="date"
+          placeholder="Fecha"
+          ref={dateStrRef}
+          className="global-input transfer-quantity"
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}/>
         <input
           type="text"
           placeholder="Comentario (opcional)"

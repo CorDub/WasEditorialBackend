@@ -1,69 +1,151 @@
-import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useEffect, useState, useMemo, useContext } from "react";
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import Navbar from "./Navbar";
-import Modal from "./Modal";
 import Alert from "./Alert";
-import UserContext from "./UserContext";
-import TableActions from "./TableActions";
+import LoadingWheel from "./LoadingWheel";
+import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import UserContext from './UserContext';
+import BookstoreInventory from './BookstoreInventory';
+import BookInventory from './BookInventory';
 
 function InventoriesList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [clickedRow, setClickedRow] = useState(null);
-  const [modalType, setModalType] = useState("inventory");
-  const [modalAction, setModalAction] = useState("");
-  const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
+  const [isLoading, setLoading] = useState(false);
+  const [specificBookstore, setSpecificBookstore] = useState({});
+  const [specificBook, setSpecificBook] = useState({});
+  const [isSpecificBookstoreOpen, setSpecificBookstoreOpen] = useState(false);
+  const [isSpecificBookOpen, setSpecificBookOpen] = useState(false);
+  const [isInventoryTypeBook, setInventoryType] = useState(false)
+  const [columnVisibility, setColumnVisibility] = useState({
+    "name": true,
+    "initial": true,
+    "extraImpressions": true, 
+    "copias": false,
+    "returns": true,
+    "entregadosDelAutor": true,
+    "entregadosAlAutor": true,
+    "transfers": true,
+    "ventas": true,
+  });
+  
   const columns = useMemo(() => [
     {
-      header: "Acciones",
-      Cell: ({row}) => (
-        <div>
-          <TableActions openModal={openModal} row={row}/>
+      header: "Nombre",
+      accessorKey: "name",
+      maxSize: 200,
+      Cell: ({row}) => {
+        return (
+        <div
+          onClick={() => openSpecifics(row.original.type, row.original.id)}
+          className="table-clickable-row">
+          {row.original.name}
         </div>
-      )
+      )}
     },
     {
-      header: "Libro",
-      accessorKey:'book.title'
+      header: isInventoryTypeBook ? "Impresión inicial" : "Impresión / Ingreso inicial",
+      size: 100,
+      accessorKey: "initial",
+      Cell: ({row}) => {
+        return (
+          row.original.impressionInicial || row.original.transferInicial
+        )
+      }
     },
     {
-      header: "Libreria",
-      accessorKey: "bookstore.name"
+      header: isInventoryTypeBook ? "Nuveas impresiónes" : "Nuevas impresiónes / ingresos",
+      size: 100,
+      accessorKey: "extraImpressions",
+      Cell: ({row}) => {
+        return (row.original.extraImpressions || row.original.extraTransfers || '-')
+      }
     },
     {
-      header: "País",
-      accessorKey: "country"
+      header: "Copias",
+      accessorKey: "copias",
+      size: 100
     },
     {
-      header: "Cantidad",
+      header: "Ingresados a otras librerias",
+      accessorKey: "transfers",
+      size: 100,
+      Cell: ({row}) => ( row.original.transfers || "-")
+    },
+    {
+      header: "Vendidos",
+      size: 100,
+      accessorKey: "ventas",
+    },
+    {
+      header: "Devueltos",
+      size: 100,
+      accessorKey: "returns",
       Cell: ({row}) => (
-        <div>{row.original.current}/{row.original.initial}</div>
+        <div>{row.original.returns === 0 
+          ? "-"
+          : row.original.type === "bookstore" && row.original.id === 1 
+            ? `+ ${row.original.returns}` 
+            : `- ${row.original.returns}`}</div>
       )
-    }
+    },
+    {
+      header: "Entregados al autor",
+      size: 100,
+      accessorKey: "entregadosAlAutor",
+      Cell: ({row}) => ( row.original.entregadosAlAutor || "-")
+    },
+    {
+      header: "Devoluciones del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 100,
+      Cell: ({row}) => ( row.original.entregadosDelAutor || '-')
+    },
+    {
+      header: "Disponibles",
+      size: 100,
+      accessorKey: "disponibles"
+    },
   ], []);
   const table = useMaterialReactTable({
     columns,
     data,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    enableRowVirtualization: true,
     renderTopToolbarCustomActions: () => (
-      <div className="table-add-button">
-        <button onClick={() => openModal("adding", null)} className="blue-button">Añadir nuevo inventario</button>
-      </div>
+      <>
+        <div className="table-button-inventories">
+          <div className="table-add-button">
+            <div
+              className={isInventoryTypeBook ? "blue-button-inactive" : "blue-button non-clickable"}
+              style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+              onClick={() => isInventoryTypeBook && toggleInventoriesType()}>
+                Inventarios por librería</div>
+            <div
+              className={isInventoryTypeBook ? "blue-button non-clickable" : "blue-button-inactive"}
+              style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}
+              onClick={() => !isInventoryTypeBook && toggleInventoriesType()}>
+                Inventarios por libro</div>
+          </div>
+        </div>
+      </>
     ),
     initialState: {
       density: 'compact',
     },
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { pagination, globalFilter, columnVisibility },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -72,8 +154,13 @@ function InventoriesList() {
         position: "fixed",
         top: "60px",
         left: "10px",
-        width: "99vw",
-        zIndex: "0",
+        width: "98.5vw"
+      }
+    },
+      muiTableContainerProps: {
+      sx: {
+          maxHeight: '79vh',
+          overflowY: 'auto'
       }
     },
     muiTableBodyRowProps: {
@@ -84,6 +171,14 @@ function InventoriesList() {
     muiTableHeadCellProps: {
       sx: {
         backgroundColor: "#fff"
+      }
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
       }
     },
     muiTopToolbarProps: {
@@ -98,68 +193,138 @@ function InventoriesList() {
     }
   });
 
-  function openModal(type, clickedRow) {
-    setClickedRow(clickedRow);
-    switch (type) {
-      case 'adding':
-        setModalAction("adding");
-        break;
-      case 'edit':
-        setModalAction("edit");
-        break;
-      case 'delete':
-        setModalAction("delete");
-        break;
-      default:
-        console.log("Unknown error")
-        return;
-    }
-    setModalOpen(true);
-  }
-
-  function closeModal(globalFilter, reload, alertMessage, alertType) {
-    setModalOpen(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
-  }
-
-  async function fetchInventories() {
+  async function openSpecifics(type, id) {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
+      if (type === "bookstore") {
+        const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSpecificBookstore(data);
+          setSpecificBookstoreOpen(true);
+        }
+      } else if (type === "book") {
+        const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSpecificBook(data);
+          setSpecificBookOpen(true);
+        }
+      }
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function getBookstoreInventories() {
+    try {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBookstore`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
-        credentials: 'include'
-      })
+        credentials: "include"
+      });
 
       if (response.ok) {
         const data = await response.json();
         setData(data);
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    fetchInventories();
-  }, [forceRender]);
+    getBookstoreInventories();
+  }, []);
+
+  async function getBookInventories() {
+    try {
+      const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook`, {
+        method: "GET",
+        header: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setData(data);
+      }
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function toggleInventoriesType() {
+    const newType = !isInventoryTypeBook;
+    setInventoryType(newType);
+    if (newType) {
+      getBookInventories();
+      setColumnVisibility((prev) => ({
+        "name": true,
+        "initial": true,
+        "extraImpressions": true, 
+        "copias": false,
+        "returns": false,
+        // "entregadosDelAutor": true,
+        "entregadosAlAutor": true,
+        "transfers": false,
+        "ventas": true,
+      }))
+    } else {
+      getBookstoreInventories();
+      setColumnVisibility((prev) => ({
+        "name": true,
+        "initial": true,
+        "extraImpressions": true, 
+        "copias": false,
+        "returns": true,
+        // "entregadosDelAutor": true,
+        "entregadosAlAutor": true,
+        "transfers": true,
+        "ventas": true,
+      }))
+    }
+  }
 
   return(
-    <div>
-      <Navbar subNav={user.role} active={"inventorias"}/>
-      {isModalOpen && <Modal modalType={modalType} modalAction={modalAction} clickedRow={clickedRow}
-          closeModal={closeModal} globalFilter={globalFilter} />}
-      {data && <MaterialReactTable table={table}/>}
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
+      <Navbar subNav={user.role} active={"inventories-list"}/>
+      {isLoading && <LoadingWheel />}
+      {data
+        && !isLoading
+        && !isSpecificBookstoreOpen
+        && <MaterialReactTable table={table} />}
+      {specificBookstore
+        && isSpecificBookstoreOpen
+        && <BookstoreInventory
+          specificBookstore={specificBookstore}
+          setSpecificBookstoreOpen={setSpecificBookstoreOpen}/> }
+      {specificBook
+        && isSpecificBookOpen
+        && <BookInventory
+          specificBook={specificBook}
+          setSpecificBookOpen={setSpecificBookOpen}/> }
       <Alert message={alertMessage} type={alertType}
-        setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
+        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
     </div>
   )
 }

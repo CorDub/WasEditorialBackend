@@ -1,73 +1,115 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
+// import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
+import checkForErrors from "./customHooks/checkForErrors";
+import ErrorsList from "./ErrorsList";
+import { countryCallingCodes } from "../countryCodes";
 
-function EditAuthorModal({ row, closeEditModal, globalFilter }) {
+function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
-  const [firstName, setFirstName] = useState(row.first_name);
-  const [lastName, setLastName] = useState(row.last_name ? row.last_name : "");
-  const [country, setCountry] = useState(row.country ? row.country : "");
-  const [referido, setReferido] = useState(row.referido ? row.referido : "");
-  const [email, setEmail] = useState(row.email ? row.email : "");
-  const [category, setCategory] = useState(row.category ? row.category.type : "");
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
+  const [firstName, setFirstName] = useState(clickedRow.first_name);
+  const [lastName, setLastName] = useState(clickedRow.last_name);
+  const [referido, setReferido] = useState(clickedRow.referido || "");
+  const [email, setEmail] = useState(clickedRow.email || "");
+  const [phone, setPhone] = useState(clickedRow.phone || '');
+  const [phonePrefix, setPhonePrefix] = useState('+52');
+  const [fullPhoneNumber, setFullPhoneNumber] = useState('');
+  const [birthday, setBirthday] = useState(clickedRow.birthday || '');
+  const [day, setDay] = useState(clickedRow.birthday ? clickedRow.birthday.substring(0,2) : '');
+  const [month, setMonth] = useState(clickedRow.birthday ? clickedRow.birthday.substring(2,4) : '');
+  const [year, setYear] = useState(clickedRow.birthday ? clickedRow.birthday.substring(4,8) : '');
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const referidoRef = useRef();
+  const emailRef = useRef();
+  const phoneRef = useRef();
+  const phonePrefixRef = useRef();
+  const dayRef = useRef();
+  const monthRef = useRef();
+  const yearRef = useRef();
+  const fullBirthdayRef = useRef();
   const [errors, setErrors] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
 
-  async function editAuthor(e) {
-    let fullCategory = {};
-    categories.map((cat) => {
-      if (cat.type === parseInt(category)) {
-        fullCategory = cat;
-        return;
+  useEffect(() => {
+    setBirthday(day.padStart(2, "0") + month.padStart(2, "0") + year)
+  }, [day, month, year])
+
+  useEffect(() => {
+    setFullPhoneNumber(phonePrefix + phone)
+  }, [phone, phonePrefix])
+
+  // Get the prefix and sort the list based on this
+  useEffect(() => {
+    if (clickedRow.phone) {
+      // get the code
+      const prefix = clickedRow.phonePrefix;
+      const phoneNumber = clickedRow.phone;
+
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === prefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === prefix) { continue }
+        sortedCountryCodeList.push(country)
       }
-    });
-    e.preventDefault();
+
+      // set everything
+      setPhonePrefix(prefix)
+      setPhone(phoneNumber)
+      setSortedCountryCodes(sortedCountryCodeList)
+    } else {
+      // find the current country in the list
+      let sortedCountryCodeList = [];
+      const currentCountryCode = countryCallingCodes.find(element => element.code === phonePrefix)
+
+      // sort the list
+      sortedCountryCodeList.push(currentCountryCode);
+      for (const country of countryCallingCodes) {
+        if (country.code === phonePrefix) { continue }
+        sortedCountryCodeList.push(country)
+      }
+
+      // set everything
+      setSortedCountryCodes(sortedCountryCodeList)
+    }
+  }, [clickedRow.phone])
+
+  async function editAuthor() {
     try {
-      const response = await fetch('http://localhost:3000/admin/user', {
+      const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
-          id: row.id,
           first_name: firstName,
           last_name: lastName,
-          country: country,
           referido: referido,
           email: email,
-          categoryId: fullCategory.id
+          phone: phone,
+          phonePrefix : phonePrefix,
+          birthday: birthday === "0000" ? null : birthday,
         })
       });
 
-      if (response.ok === true) {
-        const alertMessage = (`Actualizado ${firstName} ${lastName} con exito`);
-        closeEditModal(globalFilter, true, alertMessage, "confirmation");
+      if (response.ok) {
+        const alertMessage = (`${firstName} ${lastName} ha estado actualizado con exito`);
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
+      } else {
+        const error = await response.json();
+        if (error.message) {
+          checkForServerErrors(error.message);
+          return;
+        }
+        const alertMessage = 'No se pudó editar el autor.';
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch(error) {
@@ -75,32 +117,7 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
     }
   }
 
-  function dropDownChange(e, input_name) {
-    const inputs = {
-      "Category": {
-        "function": setCategory,
-        "element": document.getElementById("category-select")
-      },
-      "Country": {
-        "function": setCountry,
-        "element": document.getElementById("country-select")
-      }
-    }
-
-    if (e.target.value === "null") {
-      inputs[input_name]["function"](null);
-      if (inputs[input_name]["element"].classList.contains("selected") === true) {
-        inputs[input_name]["element"].classList.remove("selected")
-      };
-    } else {
-      inputs[input_name]["function"](e.target.value);
-      if (inputs[input_name]["element"].classList.contains("selected") === false) {
-        inputs[input_name]["element"].classList.add("selected")
-      };
-    };
-  }
-
-  function checkForErrors(serverError) {
+  function checkForServerErrors(serverError) {
     function addErrorClass(input_name) {
       if (!input_name.classList.contains("error-inputs")) {
         input_name.classList.add("error-inputs");
@@ -110,166 +127,213 @@ function EditAuthorModal({ row, closeEditModal, globalFilter }) {
     let errorList = [];
     const inputFirstName = document.getElementById('adding-author-first-name');
     const inputLastName = document.getElementById('adding-author-last-name');
-    const inputCountry = document.getElementById('country-select');
-    const inputReferido = document.getElementById('adding-author-referido');
     const inputEmail = document.getElementById('adding-author-email');
-    const inputCategory = document.getElementById('category-select');
-    const inputsList = [inputFirstName, inputLastName, inputCountry,
-      inputReferido, inputEmail, inputCategory];
-
-    inputsList.forEach((input) => {
-      if (input.classList.contains("error-inputs")) {
-        input.classList.remove("error-inputs");
-      }
-    })
-
-    if (firstName === '') {
-      errorList.push(11);
-      addErrorClass(inputFirstName);
-    };
-
-    if (firstName.length > 50) {
-      errorList.push(12);
-      addErrorClass(inputFirstName);
-    };
-
-    if (lastName.length > 50) {
-      errorList.push(22);
-      addErrorClass(inputLastName);
-    };
-
-    if (serverError === "Un autor con el mismo nombre completo ya existe") {
-      errorList.push(121);
+    if (serverError === "Un autor con el mismo nombre completo ya existe"
+      || serverError === "Este usuario ya existe"
+    ) {
+      errorList.push(serverError);
       addErrorClass(inputFirstName);
       addErrorClass(inputLastName);
     }
-
-    if (country === null) {
-      errorList.push(31);
-      addErrorClass(inputCountry);
-    };
-
-    if (!countries.includes(country)) {
-      errorList.push(32);
-      addErrorClass(inputCountry);
-    };
-
-    if (referido.length > 100) {
-      errorList.push(41);
-      addErrorClass(inputReferido);
-    };
-
-    if (email === '') {
-      errorList.push(51);
-      addErrorClass(inputEmail);
-    };
-
-    if (email.length > 50) {
-      errorList.push(52);
-      addErrorClass(inputEmail);
-    };
 
     if (serverError === "El correo ya está usado") {
-      errorList.push(53);
+      errorList.push(serverError);
       addErrorClass(inputEmail);
     }
-
-    if (category === null) {
-      errorList.push(61);
-      addErrorClass(inputCategory);
-    };
-
-    const categories_types = [];
-    categories.map((cat) => {
-      categories_types.push(cat.type)
-    });
-    if (!categories_types.includes(parseInt(category))) {
-      errorList.push(62);
-      addErrorClass(inputCategory);
-    };
 
     setErrors(errorList);
     return errorList;
   }
 
-  async function fetchCategoryTypes() {
-      try {
-        const response = await fetch('http://localhost:3000/admin/categories-type', {
-          method: 'GET',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include"
-        });
+  function checkInputs() {
+    let errorsList = []
+    const firstNameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    }
+    const lastNameExpectations = {
+      type: "string",
+      presence: "not empty",
+      length: 50
+    }
+    const emailExpectations = {
+      presence: "not empty",
+      type: "string",
+      validity: "email valid"
+    }
+    const referidoExpectations = {
+      type: "string"
+    }
+    const birthdayDayExpectations = {
+      type: "number",
+      minimum: 1,
+      maximum: 31
+    }
+    const birthdayMonthExpectations = {
+      type: "number",
+      minimum: 1,
+      maximum: 12
+    }
+    const birthdayYearExpectations = {
+      type: "number",
+      maximum: new Date().getFullYear(),
+      minimum: (new Date().getFullYear() - 120)
+    }
+    const phoneExpectations = {
+      presence: 'not empty',
+      type: "number",
+      validity: "phone valid"
+    }
+    const phonePrefixExpectations = {
+      presence: "not empty",
+      validity: "phonePrefix valid"
+    }
+    const fullBirthdayExpectations = {
+      validity: "birthday valid"
+    }
 
-        if (response.ok === true) {
-          const dataCategories = await response.json();
-          setCategories(dataCategories);
-        } else {
-          console.log("There was an error fetching categories:", response.status);
-        };
+    const errorsFirstName = checkForErrors("Nombre", firstName, firstNameExpectations, firstNameRef, "o")
+    const errorsLastName = checkForErrors("Apellido", lastName, lastNameExpectations, lastNameRef, "a")
+    const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o" )
+    const errorsPhone = checkForErrors("Teléfono", phone, phoneExpectations, phoneRef, "o")
+    const errorsPhonePrefix = checkForErrors("Prefijo de país", phonePrefix, phonePrefixExpectations, phonePrefixRef, "o")
+    const errorsReferido = checkForErrors("Referido", referido, referidoExpectations, referidoRef, "o")
+    const errorsBirthdayDay = day !== "" ? checkForErrors("Día de nacimiento", day, birthdayDayExpectations, dayRef, "o") : [];
+    const errorsBirthdayMonth = month !== "" ? checkForErrors("Mes de nacimiento", month, birthdayMonthExpectations, monthRef, "o") : [];
+    const errorsBirthdayYear = year !== "" ? checkForErrors("Año de nacimiento", year, birthdayYearExpectations, yearRef, "o") : [];
+    const errorsFullBirthday = birthday !== "0000" && birthday !== "" ? checkForErrors("Fecha de nacimiento", birthday, fullBirthdayExpectations, fullBirthdayRef, "a") : [];
+    const errorInputs = [
+      errorsFirstName,
+      errorsLastName,
+      errorsEmail,
+      errorsPhone,
+      errorsPhonePrefix,
+      errorsReferido,
+      errorsBirthdayDay,
+      errorsBirthdayMonth,
+      errorsBirthdayYear,
+      errorsFullBirthday
+    ]
 
-      } catch(error) {
-        console.error("Error while fetching categories:", error);
+    for (const errorInput of errorInputs) {
+      if (errorInput.length > 0) {
+        errorsList.push(errorInput);
+        setErrors(prev => [...prev, errorInput]);
       }
     }
 
-  useEffect(() => {
-    fetchCategoryTypes()
-  }, [])
+    return errorsList
+  }
 
   async function handleSubmit(e) {
-    const errorList = checkForErrors();
-    if (errorList.length > 0) {
+    e.preventDefault();
+    setErrors([]);
+
+    const res = checkInputs();
+    if (res.length > 0) {
       return;
     }
-    editAuthor(e)
+
+    editAuthor()
   }
 
   return (
-    <div className="modal-overlay">
       <div className="modal-proper">
         <div className="form-title">
           <p>Editar autor</p>
+          <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
         </div>
-        <form className="global-form">
-          <input type="text" value={`${firstName}`}
-            className="global-input" id='adding-author-first-name'
-            onChange={(e)=>setFirstName(e.target.value)}></input>
-          <input type="text" value={`${lastName}`} placeholder="Apellido"
-            className="global-input" id="adding-author-last-name"
-            onChange={(e)=>setLastName(e.target.value)}></input>
-          <select className="select-global"
-            id="country-select"
-            onChange={(e) => dropDownChange(e, "Country")} >
-            <option value={`${country}`}>{country}</option>
-            {countries.map((country, index) => (
-              <option key={index} value={country} placeholder="Pais">{country}</option>
-            ))}
-          </select>
-          <input type="text" value={`${referido}`} placeholder='Referido'
-            className="global-input" id="adding-author-referido"
-            onChange={(e)=>setReferido(e.target.value)}></input>
-          <input type="text" value={`${email}`} placeholder="Correo"
-            className="global-input" id="adding-author-email"
-            onChange={(e)=>setEmail(e.target.value)}></input>
-          <select className="select-global" id="category-select"
-            onChange={(e) => dropDownChange(e, "Category")}>
-            <option value={category} placeholder="Categoria">{category ? category : "Categoria"}</option>
-            {categories && categories.map((cat, index) => (
-              <option key={index} value={cat.type}>{cat.type}</option>
-            ))}
-          </select>
+        <div className="campos-obligatorios">
+          <p>*Campos obligatorios</p>
+        </div>
+        <form className="global-form" style={{marginBottom:"1rem"}}>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Nombre *</label>
+            <input type="text" value={`${firstName}`}
+              className="global-input" id='adding-author-first-name'
+              ref={firstNameRef}
+              onChange={(e)=>setFirstName(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Apellido*</label>
+            <input type="text" value={`${lastName}`} placeholder="Apellido"
+              className="global-input" id="adding-author-last-name"
+              ref={lastNameRef}
+              onChange={(e)=>setLastName(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Referido</label>
+            <input type="text" value={`${referido || ""}`}
+              ref={referidoRef}
+              className="global-input" id="adding-author-referido"
+              onChange={(e)=>setReferido(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Correo*</label>
+            <input type="text" value={`${email || ""}`}
+              ref={emailRef}
+              className="global-input" id="adding-author-email"
+              onChange={(e)=>setEmail(e.target.value)}></input>
+          </div>
+          <div className="modal-form-line">
+            <label className="modal-form-label">Teléfono*</label>
+            <div className="modal-phone">
+              <select className="select-phone"
+                ref={phonePrefixRef}
+                onChange={(e) => setPhonePrefix(e.target.value)}>
+                {sortedCountryCodes.map((country, index) => (
+                  <option key={index} value={country.code}>{country.iso3} {country.code}</option>
+                ))}
+              </select>
+              <input type='text'
+                className="input-phone" id="adding-author-teléfono"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                ref={phoneRef}
+                value={phone}
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+                onChange={(e) => setPhone(e.target.value)}></input>
+            </div>
+          </div>
+          <div className="modal-form-line" ref={fullBirthdayRef}>
+            <label className="modal-form-label">Fecha de nacimiento</label>
+            <div className="modal-birthday">
+              <input type="text" placeholder="dd"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+                className="global-input birthday-day" maxLength="2"
+                ref={dayRef}
+                value={day}
+                onChange={(e) => setDay(e.target.value)}></input>
+              <input type="text" placeholder="mmm"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+                className="global-input birthday-month" maxLength="2"
+                ref={monthRef}
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}></input>
+              <input type="text" placeholder="aaaa"
+                className="global-input birthday-year" maxLength="4"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+                ref={yearRef}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}></input>
+            </div>
+          </div>
+          <ErrorsList errors={errors} setErrors={setErrors} />
+          <div className="modal-actions modal-edit-author">
+            <button className='blue-button modal-button'
+                onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            <button className='blue-button modal-button'
+              onClick={handleSubmit}>Confirmar</button>
+          </div>
         </form>
-        <AddingAuthorModalErrors errors={errors} setErrors={setErrors}/>
-        <div className="modal-actions">
-          <button className='blue-button modal-button'
-              onClick={() => closeEditModal(globalFilter, false)}>Cancelar</button>
-          <button className='blue-button modal-button'
-            onClick={handleSubmit}>Confirmar</button>
-        </div>
       </div>
-    </div>
   )
 }
 

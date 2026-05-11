@@ -5,6 +5,9 @@ import UserContext from "./UserContext";
 import AdminNavbar from "./AdminNavbar";
 import SuperAdminNavbar from "./SuperAdminNavbar";
 import AuthorNavbar from "./AuthorNavbar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { Link } from "react-router-dom";
 
 function Navbar({
     subNav,
@@ -17,11 +20,12 @@ function Navbar({
     setBookInventoryOpen,
     retreat,
     setRetreat }) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   async function logout() {
-    const response = fetch("http://localhost:3000/api/logout", {
+    const response = fetch(`${baseURL}/api/user/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -33,6 +37,7 @@ function Navbar({
       return alert("Something went wrong when logging out.");
     } else {
       setUser(null);
+      sessionStorage.clear();
       navigate('/');
     }
   }
@@ -49,7 +54,8 @@ function Navbar({
                   setSelectedBookId={setSelectedBookId}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
-                  setRetreat={setRetreat}/>
+                  setRetreat={setRetreat}
+                  preferredFontSize={user.font_size}/>
       case "admin":
         return <AdminNavbar
                   active={active}
@@ -59,23 +65,35 @@ function Navbar({
                   setSelectedBook={setSelectedBook}
                   setBookInventoryOpen={setBookInventoryOpen}
                   retreat={retreat}
-                  setRetreat={setRetreat}/>
+                  setRetreat={setRetreat}
+                  preferredFontSize={user.font_size}/>
       case "author":
-        return <AuthorNavbar active={active}/>
+        return <AuthorNavbar
+                  active={active}
+                  preferredFontSize={user.font_size}/>
       default:
-        console.log('Unkown error')
+        console.error('Unkown error')
         return;
     }
   }
 
   return (
-    <div className="navbar">
+    <div className="navbar"
+      style={
+        window.innerWidth <= 1300
+          ? { fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}
+          : { fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}
+      }>
       <div className="navbar-home">
         {chooseSubNavbar(subNav)}
       </div>
       <div className='navbar-logout'>
+        <Link to='/profile-page'  className="navbar-profile">
+          <FontAwesomeIcon icon={faUser}
+            className={active === "profile" ? "navbar-profile-icon-active" : "navbar-profile-icon"}/>
+        </Link>
         {(user !== '') &&
-          <p className="grey-button" onClick={logout}>Cerrar sessión</p>}
+          <p className="grey-button" onClick={logout}>Cerrar sesión</p>}
       </div>
     </div>
   )

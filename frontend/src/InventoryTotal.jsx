@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
-import ProgressBar from "./ProgressBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { faStore } from '@fortawesome/free-solid-svg-icons';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import ImpressionsList from "./ImpressionsList";
+import "./InventoryTotal.scss";
 
 function InventoryTotal({
     selectedBookstore,
+    selectedBookstoreId,
     selectedBookstoreNoSpaces,
     selectedLogo,
     currentTotal,
     initialTotal,
+    inTiendaTotal,
     returnsTotal,
     givenToAuthorTotal,
     soldTotal,
+    entregadosDelAutorTotal,
+    transfersTotal,
+    extraTransfersTotal,
     isBookstoreInventoryOpen,
     setBookstoreInventoryOpen,
     selectedBook,
@@ -24,36 +29,45 @@ function InventoryTotal({
     impressions,
     setModalType,
     openModal,
-    setRetreat}) {
+    setRetreat,
+    preferredFontSize,
+    setSpecificBookstoreOpen,
+    setSpecificBookOpen}) {
   const [logo, setLogo] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
+  const [extraImpressions, setExtraImpressions] = useState(0);
   const [isImpressionsOpen, setImpressionsOpen] = useState(false);
   const [book, setBook] = useState(null);
-
-  // import only the logo you need based on the name
-  useEffect(() => {
-    import (`./assets/${selectedBookstoreNoSpaces}.png`)
-      .then((image) => setLogo(image.default));
-  }, [selectedBookstoreNoSpaces])
+  const [isAddingImpressionTooltipHovered, setAddingImpressionTooltipHovered] = useState(false);
 
   //assign name based on either bookstore name or book title
   useEffect(() => {
     if (selectedBook) {
       setName(selectedBook);
       setType("book");
+      if (impressions && impressions.length > 1) {
+        const extraImpressions = impressions.slice(1);
+        let totalExtraImpressions = 0;
+        for (const impression of extraImpressions) {
+          totalExtraImpressions += impression.quantity
+        }
+        setExtraImpressions(totalExtraImpressions);
+      }
     } else {
       setName(selectedBookstore)
       setType("bookstore");
+      if (impressions && impressions > 0) {
+        setExtraImpressions(impressions);
+      }
     }
-  }, [selectedBookstore, selectedBook])
+  }, [selectedBookstore, selectedBook, impressions])
 
   function returnToInventoriesAreaDashboard() {
     if (type === "book") {
-      setBookInventoryOpen(false);
-      setRetreat(false);
+      setSpecificBookOpen(false);
     } else {
-      setBookstoreInventoryOpen(false);
+      setSpecificBookstoreOpen(false);
     }
   }
 
@@ -67,61 +81,91 @@ function InventoryTotal({
   };
 
   return(
-    <div className="total-and-impressions">
-      <div className="bookstore-inventory-total">
+    <>
+      {type === "" ?
+        null
+        :
+        <div className="total-and-impressions"
+          style={{fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1rem)`}}>
+          <div className="bookstore-inventory-total">
 
-        {logo ?
-          <img src={logo} className="bookstore-inventory-img"/> :
-          <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
-            <FontAwesomeIcon
-              icon={type === "book" ? faBookOpen : faStore}
-              className="inventory-logo"/>
-            <div
-              className="inventory-name"
-              style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
-          </div>
-        }
+            {logo ?
+              <img src={logo} className="bookstore-inventory-img"/> :
+              <div style={{display: 'flex', marginLeft:'0.5rem', alignItems: "center"}}>
+                <FontAwesomeIcon
+                  icon={type === "book" ? faBookOpen : faStore}
+                  className="inventory-logo"/>
+                <div
+                  className="inventory-name"
+                  style={{marginLeft: "0.5rem", marginBottom: "0"}}>{name}</div>
+              </div>
+            }
 
-        {impressions &&
-          <div className="bookstore-inventory-total-impressions">
-            <div className="adding-impression">
+            {!!impressions && type === "book" &&
+              (<div className="bookstore-inventory-total-impressions"
+                onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
+                <div className="adding-impression">
+                  <FontAwesomeIcon
+                    icon={faCirclePlus}
+                    onClick={openAddingModal}
+                    onMouseEnter={() => setAddingImpressionTooltipHovered(true)}
+                    onMouseLeave={() => setAddingImpressionTooltipHovered(false)}/>
+                  {isAddingImpressionTooltipHovered
+                    && (
+                      <div className="tooltip-adding-impression">
+                        Añadir impresión
+                      </div>
+                    )}
+                </div>
+                <div
+                  className="bookstore-inventory-impressions-info">
+                  Impresiónes: {impressions.length}
+                </div>
+              </div>)}
+            <div className="inventory-total-details">Inicial: {initialTotal}</div>
+            {extraImpressions > 0 &&
+              <div className="inventory-total-details">Nuevas impresiones: {extraImpressions}</div>}
+            {(type === "bookstore" && selectedBookstoreId !== 1) &&
+              <div className="inventory-total-details">Nuevos ingresos: {extraTransfersTotal}</div>
+            }
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Transferidos: {transfersTotal}</div>
+            }
+            {type === "bookstore" && <div className="inventory-total-details">Devueltos: {returnsTotal}</div>}
+            <div className="inventory-total-details">Vendidos: {soldTotal}</div>
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+            }
+            {type === "book" &&
+              <div className="inventory-total-details">Entregados al autor: {givenToAuthorTotal}</div>
+            }
+            {(type === "bookstore" && selectedBookstoreId === 1) &&
+              <div className="inventory-total-details">Devoluciones del autor: {entregadosDelAutorTotal}</div>
+            }
+            {(type === "book") &&
+              <div className="inventory-total-details">Devoluciones del autor: {entregadosDelAutorTotal}</div>
+            }
+            <div className="inventory-total-details">Disponibles: {
+              currentTotal
+              }</div>
+            <div className="bookstore-progress-return">
               <FontAwesomeIcon
-                icon={faCirclePlus}
-                onClick={openAddingModal}/>
+                icon={faCircleXmark}
+                className="inventory-back-button"
+                onClick={returnToInventoriesAreaDashboard}/>
             </div>
-            <div
-              className="bookstore-inventory-impressions-info"
-              onClick={() => setImpressionsOpen(!isImpressionsOpen)}>
-              Impressiones: {impressions.length}
-            </div>
-          </div>}
-
-        <div>Vendidos: {soldTotal} / {initialTotal}</div>
-        <div>Devueltos: {returnsTotal} / {initialTotal}</div>
-        <div>Entregados al autor: {givenToAuthorTotal} / {initialTotal}</div>
-        <div>Disponibles: {currentTotal} / {initialTotal}</div>
-        <div className="bookstore-progress-return">
-          <ProgressBar
-            current={currentTotal}
-            initial={initialTotal}
-            returns={returnsTotal}
-            sold={soldTotal}
-            given={givenToAuthorTotal}/>
-          <FontAwesomeIcon
-            icon={faCircleXmark}
-            className="inventory-back-button"
-            onClick={returnToInventoriesAreaDashboard}/>
+          </div>
+          <div className="inventory-total-impressions">
+            {isImpressionsOpen &&
+              <ImpressionsList
+                impressions={impressions}
+                setModalType={setModalType}
+                openModal={openModal}
+                book={book}/>}
+          </div>
         </div>
-      </div>
-      <div className="inventory-total-impressions">
-        {isImpressionsOpen &&
-          <ImpressionsList
-            impressions={impressions}
-            setModalType={setModalType}
-            openModal={openModal}
-            book={book}/>}
-      </div>
-    </div>
+      }
+    </>
   )
 }
 

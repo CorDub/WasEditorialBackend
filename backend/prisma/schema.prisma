@@ -24,19 +24,36 @@ enum TransferType {
   return
 }
 
+enum PaymentStatus {
+  created
+  solicited
+  paid
+}
+
+enum CategoryType {
+  comissions
+  regalias
+}
+
 model User {
   id                  Int       @id @default(autoincrement())
   first_name          String
   last_name           String
-  country             String    @default("México")
   referido            String?
   email               String?   @unique
+  phone               String?
+  phonePrefix         String    @default("+52")
+  birthday            String?
+  clabe               String?   @unique
+  bank_account_number String?
+  name_bank_account   String?
+  bank                String?
+  swift               String?
   password            String?
-  category            Category? @relation(fields: [categoryId], references: [id])
-  categoryId          Int?
   books               Book[]
   role                Role      @default(author)
   reset_password_code Int?
+  font_size           Float?    @default(1.0)
   isDeleted           Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -49,40 +66,49 @@ model Book {
   id          Int          @id @default(autoincrement())
   title       String
   pasta       String?
-  price       Float?       @default(199.99)
   isbn        String?      @unique
   users       User[]
+  mainAuthor  Int
+  category    Category     @relation(fields: [categoryId], references: [id])
+  categoryId  Int          @default(1)
   inventories Inventory[]
   isDeleted   Boolean      @default(false)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   impressions Impression[]
+  kindleSales KindleSale[]
+  Cost        Cost[]
+
+  @@unique([title, mainAuthor])
 }
 
 model Category {
-  id                           Int      @id @default(autoincrement())
-  type                         String   @unique
-  percentage_royalties         Float
-  percentage_management_stores Float
-  management_min               Float
-  users                        User[]
-  isDeleted                    Boolean  @default(false)
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
+  id                           Int          @id @default(autoincrement())
+  number                       Int          @unique
+  category_type                CategoryType @default(comissions)
+  percentage_royalties         Float?
+  rebate_author                Float?
+  percentage_management_stores Float?
+  management_min               Float?
+  books                        Book[]
+  isDeleted                    Boolean      @default(false)
+  createdAt                    DateTime     @default(now())
+  updatedAt                    DateTime     @updatedAt
 }
 
 model Bookstore {
-  id              Int         @id @default(autoincrement())
-  name            String
-  deal_percentage Float?
-  contact_name    String?
-  contact_phone   String?
-  contact_email   String?
-  inventories     Inventory[]
-  color           String?     @default("#E2E2E2")
-  isDeleted       Boolean     @default(false)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id                   Int         @id @default(autoincrement())
+  name                 String      @unique
+  deal_percentage      Float?
+  contact_name         String?
+  contact_phone        String?
+  contact_phone_prefix String      @default("+52")
+  contact_email        String?
+  inventories          Inventory[]
+  color                String?     @default("#E2E2E2")
+  isDeleted            Boolean     @default(false)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 }
 
 model Inventory {
@@ -91,9 +117,10 @@ model Inventory {
   bookId        Int
   bookstore     Bookstore  @relation(fields: [bookstoreId], references: [id])
   bookstoreId   Int
-  country       String
-  initial       Int
-  current       Int
+  country       String?
+  price         Float?     @default(379)
+  initial       Int?
+  current       Int?
   returns       Int        @default(0)
   givenToAuthor Int        @default(0)
   sales         Sale[]
@@ -103,28 +130,51 @@ model Inventory {
   transfersFrom Transfer[] @relation("TransfersFrom")
   transfersTo   Transfer[] @relation("TransfersTo")
 
-  @@unique([bookId, bookstoreId, country])
+  @@unique([bookId, bookstoreId])
 }
 
 model Sale {
   id          Int       @id @default(autoincrement())
   inventory   Inventory @relation(fields: [inventoryId], references: [id])
   inventoryId Int
+  payments    Payment[]
   quantity    Int       @default(1)
   isDeleted   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  date        DateTime  @default(now())
+  dateStr     String
+}
+
+model KindleSale {
+  id            Int       @id @default(autoincrement())
+  book          Book      @relation(fields: [bookId], references: [id])
+  bookId        Int
+  payments      Payment[]
+  quantityEbook Int?
+  quantityPod   Int?
+  dateCut       DateTime?
+  dateCutStr    String
+  datePay       DateTime?
+  datePayStr    String
+  regalias      Float
+  isDeleted     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Impression {
-  id        Int      @id @default(autoincrement())
-  book      Book     @relation(fields: [bookId], references: [id])
-  bookId    Int
-  quantity  Int
-  note      String?
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  book           Book     @relation(fields: [bookId], references: [id])
+  bookId         Int
+  quantity       Int
+  note           String?
+  authorDelivery Boolean  @default(false)
+  isDeleted      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  date           DateTime @default(now())
+  dateStr        String
 }
 
 model Transfer {
@@ -137,6 +187,7 @@ model Transfer {
   type            TransferType @default(send)
   note            String?
   deliveryDate    DateTime?
+  dateStr         String?
   place           String?
   person          String?
   isDeleted       Boolean      @default(false)
@@ -145,12 +196,32 @@ model Transfer {
 }
 
 model Payment {
+  id               Int           @id @default(autoincrement())
+  user             User          @relation(fields: [userId], references: [id])
+  userId           Int
+  costs            Cost[]
+  sales            Sale[]
+  kindleSales      KindleSale[]
+  forMonth         String
+  dateMarkedAsPaid DateTime?
+  status           PaymentStatus @default(created)
+  isDeleted        Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([userId, forMonth])
+}
+
+model Cost {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  payment   Payment  @relation(fields: [paymentId], references: [id])
+  paymentId Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  note      String?
+  date      DateTime @default(now())
+  dateStr   String?
   amount    Float
-  forMonth  String
-  isPaid    Boolean  @default(false)
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

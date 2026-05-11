@@ -1,34 +1,72 @@
 import formatNumber from "./customHooks/formatNumber";
 import "./CommissionMonthSelectorRow.scss"
+import { useState } from "react";
+import { useEffect } from "react";
+import { changeDateFormat } from "../../backend/utils";
 
-function CommissionMonthSelectorRow({index, month, active, setActiveMonth}) {
+function CommissionMonthSelectorRow({
+  index,
+  month,
+  active,
+  setActiveMonth,
+  preferredFontSize,
+  setPaymentInfo}) {
+  const [salesPresence, setSalesPresence] = useState(true)
+  const [paymentStatus, setPaymentStatus] = useState("")
 
-  function changeDateFormat(date) {
-    const months = {
-      "01": "Ene",
-      "02": "Feb",
-      "03": "Mar",
-      "04": "Abr",
-      "05": "May",
-      "06": "Jun",
-      "07": "Jul",
-      "08": "Ago",
-      "09": "Sep",
-      "10": "Oct",
-      "11": "Nov",
-      "12": "Dic"
+  useEffect(() => {
+    if (month.amount === 0) {
+      setSalesPresence(false)
     }
 
-    return months[date.substring(5,7)] + " " + date.substring(0,4);
+    if (month.status === "created") {
+      setPaymentStatus("No pagado")
+    } else if (month.status === "solicited") {
+      setPaymentStatus("Solicitado") 
+    } else if (month.status === "paid") {
+      setPaymentStatus("Pagado")
+    } else {
+      setPaymentStatus("");
+    }
+
+  }, [month])
+
+  function addPaymentInfo() {
+    if (month) {
+      setPaymentInfo({
+        "id": month.id,
+        "month": changeDateFormat(month.forMonth),
+        "monthOriginal" : month.forMonth,
+        "amount": month.amount,
+        "status": month.amount === 0 ? "noVentas" : month.status
+      })
+    }
   }
 
-  return(
+  return (
     <div
       className={active ? "cms-row-active" : "cms-row"}
-      onClick={() => setActiveMonth(index)}>
+      style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}
+      onClick={() => {
+        setActiveMonth(index);
+        addPaymentInfo();}}>
       <div className="cms-month">{changeDateFormat(month.forMonth)}</div>
-      <div className="cms-status">{month.isPaid ? "Pagado" : "No pagado"}</div>
-      <div className="cms-total">{formatNumber(month.amount)}</div>
+      {salesPresence && (
+        <div className="cms-status"
+          style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
+          {paymentStatus}
+        </div>
+      )}
+      {!salesPresence && (
+        <div className="cms-status-no-sales"
+          style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
+          No ventas
+        </div>
+      )}
+      <div className="cms-total"
+        style={{ fontSize: `clamp(0.8rem, ${preferredFontSize}rem, 1.3rem)`}}>
+          {formatNumber(month.amount)}
+      </div>
     </div>
   )
 }

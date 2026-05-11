@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "font_size" DOUBLE PRECISION DEFAULT 1.0;

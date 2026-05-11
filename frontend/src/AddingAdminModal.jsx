@@ -5,6 +5,7 @@ import ErrorsList from "./ErrorsList";
 
 function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/superadmin/admin', {
+      const response = await fetch(`${baseURL}/api/superadmin/admin`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -33,7 +34,6 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -42,8 +42,8 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
         const data = await response.json();
-        const alertMessage = `Un(a) nuev(o.a) admin ${data.firstName} ${data.lastName} ha sido creado en la database con el correo ${data.email}.
-        Su contraseña se ha sido enviado por correo.`;
+        const alertMessage = `Un(a) nuev(o.a) admin ${data.firstName} ${data.lastName} ha sido creado en la database. 
+        Un correo le ha estado enviado para ingresar a la plataforma.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -55,19 +55,23 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   function checkInputs() {
     let errorsList = []
     const Expectations = {
-      type: "string",
       presence: "not empty",
-      length: 50
+      type: "string",
     };
     const roleExpectations = {
       presence: "not empty",
       value: ["superadmin", "admin", "author"]
     }
+    const emailExpectations = {
+      presence: "not empty",
+      type: "string",
+      validity: "email valid"
+    }
 
-    const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorsFirstName = checkForErrors("Nombre", firstName, Expectations, firstNameRef, "o");
+    const errorsLastName = checkForErrors("Apellido", lastName, Expectations, lastNameRef, "o");
+    const errorsEmail = checkForErrors("Correo", email, emailExpectations, emailRef, "o");
+    const errorsRole = checkForErrors("Rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -134,27 +138,38 @@ function AddingAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       <div className="form-title">
         <p>Nuevo admin</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
-        <input type='text' placeholder="Nombre"
+        <input type='text' placeholder="Nombre*"
           className="global-input" id='adding-author-first-name'
           ref={firstNameRef}
           onChange={(e) => setFirstName(e.target.value)}></input>
-        <input type='text' placeholder="Apellido"
+        <input type='text' placeholder="Apellido*"
           className="global-input" id="adding-author-last-name"
           ref={lastNameRef}
           onChange={(e) => setLastName(e.target.value)}></input>
-        <input type='text' placeholder="Correo"
+        <input type='text' placeholder="Correo*"
           className="global-input" id="adding-author-email"
           ref={emailRef}
           onChange={(e) => setEmail(e.target.value)}></input>
         <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
           ref={roleRef}>
-          <option value="null">Selecciona rol</option>
+          <option value="null">Selecciona rol*</option>
           <option value="superadmin">Superadmin</option>
           <option value="admin">Admin</option>
-          <option value="author">Usuario</option>
         </select>
         <ErrorsList errors={errors} setErrors={setErrors}/>
+        <div>
+          <p style={{
+            fontSize:"14px", 
+            textAlign: "center", 
+            marginRight: "0.5rem",
+            marginLeft: "0.5rem"
+          }}>Añadir un nuevo admin en la base de datos le manda 
+            automaticamente un correo para ingresar en la plataforma.</p>
+        </div>
         <div className="form-actions">
           <button type="button" className='blue-button'
             onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>

@@ -1,0 +1,28 @@
+.aig-scope-and-title {
+  display: flex;
+  align-items: center;
+}
+
+.aig-title {
+  text-align: center;
+  width: calc(100% - 80px);
+}
+
+.author-inventory-global {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  // margin: 1rem;
+  padding: 1rem;
+  // padding-bottom: 1rem;
+  padding-right: 2rem;
+  box-sizing: border-box;
+}
+
+.aig-title h2 {
+  margin: 0.5rem 0 0.5rem 0;
+  text-align: center;
+}

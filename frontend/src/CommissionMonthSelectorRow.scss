@@ -8,7 +8,7 @@
 }
 
 .cms-row-active {
-  background-color: #E2E2E2;
+  background-color: #d6d6d6;
   border-radius: 15px;
   display: flex;
   padding: 0.5rem;
@@ -19,11 +19,22 @@
 }
 
 .cms-status {
-  width: 40%;
+  width: 30%;
   text-align: center;
 }
 
+.cms-status-no-sales {
+  width: 40%;
+  text-align: center;
+  font-size: 0.9em;
+  font-style: italic;
+  color: grey;
+}
+
 .cms-total {
-  width: 30%;
+  width: 40%;
   text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

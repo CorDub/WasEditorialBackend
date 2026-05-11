@@ -105,3 +105,7 @@
   .dropdown-menu::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }
+
+  .custom-dropdown-selected-option {
+    font-size: clamp(0.8rem, 1rem, 1.2rem);
+  }

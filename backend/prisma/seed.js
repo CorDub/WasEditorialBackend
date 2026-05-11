@@ -1,281 +1,338 @@
 import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from "bcrypt";
-import authors from "../../helpers/authors.json" assert {type: 'json'};
-import books from "../../helpers/books.json" assert {type: 'json'}
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getForMonth } from '../utils.js';
+// import authors from "./authors.json" assert {type: 'json'};
+// import books from "./books.json" assert {type: 'json'}
 
 const prisma = new PrismaClient();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const authorsPath = path.join(__dirname, 'authors.json');
+const booksPath = path.join(__dirname, 'books.json');
+
+const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
+const booksRaw = await fs.readFile(booksPath, 'utf-8');
+
+const authors = JSON.parse(authorsRaw);
+const books = JSON.parse(booksRaw);
 
 async function main() {
-  /// Create categories
+  try {
+    /// Create categories
 
-  const twelveMonthsAgo = new Date();
-  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-  twelveMonthsAgo.setDate(1);
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    twelveMonthsAgo.setDate(1);
 
-  await prisma.category.create({
-    data: {
-      type: "1",
-      percentage_royalties: 100,
-      percentage_management_stores: 50,
-      management_min: 180.00,
-      createdAt: twelveMonthsAgo
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "2",
-      percentage_royalties: 100,
-      percentage_management_stores: 55,
-      management_min: 150.00,
-      createdAt: twelveMonthsAgo
-    }
-  })
-
-  await prisma.category.create({
-    data: {
-      type: "3",
-      percentage_royalties: 20,
-      percentage_management_stores: 20,
-      management_min: 0.00,
-      createdAt: twelveMonthsAgo
-    }
-  })
-
-  /// Add all books from DB
-
-  async function addAuthorFromDB(author) {
-    await prisma.user.create({
+    const cat1 = await prisma.category.create({
       data: {
-        first_name: author.first_name,
-        last_name: author.last_name,
-        country: "México",
-        categoryId: 1,
-        createdAt: twelveMonthsAgo
-      }
-    })
-  };
-
-  authors.forEach((author) => {
-    addAuthorFromDB(author)
-  });
-
-  async function addBookFromDB(book, authorsIndexes) {
-    function checkISBN(isbn) {
-      if (isbn === "nan" || isbn === "na") {
-        return null
-      } else {
-        return isbn
-      }
-    }
-
-    const createdBook = await prisma.book.create({
-      data: {
-        title: book.Title,
-        isbn: checkISBN(book.ISBN),
-        users: {
-          connect: authorsIndexes,
-        },
+        number: 1,
+        category_type: "comissions",
+        percentage_management_stores: 5,
+        management_min: 180,
+        // percentage_royalties: 20,
+        // rebate_author: 50,
         createdAt: twelveMonthsAgo
       }
     })
 
-    if (createdBook) {
-      const randQuant = Math.round(Math.random() * 500);
-      const createdImpression = await prisma.impression.create({
+    const cat2 = await prisma.category.create({
+      data: {
+        number: 2,
+        category_type: "regalias",
+        percentage_royalties: 20,
+        // percentage_management_stores: 5,
+        // management_min: 150.00,
+        rebate_author: 20,
+        createdAt: twelveMonthsAgo
+      }
+    })
+
+    const cat3 = await prisma.category.create({
+      data: {
+        number: 3,
+        category_type: "comissions",
+        percentage_management_stores: 5,
+        // rebate_author: 50,
+        management_min: 150,
+        createdAt: twelveMonthsAgo
+      }
+    })
+
+    /// Add all books from DB
+
+    async function addAuthorFromDB(author) {
+      const createdAuthor = await prisma.user.create({
         data: {
-          bookId: createdBook.id,
-          quantity: randQuant,
+          first_name: author.first_name,
+          last_name: author.last_name,
           createdAt: twelveMonthsAgo
         }
-      });
-    };
-  };
-
-  async function findAuthorWithFullName(user) {
-    const foundUser = await prisma.user.findFirst({where: {first_name: user.first_name, last_name: user.last_name}})
-    const formatted_user_id = {"id": foundUser.id}
-    return formatted_user_id
-  }
-
-  books.map(async (book) => {
-    let authorsIndexes = await Promise.all(
-      book["Author(s)"].map(async (user) => {
-        const user_id = await findAuthorWithFullName(user)
-        return user_id;
       })
-    )
-    addBookFromDB(book, authorsIndexes)
-  });
+    };
 
-  /// Create users
+    await Promise.all(authors.map(author => addAuthorFromDB(author)));
 
-  await prisma.user.create({
-    data: {
-      first_name: "Administrator",
-      last_name: "McLibro",
-      country: "México",
-      email: "Imake@books.com",
-      password: await bcrypt.hash("bookboi", 10),
-      role: Role.superadmin,
-      createdAt: twelveMonthsAgo
-    },
-  });
+    async function addBookFromDB(book, authorsIndexes) {
+      function checkISBN(isbn) {
+        if (isbn === "nan" || isbn === "na") {
+          return null
+        } else {
+          return isbn
+        }
+      }
 
-  await prisma.user.create({
-    data: {
-      first_name: "Subadmin",
-      last_name: "Pedro",
-      country: "México",
-      email: "yessir@gmail.com",
-      password: await bcrypt.hash("bookboi2", 10),
-      role: Role.admin,
-      createdAt: twelveMonthsAgo
-    },
-  });
+      let createdBook;
+      try {
+        createdBook = await prisma.book.create({
+          data: {
+            title: book.Title,
+            isbn: checkISBN(book.ISBN),
+            users: {
+              connect: authorsIndexes,
+            },
+            mainAuthor: authorsIndexes[0].id,
+            categoryId: 1,
+            createdAt: twelveMonthsAgo
+          }
+        })
+      } catch(error) {
+        console.log(error)
+      }
 
-  await prisma.user.create({
-    data: {
-      first_name: "Autorino",
-      last_name: "Adorno",
-      country: "México",
-      email: "adorno@gmail.com",
-      categoryId: 1,
-      password: await bcrypt.hash("bookboi3", 10),
-      role: Role.author,
-      createdAt: twelveMonthsAgo
-    },
-  });
+      if (createdBook) {
+        let randQuant = Math.round(Math.random() * 500);
+        if (randQuant === 0) {randQuant +=1};
+        const createdImpression = await prisma.impression.create({
+          data: {
+            bookId: createdBook.id,
+            quantity: randQuant,
+            createdAt: twelveMonthsAgo,
+            date: twelveMonthsAgo
+          }
+        });
+      };
+    };
 
-  /// Create Bookstores
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Gandhi",
-      deal_percentage: 50,
-      contact_name: "Gerardo Rivera",
-      contact_phone: "525524518965",
-      contact_email: "gerardo_rivera@gandhi.com",
-      createdAt: twelveMonthsAgo,
-      color: "#fff200"
+    async function findAuthorWithFullName(user) {
+      const foundUser = await prisma.user.findFirst({where: {first_name: user.first_name, last_name: user.last_name}})
+      const formatted_user_id = {"id": foundUser.id}
+      return formatted_user_id
     }
-  })
 
-  await prisma.bookstore.create({
-    data: {
-      name: "Mercado Libre",
-      deal_percentage: 30,
-      contact_name: "Jean Valdez",
-      contact_phone: "525580416352",
-      contact_email: "jlwotton17@mercadolibre.co.mx",
-      createdAt: twelveMonthsAgo,
-      color: "#ffe600"
-    }
-  })
+    await Promise.all(
+      books.map(async (book) => {
+        let authorsIndexes = await Promise.all(
+          book["Author(s)"].map(async (user) => {
+            const user_id = await findAuthorWithFullName(user)
+            return user_id;
+          })
+        )
+        addBookFromDB(book, authorsIndexes)
+      })
+    );
+    /// Create users
 
-  await prisma.bookstore.create({
-    data: {
-      name: "Plataforma Was",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-      color: "#4E5981"
-    }
-  })
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Amazon",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-      color: "#f08804"
-    }
-  })
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Gonvill",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-      color: "#22ace3"
-    }
-  })
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Sanborns",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-      color: "#ff0203"
-    }
-  })
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Central de",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-    }
-  })
-
-  await prisma.bookstore.create({
-    data: {
-      name: "Aeropuerto CDMX",
-      deal_percentage: 30,
-      createdAt: twelveMonthsAgo,
-      color: "#323E48"
-    }
-  })
-
-  /// Create inventories
-  const allImpressions = await prisma.impression.findMany();
-
-  for (const impression of allImpressions) {
-    await prisma.inventory.create({
+    await prisma.user.create({
       data: {
-        bookId: impression.bookId,
-        bookstoreId: 3,
-        country: "México",
-        initial: impression.quantity,
-        current: impression.quantity,
+        first_name: "Administrator",
+        last_name: "McLibro",
+        email: "imake@books.com",
+        password: await bcrypt.hash("bookboi", 10),
+        role: Role.superadmin,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Subadmin",
+        last_name: "Pedro",
+        email: "yessir@gmail.com",
+        password: await bcrypt.hash("bookboi2", 10),
+        role: Role.admin,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Juan",
+        last_name: "AdminWasEditorial",
+        email: "juanadmin@waseditorial.com",
+        password: await bcrypt.hash("PruebaAdmin1", 10),
+        role: Role.superadmin,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Rebeca",
+        last_name: "AdminWasEditorial",
+        email: "rebecaadmin@waseditorial.com",
+        password: await bcrypt.hash("PruebaAdmin2", 10),
+        role: Role.superadmin,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Juan",
+        last_name: "AutorWasEditorial",
+        email: "juanautor@waseditorial.com",
+        password: await bcrypt.hash("PruebaAutor1", 10),
+        role: Role.author,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Rebeca",
+        last_name: "AutorWasEditorial",
+        email: "rebecaautor@waseditorial.com",
+        password: await bcrypt.hash("PruebaAutor2", 10),
+        role: Role.author,
+        createdAt: twelveMonthsAgo
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        first_name: "Autorino",
+        last_name: "Adorno",
+        email: "adorno@gmail.com",
+        password: await bcrypt.hash("bookboi3", 10),
+        role: Role.author,
         createdAt: twelveMonthsAgo
       }
     })
-  }
 
-  /// Move things around
+    await prisma.user.create({
+      data: {
+        first_name: "Corentin",
+        last_name: "Dubois",
+        email: "corentindubois22@gmail.com",
+        password: await bcrypt.hash("bookboi4", 10),
+        role: Role.author,
+        createdAt: twelveMonthsAgo
+      }
+    })
 
-  const allInventories = await prisma.inventory.findMany();
-  const numBookstores = await prisma.bookstore.count();
+    /// Create Bookstores
 
-  for (const inventory of allInventories) {
-    const randQuantTransfers = Math.floor(Math.random() * numBookstores);
+    await prisma.bookstore.create({
+      data: {
+        name: "WAS Editorial",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#4E5981",
+      }
+    })
 
-    for (let i = 0; i < randQuantTransfers; i++) {
-      let createdInventory;
-      const randQuantToMove = Math.floor(Math.random() * inventory.current);
+    await prisma.bookstore.create({
+      data: {
+        name: "Gandhi",
+        deal_percentage: 50,
+        contact_name: "Gerardo Rivera",
+        contact_phone: "525524518965",
+        contact_email: "gerardo_rivera@gandhi.com",
+        createdAt: twelveMonthsAgo,
+        color: "#fff200"
+      }
+    })
 
-      if (randQuantToMove !== 0) {
-        if (i < inventory.bookstoreId - 1) {
-          createdInventory = await prisma.inventory.create({
-            data: {
-              bookId: inventory.bookId,
-              bookstoreId: i+1,
-              country: "México",
-              initial: randQuantToMove,
-              current: randQuantToMove,
-              createdAt: twelveMonthsAgo
-            }
-          });
+    await prisma.bookstore.create({
+      data: {
+        name: "Mercado Libre",
+        deal_percentage: 30,
+        contact_name: "Jean Valdez",
+        contact_phone: "525580416352",
+        contact_email: "jlwotton17@mercadolibre.co.mx",
+        createdAt: twelveMonthsAgo,
+        color: "#ffe600",
+      }
+    })
 
-          await prisma.inventory.update({
-            where: {id: inventory.id},
-            data: {
-              current: inventory.current - randQuantToMove,
-              initial: inventory.initial - randQuantToMove
-            }
-          });
+    await prisma.bookstore.create({
+      data: {
+        name: "Amazon",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#f08804"
+      }
+    })
 
-        } else {
+    await prisma.bookstore.create({
+      data: {
+        name: "Gonvill",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#22ace3"
+      }
+    })
+
+    await prisma.bookstore.create({
+      data: {
+        name: "Sanborns",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#ff0203"
+      }
+    })
+
+    await prisma.bookstore.create({
+      data: {
+        name: "Central de",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+      }
+    })
+
+    await prisma.bookstore.create({
+      data: {
+        name: "Aeropuerto CDMX",
+        deal_percentage: 30,
+        createdAt: twelveMonthsAgo,
+        color: "#323E48"
+      }
+    })
+
+    /// Create inventories
+    const allImpressions = await prisma.impression.findMany();
+
+    for (const impression of allImpressions) {
+      await prisma.inventory.create({
+        data: {
+          bookId: impression.bookId,
+          bookstoreId: 1,
+          country: "México",
+          initial: impression.quantity,
+          current: impression.quantity,
+          createdAt: twelveMonthsAgo
+        }
+      })
+    }
+
+    /// Move things around
+
+    const allInventories = await prisma.inventory.findMany();
+    const numBookstores = await prisma.bookstore.count();
+
+    for (const inventory of allInventories) {
+      const randQuantTransfers = Math.floor(Math.random() * numBookstores);
+      let remainingQuantity = inventory.current;
+      for (let i = 0; i < randQuantTransfers; i++) {
+        let createdInventory;
+        const randQuantToMove = Math.floor(Math.random() * 0.5 * remainingQuantity);
+
+        if (randQuantToMove !== 0) {
           createdInventory = await prisma.inventory.create({
             data: {
               bookId: inventory.bookId,
@@ -290,257 +347,248 @@ async function main() {
           await prisma.inventory.update({
             where: {id: inventory.id},
             data: {
-              current: inventory.current - randQuantToMove,
-              initial: inventory.initial - randQuantToMove
+              current: remainingQuantity - randQuantToMove
             }
           });
-        }
 
-        const createdTransfer = await prisma.transfer.create({
-          data: {
-            fromInventoryId: inventory.id,
-            toInventoryId: createdInventory.id,
-            quantity: randQuantToMove,
-            createdAt: twelveMonthsAgo
-          }
-        });
+          const createdTransfer = await prisma.transfer.create({
+            data: {
+              fromInventoryId: inventory.id,
+              toInventoryId: createdInventory.id,
+              quantity: randQuantToMove,
+              createdAt: twelveMonthsAgo
+            }
+          });
+
+          remainingQuantity -= randQuantToMove
+        }
       }
     }
-  }
 
-  /// Create fake sales
+    // Add test author to 5 books as an author
 
-  const newAllInventories = await prisma.inventory.findMany();
-
-  for (const inventory of newAllInventories) {
-    let randQuantToSell = Math.floor(Math.random() * inventory.current);
-    if (randQuantToSell === 0) {
-      randQuantToSell = 1
-    }
-
-    if (randQuantToSell > 0) {
-      const monthsAgo = Math.floor(Math.random() * 13);
-      let saleDate = new Date();
-      saleDate.setMonth(saleDate.getMonth() - monthsAgo);
-
-      const createdSale = await prisma.sale.create({
-        data: {
-          inventoryId: inventory.id,
-          quantity: randQuantToSell,
-          createdAt: saleDate
+    async function addingBookToAuthor(email) {
+      const user = await prisma.user.findFirst({
+        where: {
+          email: {
+            contains: email
+          },
+          role: Role.author
         }
       });
 
-      if (createdSale) {
-        const updatedInventory = await prisma.inventory.update({
-          where: {id: inventory.id},
+      if (!user) {
+        console.log('User not found', email);
+        return;
+      }
+
+      const randomBooks = await prisma.book.findMany({
+        take: 5,
+        where: {
+          NOT: {
+            users: {
+              some: {
+                id: user.id
+              }
+            }
+          }
+        }
+      });
+
+      for (const book of randomBooks) {
+        await prisma.book.update({
+          where: { id: book.id },
           data: {
-            current: inventory.current - randQuantToSell
+            users: {
+              connect: { id: user.id }
+            },
+            mainAuthor: user.id
           }
         });
-      } else {
-        console.log("\n SALE WASNT CREATED \n");
-        console.log("\n INVENTORY \n", inventory);
-        console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
-      }
-    };
-  }
-
-  // Add test author to 5 books as an author
-  const user = await prisma.user.findFirst({
-    where: {
-      email: {
-        contains: 'adorno'
       }
     }
-  });
 
-  if (!user) {
-    console.log('User not found');
-    return;
-  }
+    await addingBookToAuthor("adorno");
+    await addingBookToAuthor("rebeca");
+    await addingBookToAuthor("juan");
 
-  const randomBooks = await prisma.book.findMany({
-    take: 5,
-    where: {
-      NOT: {
-        users: {
-          some: {
-            id: user.id
-          }
-        }
-      }
-    }
-  });
+    /// Create fake sales
 
-  for (const book of randomBooks) {
-    await prisma.book.update({
-      where: { id: book.id },
-      data: {
-        users: {
-          connect: { id: user.id }
-        }
+    const newAllInventories = await prisma.inventory.findMany({
+      include: {
+        bookstore: true,
+        book: true,
+        transfersFrom: true
       }
     });
-  }
 
-  /// Create more fake sales specifically for the test author in the last month
-  const now = new Date();
-  const lastThirtyDays = new Date(now.setDate(now.getDate()-30));
-  console.log("LAST THRIRTY DAYS", lastThirtyDays);
-
-  const testAuthorInventories = await prisma.inventory.findMany({
-    where: {
-      book: {
-        users: {
-          some: {
-            id: 148
-          }
-        }
+    for (const inventory of newAllInventories) {
+      let remainingSales = inventory.current;
+      let randQuantToSell = Math.floor(Math.random() * 0.5 * remainingSales);
+      if (randQuantToSell === 0) {
+        continue;
       }
-    }
-  });
 
-  console.log(" TEST AUTHOR INVENTORIES LENGTH", testAuthorInventories.length);
+      if (randQuantToSell > 0) {
+        const monthsAgo = Math.floor(Math.random() * 13);
+        let saleDate = new Date();
+        saleDate.setMonth(saleDate.getMonth() - monthsAgo);
 
-  let counter = 0;
-  for (const inventory of testAuthorInventories) {
-    let current = inventory.current;
+        const saleForMonth = getForMonth(saleDate);
 
-    for (let i = 0; i < 5; i++) {
-      const randQuant = Math.floor(Math.random() * 20);
-      const saleDate = new Date(lastThirtyDays);
+        const book = await prisma.book.findUnique({
+          where: {
+            id: inventory.bookId
+          },
+          select: {
+            users: {
+              select: {
+                id: true
+              }
+            }
+          }
+        })
 
-      const randDate = Math.floor(Math.random() * 30)
-      saleDate.setDate(saleDate.getDate() + randDate);
+        const authorIds = book.users.map(user => user.id)
+        let paymentsIds = [];
+        for (const author of authorIds) {
 
-      if (inventory === testAuthorInventories[0]) {
-        console.log("SALE DATE", saleDate);
-        console.log("CURRENT", current);
-        console.log("INVENTORY ID", inventory.id);
-      };
+          const existingPayment = await prisma.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: author,
+                forMonth: saleForMonth
+              }
+            }
+          });
 
-      if (randQuant > 0 && current > randQuant) {
+          if (!existingPayment) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: author,
+                forMonth: saleForMonth,
+                createdAt: saleDate,
+              }
+            });
+
+            paymentsIds.push({"id": createdPayment.id})
+            continue;
+          }
+
+          paymentsIds.push({"id": existingPayment.id})
+        }
+
         const createdSale = await prisma.sale.create({
           data: {
             inventoryId: inventory.id,
-            quantity: randQuant,
+            quantity: randQuantToSell,
+            payments: {
+              connect: paymentsIds
+            },
             createdAt: saleDate,
+            date: saleDate
           }
         })
-        counter += 1;
-        current -= randQuant;
 
         if (createdSale) {
-          const updtInv = await prisma.inventory.update({
-            where: {
-              id: inventory.id
-            },
+          const updatedInventory = await prisma.inventory.update({
+            where: {id: inventory.id},
             data: {
-              current: current
+              current: inventory.current - randQuantToSell
             }
-          })
-          if (inventory === testAuthorInventories[0]) {
-            console.log('UPDT INV CURRENT', updtInv.current);
-            console.log("------------------------------");
-          };
+          });
+
+        } else {
+          console.log("\n SALE WASNT CREATED \n");
+          console.log("\n INVENTORY \n", inventory);
+          console.log("\n RANDQUANT TO SELL \n", randQuantToSell);
         }
-      }
+      };
     }
-  }
-  console.log(`${counter} SALES CREATED IN THE LAST THIRTY DAYS`);
 
-  // Create fake payments
+    /// CREATE FAKE KINDLE SALES
 
-  let monthlySalesByAuthor = [];
-
-  /// First get every author
-  const allAuthors =  await prisma.user.findMany({
-    where: {
-      isDeleted: false,
-      role: Role.author
-    }
-  })
-
-  ///Then get all sales for each author
-  for (const author of allAuthors) {
-    let salesByMonths = {};
-    const data = await prisma.sale.findMany({
-      where: {
-        inventory: {
-          book: {
-            users: {
-              some: {
-                id: author.id
-              }
-            }
-          }
-        },
-        isDeleted: false,
-      },
-      select: {
-        id: true,
-        quantity: true,
-        createdAt: true,
-        inventory: {
-          select: {
-            book: {
-              select: {
-                price: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
+    const newAllBooks = await prisma.book.findMany({
+      include: {
+        users: true
       }
     });
 
-    const userCategory = await prisma.category.findUnique({
-      where: {
-        id: author.categoryId
+    for (const book of newAllBooks) {
+      let randQuantToSell = Math.floor(Math.random() * 100);
+      if (randQuantToSell === 0) {
+        randQuantToSell = 1
       }
-    });
+      let randQuantPod = Math.floor(Math.random() * 100);
 
-    /// Then group them by month
-    for (const sale of data) {
-      if (salesByMonths[sale.createdAt.toISOString().substring(0,7)]) {
-        salesByMonths[sale.createdAt.toISOString().substring(0,7)] += (
-          (sale.inventory.book.price * sale.quantity)
-          * (userCategory.percentage_management_stores / 100)
-          * (userCategory.percentage_royalties / 100)
-        )
-      } else {
-        salesByMonths[sale.createdAt.toISOString().substring(0,7)] = (
-          (sale.inventory.book.price * sale.quantity)
-          * (userCategory.percentage_management_stores / 100)
-          * (userCategory.percentage_royalties / 100)
-        )
-      }
-    }
+      if (randQuantToSell > 0) {
+        const monthsAgo = Math.floor(Math.random() * 13);
+        let kindleSaleDate = new Date();
+        kindleSaleDate.setMonth(kindleSaleDate.getMonth() - monthsAgo);
+        let dateCut = new Date(kindleSaleDate);
+        dateCut.setMonth(dateCut.getMonth()-2);
 
-    // Make that a list
-    const salesByMonthsList = Object.entries(salesByMonths);
+        const saleForMonth = getForMonth(kindleSaleDate);
 
-    // Create a new payment for each month
-    for (const month of salesByMonthsList) {
-      const newPayment = await prisma.payment.create({
-        data: {
-          userId: author.id,
-          amount: month[1],
-          forMonth: month[0],
-          createdAt: new Date(month[0]+'-25')
+        const authorIds = book.users.map(user => user.id)
+        let paymentsIds = [];
+        for (const author of authorIds) {
+          const existingPayment = await prisma.payment.findUnique({
+            where: {
+              userId_forMonth: {
+                userId: author,
+                forMonth: saleForMonth
+              }
+            }
+          });
+
+          if (!existingPayment) {
+            const createdPayment = await prisma.payment.create({
+              data: {
+                userId: author,
+                forMonth: saleForMonth,
+                createdAt: kindleSaleDate,
+              }
+            });
+
+            paymentsIds.push({"id": createdPayment.id})
+            continue;
+          }
+
+          paymentsIds.push({"id": existingPayment.id})
         }
-      })
+
+        const createdKindleSale = await prisma.kindleSale.create({
+          data: {
+            bookId: book.id,
+            payments: {
+              connect: paymentsIds
+            },
+            quantityEbook: randQuantToSell,
+            quantityPod: randQuantPod,
+            dateCut: dateCut,
+            datePay: kindleSaleDate,
+            regalias: ((randQuantToSell + randQuantPod) * 299.99),
+            createdAt: kindleSaleDate,
+          }
+        })
+      };
     }
+  } catch (error) {
+    console.error("Error somewhere", error);
   }
 }
 
+
 main()
-  .catch((e) => {
-    console.error(e);
+  .then(() => {
+    console.log("Seed complete");
+    process.exit(0);
   })
-  .finally(async()=> {
+  .catch((e) => {
+    console.error("Seed failed:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
     await prisma.$disconnect();
   });

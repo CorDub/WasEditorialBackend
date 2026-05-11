@@ -4,27 +4,34 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "node pretestScript.js",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.828.0",
+    "@aws-sdk/s3-request-presigner": "^3.828.0",
     "@prisma/client": "^6.3.1",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "luxon": "^3.7.2",
+    "multer": "^2.0.1",
     "node": "^18.20.6",
-    "nodemailer": "^6.10.0",
-    "pg": "^8.13.1"
+    "node-cron": "^4.1.0",
+    "pg": "^8.13.1",
+    "resend": "^6.6.0"
   },
   "devDependencies": {
-    "prisma": "^6.3.1"
+    "prisma": "^6.3.1",
+    "vitest": "^3.2.4"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed:deploy": "node prisma/seed.js"
   }
 }

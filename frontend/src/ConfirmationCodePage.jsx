@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./ConfirmationCodePage.scss";
 
 function ConfirmationCodePage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [cc1, setConfirmationCode1] = useState(null);
   const [cc2, setConfirmationCode2] = useState(null);
   const [cc3, setConfirmationCode3] = useState(null);
@@ -24,7 +25,7 @@ function ConfirmationCodePage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/api/confirmation_code', {
+      const response = await fetch(`${baseURL}/api/user/confirmation_code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -37,7 +38,6 @@ function ConfirmationCodePage() {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
         alert('El codigo que ingreso no esta correcto');
       } else {
         navigate("/author/change-password", {state: { user_id: id }});
@@ -54,7 +54,7 @@ function ConfirmationCodePage() {
 
   return (
     <div className="ccp">
-      <p>Por favor ingrese el codigo de confirmación que le ha esta enviado a su correo.</p>
+      <p>Por favor ingrese el codigo de confirmación que le mandamos por nuevo correo.</p>
       <form onSubmit={handleSubmit}>
         <div>
           <input type="text" maxLength='1' id='ccp1'
@@ -87,7 +87,7 @@ function ConfirmationCodePage() {
             onChange={(e) => setConfirmationCode6((e.target.value).toString())}></input>
         </div>
         <div className='form-actions ccp-actions'>
-          <button type='submit' className="blue-button">Submit</button>
+          <button type='submit' className="blue-button">Ingresar</button>
         </div>
       </form>
     </div>

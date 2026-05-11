@@ -1,0 +1,26 @@
+.table-costs {
+    margin: 0.5rem 0 0 0;
+    padding: 0.5rem;
+    border-radius: 15px;
+    background-color: #d6d6d6;
+    border-bottom: grey;
+}
+
+.table-costs:hover {
+    cursor: pointer;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5), -1px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.table-costs-line {
+    display: flex;
+}
+
+.table-costs-title {
+    width: 85%;
+    margin-right: 0.5rem;
+}
+
+.table-costs-amount {
+    text-align: center;
+    width: 15%;
+}

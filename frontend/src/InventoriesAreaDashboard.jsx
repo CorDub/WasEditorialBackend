@@ -9,6 +9,7 @@ import BookstoreInventory from "./BookstoreInventory";
 
 function InventoriesAreaDashboard() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [data, setData] = useState([]);
   const { user } = useContext(UserContext);
   const [currentQuantities, setCurrentQuantities] = useState([]);
@@ -21,6 +22,7 @@ function InventoriesAreaDashboard() {
   const [isBookInventoryOpen, setBookInventoryOpen] = useState(false);
   const [isBookstoreInventoryOpen, setBookstoreInventoryOpen] = useState(false);
   const [selectedBookstore, setSelectedBookstore] = useState("");
+  const [selectedBookstoreId, setSelectedBookstoreId] = useState(null);
   const [selectedBook, setSelectedBook] = useState("");
   const [selectedBookstoreNoSpaces, setSelectedBookstoreNoSpaces] = useState("");
   const [selectedLogo, setSelectedLogo] = useState("");
@@ -38,22 +40,37 @@ function InventoriesAreaDashboard() {
     };
   }, []);
 
+  async function getCurrentTotals() {
+    const response = await fetch(`${baseURL}/api/admin/inventoriesCurrentTotals`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    });
+
+    if (response.ok) {
+      const data = await response.json()
+      setData(data);
+    }
+  }
+
+  useEffect(() => {
+    getCurrentTotals()
+  }, []);
+
   function getBookstoresNamesandCounts(data) {
     const resCounts = [];
 
-    for (let i = 0; i < data.length; i++) {
-      if (!resCounts[data[i].bookstoreId]) {
-        let bookstoreObject = {
-          name: data[i].bookstore.name,
-          count: data[i].current
-        }
-        resCounts[data[i].bookstoreId] = bookstoreObject;
-      } else {
-        resCounts[data[i].bookstoreId].count += data[i].current
-      }
+    for (const bookstore of data) {
+      resCounts.push({
+          name: bookstore.bookstoreName,
+          count: bookstore._sum.current,
+          id: bookstore.bookstoreId
+        })
     }
 
-    const filteredResCounts = resCounts.filter(count => count !== "");
+    const filteredResCounts = Object.values(resCounts).filter(count => count !== "");
     const sortedResCounts = filteredResCounts.sort((a, b) => b.count - a.count);
 
     setBookstoresCounts(sortedResCounts);
@@ -68,14 +85,16 @@ function InventoriesAreaDashboard() {
 
     //get percentages split
     let totalCurrentQuantities = 0
+    
     for (const quantity of currentQuantities) {
-      totalCurrentQuantities += quantity
+      totalCurrentQuantities += quantity.quantity
     }
-
+    
     const areaPercentages = Array.from({length: bookstoresCounts.length}).fill(0);
     for (let i = 0; i < currentQuantities.length; i++ ) {
-      areaPercentages[i] = Math.round((currentQuantities[i] / totalCurrentQuantities) * 100);
+      areaPercentages[i] = Math.round((currentQuantities[i].quantity / totalCurrentQuantities) * 100);
     }
+
     let totalAreaPercentage = 0
     for (const percent of areaPercentages) {
       totalAreaPercentage += percent;
@@ -263,33 +282,13 @@ function InventoriesAreaDashboard() {
     return finalAreaDimensions;
   };
 
-  async function fetchInventories() {
-    try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        const data = await response.json();
-        setData(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   useEffect(() => {
-    fetchInventories();
-  }, []);
-
-  useEffect(() => {
-    const newArray = Array.from({length: bookstoresCounts.length}, () => 0);
+    let newArray = [];
+    
     for (const inventory of data) {
-      newArray[inventory.bookstoreId - 1] += parseInt(inventory.current)
+      newArray.push({
+        "bookstoreId": inventory.bookstoreId,
+        "quantity": inventory._sum.current})
     }
     setCurrentQuantities(newArray);
   }, [data, bookstoresCounts]);
@@ -311,7 +310,7 @@ function InventoriesAreaDashboard() {
     <div className="inventory-area-container">
       <Navbar
         subNav={user.role}
-        active={"inventories2"}
+        active={"inventories"}
         setBookstoreInventoryOpen={setBookstoreInventoryOpen}
         setSelectedBookstore={setSelectedBookstore}
         setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
@@ -331,6 +330,7 @@ function InventoriesAreaDashboard() {
                 name={noSpaceName}
                 bookstoreName={bookstore.name}
                 count={bookstore.count}
+                bookstoreId={bookstore.id}
                 top={area.top}
                 left={area.left}
                 height={area.height}
@@ -338,6 +338,7 @@ function InventoriesAreaDashboard() {
                 setBookstoreInventoryOpen={setBookstoreInventoryOpen}
                 setSelectedBookstore={setSelectedBookstore}
                 setSelectedBookstoreNoSpaces={setSelectedBookstoreNoSpaces}
+                setSelectedBookstoreId={setSelectedBookstoreId}
                 setSelectedLogo={setSelectedLogo}
                 retreat={retreat}
                 setRetreat={setRetreat}/>
@@ -349,9 +350,11 @@ function InventoriesAreaDashboard() {
         <BookstoreInventory
           selectedBookstore={selectedBookstore}
           selectedBookstoreNoSpaces={selectedBookstoreNoSpaces}
+          selectedBookstoreId={selectedBookstoreId}
           selectedLogo={selectedLogo}
           isBookstoreInventoryOpen={isBookstoreInventoryOpen}
-          setBookstoreInventoryOpen={setBookstoreInventoryOpen}/>}
+          setBookstoreInventoryOpen={setBookstoreInventoryOpen}
+          preferredFontSize={user.font_size}/>}
 
       {isBookInventoryOpen &&
         <BookInventory
@@ -359,7 +362,8 @@ function InventoriesAreaDashboard() {
           selectedBookId={selectedBookId}
           isBookInventoryOpen={isBookInventoryOpen}
           setBookInventoryOpen={setBookInventoryOpen}
-          setRetreat={setRetreat} />}
+          setRetreat={setRetreat}
+          preferredFontSize={user.font_size} />}
     </div>
   )
 }

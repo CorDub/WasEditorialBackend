@@ -2,7 +2,7 @@ import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../UserContext';
 
-function useCheckUser(page_id) {
+function useCheckUser() {
   const { user, fetchUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -10,25 +10,20 @@ function useCheckUser(page_id) {
     async function fetchUserData() {
       if (user !== "") {
         if (user === null) {
+
           navigate("/");
           return;
         }
 
-      if (user.role === "superadmin" || user.role === "admin") {
-        return;
-      }
-
-      // if (user.id !== page_id) {
-      //   navigate("/");
-      //   return;
-      // }
+        if (user.role === "superadmin" || user.role === "admin") {
+          return;
+        }
 
         return;
       }
 
       const userData = await fetchUser();
-
-      if (userData === null) {
+      if (!userData) {
         navigate("/");
         return;
       };
@@ -36,11 +31,6 @@ function useCheckUser(page_id) {
       if (userData.role === "superadmin" || userData.role === "admin") {
         return;
       }
-
-      // if (userData.id !== page_id) {
-      //   navigate("/");
-      //   return;
-      // }
     }
 
     fetchUserData();

@@ -2,50 +2,27 @@ import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
+import { today } from "../../backend/utils.js";
 
 function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
-  const [data, setData] = useState([]);
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [existingBooks, setExistingBooks] = useState([]);
   const [existingBookstores, setExistingBookstores] = useState([]);
   const [errors, setErrors] = useState([]);
   const [book, setBook] = useState("");
   const [bookstore, setBookstore] = useState("");
-  const [country, setCountry] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const bookRef = useRef();
   const bookstoreRef = useRef();
-  const countryRef = useRef();
   const quantityRef = useRef();
-  const countries = [
-    "México", "Estados Unidos",
-    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
-    "Bahamas", "Bangladés", "Baréin", "Barbados", "Belice", "Benín", "Bielorrusia", "Birmania (Myanmar)", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Bélgica",
-    "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
-    "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Esuatini (Suazilandia)", "Etiopía",
-    "Filipinas", "Finlandia", "Fiyi", "Francia",
-    "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana",
-    "Haití", "Honduras", "Hungría",
-    "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
-    "Jamaica", "Japón", "Jordania",
-    "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
-    "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
-    "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
-    "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
-    "Omán",
-    "Países Bajos", "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumania", "Rusia",
-    "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
-    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
-    "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
-    "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
-    "Yemen",
-    "Zambia", "Zimbabue"
-  ];
+  const dateStrRef = useRef();
+  const [dateStr, setDateStr] = useState(today());
 
-  async function fetchInventories() {
+  async function getExistingBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/inventories', {
-        method: "GET",
+      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
+       method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
@@ -54,7 +31,26 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
       if (response.ok) {
         const data = await response.json();
-        setData(data);
+        setExistingBooks(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getExistingBookstores() {
+    try {
+      const response = await fetch(`${baseURL}/api/admin/existingBookstores`, {
+       method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        setExistingBookstores(data);
       }
     } catch (error) {
       console.error(error);
@@ -62,35 +58,81 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }
 
   useEffect(() => {
-    fetchInventories();
+    async function fetchData() {
+      await Promise.all([
+        getExistingBooks(),
+        getExistingBookstores()
+      ]);
+    }
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    let inventoryBooks = [];
-    let inventoryBookstores = [];
-    for (const inventory of data) {
-      inventoryBooks.push(inventory.book.title);
-      inventoryBookstores.push(inventory.bookstore.name);
+
+  function changeValueAndFilter(value, type) {
+    if (type === "Book") {
+      setBook(parseInt(value))
+      let chosenBook;
+      for (const book of existingBooks) {
+        if (book.id === parseInt(value)) {
+          chosenBook = book
+          break;
+        }
+      }
+
+      if (bookstore === "") {
+        let filteredList = [];
+        for (const inventory of chosenBook.inventories) {
+          for (const bookstore of existingBookstores) {
+            if (inventory.bookstoreId === bookstore.id) {
+              filteredList.push(bookstore)
+            }
+          }
+        }
+        setExistingBookstores(filteredList);
+        if (!filteredList.includes(bookstore)) {
+          setBookstore("");
+        }
+      }
+
+    } else if (type === "Bookstore") {
+      setBookstore(parseInt(value))
+      let chosenBookstore;
+      for (const bookstore of existingBookstores) {
+        if (bookstore.id === parseInt(value)) {
+          chosenBookstore = bookstore
+          break;
+        }
+      }
+
+      if (book === "") {
+        let filteredList = [];
+        for (const inventory of chosenBookstore.inventories) {
+          for (const book of existingBooks) {
+            if (inventory.bookId === book.id) {
+              filteredList.push(book)
+            }
+          }
+        }
+        setExistingBooks(filteredList);
+        if (!filteredList.includes(book)) {
+          setBook("");
+        }
+      }
     }
-    setExistingBooks(inventoryBooks);
-    setExistingBookstores(inventoryBookstores);
-  }, [data])
+  }
 
   function dropDownChange(e, input_name, input_index) {
 
     const inputs = {
       "Book": {
-        "function": setBook,
+        "function": changeValueAndFilter,
         "element": bookRef
       },
       "Bookstore": {
-        "function": setBookstore,
+        "function": changeValueAndFilter,
         "element": bookstoreRef
       },
-      "Country": {
-        "function": setCountry,
-        "element": countryRef
-      }
     }
 
     if (input_index !== undefined) {
@@ -101,7 +143,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         };
         return;
       } else {
-        // inputs[input_name]["function"](input_index, e);
         if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
           inputs[input_name]["element"].current.classList.add("selected")
         };
@@ -115,7 +156,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
         inputs[input_name]["element"].current.classList.remove("selected")
       };
     } else {
-      inputs[input_name]["function"](e.target.value);
+      inputs[input_name]["function"](e.target.value, input_name);
       if (inputs[input_name]["element"].current.classList.contains("selected") === false) {
         inputs[input_name]["element"].current.classList.add("selected")
       };
@@ -124,45 +165,51 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   function checkInputs() {
     let errorsList = []
+    let existingBookIds = []
+    for (const book of existingBooks) {
+      existingBookIds.push(book.id)
+    }
+    let existingBookstoreIds = []
+    for (const bookstore of existingBookstores) {
+      existingBookstoreIds.push(bookstore.id)
+    }
+
     const expectationsBook = {
-      type: "string",
       presence: "not empty",
-      length: 100,
-      value: existingBooks
+      type: "number",
+      value: existingBookIds
     };
     const expectationsBookstore = {
-      type: "string",
       presence: "not empty",
-      length: 50,
-      value: existingBookstores
-    };
-    const expectationsPais = {
-      type: "string",
-      presence: "not empty",
-      length: 50,
-      value: countries
+      type: "number",
+      value: existingBookstoreIds
     };
     const expectationsCantidad = {
-      type: "number",
       presence: "not empty",
+      type: "number",
       range: "positive"
+    }
+    const expectationsDateStr = {
+      presence: "not empty",
+      type: "string",
+      range: "no future"
     }
 
     let errorsBook;
     let errorsBookstore;
-    let errorsPais;
     let errorsQuantity;
     let errorInputs;
+    let errorsDateStr;
 
     if (clickedRow) {
-      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
+      errorsQuantity = checkForErrors("Cantidad", quantity, expectationsCantidad, quantityRef, "a");
       errorInputs = [errorsQuantity];
     } else {
-      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef);
-      errorsBookstore = checkForErrors("Libreria", bookstore, expectationsBookstore, bookstoreRef);
-      errorsPais = checkForErrors("Pais", country, expectationsPais, countryRef);
-      errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
-      errorInputs = [errorsBook, errorsBookstore, errorsPais, errorsQuantity];
+      errorsBook = checkForErrors("Libro", book, expectationsBook, bookRef, "o");
+      errorsBookstore = checkForErrors("Librería", bookstore, expectationsBookstore, bookstoreRef, "a");
+      errorsQuantity = checkForErrors("Cantidad", quantity, expectationsCantidad, quantityRef, "a");
+      errorsDateStr = checkForErrors("Fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+      errorInputs = [errorsBook, errorsBookstore, errorsQuantity, errorsDateStr];
     }
 
     for (const errorInput of errorInputs) {
@@ -190,26 +237,22 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      const chosenInventory = data.find(inventory => inventory.book.title === book && inventory.bookstore.name === bookstore);
-      console.log(chosenInventory);
-
-      const response = await fetch('http://localhost:3000/admin/sale', {
+      const response = await fetch(`${baseURL}/api/admin/sale`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          book: chosenInventory.bookId,
-          bookstore: chosenInventory.bookstoreId,
-          country: country,
-          quantity: quantity
+          bookId: parseInt(book),
+          bookstoreId: parseInt(bookstore),
+          quantity: quantity,
+          dateStr: dateStr
         }),
       });
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -228,9 +271,8 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   useEffect(() => {
     if (clickedRow) {
-      setBook(clickedRow.book.title);
-      setBookstore(clickedRow.bookstore.name);
-      setCountry(clickedRow.country);
+      setBook(clickedRow.bookId);
+      setBookstore(clickedRow.bookstoreId);
     }
   }, [clickedRow])
 
@@ -239,35 +281,42 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
       <div className="form-title">
         <p>Nueva venta</p>
       </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
+      </div>
       <form className="global-form">
         {clickedRow ?
           null :
            <>
            <select onChange={(e) => dropDownChange(e, "Book")}
              className="select-global" ref={bookRef}>
-             <option value="null">Selecciona libro</option>
+             <option value="null">Selecciona libro*</option>
              {existingBooks && existingBooks.map((book, index) => (
-               <option key={index} value={book}>{book}</option>
+               <option key={index} value={book.id}>{book.title}</option>
              ))}
            </select>
            <select onChange={(e) => dropDownChange(e, "Bookstore")}
              className="select-global" ref={bookstoreRef}>
-             <option value="null">Selecciona libreria</option>
+             <option value="null">Selecciona libreria*</option>
              {existingBookstores && existingBookstores.map((bookstore, index) => (
-               <option key={index} value={bookstore}>{bookstore}</option>
-             ))}
-           </select>
-           <select onChange={(e) => dropDownChange(e, "Country")}
-             className="select-global" ref={countryRef}>
-             <option value="null">Selecciona pais</option>
-             {countries && countries.map((country, index) => (
-               <option key={index} value={country}>{country}</option>
+               <option key={index} value={bookstore.id}>{bookstore.name}</option>
              ))}
            </select>
          </>
         }
-        <input type="text" placeholder="Cantidad vendida" className="global-input"
+        <input type="text" placeholder="Cantidad vendida*" className="global-input"
           ref={quantityRef} onChange={(e) => setQuantity(parseInt(e.target.value))}></input>
+        <input
+            type="date"
+            placeholder="Fecha"
+            className="global-input"
+            ref={dateStrRef}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
+            onChange={(e) => setDateStr(e.target.value)}
+            value={dateStr}
+            ></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

@@ -9,7 +9,7 @@ $global-second-font: 'Roboto Slab';
 
 html, body {
   background: $bg-second-color;
-  background-image: url("/home/cordub/code/CorDub/WasEditorialBackend/frontend/src/assets/triangles.png");
+  background-image: url("./assets/triangles.png");
   background-size: cover;
   background-position: center;
   font-family: $global-font;
@@ -22,10 +22,18 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  // --user-font-size: 1rem;
 }
 
 a {
   text-decoration: none;
+}
+
+.contain {
+  width: 100%;
+  max-width: 1500px;
+  display: flex;
+  justify-content: center;
 }
 
 // Buttons
@@ -41,9 +49,25 @@ a {
   color: white;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+  font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .blue-button:hover {
+  cursor: pointer;
+}
+
+.non-clickable:hover {
+  cursor: text !important;
+}
+
+.blue-button-inactive {
+  border: none;
+  color: $second-color;
+  text-decoration: underline;
+  font-size: clamp(0.8rem, 1rem, 1.2rem);
+}
+
+.blue-button-inactive:hover {
   cursor: pointer;
 }
 
@@ -57,6 +81,7 @@ a {
   background-color: $bg-second-color;
   color: $prim-color;
   box-shadow: -1px -1px 1px #4E5981, 1px 1px 1px #fff inset;
+  // font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .grey-button:hover {
@@ -74,6 +99,7 @@ a {
   background-color: $prim-color;
   color: white;
   transition: 0.3s;
+  // font-size: clamp(0.8rem, 1rem, 1.2rem);
 }
 
 .navbar-button:hover {
@@ -104,6 +130,8 @@ a {
   z-index: 2000;
   background-color: #E2E2E2;
   width: 30%;
+  max-height: 90%;
+  overflow-y: auto;
   border-radius: 15px;
   padding: 1rem;
 }
@@ -119,7 +147,84 @@ a {
   margin-right: 0.5rem;
 }
 
+.modal-form-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-form-label {
+  text-align: start;
+  width: 70%;
+  margin-bottom: 0.25rem;
+  padding-left: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.modal-form-checkbox-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  margin-bottom: 0.5rem;
+}
+
+.checkbox-input {
+  padding-left: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.modal-form-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 1rem;
+  width: 100%;
+}
+
+.modal-form-error {
+  color: red;
+}
+
+.modal-birthday {
+  display: flex;
+  width: 70%
+}
+
+.birthday-day {
+  width: 25% !important;
+}
+
+.birthday-month {
+  width: 25% !important;
+}
+
+.birthday-year {
+  width: 50% !important;
+}
+
+.modal-payment-amount {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-payment-amount p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.modal-phone {
+  display: flex;
+  width: 70%
+}
+
+.modal-edit-author {
+  margin-top: 0.5rem;
+}
+
 /// Form
+
 .global-form {
   display: flex;
   flex-direction: column;
@@ -131,16 +236,44 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
   p {
     margin: 0px;
     color: $second-color;
-    font-style: italic;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
   }
 }
 
-.form-actions {
-  // padding-top: 0.5rem;
+.form-subtitle {
+  font-weight: 200 !important;
+  font-style: italic;
+}
+
+.campos-obligatorios {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  p {
+    margin: 0;
+    font-style: italic;
+    color: grey
+  }
+}
+
+.campos-obligatorios-new-impressions {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  p {
+    margin: 0;
+    font-style: italic;
+    color: grey
+  }
+  padding: 0 0.5rem 0 0.5rem;
 }
 
 .harddel-checkbox {
@@ -173,6 +306,23 @@ a {
   font-size: 1.5em;
 }
 
+.form-actions {
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.form-actions-cat {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.centered-entrega {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
 /// Inputs
 
 .global-input {
@@ -181,7 +331,18 @@ a {
   padding-left: 0.4rem;
   margin-bottom: 0.5rem;
   width: 70%;
-  box-sizing: border-box
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
+}
+
+.input-phone {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.4rem;
+  margin-bottom: 0.5rem;
+  width: 62%;
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 .global-input:focus-visible {
@@ -197,6 +358,7 @@ a {
   width: 70%;
   color: grey;
   box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 .select-global:focus-visible {
@@ -205,6 +367,17 @@ a {
 
 .selected {
   color: black;
+}
+
+.select-phone {
+  border-radius: 15px;
+  border: 1px solid grey;
+  padding-left: 0.2rem;
+  margin-bottom: 0.5rem;
+  width: 38%;
+  color: grey;
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 /// Errors
@@ -219,14 +392,28 @@ a {
   justify-content: center;
   align-items: center;
   text-align: center;
+  margin-top: 0.5rem;
   padding-top: 0.5rem;
+  margin-bottom: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.general-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  // margin-top: 0.5rem;
+  // margin-bottom: 0.5rem;
+  // padding-top: 0.5rem;
+  // padding-bottom: 1.5rem;
 }
 
 .login-error {
   margin: 0;
   color: red;
-  font-size: 0.9em;
+  font-size: 1em;
 }
 
 /// Table
@@ -238,8 +425,26 @@ a {
   justify-content: center;
 }
 
+.table-button-inventories {
+  padding: 0.5rem;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 .table-button {
   margin-left: -0.4rem;
+}
+
+.table-clickable-row {
+  color: #4E6CB3;
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 /// Alerts
@@ -252,6 +457,7 @@ a {
   padding: 1rem;
   position: fixed;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -289,6 +495,15 @@ a {
   text-align: center;
 }
 
+.alert-warning-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-alert-warning {
+  margin-top: 1rem;
+}
+
 /// Tooltips
 
 .tooltip-proper {
@@ -298,14 +513,17 @@ a {
   border-radius: 15px;
   padding: 0.5rem;
   position: fixed;
-  width: 90px;
-  height: 40px;
+  // width: 90px;
+  // height: 40px;
   // top: 500px;
   // bottom: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  p {
+    margin: 0
+  }
 }
 
 .tooltip-message {
@@ -314,4 +532,8 @@ a {
 
 .hidden {
   display: none;
+}
+
+.fa-icon {
+  font-size: 1rem;
 }

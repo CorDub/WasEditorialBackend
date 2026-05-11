@@ -1,10 +1,11 @@
 import useCheckSuperAdmin from "./customHooks/useCheckSuperAdmin";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
 function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckSuperAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   const [firstName, setFirstName] = useState(clickedRow.first_name);
   const [lastName, setLastName] = useState(clickedRow.last_name);
@@ -15,11 +16,30 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   const lastNameRef = useRef();
   const emailRef = useRef();
   const roleRef = useRef();
+  const [roles, setRoles] = useState([]);
+
+
+  useEffect(() => {
+    let orderedRoles = []
+    let possibleRoles = [
+      {value: "superadmin", display:"Superadmin"}, 
+      {value: "admin", display: "Admin"}, 
+      {value: "author", display: "Autor"}];
+    orderedRoles.push(possibleRoles.find(role => role.value === clickedRow.role));
+    for (const role of possibleRoles) {
+      if (role.value === clickedRow.role) {
+        continue;
+      } else {
+        orderedRoles.push(role);
+      }
+    }
+    setRoles(orderedRoles);
+  }, [clickedRow])
+
 
   async function sendToServer() {
     try {
-      console.log(lastName);
-      const response = await fetch('http://localhost:3000/superadmin/admin', {
+      const response = await fetch(`${baseURL}/api/superadmin/api/admin/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +55,6 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -65,10 +84,10 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
       value: ["superadmin", "admin", "author"]
     }
 
-    const errorsFirstName = checkForErrors("nombre", firstName, Expectations, firstNameRef);
-    const errorsLastName = checkForErrors("apellido", lastName, Expectations, lastNameRef);
-    const errorsEmail = checkForErrors("correo", email, Expectations, emailRef);
-    const errorsRole = checkForErrors("rol", role, roleExpectations, roleRef);
+    const errorsFirstName = checkForErrors("Nombre", firstName, Expectations, firstNameRef, "o");
+    const errorsLastName = checkForErrors("Apellido", lastName, Expectations, lastNameRef, "o");
+    const errorsEmail = checkForErrors("Correo", email, Expectations, emailRef, "o");
+    const errorsRole = checkForErrors("Rol", role, roleExpectations, roleRef, "o");
     const errorInputs = [errorsFirstName, errorsLastName, errorsEmail, errorsRole];
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -81,6 +100,7 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setErrors([]);
 
     const res = checkInputs();
     if (res.length > 0) {
@@ -132,28 +152,43 @@ function EditAdminModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     <div className="modal-proper">
       <div className="form-title">
         <p>Editar admin</p>
+        <p className="form-subtitle">{clickedRow.first_name} {clickedRow.last_name}</p>
+      </div>
+      <div className="campos-obligatorios">
+        <p>*Campos obligatorios</p>
       </div>
       <form className="global-form">
-        <input type='text' placeholder="Nombre"
-          value={firstName}
-          className="global-input" id='adding-author-first-name'
-          ref={firstNameRef}
-          onChange={(e) => setFirstName(e.target.value)}></input>
-        <input type='text' placeholder="Apellido" value={lastName}
-          className="global-input" id="adding-author-last-name"
-          ref={lastNameRef}
-          onChange={(e) => setLastName(e.target.value)}></input>
-        <input type='text' placeholder="Correo" value={email}
-          className="global-input" id="adding-author-email"
-          ref={emailRef}
-          onChange={(e) => setEmail(e.target.value)}></input>
-        <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
-          ref={roleRef}>
-          <option value={role}>{role}</option>
-          <option value="superadmin">Superadmin</option>
-          <option value="admin">Admin</option>
-          <option value="author">Usuario</option>
-        </select>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Nombre *</label>
+          <input type='text' placeholder="Nombre"
+            value={firstName}
+            className="global-input" id='adding-author-first-name'
+            ref={firstNameRef}
+            onChange={(e) => setFirstName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Apellido *</label>
+          <input type='text' placeholder="Apellido" value={lastName}
+            className="global-input" id="adding-author-last-name"
+            ref={lastNameRef}
+            onChange={(e) => setLastName(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Correo</label>
+          <input type='text' placeholder="Correo" value={email}
+            className="global-input" id="adding-author-email"
+            ref={emailRef}
+            onChange={(e) => setEmail(e.target.value)}></input>
+        </div>
+        <div className="modal-form-line">
+          <label className="modal-form-label">Role *</label>
+          <select onChange={(e) => dropDownChange(e, "Role")} className="select-global"
+            ref={roleRef}>
+            {roles.map((role, index) => (
+              <option key={index} value={role.value}>{role.display}</option>
+            ))}
+          </select>
+        </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

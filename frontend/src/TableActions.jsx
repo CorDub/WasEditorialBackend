@@ -8,6 +8,7 @@ import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { faPersonArrowUpFromLine } from "@fortawesome/free-solid-svg-icons";
 import { faPersonArrowDownToLine } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import "./TableActions.scss";
 import Tooltip from "./Tooltip";
 
@@ -15,9 +16,9 @@ function TableActions ({
     openModal,
     row,
     isTableActionsOpen,
-    setTableActionsOpen,
     setModalType,
-    type}) {
+    type,
+    status}) {
   const gearRef = useRef();
   const buttonsRef = useRef();
   const [x, setX] = useState(null);
@@ -31,9 +32,13 @@ function TableActions ({
   const [isReturnTooltipOpen, setReturnTooltipOpen ] = useState(false);
   const [isGivenToAuthorTooltipOpen, setGivenToAuthorTooltipOpen ] = useState(false);
   const [isReceivedFromAuthorTooltipOpen, setReceivedFromAuthorTooltipOpen ] = useState(false);
+  const [isPaymentsTooltipOpen, setPaymentsTooltipOpen] = useState(false);
+  const [isCostTooltipOpen, setCostTooltipOpen] = useState(false);
+  const [isEditBookPricesTooltipOpen, setEditBookPricesTooltipOpen] = useState(false);
+  const [isNewImpressionTooltipOpen, setNewImpressionTooltipOpen] = useState(false)
 
   useEffect(() => {
-    if (row.original.bookstoreId === 3) {
+    if (row.original.bookstoreId === 1) {
       setTransferType('send')
     } else {
       setTransferType('return')
@@ -105,41 +110,142 @@ function TableActions ({
     openModal("adding", row.original);
   }
 
+  function markAsPaid() {
+    setModalType("payment");
+    openModal("edit", row.original);
+  }
+
+  function addCost() {
+    setModalType("cost");
+    openModal("adding", row.original);
+  }
+
+  function editBookPrices() {
+    openModal("editBookPrices", row.original);
+  } 
+
+  function addNewImpression() {
+    setModalType("impression");
+    openModal("adding", row.original)
+  } 
+
   return(
     <div className="table-actions">
       <FontAwesomeIcon icon={faGear} className="ta-gear"
         onClick={displayingActions} ref={gearRef}/>
-
-      <div className="ta-buttons hidden" ref={buttonsRef}>
+        <div className="ta-buttons hidden" ref={buttonsRef}>
         <Tooltip message={tooltipMessage} x={x} y={y}/>
-        <FontAwesomeIcon
-          icon={faPen}
-          className="ta-button ta-edit"
-          id={`ta-edit-${row.index}`}
-          onClick={() => openModal("edit", row.original)}
-          onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
-          onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
-        {isEditTooltipOpen && (
-          <div className="ta-tooltip">Editar</div>)}
-        <FontAwesomeIcon
-          icon={faCircleXmark}
-          className="ta-button ta-delete"
-          id={`ta-delete-${row.index}`}
-          onClick={() => openModal("delete", row.original)}
-          onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
-          onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
-        {isDeleteTooltipOpen && (
-          <div className="ta-tooltip">Eliminar</div>)}
+
+        {!type && (
+          <>
+          <FontAwesomeIcon
+            icon={faPen}
+            className="ta-button ta-edit"
+            id={`ta-edit-${row.index}`}
+            onClick={() => openModal("edit", row.original)}
+            onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+            onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+          {isEditTooltipOpen && (
+            <div className="ta-tooltip">Editar</div>)}
+          <FontAwesomeIcon
+            icon={faCircleXmark}
+            className="ta-button ta-delete"
+            id={`ta-delete-${row.index}`}
+            onClick={() => openModal("delete", row.original)}
+            onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+            onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+          {isDeleteTooltipOpen && (
+            <div className="ta-tooltip">Eliminar</div>)}
+          </>)
+        }
+
+        {type && type === "book" &&
+          <>
+            <FontAwesomeIcon
+              icon={faPen}
+              className="ta-button ta-edit"
+              id={`ta-edit-${row.index}`}
+              onClick={() => openModal("edit", row.original)}
+              onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+              onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+            {isEditTooltipOpen && (
+              <div className="ta-tooltip">Editar</div>)}
+            <FontAwesomeIcon icon={faDollarSign}
+              className='ta-button ta-sale'
+              id={`ta-payment-${row.index}`}
+              onClick={editBookPrices}
+              onMouseEnter={() => setEditBookPricesTooltipOpen(!isEditBookPricesTooltipOpen)}
+              onMouseLeave={() => setEditBookPricesTooltipOpen(!isEditBookPricesTooltipOpen)}/>
+            {isEditBookPricesTooltipOpen && (
+              <div className="ta-tooltip">Editar precios</div>)}
+            <FontAwesomeIcon
+              icon={faCircleXmark}
+              className="ta-button ta-delete"
+              id={`ta-delete-${row.index}`}
+              onClick={() => openModal("delete", row.original)}
+              onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+              onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+            {isDeleteTooltipOpen && (
+              <div className="ta-tooltip">Eliminar</div>)}
+          </>
+        }
+
+        {type && type === "payment" && 
+            <>
+            {status === "solicited" && (
+              <>
+              <FontAwesomeIcon icon={faCircleCheck}
+                className='ta-button ta-sale'
+                id={`ta-payment-${row.index}`}
+                onClick={markAsPaid}
+                onMouseEnter={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}
+                onMouseLeave={() => setPaymentsTooltipOpen(!isPaymentsTooltipOpen)}/>
+              {isPaymentsTooltipOpen && (
+                <div className="ta-tooltip">Marcar pagado</div>)}
+              </>
+            )}
+            {status === "created" && (
+              <>
+              <FontAwesomeIcon icon={faDollarSign}
+                className='ta-button ta-delete'
+                id={`ta-payment-${row.index}`}
+                onClick={addCost}
+                onMouseEnter={() => setCostTooltipOpen(!isCostTooltipOpen)}
+                onMouseLeave={() => setCostTooltipOpen(!isCostTooltipOpen)}/>
+              {isCostTooltipOpen && (
+                <div className="ta-tooltip">Añadir costo addicional</div>)}
+              </>
+            )}
+            </>}
+
         {type && type === "inventory" &&
           <>
-          <FontAwesomeIcon icon={faDollarSign}
+          {/* <FontAwesomeIcon
+            icon={faPen}
+            className="ta-button ta-edit"
+            id={`ta-edit-${row.index}`}
+            onClick={() => openModal("edit", row.original)}
+            onMouseEnter={() => setEditTooltipOpen(!isEditTooltipOpen)}
+            onMouseLeave={() => setEditTooltipOpen(!isEditTooltipOpen)} />
+          {isEditTooltipOpen && (
+            <div className="ta-tooltip">Editar</div>)} */}
+          {/* <FontAwesomeIcon
+            icon={faCircleXmark}
+            className="ta-button ta-delete"
+            id={`ta-delete-${row.index}`}
+            onClick={() => openModal("delete", row.original)}
+            onMouseEnter={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}
+            onMouseLeave={() => setDeleteTooltipOpen(!isDeleteTooltipOpen)}/>
+          {isDeleteTooltipOpen && (
+            <div className="ta-tooltip">Eliminar</div>)} */}
+          {/* <FontAwesomeIcon icon={faDollarSign}
             className='ta-button ta-sale'
             id={`ta-sale-${row.index}`}
             onClick={addSale}
             onMouseEnter={() => setSaleTooltipOpen(!isSaleTooltipOpen)}
             onMouseLeave={() => setSaleTooltipOpen(!isSaleTooltipOpen)}/>
           {isSaleTooltipOpen && (
-            <div className="ta-tooltip">Añadir venta</div>)}
+            <div className="ta-tooltip">Añadir venta</div>)} */}
           {transferType === "send" ?
             <>
               <FontAwesomeIcon icon={faArrowUp}
@@ -149,7 +255,15 @@ function TableActions ({
                 onMouseEnter={() => setSendTooltipOpen(!isSendTooltipOpen)}
                 onMouseLeave={() => setSendTooltipOpen(!isSendTooltipOpen)}/>
               {isSendTooltipOpen && (
-                <div className="ta-tooltip">Añadir entrega</div>)}
+                <div className="ta-tooltip">Ingreso a librería</div>)}
+              <FontAwesomeIcon icon={faArrowDown}
+                className='ta-button ta-transfer-send'
+                id={`ta-transfer-${row.index}`}
+                onClick={addNewImpression}
+                onMouseEnter={() => setNewImpressionTooltipOpen(!isNewImpressionTooltipOpen)}
+                onMouseLeave={() => setNewImpressionTooltipOpen(!isNewImpressionTooltipOpen)}/>
+              {isNewImpressionTooltipOpen && (
+                <div className="ta-tooltip">Nueva impresión</div>)}
               <FontAwesomeIcon icon={faPersonArrowUpFromLine}
                 className='ta-button ta-givenToAuthor'
                 id={`ta-transfer-${row.index}`}
@@ -157,15 +271,19 @@ function TableActions ({
                 onMouseEnter={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}
                 onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
               {isGivenToAuthorTooltipOpen && (
-                <div className="ta-tooltip">Añadir entrega a autor</div>)}
-              <FontAwesomeIcon icon={faPersonArrowDownToLine}
-                className='ta-button ta-receivedFromAuthor'
-                id={`ta-transfer-${row.index}`}
-                onClick={transferFromAuthor}
-                onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
-                onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
-              {isReceivedFromAuthorTooltipOpen && (
-                <div className="ta-tooltip">Añadir entrega de autor</div>)}
+                <div className="ta-tooltip">Entrega al autor</div>)}
+              {row.original.entregadosAlAutor > 0 && (
+                <>
+                <FontAwesomeIcon icon={faPersonArrowDownToLine}
+                  className='ta-button ta-receivedFromAuthor'
+                  id={`ta-transfer-${row.index}`}
+                  onClick={transferFromAuthor}
+                  onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
+                  onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
+                {isReceivedFromAuthorTooltipOpen && (
+                  <div className="ta-tooltip">Devolución del autor</div>)}
+                </>
+              )}
             </>
             :
             <>
@@ -176,10 +294,9 @@ function TableActions ({
                 onMouseEnter={() => setReturnTooltipOpen(!isReturnTooltipOpen)}
                 onMouseLeave={() => setReturnTooltipOpen(!isReturnTooltipOpen)}/>
               {isReturnTooltipOpen && (
-                <div className="ta-tooltip">Añadir devolución</div>)}
+                <div className="ta-tooltip">Devolución</div>)}
             </>
           }
-
           </>
         }
       </div>

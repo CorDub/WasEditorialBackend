@@ -2,13 +2,15 @@ import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
+import { today } from "../../backend/utils.js";
 
 function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [errors, setErrors] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState('');
-  const [deliveryDate, setDeliveryDate] = useState(null);
+  const [dateStr, setDateStr] = useState(today());
   const [place, setPlace] = useState('');
   const [person, setPerson] = useState('');
   const quantityRef = useRef();
@@ -37,16 +39,16 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
     }
 
     const errorsQuantity = checkForErrors(
-      "La cantidad",
+      "Cantidad",
       quantity,
       expectationsQuantity,
-      quantityRef
+      quantityRef,
+      "a"
     )
 
     if (errorsQuantity.length > 0) {
       errorsList.push(errorsQuantity);
     };
-    console.log("errorsQuantity", errorsQuantity);
 
     setErrors(prev => [...prev, errorsList]);
     return errorsList
@@ -54,7 +56,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/transfer', {
+      const response = await fetch(`${baseURL}/api/admin/transfer`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +67,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           inventoryFromId: clickedRow.id,
           type: "send",
           note: note,
-          deliveryDate: deliveryDate,
+          dateStr: dateStr,
           place: place,
           person: person,
         }),
@@ -73,7 +75,6 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
@@ -93,7 +94,7 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
     <div className="modal-proper">
       <div className="form-title">
         <p>Nueva entrega a autor</p>
-        <p>{clickedRow && clickedRow.book.title }</p>
+        <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
       <form
         onSubmit={handleSubmit}
@@ -102,6 +103,9 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           type='text'
           placeholder="Cantidad"
           className="global-input transfer-quantity"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}>
         </input>
@@ -109,7 +113,8 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           type="date"
           placeholder="Fecha de entrega"
           className="global-input"
-          onChange={(e) => setDeliveryDate(e.target.value)}/>
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}/>
         <input
           type="text"
           placeholder="Lugar (opcional)"

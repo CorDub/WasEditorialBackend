@@ -1,12 +1,17 @@
 import "./ScopeSelector.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faShop, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
+import { faBook, faShop } from '@fortawesome/free-solid-svg-icons'
 import { useState } from "react";
 
-function ScopeSelector({scope, setScope, setSelectedBookId}) {
+function ScopeSelector({
+  scope, 
+  setScope, 
+  setSelectedBookId, 
+  setLegendDisplays,
+  setTriggerResize
+}) {
   const [isBookTooltipOpen, setBookTooltipOpen] = useState(false);
   const [isBookstoreTooltipOpen, setBookstoreTooltipOpen] = useState(false);
-  const [isCountryTooltipOpen, setCountryTooltipOpen] = useState(false);
 
   function determineLeft() {
     switch (scope) {
@@ -23,10 +28,17 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
     <div className="scope-selector">
       <FontAwesomeIcon
         icon={faBook}
-        className={scope === "book" ? "ssi-active" : "scope-selector-icon"}
+        className={scope === "book" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
         onClick={() => {
           setScope("book");
           setSelectedBookId('');
+          setLegendDisplays({
+            "givenToAuthor": true,
+            "sold": true,
+            "current": true,
+            "returns": false
+          });
+          setTriggerResize(false)
         }}
         onMouseEnter={() => setBookTooltipOpen(true)}
         onMouseLeave={() => setBookTooltipOpen(false)} />
@@ -34,20 +46,22 @@ function ScopeSelector({scope, setScope, setSelectedBookId}) {
         <div className="scope-selector-tooltip-libro">Libro</div>)}
       <FontAwesomeIcon
         icon={faShop}
-        className={scope === "bookstore" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("bookstore")}
+        className={scope === "bookstore" ? "ssi-active fa-icon" : "scope-selector-icon fa-icon"}
+        id='ssi-bookstore'
+        onClick={() => {
+          setScope("bookstore")
+          setLegendDisplays({
+            "givenToAuthor": true,
+            "sold": true,
+            "current": true,
+            "returns": false
+          });
+          setTriggerResize(false)
+        }}
         onMouseEnter={() => setBookstoreTooltipOpen(true)}
         onMouseLeave={() => setBookstoreTooltipOpen(false)} />
       {isBookstoreTooltipOpen && (
         <div className="scope-selector-tooltip-libreria">Librería</div>)}
-      <FontAwesomeIcon
-        icon={faEarthAmericas}
-        className={scope === "country" ? "ssi-active" : "scope-selector-icon"}
-        onClick={() => setScope("country")}
-        onMouseEnter={() => setCountryTooltipOpen(true)}
-        onMouseLeave={() => setCountryTooltipOpen(false)} />
-      {isCountryTooltipOpen && (
-        <div className="scope-selector-tooltip-pais">País</div>)}
       <div
         className="scope-selector-slider"
         style={{ left: `${determineLeft()}`}}></div>

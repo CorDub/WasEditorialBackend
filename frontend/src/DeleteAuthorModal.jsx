@@ -1,13 +1,14 @@
 import "./DeleteAuthorModal.scss"
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 
-function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
+function DeleteAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
 
   async function deleteAuthor(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/admin/user?user_id=${row.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
@@ -16,11 +17,11 @@ function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
       });
 
       if (response.ok) {
-        const alertMessage = `El autor ${row.first_name} ${row.last_name} ha sido eliminado.`;
-        closeDeleteModal(globalFilter, true, alertMessage, "confirmation");
+        const alertMessage = `El autor ${clickedRow.first_name} ${clickedRow.last_name} ha sido eliminado.`;
+        closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
-        const alertMessage = `No se pudo eliminar el autor ${row.first_name} ${row.last_name}`;
-        closeDeleteModal(globalFilter, false, alertMessage, "error");
+        const alertMessage = `No se pudo eliminar el autor ${clickedRow.first_name} ${clickedRow.last_name}`;
+        closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
 
     } catch (error) {
@@ -33,11 +34,11 @@ function DeleteAuthorModal({ row, closeDeleteModal, globalFilter }) {
       <div className="modal-proper">
         <div className="delmod-confirm">
           <p>{`¿Está seguro que quiere eliminar el autor
-          ${row.first_name} ${row.last_name}?`}</p>
+          ${clickedRow.first_name} ${clickedRow.last_name}?`}</p>
         </div>
         <div className="modal-actions">
           <button className='blue-button modal-button'
-            onClick={() => closeDeleteModal(globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
           <button className='blue-button modal-button'
             onClick={deleteAuthor}>Confirmar</button>
         </div>

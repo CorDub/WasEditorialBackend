@@ -13,6 +13,7 @@
   width: 70%;
   color: grey;
   box-sizing: border-box;
+  font-size: clamp(0.8rem, var(--user-font-size), 1.2rem);
 }
 
 .select-global:focus-visible {

@@ -14,17 +14,26 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  &:hover {
-    cursor: pointer;
-  }
+  // &:hover {
+  //   cursor: pointer;
+  // }
 }
 
 .author-inventory-label {
   margin: 0;
+  // font-size: clamp(0.8rem, 1.2rem, 1.2rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .author-inventory-number {
   margin: 0;
+}
+
+.author-inventory-entregados {
+  display: flex;
+  flex-direction: column;
 }
 
 .author-inventory-was {
@@ -47,4 +56,27 @@
   background-color: #4E5981;
   border-radius: 15px;
   color: white
+}
+
+.author-inventory-date {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: grey;
+  margin-left: 0.5rem;
+}
+
+.author-inventory-impressions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.ail-bold {
+  font-weight: bold;
+}
+
+.ail-repartition {
+  font-weight: 200;
+  margin-left: 1rem;
 }

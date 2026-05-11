@@ -1,64 +1,75 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import DeleteBookModal from './DeleteBookModal';
-import EditBookModal from './EditBookModal';
-import AddingBookModal from './AddingBookModal';
 import Navbar from './Navbar';
 import Alert from "./Alert";
 import UserContext from './UserContext';
+import TableActions from "./TableActions";
+import Modal from "./Modal";
+import LoadingWheel from "./LoadingWheel";
 
 function BooksList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [isEditModalOpen, setOpenEditModal] = useState(false);
-  const [editModal, setEditModal] = useState(null);
-  const [isAddingModalOpen, setOpenAddingModal] = useState(false);
-  const [addingModal, setAddingModal] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [clickedRow, setClickedRow] = useState(null);
+  const [modalType, setModalType] = useState("book");
+  const [modalAction, setModalAction] = useState('');
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  // const [pagination, setPagination] = useState({
-  //   pageIndex: 0,
-  //   pageSize: 15
-  // })
+  const [alertExtra, setAlertExtra] = useState();
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 30
+  })
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
       header: "Acciones",
+      size: 50,
       Cell: ({row}) => (
-        <div>
-          <button onClick={()=>openEditModal(row.original)}
-            className="blue-button modal-button">Editar</button>
-          <button onClick={()=>openDeleteModal(row.original)}
-            className="blue-button modal-button">Eliminar</button>
+        <div style={{overflow:"visible"}}>
+          <TableActions openModal={openModal} row={row} type={"book"}/>
         </div>
-      )
+      ),
+      muiTableBodyCellProps: {
+        sx: {
+          overflow: "visible"
+        }
+      }
     },
     {
       header: "Titulo",
-      accessorKey: "title"
+      accessorKey: "title",
+      maxSize: 400,
     },
     {
       header: "Autor(es)",
       accessorKey: "authorNames",
+      maxWidth: 400,
     },
     {
-      header: "Pasta",
-      accessorKey: "pasta"
-    },
-    {
-      header: "Precio",
+      header: "Precio en Was",
       accessorKey: "price"
     },
     {
       header: "ISBN",
       accessorKey: "isbn"
     },
+    {
+      header: "Categoría",
+      accessorKey: "category.number"
+    },
+    {
+      header: "Pasta",
+      accessorKey: "pasta"
+    },
+    
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -68,19 +79,28 @@ function BooksList() {
     },
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    enablePagination: false,
-    enableRowVirtualization: true,
+    enablePagination: true,
+    enableRowVirtualization: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={openAddingModal} className="blue-button">Añadir nuevo libro</button>
+        <button
+          onClick={() => openModal("adding", null)}
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nuevo libro</button>
+        <button 
+          className="blue-button"
+          onClick={() => openModal("addingMultiples", null)}
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir varios libros</button>
       </div>
     ),
     initialState: {
       density: 'compact',
     },
-    // onPaginationChange: setPagination,
+    onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
-    state: { globalFilter },
+    state: { pagination, globalFilter },
     muiTablePaperProps: {
       elevation: 0,
       sx: {
@@ -94,7 +114,7 @@ function BooksList() {
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: '81vh',
+        maxHeight: '80vh',
         overflowY: 'auto'
       }
     },
@@ -106,6 +126,15 @@ function BooksList() {
     muiTableHeadCellProps: {
       sx: {
         backgroundColor: "#fff"
+      }
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        maxWidth: 200
       }
     },
     muiTopToolbarProps: {
@@ -122,7 +151,8 @@ function BooksList() {
 
   async function fetchBooks() {
     try {
-      const response = await fetch('http://localhost:3000/admin/book', {
+      // setLoading(true);
+      const response = await fetch(`${baseURL}/api/admin/book`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"
@@ -133,8 +163,9 @@ function BooksList() {
       if (response.ok === true) {
         const dataBooks = await response.json();
         setData(dataBooks);
+        // setLoading(false);
       } else {
-        console.log("There was an error fetching books:", response.status);
+        console.error("There was an error fetching books:", response.status);
       };
 
     } catch(error) {
@@ -144,78 +175,71 @@ function BooksList() {
 
   useEffect(() => {
     fetchBooks();
-  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
+  }, [isModalOpen, forceRender])
 
-  function openDeleteModal(row) {
-    setDeleteModal(<DeleteBookModal row={row} closeDeleteModal={closeDeleteModal}
-      globalFilter={globalFilter}/>);
-    setOpenDeleteModal(true);
+  function openModal(type, clickedRow) {
+    setClickedRow(clickedRow);
+    switch (type) {
+      case 'adding':
+        setModalAction("adding");
+        break;
+      case "addingMultiples":
+        setModalAction("addingMultiples");
+        break;
+      case 'edit':
+        setModalAction("edit");
+        break;
+      case 'editBookPrices':
+        setModalAction("editBookPrices");
+        break;
+      case 'delete':
+        setModalAction("delete");
+        break;
+      default:
+        console.error("Unknown error")
+        return;
+    }
+    setModalOpen(true);
   }
 
-  function closeDeleteModal(globalFilter, reload, alertMessage, alertType) {
-    setDeleteModal(null);
-    setOpenDeleteModal(false);
+  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType, alertExtra) {
+    setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
-
+    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
     if (reload === true) {
-      setForceRender(!forceRender);
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
       setAlertType(alertType);
-    }
-  }
-
-  function openEditModal(row) {
-    setEditModal(<EditBookModal row={row} closeEditModal={closeEditModal}
-      globalFilter={globalFilter}/>);
-    setOpenEditModal(true);
-  }
-
-  function closeEditModal(globalFilter, reload, alertMessage, alertType) {
-    setEditModal(null);
-    setOpenEditModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
-  }
-
-  function openAddingModal() {
-    setAddingModal(<AddingBookModal closeAddingModal={closeAddingModal}
-      globalFilter={globalFilter}/>);
-    setOpenAddingModal(true);
-  }
-
-  function closeAddingModal(lobalFilter, reload, alertMessage, alertType) {
-    setAddingModal(null);
-    setOpenAddingModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
+      setAlertExtra(alertExtra);
     }
   }
 
   return(
-    <>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"libros"} />
-      {isDeleteModalOpen && deleteModal}
-      {isEditModalOpen && editModal}
-      {isAddingModalOpen && addingModal}
-      {data && <MaterialReactTable table={table} />}
-      <Alert message={alertMessage} type={alertType}
-        setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
-    </>
+      {isModalOpen &&
+        <Modal
+          modalType={modalType}
+          modalAction={modalAction}
+          clickedRow={clickedRow}
+          closeModal={closeModal}
+          pageIndex={pagination.pageIndex}
+          globalFilter={globalFilter}
+          userFontSize={user.font_size} />}
+      {isLoading && <LoadingWheel/>}
+      <div className="contain">
+        {data && !isLoading && <MaterialReactTable table={table} />}
+      </div>
+      <Alert 
+        message={alertMessage} 
+        type={alertType}
+        alertExtra={alertExtra}
+        setAlertMessage={setAlertMessage} 
+        setAlertType={setAlertType}
+        setAlertExtra={setAlertExtra} />
+    </div>
   )
 }
 

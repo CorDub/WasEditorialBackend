@@ -33,6 +33,15 @@ function LoginError({ errors, setErrors, inputs }) {
         <p className="login-error">La contraseña no puede estar vacia</p>
       )
     }
+
+    if (error === 4) {
+      if (!inputs[0].classList.contains("error-inputs"))  {
+        inputs[0].classList.add("error-inputs");
+      }
+      return (
+        <p className="login-error">El correo no es un correo valido.</p>
+      )
+    }
   }
 
   //reseting Errors in the parent component Login so that state can be transformed on submit again,

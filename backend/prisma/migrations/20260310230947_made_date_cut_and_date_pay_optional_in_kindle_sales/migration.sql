@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "KindleSale" ALTER COLUMN "dateCut" DROP NOT NULL,
+ALTER COLUMN "datePay" DROP NOT NULL;

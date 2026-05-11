@@ -1,0 +1,18 @@
+.twdh {
+  // border: 1px solid black;
+  width: 100%;
+  display: flex;
+  margin-top: 0.5rem;
+  justify-content: space-between;
+}
+
+.twdh-filtrar {
+  margin-right: 0.5rem;
+  display: flex;
+}
+
+.twdh-select {
+  border-radius: 15px;
+  margin-left: 0.5rem;
+  width: 200px;
+}

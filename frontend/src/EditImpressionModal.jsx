@@ -1,12 +1,17 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
 function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   useCheckAdmin();
   const quantityRef = useRef();
-  const [quantity, setQuantity] = useState(null);
+  const dateStrRef = useRef();
+  const noteRef = useRef();
+  const [quantity, setQuantity] = useState(clickedRow.quantity);
+  const [dateStr, setDateStr] = useState(clickedRow.dateStr);
+  const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
 
   async function handleSubmit(e) {
@@ -28,9 +33,22 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       presence: "not empty",
       range: "positive"
     }
+    const errorsQuantity = checkForErrors("La cantidad", quantity, expectationsCantidad, quantityRef, "a");
 
-    const errorsQuantity = checkForErrors("Cantidad inicial", quantity, expectationsCantidad, quantityRef);
-    const errorInputs = [errorsQuantity];
+    const expectationsDateStr = {
+      type: "string",
+      presence: "not empty",
+      range: "no future"
+    }
+    const errorsDateStr = checkForErrors("La fecha", dateStr, expectationsDateStr, dateStrRef, "a");
+
+    const expectationsNote = {
+      type: "string",
+      length: 255
+    }
+    const errorsNote = checkForErrors("La nota", note, expectationsNote, noteRef, "a")
+
+    const errorInputs = [errorsQuantity, errorsDateStr, errorsNote];
 
     for (const errorInput of errorInputs) {
       if (errorInput.length > 0) {
@@ -44,30 +62,30 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch('http://localhost:3000/admin/impression', {
+      const response = await fetch(`${baseURL}/api/admin/impression/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.id,
           quantity: quantity,
-          book_id: clickedRow.bookId
+          book_id: clickedRow.bookId,
+          note: note,
+          dateStr: dateStr
         }),
       });
 
       if (response.ok === false) {
         const error = await response.json();
-        console.log(error);
         if (error.message) {
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó crear una nueva impression.';
+        const alertMessage = 'No se pudó editar la impresión.';
         closeModal(globalFilter, false, alertMessage, "error");
       } else {
-        const alertMessage = `Una nueva impresion ha sido creada.`;
+        const alertMessage = `La impresión ha sido actualizada.`;
         closeModal(globalFilter, true, alertMessage, "confirmation");
       }
 
@@ -76,14 +94,10 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     }
   }
 
-  useEffect(() => {
-    setQuantity(clickedRow.quantity);
-  }, [clickedRow])
-
   return(
     <div className='modal-proper'>
       <div className="form-title">
-        <p>Nueva impression</p>
+        <p>Editar impresión</p>
       </div>
       <form className="global-form">
         <input
@@ -93,16 +107,29 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           className="global-input"
           ref={quantityRef}
           onChange={(e) => setQuantity(e.target.value)}></input>
+        <input 
+          type="date"
+          placeholder="Fecha"
+          className="global-input"
+          ref={dateStrRef}
+          onChange={(e) => setDateStr(e.target.value)}
+          value={dateStr}></input>
+        <input
+          type="text"
+          placeholder="Nota para el autor (opcional)"
+          className="global-input"
+          ref={noteRef}
+          onChange={(e) => setNote(e.target.value)}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button
             type="button"
             className='blue-button'
-            onClick={() => closeModal(pageIndex, globalFilter, false)}>Cancelar</button>
+            onClick={() => closeModal(pageIndex, globalFilter, true)}>Cancelar</button>
           <button
             type='button'
             onClick={handleSubmit}
-            className="blue-button">Añadir</button>
+            className="blue-button">Editar</button>
         </div>
       </form>
       </div>

@@ -1,24 +1,23 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import DeleteCategoryModal from './DeleteCategoryModal';
-import EditCategoryModal from './EditCategoryModal';
-import AddingCategoryModal from './AddingCategoryModal';
 import Navbar from './Navbar';
 import Alert from "./Alert";
 import UserContext from './UserContext';
+import Modal from "./Modal";
+import TableActions from "./TableActions";
+import LoadingWheel from './LoadingWheel';
 
 function CategoriesList() {
   useCheckAdmin();
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
   const [data, setData] = useState([]);
-  const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [isEditModalOpen, setOpenEditModal] = useState(false);
-  const [editModal, setEditModal] = useState(null);
-  const [isAddingModalOpen, setOpenAddingModal] = useState(false);
-  const [addingModal, setAddingModal] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [clickedRow, setClickedRow] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [modalType, setModalType] = useState("category");
+  const [modalAction, setModalAction] = useState('');
   const [forceRender, setForceRender] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -26,38 +25,51 @@ function CategoriesList() {
     pageIndex: 0,
     pageSize: 15
   })
+  const [isLoading, setLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
       header: "Acciones",
       Cell: ({row}) => (
-        <div>
-          <button onClick={()=>openEditModal(row.original)}
-            className="blue-button modal-button">Editar</button>
-          <button onClick={()=>openDeleteModal(row.original)}
-            className="blue-button modal-button">Eliminar</button>
+        <div style={{overflow:"visible"}}>
+          <TableActions openModal={openModal} row={row}/>
         </div>
-      )
+      ),
+      muiTableBodyCellProps: {
+        sx: {
+          overflow: "visible"
+        }
+      }
+    },
+    {
+      header: "Número",
+      accessorKey: "number"
     },
     {
       header: "Tipo",
-      accessorKey: "type"
+      accessorKey: "category_type",
+      Cell: ({ row }) => `${row.original.category_type === "comissions" ? "Comisiones" : "Regalías"}`
     },
     {
-      header: "Regalias de venta",
+      header: "Porcentaje para el autor",
       accessorKey: "percentage_royalties",
-      Cell: ({ row }) => `${row.original.percentage_royalties}%`
+      Cell: ({ row }) => `${row.original.percentage_royalties ? `${row.original.percentage_royalties} %` : "-"}`
     },
     {
-      header: "Gestión tiendas",
-      accessorKey: "percentage_management_stores",
-      Cell: ({ row }) => `${row.original.percentage_management_stores}%`
+      header: "Descuento copia de autor",
+      accessorKey: "rebate_author",
+      Cell: ({ row }) => `${row.original.rebate_author ? `${row.original.rebate_author} %` : '-'}`
     },
     {
-      header: "Gestión minima",
+      header: "Monto mínimo de gestión en WAS",
       accessorKey: "management_min",
-      Cell: ({ row }) => `$${row.original.management_min}`
-    }
+      Cell: ({ row }) => `${row.original.management_min ? `$${row.original.management_min}` : "-"}`
+    },
+    {
+      header: "Comisión extra de librerías",
+      accessorKey: "percentage_management_stores",
+      Cell: ({ row }) => `${row.original.percentage_management_stores ? `${row.original.percentage_management_stores} %` : '-'}`
+    },
   ], []);
   const table = useMaterialReactTable({
     columns,
@@ -66,7 +78,11 @@ function CategoriesList() {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <div className="table-add-button">
-        <button onClick={openAddingModal} className="blue-button">Añadir nueva categoria</button>
+        <button
+          onClick={() => openModal("adding", null)}
+          className="blue-button"
+          style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.1rem)`}}>
+            Añadir nueva categoria</button>
       </div>
     ),
     initialState: {
@@ -86,6 +102,12 @@ function CategoriesList() {
         width: "99vw"
       }
     },
+      muiTableContainerProps: {
+        sx: {
+            maxHeight: '79vh',
+            overflowY: 'auto'
+        }
+      },
     muiTableBodyRowProps: {
       sx: {
         backgroundColor: "#fff",
@@ -94,6 +116,14 @@ function CategoriesList() {
     muiTableHeadCellProps: {
       sx: {
         backgroundColor: "#fff"
+      }
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
       }
     },
     muiTopToolbarProps: {
@@ -110,7 +140,8 @@ function CategoriesList() {
 
   async function fetchCategories() {
     try {
-      const response = await fetch('http://localhost:3000/admin/categories', {
+      setLoading(true);
+      const response = await fetch(`${baseURL}/api/admin/categories`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"
@@ -121,8 +152,9 @@ function CategoriesList() {
       if (response.ok === true) {
         const dataCategories = await response.json();
         setData(dataCategories);
+        setLoading(false);
       } else {
-        console.log("There was an error fetching categories:", response.status);
+        console.error("There was an error fetching categories:", response.status);
       };
 
     } catch(error) {
@@ -132,61 +164,33 @@ function CategoriesList() {
 
   useEffect(() => {
     fetchCategories();
-  }, [isDeleteModalOpen, isEditModalOpen, isAddingModalOpen])
+  }, [isModalOpen])
 
-  function openDeleteModal(row) {
-    setDeleteModal(<DeleteCategoryModal row={row} closeDeleteModal={closeDeleteModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenDeleteModal(true);
+  function openModal(type, clickedRow) {
+    setClickedRow(clickedRow);
+    switch (type) {
+      case 'adding':
+        setModalAction("adding");
+        break;
+      case 'edit':
+        setModalAction("edit");
+        break;
+      case 'delete':
+        setModalAction("delete");
+        break;
+      default:
+        console.error("Unknown error")
+        return;
+    }
+    setModalOpen(true);
   }
 
-  function closeDeleteModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setDeleteModal(null);
-    setOpenDeleteModal(false);
+  function closeModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
+    setModalOpen(false);
     globalFilter && setGlobalFilter(globalFilter);
     pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
     if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
-  }
-
-  function openEditModal(row) {
-    setEditModal(<EditCategoryModal row={row} closeEditModal={closeEditModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenEditModal(true);
-  }
-
-  function closeEditModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setEditModal(null);
-    setOpenEditModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    if (reload === true) {
-      setForceRender(!forceRender);
-    }
-    if (alertMessage) {
-      setAlertMessage(alertMessage);
-      setAlertType(alertType);
-    }
-  }
-
-  function openAddingModal() {
-    setAddingModal(<AddingCategoryModal closeAddingModal={closeAddingModal}
-      pageIndex={pagination.pageIndex} globalFilter={globalFilter}/>);
-    setOpenAddingModal(true);
-  }
-
-  function closeAddingModal(pageIndex, globalFilter, reload, alertMessage, alertType) {
-    setAddingModal(null);
-    setOpenAddingModal(false);
-    globalFilter && setGlobalFilter(globalFilter);
-    pagination && setPagination(prev => ({...prev, pageIndex: pageIndex}));
-    if (reload === true) {
-      setForceRender(!forceRender);
+      setForceRender(prev => !prev);
     }
     if (alertMessage) {
       setAlertMessage(alertMessage);
@@ -195,15 +199,21 @@ function CategoriesList() {
   }
 
   return(
-    <>
+    <div style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"categorias"}/>
-      {isDeleteModalOpen && deleteModal}
-      {isEditModalOpen && editModal}
-      {isAddingModalOpen && addingModal}
-      {data && <MaterialReactTable table={table} />}
+      {isModalOpen &&
+        <Modal
+          modalType={modalType}
+          modalAction={modalAction}
+          clickedRow={clickedRow}
+          closeModal={closeModal}
+          pageIndex={pagination.pageIndex}
+          globalFilter={globalFilter} />}
+      {isLoading && <LoadingWheel />}
+      {data && !isLoading && <MaterialReactTable table={table} />}
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType} />
-    </>
+    </div>
   )
 }
 

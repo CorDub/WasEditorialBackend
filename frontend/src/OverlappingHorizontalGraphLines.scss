@@ -114,7 +114,6 @@
   overflow-y: visible;
   text-overflow: ellipsis;
   width: 125px;
-
 }
 
 .ohgl-global {
@@ -131,4 +130,42 @@
   z-index: 10;
   white-space: nowrap;
   padding: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.ohgl-number {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.no-padding {
+  padding: 0.25rem 0 0.25rem 0;
+}
+
+.ohgl-current-number {
+  display: flex;
+  align-items: center;
+}
+
+.ohgl-returns-number {
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  margin-left: 0.5rem;
+  background-color: grey;
+  border-radius: 15px;
+}
+
+.ohgl-returns-number p {
+  margin: 0;
+  color: white;
+}
+
+.incl {
+  font-size: 0.75em;
+  font-style: italic;
+  margin-right: 0.25rem;
 }

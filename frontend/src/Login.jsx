@@ -1,12 +1,15 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.scss';
 import logo from './assets/PlataformaWas.png';
 import UserContext from './UserContext';
 import LoginError from './LoginError';
 import Alert from './Alert';
+import checkForErrors from "./customHooks/checkForErrors";
+import LoadingWheel from "./LoadingWheel";
 
 function LoginPage() {
+  const baseURL = import.meta.env.VITE_API_URL || '';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setUser } = useContext(UserContext);
@@ -16,6 +19,8 @@ function LoginPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
   const location = useLocation();
+  const emailRef = useRef();
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     if (location.state) {
@@ -36,11 +41,13 @@ function LoginPage() {
         return;
       }
 
-      const response = await fetch('/api/login', {
+      setLoading(true);
+      const response = await fetch(`${baseURL}/api/user/login`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include",
         body: JSON.stringify({
           email: email,
           password: password,
@@ -48,11 +55,13 @@ function LoginPage() {
       });
 
       if (response.ok === false) {
-        console.log(response.status);
-        setErrors([...errors, 1]);
+        setErrors([1]);
+        setLoading(false);
       } else {
         const data = await response.json();
+
         setUser(data);
+        setLoading(false);
         if (data.role === "admin") {
           navigate('/admin/authors')
         } else if (data.role === "superadmin") {
@@ -68,6 +77,7 @@ function LoginPage() {
   }
 
   function checkBoundsErrors(email, password) {
+    setErrors([]);
     let newErrors = [];
 
     if (typeof email !== "string" || typeof password !== "string") {
@@ -76,6 +86,15 @@ function LoginPage() {
       if (email.length === 0) {newErrors.push(2)};
       if (email.length > 50 || password.length > 50) {newErrors.push(1)};
       if (password.length === 0) {newErrors.push(3)};
+    }
+
+    const expectationsEmail = {
+      validity: "email valid"
+    }
+
+    const errorsLine = checkForErrors("El correo que ingresabá", email, expectationsEmail, emailRef);
+    if (errorsLine.length > 0) {
+      newErrors.push(4);
     }
 
     setErrors(newErrors);
@@ -93,7 +112,8 @@ function LoginPage() {
             type="text"
             placeholder="Correo"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}/>
+            ref={emailRef}
+            onChange={(e) => setEmail(e.target.value.trim().toLowerCase())}/>
           <input className="global-input login-input"
             type="password"
             placeholder="Contraseña"
@@ -105,9 +125,12 @@ function LoginPage() {
         </form>
       </div>
       <LoginError errors={errors} setErrors={setErrors} inputs={inputs} />
+      {isLoading && (
+        <LoadingWheel />)}
       <div className="login-forpas">
-      <Link to="/forgotten-password"
-        className="login-forgotten-password">Olvidó su contraseña?</Link>
+        <Link to="/forgotten-password"
+          className="login-forgotten-password">¿Primera visita o olvidó su contraseña?
+        </Link>
       </div>
       <Alert message={alertMessage} type={alertType} setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}/>

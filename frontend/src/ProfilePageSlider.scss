@@ -1,0 +1,23 @@
+.profile-page-slider-edit {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.profile-page-slider-top {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0 0.5rem 0;
+}
+
+.profile-page-slider-example {
+  width: 80%;
+  text-align: center;
+  p {
+    margin: 0
+  }
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-top: 1rem;
+}

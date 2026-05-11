@@ -3,17 +3,15 @@ import { prisma } from "./prisma/client.js"
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
 
-// const resend = new Resend(process.env.RESEND_API_KEY);
-
 let resend;
 let mailtrap;
 
 export function getResend() {
   if (!resend) {
-    if (!process.env.RESEND_API_KEY) {
-      throw new Error('RESEND_API_KEY missing');
+    if (!process.env.RESEND_PROD_API_KEY) {
+      throw new Error('RESEND_PROD_API_KEY missing');
     }
-    resend = new Resend(process.env.RESEND_API_KEY);
+    resend = new Resend(process.env.RESEND_PROD_API_KEY);
   }
   return resend;
 }
@@ -71,6 +69,8 @@ async function sendEmail({ to, subject, text, html, attachments }) {
       }
 
       return data;
+    } else {
+      throw new Error("missing invalid node_env")
     }
   } catch(error) {
     console.error(error)

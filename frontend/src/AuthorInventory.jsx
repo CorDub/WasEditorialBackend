@@ -48,7 +48,7 @@ function AuthorInventory(){
       //   return
       // }
 
-      const response = await fetch(`${baseURL}/api/author/authorInventories`, {
+      const response = await fetch(`${baseURL}/api/author/inventories/authorInventories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

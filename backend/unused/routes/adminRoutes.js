@@ -1,6 +1,6 @@
 import { Role } from "@prisma/client";
 import express from "express";
-import { sendWelcomeMail } from './../mailer.js';
+import { sendWelcomeMail } from '../../mailer.js';
 import {
   calculateAuthorRevenue,
   getForMonth,
@@ -10,12 +10,12 @@ import {
   getAuthorString,
   getForMonthStr,
   today
-} from './../utils.js';
-import { prisma } from "../prisma/client.js";
+} from '../../utils.js';
+import { prisma } from "../../prisma/client.js";
 import multer from "multer";
-import { validateInput } from "../validations.js";
-import { validateInputs } from "./../utils.js";
-import { getInventoryDerived } from "./admin/inventories/inventoryHelpers.js";
+import { validateInput } from "../../validations.js";
+import { validateInputs } from "../../utils.js";
+import { getInventoryDerived } from "../../routes/admin/inventories/inventoryHelpers.js";
 
 const upload = multer();
 const router = express.Router();

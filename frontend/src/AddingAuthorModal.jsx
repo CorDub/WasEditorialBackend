@@ -40,7 +40,7 @@ function AddingAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/user`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/user`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

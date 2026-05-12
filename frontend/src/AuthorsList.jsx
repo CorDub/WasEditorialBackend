@@ -232,7 +232,7 @@ function AuthorsList() {
   async function fetchUsers() {
     try {
       // setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/users`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

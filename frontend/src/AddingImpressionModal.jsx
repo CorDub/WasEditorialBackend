@@ -69,14 +69,14 @@ function AddingImpressionModal({
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impression`, {
+      const response = await fetch(`${baseURL}/api/admin/impressions/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
-          id: clickedRow.bookId,
+          id: clickedRow.id,
           quantity: quantity,
           note: note,
           dateStr: dateStr,

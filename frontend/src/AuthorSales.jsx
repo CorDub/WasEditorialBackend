@@ -7,7 +7,6 @@ import BookSelector from './BookSelector';
 import SalesContent from './SalesContent';
 import LoadingWheel from './LoadingWheel';
 import { 
-  generateMonthKeysForRange,
   generateMonthKeysForRangeStr,
   getForMonthStr,
   today,
@@ -115,7 +114,7 @@ function AuthorSales() {
         endDateStr: dateRange.endDateStr
       });
 
-      const response = await fetch(`${baseURL}/api/author/sales?${queryParams}`, {
+      const response = await fetch(`${baseURL}/api/author/sales/sales?${queryParams}`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'

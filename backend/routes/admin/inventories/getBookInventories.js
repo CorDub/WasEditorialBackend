@@ -137,7 +137,7 @@ export async function getBookInventory(req, res) {
     res.status(500).json({message: "server error getting the book inventories"})
   }
 }
-router.get('/inventories/inventoriesByBook/:id', getBookInventory)
+router.get('/inventoriesByBook/:id', getBookInventory)
 
 
 export function getWasInventoryForThisBook(inventory) {

@@ -6,7 +6,7 @@ import {
   addReturn,
   addDeliveryToAuthor,
   addTransfer,
-} from "../../../routes/admin/transfers/addTransfers.js";
+} from "../../../routes/admin/transfers/addTransfer.js";
 import {
   createCategory,
   createAuthor,

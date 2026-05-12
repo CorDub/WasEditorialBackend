@@ -6,7 +6,7 @@ function DeleteSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function deleteSale() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/sale/${clickedRow.id}?inventory_id=${clickedRow.inventoryId}`, {
+      const response = await fetch(`${baseURL}/api/admin/sales/sale/${clickedRow.id}?inventory_id=${clickedRow.inventoryId}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

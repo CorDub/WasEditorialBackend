@@ -33,7 +33,7 @@ export async function getBookstoreInventory(req, res) {
     res.status(500).json({message: "server error getting the bookstore inventories"})
   }
 }
-router.get('/inventories/inventoriesByBookstore/:id', getBookstoreInventory)
+router.get('/inventoriesByBookstore/:id', getBookstoreInventory)
 
 
 export async function getWasInventories(prismaClient, inputsId) {

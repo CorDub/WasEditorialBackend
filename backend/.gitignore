@@ -3,3 +3,11 @@
 .env
 amazonAPI.js
 staging_dump.sql
+
+prisma/finalAuthorList.json
+prisma/finalBooksList.json
+prisma/thirdBooks.json
+prisma/fourthBooks.json
+prisma/authors.json
+prisma/books.json
+prisma/secondBooks.json

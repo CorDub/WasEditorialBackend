@@ -2,7 +2,7 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { 
   validateInputs,
-} from "../../../utils";
+} from "../../../utils.js";
 const router = express.Router();
 
 export async function softDeleteBooksOnCascade(deletedAuthor, tx) {

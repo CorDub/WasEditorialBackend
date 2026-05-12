@@ -3,7 +3,7 @@ import { prisma } from "../../../prisma/client.js";
 import { 
   validateInputs,
   calculateAuthorRevenue 
-} from "../../../utils";
+} from "../../../utils.js";
 const router = express.Router();
 
 export async function getPayments(req, res) {

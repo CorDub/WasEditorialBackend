@@ -1,6 +1,8 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import multer from "multer";
 const router = express.Router();
+const upload = multer();
 
 export async function addMultipleBooks(req, res) {
   try {

@@ -193,7 +193,7 @@ function TransfersList() {
   async function fetchTransfers() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/transfers`, {
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfers`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

@@ -28,3 +28,5 @@ export async function deleteSale(req, res) {
   }
 }
 router.delete('/sale/:id', deleteSale)
+
+export default router;

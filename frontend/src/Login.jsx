@@ -63,7 +63,7 @@ function LoginPage() {
         setUser(data);
         setLoading(false);
         if (data.role === "admin") {
-          navigate('/admin/authors')
+          navigate('/admin/authors/authors')
         } else if (data.role === "superadmin") {
           navigate('/superadmin/admins')
         } else {

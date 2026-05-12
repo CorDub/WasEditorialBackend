@@ -45,7 +45,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function fetchExistingBookstores() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/existingBookstores`, {
+      const response = await fetch(`${baseURL}/api/admin/bookstores/existingBookstores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -149,7 +149,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/transfer`, {
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

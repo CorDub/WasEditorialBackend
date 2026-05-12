@@ -87,7 +87,7 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
       formData.append("monthOriginal", paymentInfo.monthOriginal);
       formData.append("amount", paymentInfo.amount);
 
-      const response = await fetch(`${baseURL}/api/author/sendInvoice`, {
+      const response = await fetch(`${baseURL}/api/author/commissions/sendInvoice`, {
         method: "POST",
         credentials: "include",
         body: formData

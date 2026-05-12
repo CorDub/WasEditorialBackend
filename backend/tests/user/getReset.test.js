@@ -2,7 +2,7 @@ import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import { 
   getReset
 } from "../../routes/user/getReset.js";
-import { changePassword } from "../../routes/authorRoutes.js";
+import { changePassword } from "../../routes/author/password/changePassword.js";
 import {
   createCategory,
   createAuthor,

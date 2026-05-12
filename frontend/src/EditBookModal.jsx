@@ -18,7 +18,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   const [tooltipMessage, setTooltipMessage] = useState("");
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);
-  // const [errorList, setErrorList] = useState([]);
   const [pastaDisplay, setPastaDisplay] = useState([]);
   const [category, setCategory] = useState(clickedRow.categoryId);
   const [existingCategories, setExistingCategories] = useState([]);
@@ -42,7 +41,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
   async function fetchUsers() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/users`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -67,7 +66,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
   useEffect(() => {
     async function fetchExistingCategories() {
       try {
-        const response = await fetch(`${baseURL}/api/admin/categories`, {
+        const response = await fetch(`${baseURL}/api/admin/categories/categories`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -108,7 +107,7 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/book/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/books/book/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -369,7 +368,6 @@ function EditBookModal({ clickedRow, closeModal, pageIndex, globalFilter, userFo
               </div>
             ))}
           </div>
-        {/* <AddingBookErrorList errorList={errorList} setErrorList={setErrorList}/> */}
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

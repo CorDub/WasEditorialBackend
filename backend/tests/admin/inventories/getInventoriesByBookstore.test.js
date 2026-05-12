@@ -7,7 +7,7 @@ import {
   transfersOthers,
   handleOtherInventories,
   getInventoriesByBookstore,
-} from "../../../routes/admin/inventories/getInventoriesByBookstores.js";
+} from "../../../routes/admin/inventories/getInventoriesByBookstore.js";
 import {
   createCategory,
   createAuthor,

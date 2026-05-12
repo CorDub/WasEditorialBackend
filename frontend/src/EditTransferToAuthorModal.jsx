@@ -55,7 +55,7 @@ function EditTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFil
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/transfer/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

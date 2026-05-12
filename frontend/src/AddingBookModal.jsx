@@ -32,7 +32,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function fetchUsers() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/users`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/users`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -57,7 +57,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
   useEffect(() => {
     async function fetchExistingCategories() {
       try {
-        const response = await fetch(`${baseURL}/api/admin/categories`, {
+        const response = await fetch(`${baseURL}/api/admin/categories/categories`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -85,7 +85,7 @@ function AddingBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${baseURL}/api/admin/book`, {
+      const response = await fetch(`${baseURL}/api/admin/books/book`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

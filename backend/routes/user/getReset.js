@@ -15,10 +15,10 @@ export async function getReset(req, res) {
 
     const user = await prismaClient.user.findUnique({where: {email: inputs.email,}});
     if (user && user.isDeleted) {
-      return res.status(500).json("Error retrieving the user");
+      return res.status(204).json("Error retrieving the user");
     }
     if (!user) {
-      return res.status(500).json("Error retrieving the user");
+      return res.status(204).json("Error retrieving the user");
     }
 
     await sendResetPasswordMail(inputs.email, user.first_name)

@@ -5,7 +5,7 @@ import {
   generateMonthKeysForRangeStr,
   getAuthorString,
   getForMonthStr
-} from "../../../utils";
+} from "../../../utils.js";
 const router = express.Router();
 
 export async function getKindleSales(req, res) {

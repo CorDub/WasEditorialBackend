@@ -8,7 +8,7 @@ function DeleteAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   async function deleteAuthor(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/user/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

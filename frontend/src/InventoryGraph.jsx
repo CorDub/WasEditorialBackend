@@ -30,7 +30,7 @@ function InventoryGraph({
       // }
 
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/author/completeInventory`, {
+      const response = await fetch(`${baseURL}/api/author/inventories/completeInventory`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

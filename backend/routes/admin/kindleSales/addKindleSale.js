@@ -3,7 +3,7 @@ import { prisma } from "../../../prisma/client.js";
 import { 
   validateInputs,
   getForMonth,
-} from "../../../utils";
+} from "../../../utils.js";
 const router = express.Router();
 
 export async function addKindleSale (req, res) {

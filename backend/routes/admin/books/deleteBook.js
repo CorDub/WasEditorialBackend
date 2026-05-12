@@ -7,11 +7,6 @@ import {
   softDeleteImpressionsOnCascade 
 } from "../softDelete/softDelete.js";
 const router = express.Router();
-import { 
-  softDeleteInventoriesOnCascade,
-  softDeleteCostsOnCascade,
-  softDeleteImpressionsOnCascade, 
-} from "../softDelete/softDelete.js"
 
 export async function deleteBook(req, res) {
   try {

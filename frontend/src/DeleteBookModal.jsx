@@ -6,7 +6,7 @@ function DeleteBookModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function deleteBook() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/book/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/books/book/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

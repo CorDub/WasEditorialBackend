@@ -62,7 +62,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impression/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

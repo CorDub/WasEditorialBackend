@@ -3,8 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import { 
-  convertISOString, 
-  toLocalISODate, 
   today,
   getDateCutStr 
 } from "../../backend/utils";
@@ -21,7 +19,6 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
   const bookRef = useRef();
   const quantityEbookRef = useRef();
   const quantityPodRef = useRef();
-  const dateCutStrRef = useRef();
   const [dateCutStr, setDateCutStr] = useState(getDateCutStr(today()));
   const [datePayStr, setDatePayStr] = useState(today());
   const datePayStrRef = useRef();
@@ -34,7 +31,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function getExistingBooks() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
+      const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
        method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -171,7 +168,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/kindlesales`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales/kindlesales`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

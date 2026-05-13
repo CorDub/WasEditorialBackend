@@ -100,7 +100,7 @@ export async function getInventoriesByBookstore(req, res) {
     res.status(500).json({error: "Server error fetching inventories route"});
   }
 }
-router.get("/inventories/inventoriesByBookstore", getInventoriesByBookstore);
+router.get("/inventoriesByBookstore", getInventoriesByBookstore);
 
 
 export function separateInventories(inventories) {

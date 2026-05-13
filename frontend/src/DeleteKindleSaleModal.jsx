@@ -6,7 +6,7 @@ function DeleteKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
 
   async function deleteKindleSale() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/kindlesales/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales/kindlesales/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

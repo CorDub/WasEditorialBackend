@@ -11,7 +11,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
   async function fetchExistingCategories() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/categories`, {
+      const response = await fetch(`${baseURL}/api/admin/categories/categories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -38,7 +38,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
   async function checkImpactedUsers() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/categoryImpactedBooks/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/categories/categoryImpactedBooks/${clickedRow.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -63,7 +63,7 @@ function DeleteCategoryModal( {clickedRow, closeModal, pageIndex, globalFilter }
 
   async function deleteCategory() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/category/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/categories/category/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

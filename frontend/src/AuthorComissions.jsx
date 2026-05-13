@@ -76,7 +76,7 @@ function AuthorCommissions() {
       //   return
       // }
 
-      const response = await fetch(`${baseURL}/api/author/payments`, {
+      const response = await fetch(`${baseURL}/api/author/commissions/payments`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ function AuthorCommissions() {
 
   async function fetchSalesByPayments() {
     try {
-      const response = await fetch(`${baseURL}/api/author/monthlySalesByPayments`, {
+      const response = await fetch(`${baseURL}/api/author/commissions/monthlySalesByPayments`, {
         method: "GET",
         headers: {
           "Content-Type":"application/json"

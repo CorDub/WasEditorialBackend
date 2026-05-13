@@ -6,7 +6,7 @@ function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function deleteTransfer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/transfer/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

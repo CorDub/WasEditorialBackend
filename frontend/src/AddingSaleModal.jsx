@@ -21,7 +21,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function getExistingBooks() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
+      const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
        method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -40,7 +40,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function getExistingBookstores() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/existingBookstores`, {
+      const response = await fetch(`${baseURL}/api/admin/bookstores/existingBookstores`, {
        method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -237,7 +237,7 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/sale`, {
+      const response = await fetch(`${baseURL}/api/admin/sales/sale`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

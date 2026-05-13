@@ -152,7 +152,7 @@ function BooksList() {
   async function fetchBooks() {
     try {
       // setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/book`, {
+      const response = await fetch(`${baseURL}/api/admin/books/book`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

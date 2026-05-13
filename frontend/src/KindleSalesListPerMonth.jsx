@@ -5,9 +5,7 @@ import UserContext from "./UserContext";
 import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
 import { 
-  twelveMonthsAgo, 
-  applyFilters, 
-  putDateAtNoon,
+  applyFilters,
   localISODateTwelveMonthsAgo,
   today
 } from "../../backend/utils";
@@ -32,7 +30,7 @@ function KindleSalesListPerMonth() {
   async function fetchKindleSalesPerMonth(startDate, endDate) {
     try {
       setLoading(true)
-      const response = await fetch(`${baseURL}/api/admin/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales/kindlesales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

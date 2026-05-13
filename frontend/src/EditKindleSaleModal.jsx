@@ -28,7 +28,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function getExistingBooks() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/existingBooks`, {
+      const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
        method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -98,11 +98,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     for (const book of existingBooks) {
       existingBookIds.push(book.id)
     }
-    const expectationsBook = {
-      presence: "not empty",
-      type: "number",
-      value: existingBookIds
-    };
     const expectationsCantidad = {
       presence: "not empty",
       type: "number",
@@ -114,7 +109,6 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       range: "no future"
     }
 
-    let errorsBook;
     let errorsQuantityEbook;
     let errorsQuantityPod;
     let errorInputs;
@@ -161,7 +155,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/kindlesales/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/kindlesales/kindlesales/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',

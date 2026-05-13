@@ -26,7 +26,7 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
       }
       formData.append("archivo", archivo)
 
-      const response = await fetch(`${baseURL}/api/admin/api/author/addMultiples`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/addMultiples`, {
         method: "POST",
         credentials: "include",
         body: formData
@@ -62,8 +62,6 @@ function AddingMultipleAuthorsModal({ clickedRow, closeModal, pageIndex, globalF
           <div className="mulauth-line">
             <p className="mulauth-line mulauth-mandatory">Nombre(s)*</p>
             <p className="mulauth-line mulauth-mandatory">Apellido(s)*</p>
-            {/* <p className="mulauth-line">País</p>
-            <p className="mulauth-line">Categoria</p> */}
             <p className="mulauth-line mulauth-mandatory" style={{"marginBottom": "0.40rem"}}>Correo*</p>
             <p className="mulauth-line mulauth-mandatory">Teléfono*</p>
             <p className="mulauth-subline">(Al formato +520000000000 - sin espacios)</p>

@@ -1,8 +1,8 @@
 import express from "express";
 import bcrypt from 'bcrypt';
-import { prisma } from "../prisma/client.js"
+import { prisma } from "../../prisma/client.js"
 import multer from "multer";
-import { sendEmailWithInvoice } from "../mailer.js";
+import { sendEmailWithInvoice } from "../../mailer.js";
 import {
   calculateAuthorRevenue,
   calculateBookstoreComission,
@@ -12,7 +12,7 @@ import {
   today,
   twelveMonthsAgo,
   validateInputs,
-} from "../utils.js";
+} from "../../utils.js";
 
 const upload = multer();
 const router = express.Router();

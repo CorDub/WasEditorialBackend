@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-// import AddingAuthorModalErrors from "./AddingAuthorModalErrors";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import { countryCallingCodes } from "../countryCodes";
@@ -82,7 +81,7 @@ function EditAuthorModal({ clickedRow, closeModal, pageIndex, globalFilter }) {
 
   async function editAuthor() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/user/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/authors/user/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

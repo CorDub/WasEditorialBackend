@@ -138,7 +138,7 @@ function BookstoresList() {
   async function fetchBookstores() {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/bookstore`, {
+      const response = await fetch(`${baseURL}/api/admin/bookstores/bookstore`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json"

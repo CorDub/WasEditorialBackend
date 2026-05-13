@@ -6,7 +6,7 @@ function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function deleteTransfer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impression/${clickedRow.id}?authorDelivery=true`, {
+      const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}?authorDelivery=true`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'

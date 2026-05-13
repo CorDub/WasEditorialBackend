@@ -74,7 +74,7 @@ function EditBookPricesModal({
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/book/${clickedRow.id}/prices`, {
+      const response = await fetch(`${baseURL}/api/admin/books/book/${clickedRow.id}/prices`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

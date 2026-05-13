@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-// import AddingCategoryError from './AddingCategoryError';
 import ErrorsList from "./ErrorsList";
 import checkForErrors from './customHooks/checkForErrors';
 
@@ -11,19 +10,17 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
   const [regalias, setRegalias] = useState(clickedRow.percentage_royalties);
   const [gestionTiendas, setGestionTiendas] = useState(clickedRow.percentage_management_stores);
   const [gestionMinima, setGestionMinima] = useState(clickedRow.management_min);
-  // const [errorList, setErrorList] = useState([]);
   const [number, setNumber] = useState(clickedRow.number);
   const [rebate, setRebate] = useState(clickedRow.rebate_author);
   const regaliasRef = useRef()
   const rebateRef = useRef()
   const gestionTiendasRef = useRef()
   const gestionMinimaRef = useRef()
-  // const typeRef = useRef()
   const [errors, setErrors] = useState([])
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/category/${clickedRow.id}`, {
+      const response = await fetch(`${baseURL}/api/admin/categories/category/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -58,121 +55,6 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
       console.error("Error on frontend sending edit category info:", error);
     }
   }
-
-  // function addErrorClass(element) {
-  //   if (!element.classList.contains("error-inputs")) {
-  //     element.classList.add("error-inputs");
-  //   };
-  // }
-
-  // function checkForErrors(serverError) {
-  //   let newErrorList = [];
-  //   // const inputType = document.getElementById("adding-category-type");
-  //   const inputRegalias = document.getElementById("adding-category-regalias");
-  //   const inputGestionTiendas = document.getElementById("adding-category-gestionTiendas");
-  //   const inputGestionMinima = document.getElementById("adding-category-gestionMinima");
-  //   const inputRebate = document.getElementById("adding-category-descuento");
-  //   let inputList = [];
-  //   if (type === "regalias") {
-  //     inputList = [inputRegalias, inputRebate]
-  //   } else if (type === "comissions") {
-  //     inputList = [inputGestionTiendas, inputGestionMinima]
-  //   }
-
-  //   inputList.forEach((input) => {
-  //     if (input.classList.contains("error-inputs")) {
-  //       input.classList.remove("error-inputs");
-  //     }
-  //   });
-
-  //   inputList.forEach((input) => {
-  //     if (input.classList.contains("error-inputs")) {
-  //       input.classList.remove("error-inputs");
-  //     }
-  //   });
-
-  //   // if (type === false) {
-  //   //   newErrorList.push(11);
-  //   //   addErrorClass(inputType);
-  //   // }
-
-  //   // if (serverError === 13) {
-  //   //   newErrorList.push(13);
-  //   //   addErrorClass(inputType);
-  //   // }
-
-  //   if (type === "regalias") {
-  //     if (isNaN(parseFloat(regalias))) {
-  //       newErrorList.push(21);
-  //       addErrorClass(inputRegalias);
-  //     };
-
-  //     if (regalias === "") {
-  //       newErrorList.push(22);
-  //       addErrorClass(inputRegalias);
-  //     };
-
-  //     if (parseFloat(regalias) > 100) {
-  //       newErrorList.push(23);
-  //       addErrorClass(inputRegalias);
-  //     }
-
-  //     if (!rebate) {
-  //       newErrorList.push(51);
-  //       addErrorClass(inputRebate);
-  //     }
-
-  //     if (isNaN(parseFloat(rebate))) {
-  //       newErrorList.push(52);
-  //       addErrorClass(inputRebate);
-  //     }
-
-  //     if (rebate < 0 || rebate > 100) {
-  //       newErrorList.push(53);
-  //       addErrorClass(inputRebate)
-  //     }
-  //   }
-
-  //   if (type === "comissions") {
-  //     if (isNaN(parseFloat(gestionTiendas))) {
-  //       newErrorList.push(31);
-  //       addErrorClass(inputGestionTiendas);
-  //     };
-
-  //     if (gestionTiendas === "") {
-  //       newErrorList.push(32);
-  //       addErrorClass(inputGestionTiendas);
-  //     };
-
-  //     if (parseFloat(gestionTiendas) > 100) {
-  //       newErrorList.push(33);
-  //       addErrorClass(inputGestionTiendas);
-  //     }
-
-  //     if (isNaN(parseFloat(gestionMinima))) {
-  //       newErrorList.push(41);
-  //       addErrorClass(inputGestionMinima);
-  //     };
-
-  //     if (gestionMinima === "") {
-  //       newErrorList.push(42);
-  //       addErrorClass(inputGestionMinima);
-  //     };
-  //   }
-
-  //   setErrorList(newErrorList);
-  //   return newErrorList;
-  // }
-
-  // function handleSubmit(e) {
-  //   e.preventDefault();
-
-  //   const errorList = checkForErrors();
-  //   if (errorList.length > 0) {
-  //     return;
-  //   }
-  //   sendToServer();
-  // }
 
   function checkInputs() {
     let errorsList = []
@@ -310,7 +192,6 @@ function EditCategoryModal({ clickedRow, closeModal, pageIndex, globalFilter }) 
             </div>
           </>
         )}
-        {/* <AddingCategoryError errorList={errorList} setErrorList={setErrorList}/> */}
         <ErrorsList errors={errors} setErrors={setErrors} />
         <div className="form-actions">
           <button type="button" className='blue-button'

@@ -30,7 +30,7 @@ function InventoryGraph({
       // }
 
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/author/completeInventory`, {
+      const response = await fetch(`${baseURL}/api/author/inventories/completeInventory`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -60,6 +60,7 @@ function InventoryGraph({
 
   function filterData(data, scope, selectedBookId, legendDisplays, exclusions) {
     if (!data) {
+      setLoading(false)
       return;
     }
 
@@ -224,6 +225,11 @@ function InventoryGraph({
       </div>
       {isLoading && (
         <LoadingWheel />
+      )}
+      {!isLoading && !filteredData && (
+        <div className="aig-no-data">
+          <p className="aig-p">No datos por ahora</p>
+        </div>
       )}
       {filteredData && !isLoading && filteredData.map((dataPoint, index) => (
         <OverlappingHorizontalGraphLines

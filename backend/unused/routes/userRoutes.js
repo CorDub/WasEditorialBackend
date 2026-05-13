@@ -1,10 +1,10 @@
 import express from 'express';
-import { matchConfirmationCode } from './../passwordUtils.js';
+import { matchConfirmationCode } from '../../passwordUtils.js';
 import bcrypt from 'bcrypt';
-import { sendResetPasswordMail } from './../mailer.js';
-import { prisma } from "../prisma/client.js"
-import { validateInputs } from '../utils.js';
-import { validateInput } from '../validations.js';
+import { sendResetPasswordMail } from '../../mailer.js';
+import { prisma } from "../../prisma/client.js"
+import { validateInputs } from '../../utils.js';
+import { validateInput } from '../../validations.js';
 
 const router = express.Router();
 

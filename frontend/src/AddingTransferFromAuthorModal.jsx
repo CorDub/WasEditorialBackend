@@ -71,7 +71,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impression`, {
+      const response = await fetch(`${baseURL}/api/admin/impressions/impression`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

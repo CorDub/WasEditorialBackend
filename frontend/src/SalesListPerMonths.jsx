@@ -6,9 +6,7 @@ import TableWithDrawers from "./TableWithDrawers";
 import LoadingWheel from "./LoadingWheel";
 import { useEffect } from "react";
 import { 
-  twelveMonthsAgo, 
   applyFilters, 
-  getForMonthStr,
   localISODateTwelveMonthsAgo,
   today 
 } from "../../backend/utils";
@@ -40,7 +38,7 @@ function SalesListPerMonths() {
   async function fetchSalesPerMonths(startDate, endDate) {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
+      const response = await fetch(`${baseURL}/api/admin/sales/sales?startDate=${startDate}&endDate=${endDate}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -101,7 +99,7 @@ function SalesListPerMonths() {
       //refetch if date has changed
       if (dateRangeChanged) {
         setLoading(true);
-        const response = await fetch(`${baseURL}/api/admin/sales?startDate=${startDate}&endDate=${endDate}`, {
+        const response = await fetch(`${baseURL}/api/admin/sales/sales?startDate=${startDate}&endDate=${endDate}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

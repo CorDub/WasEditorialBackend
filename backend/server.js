@@ -2,23 +2,11 @@ import dotenv from "dotenv";
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
-import userRoutes from './routes/userRoutes.js';
 import { prisma } from "./prisma/client.js"
-import adminRoutes from "./routes/adminRoutes.js";
-// import adminRoutes from "./routes/admin/adminIndex.js";
-import newUpdateSaleRoute from "./routes/admin/sales/updateSale.js"
-import newInventoriesByBookstoreRoute from "./routes/admin/inventories/getInventoriesByBookstores.js";
-import newInventoriesByBookRoute from "./routes/admin/inventories/getInventoriesByBook.js";
-import newBookstoreInventoryRoute from "./routes/admin/inventories/getBookstoreInventory.js";
-import newBookInventoryRoute from "./routes/admin/inventories/getBookInventories.js";
-import newAddTransferRoute from "./routes/admin/transfers/addTransfers.js";
-import newGetTransfersRoute from "./routes/admin/transfers/getTransfers.js";
-import newUpdateTransferRoute from "./routes/admin/transfers/updateTransfer.js";
-import newDeleteTransferRoute from "./routes/admin/transfers/deleteTransfer.js";
-import authorRoutes from "./routes/authorRoutes.js";
-import newGetAuthorInventoriesRoute from "./routes/author/inventories/getAuthorInventories.js";
-import newGetCompleteInventoryRoute from "./routes/author/inventories/getCompleteInventory.js";
-import superAdminRoutes from "./routes/superAdminRoutes.js";
+import adminRoutes from "./routes/admin/adminIndex.js";
+import authorRoutes from "./routes/author/authorIndex.js";
+import superAdminRoutes from "./routes/superadmin/superadminIndex.js";
+import userRoutes from "./routes/user/userIndex.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -118,18 +106,7 @@ async function authenticateSuperAdmin(req, res, next) {
 }
 
 //Routes
-app.use('/api/author', authenticateUser, newGetAuthorInventoriesRoute);
-app.use('/api/author', authenticateUser, newGetCompleteInventoryRoute);
 app.use('/api/author', authenticateUser, authorRoutes);
-app.use('/api/admin', authenticateAdmin, newInventoriesByBookstoreRoute);
-app.use('/api/admin', authenticateAdmin, newInventoriesByBookRoute);
-app.use('/api/admin', authenticateAdmin, newBookstoreInventoryRoute);
-app.use('/api/admin', authenticateAdmin, newBookInventoryRoute);
-app.use('/api/admin', authenticateAdmin, newAddTransferRoute);
-app.use('/api/admin', authenticateAdmin, newUpdateSaleRoute);
-app.use('/api/admin', authenticateAdmin, newGetTransfersRoute);
-app.use('/api/admin', authenticateAdmin, newUpdateTransferRoute);
-app.use('/api/admin', authenticateAdmin, newDeleteTransferRoute);
 app.use('/api/admin', authenticateAdmin, adminRoutes);
 app.use('/api/superadmin', authenticateSuperAdmin, superAdminRoutes);
 app.use("/api/user", userRoutes);

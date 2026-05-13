@@ -29,6 +29,11 @@ const SalesContent = ({
           <p style={{fontWeight: "400", fontSize:"14px", marginTop:'0.5rem', fontStyle:"italic"}}>Este reporte no contiene datos de ventas en Kindle</p>
         </div>
         <div id="books-sold">
+          {salesData && salesData.totalSales === 0 && (
+            <div className="author-sales-no-data">
+              <p className="aig-p">No ventas por ahora</p>
+            </div>
+          )} 
           {selectedBook === 'total'
             ? <ul>
               {salesData.bookSales.map(book => (

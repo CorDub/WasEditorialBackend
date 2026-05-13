@@ -9,16 +9,16 @@ const prisma = new PrismaClient();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const authorsPath = path.join(__dirname, 'finalAuthorList.json');
-const booksPath = path.join(__dirname, "finalBooksList.json");
+// const authorsPath = path.join(__dirname, 'finalAuthorList.json');
+// const booksPath = path.join(__dirname, "finalBooksList.json");
 const additionalBooksPath = path.join(__dirname, "fourthBooks.json");
 
-const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
-const booksRaw = await fs.readFile(booksPath, 'utf-8');
+// const authorsRaw = await fs.readFile(authorsPath, 'utf-8');
+// const booksRaw = await fs.readFile(booksPath, 'utf-8');
 const additionalBooksRaw = await fs.readFile(additionalBooksPath, "utf-8");
 
-const authors = JSON.parse(authorsRaw);
-const books = JSON.parse(booksRaw);
+// const authors = JSON.parse(authorsRaw);
+// const books = JSON.parse(booksRaw);
 const additionalBooks = JSON.parse(additionalBooksRaw);
 
 async function addAuthorFromDB(author) {

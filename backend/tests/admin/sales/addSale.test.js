@@ -45,7 +45,7 @@ describe("adding a valid sale", () => {
     const category = await createCategory(prisma);
     author = await createAuthor(prisma);
     book = await createBook(prisma, [author.id], { categoryId: category.id });
-    impression = await createImpression(prisma, book.id, { quantity: 1000 });
+    impression = await createImpression(prisma, book.id, { quantity: 1000, dateStr: "2024-01-01" });
     bookstore = await createBookstore(prisma);
     inventory = await createInventory(prisma, book.id, bookstore.id, {
       initial: 3000,
@@ -124,7 +124,7 @@ describe("adding a sale for a multi-authors book", () => {
     author1 = await createAuthor(prisma);
     author2 = await createAuthor(prisma);
     book = await createBook(prisma, [author1.id, author2.id], { categoryId: category.id });
-    impression = await createImpression(prisma, book.id);
+    impression = await createImpression(prisma, book.id, { dateStr: "2024-01-01" });
     bookstore = await createBookstore(prisma);
     inventory = await createInventory(prisma, book.id, bookstore.id, {
       initial: 3000,
@@ -178,7 +178,7 @@ describe("adding a sale larger than the remaining inventory", () => {
     const category = await createCategory(prisma);
     author = await createAuthor(prisma);
     book = await createBook(prisma, [author.id], { categoryId: category.id });
-    await createImpression(prisma, book.id, {quantity: 50});
+    await createImpression(prisma, book.id, {quantity: 50, dateStr: "2024-01-01"});
     bookstore = await createBookstore(prisma);
     inventory = await createInventory(prisma, book.id, bookstore.id, {
       initial: 50,
@@ -218,6 +218,110 @@ describe("adding a sale larger than the remaining inventory", () => {
 })
 
 
+describe("sale date before WAS inventory availability", () => {
+  let mockReq, mockRes, mute;
+  let author, book, bookstore, inventory;
+
+  beforeAll(async() => {
+    const category = await createCategory(prisma);
+    author = await createAuthor(prisma);
+    book = await createBook(prisma, [author.id], { categoryId: category.id });
+    await createImpression(prisma, book.id, { quantity: 1000, dateStr: "2024-06-01" });
+    bookstore = await createBookstore(prisma);
+    inventory = await createInventory(prisma, book.id, bookstore.id, {
+      initial: 3000,
+      current: 3000,
+    });
+
+    mockReq = {
+      body: {
+        bookId: book.id,
+        bookstoreId: bookstore.id,
+        quantity: 10,
+        dateStr: "2024-01-01",
+      },
+      prisma: prisma
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {})
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma);
+    mute.mockRestore();
+  })
+
+  it("should return 400 when sale date is before the first impression", async() => {
+    await addSale(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith(
+      { message: "La fecha de la venta no puede ser anterior a la disponibilidad del libro en este inventario." }
+    );
+  })
+})
+
+describe("sale date before other bookstore inventory availability", () => {
+  let mockReq, mockRes, mute;
+  let author, book, wasBookstore, otherBookstore, wasInventory, otherInventory;
+
+  beforeAll(async() => {
+    const category = await createCategory(prisma);
+    author = await createAuthor(prisma);
+    book = await createBook(prisma, [author.id], { categoryId: category.id });
+    await createImpression(prisma, book.id, { quantity: 1000, dateStr: "2024-01-01" });
+    wasBookstore = await createBookstore(prisma);
+    otherBookstore = await createBookstore(prisma);
+    wasInventory = await createInventory(prisma, book.id, wasBookstore.id, {
+      initial: 3000,
+      current: 3000,
+    });
+    otherInventory = await createInventory(prisma, book.id, otherBookstore.id, {
+      initial: 0,
+      current: 0,
+    });
+    await createTransfer(prisma, wasInventory.id, {
+      toInventoryId: otherInventory.id,
+      quantity: 500,
+      dateStr: "2024-06-01",
+    });
+
+    mockReq = {
+      body: {
+        bookId: book.id,
+        bookstoreId: otherBookstore.id,
+        quantity: 10,
+        dateStr: "2024-01-01",
+      },
+      prisma: prisma
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    }
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {})
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma);
+    mute.mockRestore();
+  })
+
+  it("should return 400 when sale date is before the first transfer to the bookstore", async() => {
+    await addSale(mockReq, mockRes);
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith(
+      { message: "La fecha de la venta no puede ser anterior a la disponibilidad del libro en este inventario." }
+    );
+  })
+})
+
 describe("adding a sale but the payment is deleted", () => {
   let mockReq, mockRes, mute;
   let createdSale;
@@ -227,7 +331,7 @@ describe("adding a sale but the payment is deleted", () => {
     const category = await createCategory(prisma);
     author = await createAuthor(prisma);
     book = await createBook(prisma, [author.id], { categoryId: category.id });
-    await createImpression(prisma, book.id, { quantity: 1000 });
+    await createImpression(prisma, book.id, { quantity: 1000, dateStr: "2025-01-01" });
     bookstore = await createBookstore(prisma);
     inventory = await createInventory(prisma, book.id, bookstore.id, {
       initial: 3000,

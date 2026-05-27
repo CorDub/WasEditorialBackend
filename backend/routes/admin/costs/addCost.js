@@ -3,6 +3,7 @@ import { prisma } from "../../../prisma/client.js";
 import { 
   validateInputs,
   getForMonth,
+  getForMonthStr,
 } from "../../../utils.js";
 const router = express.Router();
 
@@ -16,6 +17,15 @@ export async function addCost(req, res) {
       "bookId": parseInt(req.body.bookId),
     }
     validateInputs(inputs);
+
+    const costForMonth = inputs.dateStrOptional
+      ? getForMonthStr(inputs.dateStrOptional)
+      : getForMonth(new Date())
+
+    const [yr, mo] = costForMonth.split('-').map(Number)
+    const costNextForMonth = mo === 12
+      ? `${yr + 1}-01`
+      : `${yr}-${String(mo + 1).padStart(2, '0')}`
 
     const prismaClient = req.prisma || prisma;
 
@@ -38,7 +48,7 @@ export async function addCost(req, res) {
           where: {
             userId_forMonth: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(new Date())
+              forMonth: costForMonth
             },
           }
         })
@@ -47,7 +57,7 @@ export async function addCost(req, res) {
           const newPayment = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(new Date())
+              forMonth: costForMonth
             }
           })
           paymentId = newPayment.id;
@@ -57,7 +67,7 @@ export async function addCost(req, res) {
           const newPaymentNextMonth = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(new Date(new Date().setMonth(new Date().getMonth() + 1)))
+              forMonth: costNextForMonth
             }
           })
           paymentId = newPaymentNextMonth.id;
@@ -73,7 +83,7 @@ export async function addCost(req, res) {
           const resetPayment = await tx.payment.create({
             data: {
               userId: selectedBook.mainAuthor,
-              forMonth: getForMonth(new Date())
+              forMonth: costForMonth
             }
           })
           paymentId = resetPayment.id;

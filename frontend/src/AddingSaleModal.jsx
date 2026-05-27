@@ -19,6 +19,13 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const dateStrRef = useRef();
   const [dateStr, setDateStr] = useState(today());
 
+  useEffect(() => {
+    if (dateStrRef.current) {
+      const d = new Date();
+      dateStrRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [])
+
   async function getExistingBooks() {
     try {
       const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
@@ -315,7 +322,6 @@ function AddingSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             pattern="[0-9]*"
             onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
             onChange={(e) => setDateStr(e.target.value)}
-            value={dateStr}
             ></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

@@ -2,11 +2,10 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { 
   localISODateTwelveMonthsAgo, 
-  today,
   validateInputs,
   generateMonthKeysForRangeStr,
   getAuthorString,
-  getForMonth,
+  getForMonthStr,
 } from "../../../utils.js" 
 const router = express.Router();
 
@@ -14,7 +13,7 @@ export async function getSales(req, res) {
   try {
     const inputs = {
       startDateStr: req.query.startDate ? req.query.startDate : localISODateTwelveMonthsAgo(),
-      endDateStr: req.query.endDate ? req.query.endDate : today()
+      endDateStr: req.query.endDate
     };
     validateInputs(inputs);
 
@@ -93,7 +92,7 @@ export async function getSales(req, res) {
     }
     for (const sale of sales) {
       for (const month of salesCompiled) {
-        if (getForMonth(sale.dateStr) === month.forMonth) {
+        if (getForMonthStr(sale.dateStr) === month.forMonth) {
           month.sales.push(sale);
           month.total += sale.quantity
 

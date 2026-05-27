@@ -1,5 +1,6 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
+import { validateInputs } from "../../../utils.js";
 import multer from "multer";
 const router = express.Router();
 const upload = multer();

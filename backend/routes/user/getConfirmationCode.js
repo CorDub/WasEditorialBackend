@@ -1,5 +1,7 @@
 import express from "express";
 import { prisma } from "../../prisma/client.js";
+import { matchConfirmationCode } from '../../passwordUtils.js';
+import { validateInput } from '../../validations.js';
 const router = express.Router();
 
 export async function getConfirmationCode(req, res) {

@@ -5,7 +5,8 @@ import {
   getForMonthStr 
 } from "../../../utils.js" 
 import {
-  getInventoryDerived
+  getInventoryDerived,
+  getEarliestInventoryDate
 } from "../inventories/inventoryHelpers.js"
 const router = express.Router();
 
@@ -45,6 +46,12 @@ export async function addSale(req, res) {
 
       if (!selectedInventory) {
         res.status(400).json({ message: "No existe un inventario con esta combinación de titulo y librería"});
+        return;
+      }
+
+      const earliestDate = getEarliestInventoryDate(selectedInventory)
+      if (earliestDate && inputs.dateStr < earliestDate) {
+        res.status(400).json({ message: "La fecha de la venta no puede ser anterior a la disponibilidad del libro en este inventario."});
         return;
       }
 

@@ -232,6 +232,24 @@ export function getOtherInventory(inventory) {
   return scaffold
 }
 
+export function getEarliestInventoryDate(inventory) {
+  //finds earliest non-deleted impression for WAS
+  if (inventory.bookstoreId === 1) {
+    const impressions = (inventory.book?.impressions || [])
+      .filter(imp => !imp.isDeleted)
+      .sort((a, b) => a.dateStr.localeCompare(b.dateStr))
+
+    return impressions.length > 0 ? impressions[0].dateStr : null
+  }
+
+  // finds earliest non-deleted transfer for any other
+  const transfersTo = (inventory.transfersTo || [])
+    .filter(t => !t.isDeleted)
+    .sort((a, b) => a.dateStr.localeCompare(b.dateStr))
+
+  return transfersTo.length > 0 ? transfersTo[0].dateStr : null
+}
+
 export function getInventoryDerived(inventory) {
   let res; 
   if (inventory.bookstoreId === 1) {

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
@@ -13,6 +13,14 @@ function EditTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFil
   const [place, setPlace] = useState(clickedRow.place);
   const [person, setPerson] = useState(clickedRow.person);
   const quantityRef = useRef();
+  const dateStrRef = useRef();
+
+  useEffect(() => {
+    if (dateStrRef.current && clickedRow.dateStr) {
+      const parts = clickedRow.dateStr.split('-');
+      dateStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -113,8 +121,8 @@ function EditTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalFil
           type="date"
           placeholder="Fecha de entrega"
           className="global-input"
-          onChange={(e) => setDateStr(e.target.value)}
-          value={dateStr}/>
+          ref={dateStrRef}
+          onChange={(e) => setDateStr(e.target.value)}/>
         <input
           type="text"
           placeholder="Lugar (opcional)"

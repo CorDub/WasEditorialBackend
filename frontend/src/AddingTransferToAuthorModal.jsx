@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
@@ -14,6 +14,14 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
   const [place, setPlace] = useState('');
   const [person, setPerson] = useState('');
   const quantityRef = useRef();
+  const dateStrRef = useRef();
+
+  useEffect(() => {
+    if (dateStrRef.current) {
+      const d = new Date();
+      dateStrRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -113,8 +121,8 @@ function AddingTransferToAuthorModal({clickedRow, closeModal, pageIndex, globalF
           type="date"
           placeholder="Fecha de entrega"
           className="global-input"
-          onChange={(e) => setDateStr(e.target.value)}
-          value={dateStr}/>
+          ref={dateStrRef}
+          onChange={(e) => setDateStr(e.target.value)}/>
         <input
           type="text"
           placeholder="Lugar (opcional)"

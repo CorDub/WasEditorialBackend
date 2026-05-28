@@ -29,6 +29,13 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
     setDateCutStr(getDateCutStr(datePayStr))
   }, [datePayStr])
 
+  useEffect(() => {
+    if (datePayStrRef.current) {
+      const d = new Date();
+      datePayStrRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [])
+
   async function getExistingBooks() {
     try {
       const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
@@ -254,8 +261,7 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
             type="date"
             className="global-input"
             ref={datePayStrRef}
-            onChange={(e) => setDatePayStr(e.target.value)}
-            value={datePayStr}></input>
+            onChange={(e) => setDatePayStr(e.target.value)}></input>
         </div>
         <input type="text" placeholder="Regalías*" className="global-input"
           inputMode="numeric"

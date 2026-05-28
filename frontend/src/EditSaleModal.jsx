@@ -20,6 +20,13 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   const dateStrRef = useRef();
   const [dateStr, setDateStr] = useState(clickedRow.dateStr);
 
+  useEffect(() => {
+    if (dateStrRef.current && dateStr) {
+      const parts = dateStr.split('-');
+      dateStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [])
+
   let bookTitlesList = []
   for (const book of existingBooks) {
     bookTitlesList.push(book.title)
@@ -209,8 +216,7 @@ function EditSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) {
             placeholder="Fecha"
             className="global-input"
             ref={dateStrRef}
-            onChange={(e) => setDateStr(e.target.value)}
-            value={dateStr}></input>
+            onChange={(e) => setDateStr(e.target.value)}></input>
         </div>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">

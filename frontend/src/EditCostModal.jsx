@@ -18,6 +18,13 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
     const [dateStr, setDateStr] = useState(changeDateFormat(clickedRow.dateStr, "yearFirst"));
     const dateStrRef = useRef();
 
+    useEffect(() => {
+      if (dateStrRef.current && dateStr) {
+        const parts = dateStr.split('-');
+        dateStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      }
+    }, [])
+
     async function fetchExistingBooks() {
         try {
             const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
@@ -148,7 +155,6 @@ function EditCostModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                         className="global-input"
                         placeholder="Fecha"
                         ref={dateStrRef}
-                        value={dateStr}
                         onChange={(e) => setDateStr(e.target.value)}/>
                 </div>
                 <div className="modal-form-line">

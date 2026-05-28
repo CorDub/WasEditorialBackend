@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors.jsx";
 import ErrorsList from "./ErrorsList.jsx";
 import useCheckAdmin from "./customHooks/useCheckAdmin.jsx";
@@ -13,6 +13,13 @@ function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalF
   const [dateStr, setDateStr] = useState(clickedRow.dateStr);
   const quantityRef = useRef();
   const dateStrRef = useRef();
+
+  useEffect(() => {
+    if (dateStrRef.current && dateStr) {
+      const parts = dateStr.split('-');
+      dateStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [])
 
   function cleanNote() {
     const len = clickedRow.note.length
@@ -133,8 +140,7 @@ function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalF
           placeholder="Fecha"
           ref={dateStrRef}
           className="global-input transfer-quantity"
-          onChange={(e) => setDateStr(e.target.value)}
-          value={dateStr}/>
+          onChange={(e) => setDateStr(e.target.value)}/>
         <input
           type="text"
           placeholder="Comentario (opcional)"

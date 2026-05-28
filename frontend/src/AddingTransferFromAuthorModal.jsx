@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
@@ -15,6 +15,13 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   const [dateStr, setDateStr] = useState(today());
   const quantityRef = useRef();
   const dateStrRef = useRef();
+
+  useEffect(() => {
+    if (dateStrRef.current) {
+      const d = new Date();
+      dateStrRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -128,8 +135,7 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
           placeholder="Fecha"
           ref={dateStrRef}
           className="global-input transfer-quantity"
-          onChange={(e) => setDateStr(e.target.value)}
-          value={dateStr}/>
+          onChange={(e) => setDateStr(e.target.value)}/>
         <input
           type="text"
           placeholder="Comentario (opcional)"

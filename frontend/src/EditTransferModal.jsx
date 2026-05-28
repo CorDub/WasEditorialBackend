@@ -28,6 +28,13 @@ function EditTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
   }, [clickedRow])
 
   useEffect(() => {
+    if (dateRef.current && clickedRow.dateStr) {
+      const parts = clickedRow.dateStr.split('-');
+      dateRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [transferType])
+
+  useEffect(() => {
     let list = [];
     for (const bookstore of existingBookstores) {
       if (bookstore.id === 1) {
@@ -217,8 +224,7 @@ function EditTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
                 type="date"
                 className="global-input"
                 ref={dateRef}
-                onChange={(e) => setDate(e.target.value)}
-                value={date}>
+                onChange={(e) => setDate(e.target.value)}>
               </input>
               <input
                 type='text'
@@ -236,8 +242,7 @@ function EditTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
               type="date"
               className="global-input"
               ref={dateRef}
-              onChange={(e) => setDate(e.target.value)}
-              value={date}>
+              onChange={(e) => setDate(e.target.value)}>
             </input>
             <input
               type='text'

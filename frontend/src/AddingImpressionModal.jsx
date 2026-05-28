@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import ErrorsList from "./ErrorsList";
 import checkForErrors from "./customHooks/checkForErrors";
-import { convertISOString, today } from "../../backend/utils";
+import { today } from "../../backend/utils";
 
 function AddingImpressionModal({
     clickedRow,
@@ -20,6 +20,13 @@ function AddingImpressionModal({
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState([]);
   // const [entregaDelAutor, setEntregaDelAutor] = useState(false);
+
+  useEffect(() => {
+    if (dateStrRef.current) {
+      const d = new Date();
+      dateStrRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -131,8 +138,7 @@ function AddingImpressionModal({
           placeholder="Fecha"
           className="global-input"
           ref={dateStrRef}
-          onChange={(e) => setDateStr(e.target.value)}
-          value={convertISOString(dateStr)}></input>
+          onChange={(e) => setDateStr(e.target.value)}></input>
         <input
           type="text"
           placeholder="Nota para el autor (opcional)"

@@ -26,6 +26,13 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
     setDateCutStr(getDateCutStr(datePayStr))
   }, [datePayStr])
 
+  useEffect(() => {
+    if (datePayStrRef.current && clickedRow.datePayStr) {
+      const parts = clickedRow.datePayStr.split('-');
+      datePayStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [])
+
   async function getExistingBooks() {
     try {
       const response = await fetch(`${baseURL}/api/admin/books/existingBooks`, {
@@ -250,8 +257,7 @@ function EditKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}) 
             type="date"
             className="global-input"
             ref={datePayStrRef}
-            onChange={(e) => setDatePayStr(e.target.value)}
-            value={datePayStr}></input>
+            onChange={(e) => setDatePayStr(e.target.value)}></input>
         </div>
         <div className="modal-form-line">
           <label className="modal-form-label">Regalías*</label>

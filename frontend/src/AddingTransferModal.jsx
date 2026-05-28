@@ -29,6 +29,13 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   }, [clickedRow])
 
   useEffect(() => {
+    if (dateRef.current) {
+      const d = new Date();
+      dateRef.current.valueAsDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+  }, [transferType])
+
+  useEffect(() => {
     let list = [];
     for (const bookstore of existingBookstores) {
       if (bookstore.id === 1) {
@@ -218,8 +225,7 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
                 type="date"
                 className="global-input"
                 ref={dateRef}
-                onChange={(e) => setDate(e.target.value)}
-                value={date}>
+                onChange={(e) => setDate(e.target.value)}>
               </input>
               <input
                 type='text'

@@ -1,5 +1,5 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 
@@ -13,6 +13,13 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
   const [dateStr, setDateStr] = useState(clickedRow.dateStr);
   const [note, setNote] = useState(clickedRow.note)
   const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    if (dateStrRef.current && dateStr) {
+      const parts = dateStr.split('-');
+      dateStrRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -112,8 +119,7 @@ function EditImpressionModal({clickedRow, closeModal, pageIndex, globalFilter}) 
           placeholder="Fecha"
           className="global-input"
           ref={dateStrRef}
-          onChange={(e) => setDateStr(e.target.value)}
-          value={dateStr}></input>
+          onChange={(e) => setDateStr(e.target.value)}></input>
         <input
           type="text"
           placeholder="Nota para el autor (opcional)"

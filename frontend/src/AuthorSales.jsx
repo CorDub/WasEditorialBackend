@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import useCheckUser from "./customHooks/useCheckUser";
 import UserContext from "./UserContext";
 import './AuthorSales.scss';
@@ -27,10 +27,24 @@ function AuthorSales() {
     startDateStr: localISODateTwelveMonthsAgo(),
     endDateStr: today()
   });
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+const [alertMessage, setAlertMessage] = useState("");
+const [alertType, setAlertType] = useState("");
 
-  function processMonthlyData(sales, bookId = 'total') {
+const startDateRef = useRef(null);
+const endDateRef = useRef(null);
+
+useEffect(() => {
+  if (startDateRef.current && dateRange.startDateStr) {
+    const parts = dateRange.startDateStr.split('-');
+    startDateRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+  if (endDateRef.current && dateRange.endDateStr) {
+    const parts = dateRange.endDateStr.split('-');
+    endDateRef.current.valueAsDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+}, [])
+
+function processMonthlyData(sales, bookId = 'total') {
     const monthlySales = {};
     // if (!sales || sales.length === 0) return;
     if (sales && sales.length > 0 ) {
@@ -212,7 +226,7 @@ function AuthorSales() {
               type="date"
               id="startDate"
               name="startDateStr"
-              value={dateRange.startDateStr}
+              ref={startDateRef}
               onChange={handleDateChange}
             />
           </div>
@@ -221,7 +235,7 @@ function AuthorSales() {
               type="date"
               id="endDate"
               name="endDateStr"
-              value={dateRange.endDateStr}
+              ref={endDateRef}
               onChange={handleDateChange}
             />
           </div>

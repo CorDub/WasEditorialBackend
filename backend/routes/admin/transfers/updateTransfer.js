@@ -76,10 +76,13 @@ export async function updateTransfer(req, res) {
           let totalQuantitySentLeft = 0;
           for (const send of inventoryFrom.transfersFrom) {
             if (!send.isDeleted) {
-              totalQuantitySentLeft += send.quantity
+              if (send.id === transferToBeEdited.id) {
+                totalQuantitySentLeft += inputs.quantity
+              } else {
+                totalQuantitySentLeft += send.quantity
+              }
             }
           }
-          totalQuantitySentLeft -= quantityUpdate
 
           // get total amount returned
           let totalQuantityReturned = 0;
@@ -101,10 +104,13 @@ export async function updateTransfer(req, res) {
           let totalQuantitySentLeft = 0;
           for (const sent of inventoryFrom.transfersFrom) {
             if (!sent.isDeleted && !sent.toInventoryId) {
-              totalQuantitySentLeft += sent.quantity
+              if (sent.id === transferToBeEdited.id) {
+                totalQuantitySentLeft += inputs.quantity
+              } else {
+                totalQuantitySentLeft += sent.quantity
+              }
             }
           }
-          totalQuantitySentLeft -= quantityUpdate
 
           // get total amount returned
           const thatBookAuthorDeliveries = await tx.impression.findMany({

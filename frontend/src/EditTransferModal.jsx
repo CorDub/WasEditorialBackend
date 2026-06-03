@@ -203,23 +203,6 @@ function EditTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) {
           <>
             <div
               className="centered-entrega">
-              {/* <select
-                className="global-input"
-                ref={bookstoreIdRef}
-                onChange={(e) => setBookstoreId(e.target.value)}
-                >
-                <option
-                  value="null">
-                  Libreria*
-                </option>
-                {bookstoreNamesList && bookstoreNamesList.map((bookstore, index) => (
-                  <option
-                    key={index}
-                    value={`${bookstore.id}`}>
-                    {bookstore.name}
-                  </option>
-                  ))};
-              </select> */}
               <input
                 type="date"
                 className="global-input"

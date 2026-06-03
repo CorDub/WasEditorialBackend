@@ -266,8 +266,8 @@ function AddingKindleSaleModal({clickedRow, closeModal, pageIndex, globalFilter}
         <input type="text" placeholder="Regalías*" className="global-input"
           inputMode="numeric"
           pattern="[0-9]*"
-          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9]/.test(e.key)) {e.preventDefault();}}}
-          ref={regaliasRef} onChange={(e) => setRegalias(parseInt(e.target.value))}></input>
+          onKeyDown={(e) => {if (e.key.length === 1 && !/[0-9.]/.test(e.key)) {e.preventDefault();}}}
+          ref={regaliasRef} onChange={(e) => setRegalias(parseFloat(e.target.value))}></input>
         <ErrorsList errors={errors} setErrors={setErrors}/>
         <div className="form-actions">
           <button type="button" className='blue-button'

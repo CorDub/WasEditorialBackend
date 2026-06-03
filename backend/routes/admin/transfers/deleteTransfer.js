@@ -33,29 +33,31 @@ export async function deleteTransfer(req, res) {
 
       // If it's a send, make sure no return is associated to it
       if (inventoryFrom.bookstoreId === 1) {
-        if (transferToBeDeleted.toInventoryId && inventoryFrom.transfersTo.length > 0) {
-          // check the total amount of send left after taking out this transfer's quantity
-          let totalQuantitySentLeft = 0;
-          for (const send of inventoryFrom.transfersFrom) {
-            if (!send.isDeleted) {
-              totalQuantitySentLeft += send.quantity
+        if (transferToBeDeleted.toInventoryId) {
+          if (inventoryFrom.transfersTo.length > 0) {
+            // check the total amount of send left after taking out this transfer's quantity
+            let totalQuantitySentLeft = 0;
+            for (const send of inventoryFrom.transfersFrom) {
+              if (!send.isDeleted) {
+                totalQuantitySentLeft += send.quantity
+              }
             }
-          }
-          totalQuantitySentLeft -= transferToBeDeleted.quantity
+            totalQuantitySentLeft -= transferToBeDeleted.quantity
 
-          // get total amount returned
-          let totalQuantityReturned = 0;
-          for (const transferBack of inventoryFrom.transfersTo) {
-            if (!transferBack.isDeleted) {
-              totalQuantityReturned += transferBack.quantity
+            // get total amount returned
+            let totalQuantityReturned = 0;
+            for (const transferBack of inventoryFrom.transfersTo) {
+              if (!transferBack.isDeleted) {
+                totalQuantityReturned += transferBack.quantity
+              }
             }
-          }
-          
-          // compare
-          if (totalQuantitySentLeft < totalQuantityReturned) {
-            invalidRequestLibreria = true;
-            totalReturns = totalQuantityReturned;
-            return;
+            
+            // compare
+            if (totalQuantitySentLeft < totalQuantityReturned) {
+              invalidRequestLibreria = true;
+              totalReturns = totalQuantityReturned;
+              return;
+            }
           }
         } else {
           // the delivery to author case

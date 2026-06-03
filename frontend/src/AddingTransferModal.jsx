@@ -248,6 +248,12 @@ function AddingTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
               ref={quantityRef}
               onChange={(e) => setQuantity(e.target.value)}>
             </input>
+            <input
+              type="date"
+              className="global-input"
+              ref={dateRef}
+              onChange={(e) => setDate(e.target.value)}>
+            </input>
           </>
         }
 

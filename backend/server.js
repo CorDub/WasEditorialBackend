@@ -27,6 +27,7 @@ app.use(cors({
 app.use(express.json());
 
 const isStaging = process.env.NODE_ENV === "staging"
+const isProduction = process.env.NODE_ENV === "production"
 
 app.set('trust proxy', 1);
 app.use(session({
@@ -35,8 +36,8 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: isStaging,
-    sameSite: isStaging ? "none" : "lax"
+    secure: isProduction || isStaging,
+    sameSite: (isProduction || isStaging) ? "none" : "lax"
   }
 }));
 

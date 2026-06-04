@@ -4,7 +4,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import "./ChangePasswordPage.scss";
 import ChangePasswordPageErrors from "./ChangePasswordPageErrors";
 import Alert from "./Alert";
-import LoadingWheel from "./LoadingWheel";
 
 function ChangePasswordPage() {
   const baseURL = import.meta.env.VITE_API_URL || '';

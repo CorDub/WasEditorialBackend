@@ -64,8 +64,10 @@ export async function changePassword(req, res) {
       return res.status(401).json({error: "Expired token"});
     }
 
-    if (await bcrypt.compare(password, current_user.password)) {
-      errors.push(14);
+    if (current_user.password !== null && current_user.password !== undefined) {
+      if (await bcrypt.compare(password, current_user.password)) {
+        errors.push(14);
+      }
     }
 
     if (errors.length > 0) { return res.status(400).json(errors); }

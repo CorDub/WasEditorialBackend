@@ -1,9 +1,10 @@
 import { useState } from "react";
 // import { useLocation, useNavigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import "./ChangePasswordPage.scss";
 import ChangePasswordPageErrors from "./ChangePasswordPageErrors";
 import Alert from "./Alert";
+import LoadingWheel from "./LoadingWheel";
 
 function ChangePasswordPage() {
   const baseURL = import.meta.env.VITE_API_URL || '';
@@ -15,6 +16,8 @@ function ChangePasswordPage() {
   const [errorList, setErrorList] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
   async function sendToServer() {
     if (cs1 !== cs2) {
@@ -22,7 +25,7 @@ function ChangePasswordPage() {
       return;
     };
 
-    const response = await fetch(`${baseURL}/api/author/passwords/change_password`, {
+    const response = await fetch(`${baseURL}/api/user/change_password`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
@@ -30,7 +33,8 @@ function ChangePasswordPage() {
       credentials: "include",
       body: JSON.stringify({
         // user_id: user_id,
-        password: cs1
+        password: cs1,
+        token: token
       })
     });
 
@@ -43,7 +47,7 @@ function ChangePasswordPage() {
       });
     } else {
       const res = await response.json();
-      if(res.status === 500) {
+      if (response.status === 500) {
         setAlertMessage("No se pudó actualizar la contraseña");
         setAlertType("error");
         return;
@@ -139,6 +143,7 @@ function ChangePasswordPage() {
         <ChangePasswordPageErrors errorList={errorList} setErrorList={setErrorList}/>
         <button type="submit" className="blue-button">Ingresar</button>
       </form>
+      
       <Alert message={alertMessage} type={alertType}
         setAlertMessage={setAlertMessage} setAlertType={setAlertType}/>
     </div>

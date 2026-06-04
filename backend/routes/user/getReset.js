@@ -1,7 +1,8 @@
 import express from "express";
 import { prisma } from "../../prisma/client.js";
 import { validateInputs } from "../../utils.js";
-import { sendResetPasswordMail } from "../../mailer.js";
+import { sendTokenResetPasswordMail } from "../../mailer.js";
+import crypto from "crypto";
 const router = express.Router();
 
 export async function getReset(req, res) {
@@ -21,7 +22,9 @@ export async function getReset(req, res) {
       return res.status(204).json("Error retrieving the user");
     }
 
-    await sendResetPasswordMail(inputs.email, user.first_name)
+    const token = crypto.randomBytes(32).toString("hex");
+
+    await sendTokenResetPasswordMail(inputs.email, user.first_name, token)
     const user_send = {
       id: user.id,
     }

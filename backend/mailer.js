@@ -33,11 +33,7 @@ export function getMailtrap() {
 
 async function sendEmail({ to, subject, text, html, attachments }) {
   try {
-    if (process.env.NODE_ENV === "development") {
-      console.log("no email sent for test")
-      return ("test environment - no email sent")
-
-    } else if (process.env.NODE_ENV === "staging") {
+    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "staging") {
       const finalTo = process.env.STAGING_EMAIL_REDIRECT
 
       const transport = getMailtrap()
@@ -126,9 +122,10 @@ export async function sendResetPasswordMail(to, name) {
     const user = await prisma.user.findUnique({where: {email: to}});
     if (!user) throw new Error(`User not found for email: ${to}`);
     setResetPasswordCode(user.id, codigo);
+
     await sendEmail({
       to,
-      subject: 'Código de confirmación para su cuenta de Was Editorial',
+      subject: 'Código de confirmación para su cuenta de WAS Editorial',
       text: `Hola ${name}, \n
       Por favor ingrese el siguiente código de confirmación en la pagina de Was:\n
       ${codigo}
@@ -141,6 +138,39 @@ export async function sendResetPasswordMail(to, name) {
     console.error('Error sending the set password email:', error);
   }
 };
+
+export async function sendTokenResetPasswordMail(to, name, token) {
+  const user = await prisma.user.findUnique({where: {email: to}});
+    if (!user) throw new Error(`User not found for email: ${to}`);
+    const updatedUser  = await prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        reset_password_token: token,
+        reset_password_expires: new Date(Date.now() + 60* 60 * 1000)
+      }
+    })
+
+    let link;
+    if (process.env.NODE_ENV === "development") {
+      link = `http://localhost:5173/change-password?token=${token}`
+    } else if (process.env.NODE_ENV === "staging") {
+      link = `https://plataformawaseditorialstaging.onrender.com/change-password?token=${token}`
+    } else {
+      link = `https://distribucionwas.com/change-password?token=${token}`
+    }
+
+    await sendEmail({
+      to,
+      subject: 'Restablecimiento de su contraseña para su cuenta de WAS Editorial',
+      text: `Hola ${name}, \n
+      Por favor haga clic en el siguiente enlace para restablecer (o establecer si es su primera visita) la contraseña de su cuenta de WAS Editorial:\n
+      ${link}
+      \n
+      Este enlace estará válido por 1 hora.`
+    });
+}
 
 export async function sendEmailWithInvoice(name, month, amount, factura, constancia, correo) {
   try {

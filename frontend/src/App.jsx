@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './Login.jsx';
 import './Global.scss';
 import AuthorsList from './AuthorsList.jsx';
-import ConfirmationCodePage from './ConfirmationCodePage.jsx';
+// import ConfirmationCodePage from './ConfirmationCodePage.jsx';
 import ChangePasswordPage from './ChangePasswordPage.jsx';
 import ForgottenPasswordPage from './ForgottenPasswordPage.jsx';
 import UserProvider from './UserProvider.jsx';
@@ -45,9 +45,9 @@ function App() {
           <Route path='/admin/transfers' element={<TransfersList />} />
           <Route path='/admin/inventories-list' element={<InventoriesList/>} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
-          <Route path='/confirmation-code' element={<ConfirmationCodePage />} />
+          {/* <Route path='/confirmation-code' element={<ConfirmationCodePage />} /> */}
           <Route path='/profile-page' element={<ProfilePage/>} />
-          <Route path='/author/change-password' element={<ChangePasswordPage />} />
+          <Route path='/change-password' element={<ChangePasswordPage />} />
           <Route path='/author/inventory' element={<AuthorInventory/>} />
           <Route path='/author/sales' element={<AuthorSales/>} />
           <Route path='/author/commissions' element={<AuthorCommissions />} />

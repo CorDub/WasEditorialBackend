@@ -36,28 +36,29 @@ enum CategoryType {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  first_name          String
-  last_name           String
-  referido            String?
-  email               String?   @unique
-  phone               String?
-  phonePrefix         String    @default("+52")
-  birthday            String?
-  clabe               String?   @unique
-  bank_account_number String?
-  name_bank_account   String?
-  bank                String?
-  swift               String?
-  password            String?
-  books               Book[]
-  role                Role      @default(author)
-  reset_password_code Int?
-  font_size           Float?    @default(1.0)
-  isDeleted           Boolean   @default(false)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  payments            Payment[]
+  id                     Int       @id @default(autoincrement())
+  first_name             String
+  last_name              String
+  referido               String?
+  email                  String?   @unique
+  phone                  String?
+  phonePrefix            String    @default("+52")
+  birthday               String?
+  clabe                  String?   @unique
+  bank_account_number    String?
+  name_bank_account      String?
+  bank                   String?
+  swift                  String?
+  password               String?
+  books                  Book[]
+  role                   Role      @default(author)
+  reset_password_token   String?   @unique
+  reset_password_expires DateTime?
+  font_size              Float?    @default(1.0)
+  isDeleted              Boolean   @default(false)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  payments               Payment[]
 
   @@unique([first_name, last_name])
 }

@@ -165,8 +165,9 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
         <div className="dempay-adicional-info">
           <p className="dempay-bold">Datos requeridos en la factura</p>
           <p>Uso de CFDI: Gastos Generales</p>
-          <p>Concepto: Regalías</p>
-          <p>Código: 82111702</p>
+          <p>Concepto: Venta de libros</p>
+          <p>Código: 55101500</p>
+          <p>IVA tasa 0%</p>
           {/* <p>y agrega la referencia "55101500 venta de libros + 'título del libro'" a la factura.</p> */}
           <p>-</p>
           <p>No agregar el IVA en la factura.</p>

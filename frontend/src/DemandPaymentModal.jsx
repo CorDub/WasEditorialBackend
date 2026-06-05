@@ -182,14 +182,14 @@ function DemandPaymentModal({closeModal, paymentInfo}) {
           <label className="modal-form-label dempay-title">Factura (pdf, jpeg, png, max 5MB)</label>
           <input type="file"
             className="modal-form-file"
-            accept=".pdf,image/jpeg,image/pdf"
+            accept=".pdf,image/jpeg,image/png"
             onChange={(e) => checkFile(e, "factura")}/>
           <div className="modal-form-error">{errorFactura}</div>
         </div>
         <div className="modal-form-upload">
           <label className="modal-form-label dempay-title">Constancia de situación fiscal (pdf, jpeg, png, max 5MB)</label>
           <input type="file"
-            accept=".pdf,image/jpeg,image/pdf"
+            accept=".pdf,image/jpeg,image/png"
             className="modal-form-file"
             onChange={(e) => checkFile(e, "constancia")}/>
           <div className="modal-form-error">{errorConstancia}</div>

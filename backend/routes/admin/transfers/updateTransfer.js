@@ -3,6 +3,8 @@ import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
 import { validateAuthorReturn } from "../impressions/impressionHelpers.js";
+import { findEarliestDeliveryToAuthor, findEarliestReturnFromAuthor } from "./transferHelpers.js";
+
 const router = express.Router();
 
 export async function updateTransfer(req, res) {
@@ -23,10 +25,6 @@ export async function updateTransfer(req, res) {
 
     const prismaClient = req.prisma || prisma
 
-    let invalidRequestLibreria = false;
-    let invalidRequestAuthor = false;
-    let totalReturns = 0;
-
     let result = null;
 
     await prismaClient.$transaction(async (tx) => {
@@ -36,7 +34,8 @@ export async function updateTransfer(req, res) {
           id: inputs.id
         },
         include: {
-          toInventory: true
+          toInventory: true,
+          fromInventory: true
         }
       })
 
@@ -44,168 +43,34 @@ export async function updateTransfer(req, res) {
         throw new Error("deleted transfer")
       }
 
-      //2.1 if no inventoryFrom it's a return from author
-      if (!inputs.inventoryFromId) {
-        const inventoryTo = await tx.inventory.findUnique({
-          where: {
-            id: inputs.inventoryToId
-          }
-        })
-
-        const valid = await validateAuthorReturn(tx, inventoryTo.bookId, inventoryTo.bookstoreId, inputs.quantity)
-        if (!valid) {
-          throw new Error("cannot return more books than were delivered to author")
-        }
-
-        const editedTransfer = await tx.transfer.update({
-          where: {
-            id: inputs.id
-          },
-          data: {
-            quantity: inputs.quantity,
-            dateStr: inputs.dateStrOptional,
-            note: inputs.note,
-          }
-        })
-
-        // return res.status(200).json({message:"successfully edited the return from author"})
-        result = {
-          status: 200,
-          message: "successfully edited the return from author"
-        }
+      // routing from here
+      // return from author path
+      if (!transferToBeEdited.fromInventoryId) {
+        console.log("return from author")
+        result = await editReturnFromAuthor(tx, transferToBeEdited, inputs)
         return
       }
 
-      // back to any other cases
-      const inventoryFrom = await tx.inventory.findUnique({
-        where: {
-          id: transferToBeEdited.fromInventoryId
-        },
-        include: {
-          book: {
-            include: {
-              impressions: true
-            }
-          },
-          bookstore: true,
-          sales: true,
-          transfersFrom: true,
-          transfersTo: true
-        }
-      })
-
-      if (inventoryFrom.isDeleted) {
-        throw new Error("deleted inventory from")
-      }
-
-      //3. Check that the new quantity is not more than available in the inventory
-      const derived = getInventoryDerived(inventoryFrom)
-      const quantityUpdate = transferToBeEdited.quantity - inputs.quantity
-      if ((derived.disponibles + quantityUpdate) < 0) {
-        result = {
-          status: 400,
-          message: `No hay suficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`
-        }
+      // send to author
+      if (!transferToBeEdited.toInventoryId) {
+        console.log("send to author")
+        result = await editSendToAuthor(tx, transferToBeEdited, inputs)
         return
       }
+      
+      // send to library
+      if (transferToBeEdited.fromInventory.bookstoreId === 1) {
+        console.log("send to library")
+        result = await editSendToLibrary(tx, transferToBeEdited, inputs)
+        return
+      } 
 
-      //4. Check that you can't have less sends than returns
-      if (inventoryFrom.bookstoreId === 1) {
-        if (transferToBeEdited.toInventoryId && inventoryFrom.transfersTo.length > 0) {
-          // check the total amount of send left after taking out this transfer's quantity
-          let totalQuantitySentLeft = 0;
-          for (const send of inventoryFrom.transfersFrom) {
-            if (!send.isDeleted) {
-              if (send.id === transferToBeEdited.id) {
-                totalQuantitySentLeft += inputs.quantity
-              } else {
-                totalQuantitySentLeft += send.quantity
-              }
-            }
-          }
+      // return to library
+      console.log("return to library")
+      result = await editReturnToLibrary(tx, transferToBeEdited, inputs)
+    });
 
-          // get total amount returned
-          let totalQuantityReturned = 0;
-          for (const transferBack of inventoryFrom.transfersTo) {
-            if (!transferBack.isDeleted) {
-              totalQuantityReturned += transferBack.quantity
-            }
-          }
-          
-          // compare
-          if (totalQuantitySentLeft < totalQuantityReturned) {
-            invalidRequestLibreria = true;
-            totalReturns = totalQuantityReturned;
-            return;
-          }
-        } else {
-          // the delivery to author case
-          //same process, get the total amount sent - this transfer first
-          let totalQuantitySentLeft = 0;
-          for (const sent of inventoryFrom.transfersFrom) {
-            if (!sent.isDeleted && !sent.toInventoryId) {
-              if (sent.id === transferToBeEdited.id) {
-                totalQuantitySentLeft += inputs.quantity
-              } else {
-                totalQuantitySentLeft += sent.quantity
-              }
-            }
-          }
-
-          // get total amount returned
-          const thatBookAuthorDeliveries = await tx.impression.findMany({
-            where: {
-              bookId: inventoryFrom.bookId,
-              authorDelivery: true,
-              isDeleted: false
-            }
-          })
-
-          let totalQuantityReturned = 0;
-          for (const authorDelivery of thatBookAuthorDeliveries) {
-            totalQuantityReturned += authorDelivery.quantity
-          }
-
-          //compare
-          if (totalQuantitySentLeft < totalQuantityReturned) {
-            invalidRequestAuthor = true;
-            totalReturns = totalQuantityReturned;
-            return
-          }
-        }
-      }
-
-      //5. finally update the transfer
-      const updatedTransfer = await tx.transfer.update({
-        where: {
-          id: transferToBeEdited.id
-        },
-        data: {
-          quantity: inputs.quantity,
-          dateStr: inputs.dateStrOptional,
-          note: inputs.note,
-          place: inputs.place,
-          person: inputs.person
-        }
-      })
-    })
-
-    if (invalidRequestLibreria) {
-      res.status(400).json({error: `Quedan ${totalReturns} devoluciones de esta librería. No se puede tener menos libros en ingresos que en devoluciones. Por favor edite o elimine las devoluciones.`})
-      return
-    }
-
-    if (invalidRequestAuthor) {
-      res.status(400).json({error: `Quedan ${totalReturns} devoluciones de este autor. No se puede tener menos libros en entrega que en devoluciones. Por favor edite o elimine las devoluciones.`})
-      return
-    }
-
-    if (result) {
-      res.status(result.status).json({message: result.message})
-      return
-    }
-    res.status(200).json({message: "successfully edited the transfer"})
-    
+    res.status(result.status).json({message: result.message})
   } catch(error) {
     console.error("\n ERROR WHILE UPDATING TRANSFER \n", error);
     res.status(500).json({error: "a server error occurred while updating the transfer"})
@@ -213,5 +78,350 @@ export async function updateTransfer(req, res) {
 }
 router.patch('/transfer/:id', updateTransfer)
 
+
+
+async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
+  // check quantity is valid
+  const inventoryTo = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.toInventoryId
+    },
+    include:{
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  const diff = transferToBeEdited.quantity - inputs.quantity
+  const derived = getInventoryDerived(inventoryTo)
+  if ((derived.entregadosDelAutor + diff) > derived.entregadosAlAutor) {
+    const res = {
+      status: 400,
+      message: `No se puede regresar mas libros que han estado entregados al autor`
+    }
+    return res
+  }
+
+  // check date is valid
+  if (inputs.dateStrOptional) {
+    const earliestDelivery = findEarliestDeliveryToAuthor(inventoryTo)
+    if (inputs.dateStrOptional && inputs.dateStrOptional < earliestDelivery) {
+      const res = {
+        status: 400,
+        message: `No se puede poner una devolución del autor antes de la primera entrega al autor del inventario`
+      }
+      return res
+    }
+
+    const validOrder = checkSendReturnOrder(inventoryTo, transferToBeEdited, "to")
+    if (!validOrder) {
+      const res = {
+        status: 400,
+        message: `No se puede poner una devolución del autor antes de que haya suficiente entregas al autor`
+      }
+      return res
+    }
+  }
+
+  // edit if all correct 
+  const editedReturnFromAuthor = await tx.transfer.update({
+    where: {
+      id: transferToBeEdited.id
+    },
+    data: {
+      quantity: inputs.quantity,
+      note: inputs.note ? inputs.note : transferToBeEdited.note,
+      dateStr: inputs.dateStrOptional ? inputs.dateStrOptional : transferToBeEdited.dateStr,
+    }
+  });
+
+  const res = {
+    status: 200,
+    message: "Devolución del autor editada con exito"
+  }
+  return res
+} 
+
+
+
+async function editSendToAuthor(tx, transferToBeEdited, inputs) {
+  // check quantity is valid - both from disponibles upstream and entregados downstream
+  const inventoryFrom = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.fromInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  // upstream - check enough disponibles
+  const diff = transferToBeEdited.quantity - inputs.quantity
+  const derived = getInventoryDerived(inventoryFrom)
+  if ((derived.disponibles + diff) < 0) {
+    const res = {
+      status: 400,
+      message: `No se quedan suficiente libros disponibles en el inventario para hacer este cambio.`
+    }
+    return res
+  }
+
+  // downstream - check enough deliveries to author remaining
+  if ((derived.entregadosAlAutor - diff) < derived.entregadosDelAutor) {
+    const res = {
+      status: 400,
+      message: `No se puede tener menos entregas al autor que devoluciones del autor.`
+    }
+    return res
+  }
+
+  // check date is valid
+  const validOrder = checkDeliveryReturnOrder(inventoryFrom, transferToBeEdited, "from")
+  if (!valid) {
+    const res = {
+      status: 400,
+      message: `No se puede poner una entrega del autor después de sus devoluciones.`
+    }
+    return res
+  }
+
+
+  // if everything is valid edit
+  const editedSendToAuthor = await tx.transfer.update({
+    where: {
+      id: transferToBeEdited.id
+    },
+    data: {
+      quantity: inputs.quantity,
+      note: inputs.note ?? transferToBeEdited.note,
+      dateStr: inputs.dateStrOptional ?? transferToBeEdited.dateStr,
+      place: inputs.place ?? transferToBeEdited.place,
+      person: inputs.person ?? transferToBeEdited.person
+    }
+  });
+
+  const res = {
+    status: 200,
+    message: "Entrega al autor editada con exito."
+  }
+
+  return res
+}
+
+
+
+async function editSendToLibrary(tx, transferToBeEdited, inputs) {
+  // check quantity is valid - both from disponibles upstream and downstream
+  const inventoryFrom = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.fromInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      impressions: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  const inventoryTo = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.toInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  // upstream
+  const diff = transferToBeEdited.quantity - inputs.quantity
+  const derived = getInventoryDerived(inventoryFrom)
+  if ((derived.disponibles + diff) < 0) {
+    const res = {
+      status: 400,
+      message: `No se quedan suficiente libros disponibles en el inventario de salida para hacer este cambio.`
+    }
+    return res
+  }
+
+  // downstream
+  const derivedTo = getInventoryDerived(inventoryTo)
+  if ((derivedTo.disponibles + diff) < 0) {
+    const res = {
+      status: 400,
+      message: `No se quedan suficiente libros disponibles en el inventario de destinación para hacer este cambio.`
+    }
+    return res
+  }
+
+  //date check
+  const valid = checkSendReturnOrder(inventoryFrom, transferToBeEdited, "from")
+  if (!valid) {
+    const res = {
+      status: 400,
+      message: `No se puede poner un ingreso a librería después de sus devoluciones.`
+    }
+    return res
+  }
+
+  //if everything is valid edit
+  const editedSendToAuthor = await tx.transfer.update({
+    where: {
+      id: transferToBeEdited.id
+    },
+    data: {
+      quantity: inputs.quantity,
+      dateStr: inputs.dateStrOptional ?? transferToBeEdited.dateStr,
+    }
+  });
+
+  const res = {
+    status: 200,
+    message: "Ingreso a librería editado con exito."
+  }
+
+  return res
+}
+
+
+
+async function editReturnToLibrary(tx, transferToBeEdited, inputs) {
+  // check quantity is valid - both from disponibles upstream and downstream
+  const inventoryFrom = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.fromInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  const inventoryTo = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeEdited.toInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      },
+      transfersTo: {
+        orderBy: {
+          dateStr: 'asc'
+        }
+      }
+    }
+  });
+
+  // upstream
+  const diff = transferToBeEdited.quantity - inputs.quantity
+  const derived = getInventoryDerived(inventoryFrom)
+  if ((derived.disponibles + diff) < 0) {
+    const res = {
+      status: 400,
+      message: `No se quedan suficiente libros disponibles en el inventario de salida para hacer este cambio.`
+    }
+    return res
+  }
+
+  // downstream
+  const derivedTo = getInventoryDerived(inventoryTo)
+  if ((derivedTo.disponibles + diff) < 0) {
+    const res = {
+      status: 400,
+      message: `No se quedan suficiente libros disponibles en el inventario de destinación para hacer este cambio.`
+    }
+    return res
+  }
+
+  //date
+  const valid = checkSendReturnOrder(inventoryFrom, transferToBeEdited, "from")
+  if (!valid) {
+    const res = {
+      status: 400,
+      message: `No se puede poner una devolución antes de su ingreso a librería.`
+    }
+    return res
+  }
+
+  //if everything is valid edit
+  const editedSendToAuthor = await tx.transfer.update({
+    where: {
+      id: transferToBeEdited.id
+    },
+    data: {
+      quantity: inputs.quantity,
+      dateStr: inputs.dateStrOptional ?? transferToBeEdited.dateStr,
+    }
+  });
+
+  const res = {
+    status: 200,
+    message: "Devolución a librería editada con exito."
+  }
+
+  return res
+}
 
 export default router;

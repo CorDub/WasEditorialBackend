@@ -1,8 +1,11 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { 
+  twelveMonthsAgo,
   validateInputs,
 } from "../../../utils.js" 
+import { validateAuthorReturn } from "../impressions/impressionHelpers.js";
+import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
 const router = express.Router();
 
 export async function deleteTransfer(req, res) {
@@ -14,109 +17,185 @@ export async function deleteTransfer(req, res) {
 
     const prismaClient = req.prisma || prisma
 
-    let invalidRequestLibreria = false;
-    let invalidRequestAuthor = false;
-    let totalReturns = 0;
+    let result;
 
     await prismaClient.$transaction(async (tx) => {
-      const transferToBeDeleted = await tx.transfer.findUnique({where: {id: inputs.id}})
-
-      const inventoryFrom = await tx.inventory.findUnique({
+      const transferToBeDeleted = await tx.transfer.findUnique({
         where: {
-          id: transferToBeDeleted.fromInventoryId
+          id: inputs.id
         },
         include: {
-          transfersFrom: true,
-          transfersTo: true
+          toInventory: true,
+          fromInventory: true
         }
       })
 
-      // If it's a send, make sure no return is associated to it
-      if (inventoryFrom.bookstoreId === 1) {
-        if (transferToBeDeleted.toInventoryId) {
-          if (inventoryFrom.transfersTo.length > 0) {
-            // check the total amount of send left after taking out this transfer's quantity
-            let totalQuantitySentLeft = 0;
-            for (const send of inventoryFrom.transfersFrom) {
-              if (!send.isDeleted) {
-                totalQuantitySentLeft += send.quantity
-              }
-            }
-            totalQuantitySentLeft -= transferToBeDeleted.quantity
-
-            // get total amount returned
-            let totalQuantityReturned = 0;
-            for (const transferBack of inventoryFrom.transfersTo) {
-              if (!transferBack.isDeleted) {
-                totalQuantityReturned += transferBack.quantity
-              }
-            }
-            
-            // compare
-            if (totalQuantitySentLeft < totalQuantityReturned) {
-              invalidRequestLibreria = true;
-              totalReturns = totalQuantityReturned;
-              return;
-            }
-          }
-        } else {
-          // the delivery to author case
-          //same process, get the total amount sent - this transfer first
-          let totalQuantitySentLeft = 0;
-          for (const sent of inventoryFrom.transfersFrom) {
-            if (!sent.isDeleted && !sent.toInventoryId) {
-              totalQuantitySentLeft += sent.quantity
-            }
-          }
-          totalQuantitySentLeft -= transferToBeDeleted.quantity
-
-          // get total amount returned
-          const thatBookAuthorDeliveries = await tx.impression.findMany({
-            where: {
-              bookId: inventoryFrom.bookId,
-              authorDelivery: true,
-              isDeleted: false
-            }
-          })
-
-          let totalQuantityReturned = 0;
-          for (const authorDelivery of thatBookAuthorDeliveries) {
-            totalQuantityReturned += authorDelivery.quantity
-          }
-
-          //compare
-          if (totalQuantitySentLeft < totalQuantityReturned) {
-            invalidRequestAuthor = true;
-            totalReturns = totalQuantityReturned;
-            return
-          }
-        }
+      if (transferToBeDeleted.isDeleted) {
+        throw new Error("deleted transfer")
+      }
+      
+      // routing from here
+      // return from author path
+      if (!transferToBeDeleted.fromInventoryId) {
+        console.log("return from author")
+        result = await deleteReturnFromAuthor(tx, transferToBeDeleted)
+        return
       }
 
-      const deletedTransfer = await tx.transfer.update({where:
-        {id: inputs.id},
-        data: {
-          isDeleted: true
-        },
-      });
-    }) 
+      // send to author
+      if (!transferToBeDeleted.toInventoryId) {
+        console.log("send to author")
+        result = await deleteSendToAuthor(tx, transferToBeDeleted)
+        return
+      }
+      
+      // send to library
+      if (transferToBeDeleted.fromInventory.bookstoreId === 1) {
+        console.log("send to library")
+        result = await deleteSendToLibrary(tx, transferToBeDeleted)
+        return
+      } 
 
-    if (invalidRequestLibreria) {
-      res.status(400).json({error: `Quedan ${totalReturns} devoluciones de esta librería. No se puede eliminar este ingreso sin eliminar las devoluciones primero.`})
-      return
-    }
+      // return to library
+      console.log("return to library")
+      result = await deleteReturnToLibrary(tx, transferToBeDeleted)
+    });
 
-    if (invalidRequestAuthor) {
-      res.status(400).json({error: `Quedan ${totalReturns} devoluciones de este autor. No se puede eliminar esta entrega al autor sin eliminar las devoluciones primero.`})
-      return
-    }
-
-    res.status(200).json({message: "El movimiento ha sido eliminado con exito."})
+    res.status(result.status).json({message: result.message})
   } catch(error) {
     console.error(error);
     res.status(500).json({error: 'A server error occurred while deleting the sale'});
   }
 }
 router.delete('/transfer/:id', deleteTransfer)
+
+
+
+async function deleteReturnFromAuthor(tx, transferToBeDeleted) {
+  const deletedReturnFromAuthor = await tx.transfer.update({
+    where: {
+      id: transferToBeDeleted.id
+    },
+    data: {
+      isDeleted: true
+    }
+  })
+
+  const res = {
+    status: 200,
+    message: "Movimiento eliminado con exito."
+  }
+  return res
+}
+
+
+
+async function deleteSendToLibrary(tx, transferToBeDeleted) {
+  // check if there are any returns or delivery to author from the inventory being sent to
+  const inventoryTo = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeDeleted.toInventoryId
+    },
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: true,
+      transfersTo: true
+    }
+  })
+  
+  const derived = getInventoryDerived(inventoryTo)
+  if (derived.disponibles < transferToBeDeleted.quantity) {
+    const res = {
+      status: 400,
+      message: `No quedan suficiente libros en este inventario (${derived.disponibles}) para poder eliminar este ingreso (${transferToBeDeleted.quantity})`
+    }
+    return res
+  }
+
+  // if not delete
+  const deletedSendToLibrary = await tx.transfer.update({
+    where: {
+      id: transferToBeDeleted.id
+    },
+    data: {
+      isDeleted: true
+    }
+  })
+
+  const res = {
+    status: 200,
+    message: "Movimiento eliminado con exito."
+  }
+  return res
+}
+
+
+
+async function deleteReturnToLibrary(tx, transferToBeDeleted) {
+  // can delete straight away if it's a return
+  const deletedReturn = await tx.transfer.update({
+    where: {
+      id: transferToBeDeleted.id
+    },
+    data: {
+      isDeleted: true
+    }
+  })
+
+  const res = {
+    status: 200,
+    message: "Movimiento eliminado con exito."
+  }
+
+  return res
+}
+
+
+
+async function deleteSendToAuthor(tx, transferToBeDeleted) {
+  // check if there's more or equal sent to author left than returned
+  const inventoryFrom = await tx.inventory.findUnique({
+    where: {
+      id: transferToBeDeleted.fromInventoryId
+    }, 
+    include: {
+      book: true,
+      bookstore: true,
+      sales: true,
+      transfersFrom: true,
+      transfersTo: true
+    }
+  })
+
+  const derived = getInventoryDerived(inventoryFrom)
+  if ((derived.entregadosDelAutor + transferToBeDeleted.quantity) > derived.entregadosAlAutor) {
+    const res = {
+      status: 400,
+      message: `Quedan devoluciones de autor vinculadas a esta entrega al autor. Por favor elimine las devoluciones primero.`
+    }
+    return res
+  }
+
+  //if all good go ahead and delete
+  const deletedTransfer = await tx.transfer.update({
+    where: {
+      id: transferToBeDeleted.id
+    },
+    data: {
+      isDeleted: true
+    }
+  })
+
+  const res = {
+    status: 200,
+    message: "Movimiento eliminado con exito."
+  }
+
+  return res
+}
+
+
 
 export default router;

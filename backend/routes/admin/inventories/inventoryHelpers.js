@@ -38,6 +38,7 @@ export function getTotalWasTransfers(inventory) {
   let res = {
     transfers: 0,
     entregadosAlAutor: 0,
+    entregadosDelAutor: 0,
     returns: 0
   }
 
@@ -63,9 +64,15 @@ export function getTotalWasTransfers(inventory) {
         continue
       }
 
+      if (transfer.fromInventoryId == null) {
+        res.entregadosDelAutor += transfer.quantity
+        continue
+      }
+
       res.returns += transfer.quantity
     }
   }
+
   return res
 }
 
@@ -94,7 +101,9 @@ export function getNonWasTransfers(inventory) {
   let res = {
     transferInicial: 0,
     extraTransfers: 0,
-    returns: 0
+    returns: 0,
+    transfersToAuthors: 0,
+    returnsFromAuthors: 0
   }
 
   if (!inventory.transfersTo || inventory.transfersTo.length === 0) {
@@ -118,7 +127,11 @@ export function getNonWasTransfers(inventory) {
       res.transferInicial += transfer.quantity
       transferInicialAssigned = true
     } else {
-      res.extraTransfers += transfer.quantity
+      if (transfer.fromInventoryId) {
+        res.extraTransfers += transfer.quantity
+      } else {
+        res.returnsFromAuthors += transfer.quantity
+      }
     }
   }
 
@@ -129,7 +142,11 @@ export function getNonWasTransfers(inventory) {
       continue
     }
 
-    res.returns += transfer.quantity
+    if (transfer.toInventoryId) {
+      res.returns += transfer.quantity
+    } else {
+      res.transfersToAuthors += transfer.quantity
+    }
   }
 
   return res
@@ -156,6 +173,30 @@ export function getGivenToAuthor(inventory) {
 
   return res
 }
+
+
+
+export function getReturnsFromAuthor(inventory) {
+  let res = 0
+
+  if (!inventory.transfersTo || inventory.transfersTo.length === 0) {
+    return res
+  }
+
+  for (const transfer of inventory.transfersTo) {
+    if (transfer.isDeleted) {
+      console.error("Deleted transfer here that shouldn't happen")
+      continue
+    }
+
+    if (transfer.fromInventoryId === null) {
+      res += transfer.quantity
+    }
+  }
+
+  return res
+}
+
 
 
 export function getWasInventory(inventory) {

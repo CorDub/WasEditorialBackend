@@ -75,6 +75,7 @@ export async function getInventoriesByBookstore(req, res) {
             id: true,
             quantity: true,
             toInventoryId: true,
+            fromInventoryId: true,
             isDeleted: true
           }
         }
@@ -160,6 +161,7 @@ export function handleWasInventories(wasInventories) {
     wasTotal.transfers += transfersRes.transfers
     wasTotal.entregadosAlAutor += transfersRes.entregadosAlAutor
     wasTotal.returns += transfersRes.returns
+    wasTotal.entregadosDelAutor += transfersRes.entregadosDelAutor
 
     //step 4: copias
     wasTotal.copias = 
@@ -209,6 +211,7 @@ export function handleOtherInventories(inventories) {
       disponibles: 0,
       type: "bookstore",
       entregadosAlAutor: 0,
+      entregadosDelAutor: 0,
       id: 0
     }
 
@@ -221,7 +224,8 @@ export function handleOtherInventories(inventories) {
     groupTotal.transferInicial += transfersRes.transferInicial
     groupTotal.extraTransfers += transfersRes.extraTransfers
     groupTotal.returns += transfersRes.returns
-    
+    groupTotal.entregadosAlAutor += transfersRes.entregadosAlAutor
+    groupTotal.entregadosDelAutor += transfersRes.entregadosDelAutor
 
     //step 2.3: sales
     for (const inventory of group) {
@@ -235,7 +239,9 @@ export function handleOtherInventories(inventories) {
     groupTotal.disponibles = 
       groupTotal.copias - 
       groupTotal.returns -
-      groupTotal.ventas
+      groupTotal.ventas +
+      groupTotal.entregadosDelAutor - 
+      groupTotal.entregadosAlAutor
     
     if (groupTotal.disponibles < 0) {
       console.error("Number of available book is below zero for this bookstore inventories")
@@ -306,7 +312,9 @@ export function transfersOthers(groupOfInventories) {
   let res = {
     transferInicial: 0,
     extraTransfers: 0,
-    returns: 0
+    returns: 0,
+    entregadosAlAutor: 0,
+    entregadosDelAutor: 0
   }
 
   //2.1.3: get transferInicial and extraTransfers
@@ -315,19 +323,24 @@ export function transfersOthers(groupOfInventories) {
   }
 
   for (const transfer of extraTransfersTo) {
+    if (!transfer.fromInventoryId) {
+      res.entregadosDelAutor += transfer.quantity
+      continue
+    }
+
     res.extraTransfers += transfer.quantity
   }
 
   //2.1.4: get returns
   for (const transfer of allTransfersFrom) {
-    if (transfer.toInventoryId === null) {
-      console.error(`A non-WAS inventory had a delivery to author transfer. Transfer: ${transfer}`)
-      return
-    }
-
     if (transfer.isDeleted) {
       console.error(`A deleted transfer was being processed. Transfer id: ${transfer.id}`)
       return
+    }
+
+    if (!transfer.toInventoryId) {
+      res.entregadosAlAutor += transfer.quantity
+      continue
     }
 
     res.returns += transfer.quantity

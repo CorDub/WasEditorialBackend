@@ -40,6 +40,8 @@ function TableActions ({
   useEffect(() => {
     if (row.original.bookstoreId === 1) {
       setTransferType('send')
+    } else if (row.original.wasRed === true) {
+      setTransferType('wasRed')
     } else {
       setTransferType('return')
     }
@@ -246,7 +248,7 @@ function TableActions ({
             onMouseLeave={() => setSaleTooltipOpen(!isSaleTooltipOpen)}/>
           {isSaleTooltipOpen && (
             <div className="ta-tooltip">Añadir venta</div>)} */}
-          {transferType === "send" ?
+          {transferType === "send" && (
             <>
               <FontAwesomeIcon icon={faArrowUp}
                 className='ta-button ta-transfer-send'
@@ -284,8 +286,40 @@ function TableActions ({
                   <div className="ta-tooltip">Devolución del autor</div>)}
                 </>
               )}
+            </>)}
+          {transferType === "wasRed" && (
+            <>
+              <FontAwesomeIcon icon={faArrowDown}
+                className='ta-button ta-transfer-return'
+                id={`ta-transfer-${row.index}`}
+                onClick={transfer}
+                onMouseEnter={() => setReturnTooltipOpen(!isReturnTooltipOpen)}
+                onMouseLeave={() => setReturnTooltipOpen(!isReturnTooltipOpen)}/>
+              {isReturnTooltipOpen && (
+                <div className="ta-tooltip">Devolución</div>)}
+              <FontAwesomeIcon icon={faPersonArrowUpFromLine}
+                className='ta-button ta-givenToAuthor'
+                id={`ta-transfer-${row.index}`}
+                onClick={transferToAuthor}
+                onMouseEnter={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}
+                onMouseLeave={() => setGivenToAuthorTooltipOpen(!isGivenToAuthorTooltipOpen)}/>
+              {isGivenToAuthorTooltipOpen && (
+                <div className="ta-tooltip">Entrega al autor</div>)}
+              {row.original.entregadosAlAutor > 0 && (
+                <>
+                <FontAwesomeIcon icon={faPersonArrowDownToLine}
+                  className='ta-button ta-receivedFromAuthor'
+                  id={`ta-transfer-${row.index}`}
+                  onClick={transferFromAuthor}
+                  onMouseEnter={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}
+                  onMouseLeave={() => setReceivedFromAuthorTooltipOpen(!isReceivedFromAuthorTooltipOpen)}/>
+                {isReceivedFromAuthorTooltipOpen && (
+                  <div className="ta-tooltip">Devolución del autor</div>)}
+                </>
+              )}
             </>
-            :
+          )}
+          {transferType === "return" && (
             <>
               <FontAwesomeIcon icon={faArrowDown}
                 className='ta-button ta-transfer-return'
@@ -296,7 +330,8 @@ function TableActions ({
               {isReturnTooltipOpen && (
                 <div className="ta-tooltip">Devolución</div>)}
             </>
-          }
+          )}
+          
           </>
         }
       </div>

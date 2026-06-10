@@ -2,6 +2,7 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
+import { validateAuthorReturn } from "../impressions/impressionHelpers.js";
 const router = express.Router();
 
 export async function updateTransfer(req, res) {
@@ -9,9 +10,9 @@ export async function updateTransfer(req, res) {
     //1. validate inputs
     const inputs = {
       id: parseInt(req.params.id),
-      inventoryToId: req.body.toInventoryId ? parseInt(req.body.toInventoryId) : null,
+      inventoryToId: req.body.inventoryToId ? parseInt(req.body.inventoryToId) : null,
       quantity: parseInt(req.body.quantity),
-      inventoryFromId: parseInt(req.body.inventoryFromId),
+      inventoryFromId: req.body.fromInventoryId ? parseInt(req.body.inventoryFromId) : null,
       type: req.body.type,
       note: req.body.note || null,
       dateStrOptional: req.body.dateStr || null,
@@ -25,6 +26,8 @@ export async function updateTransfer(req, res) {
     let invalidRequestLibreria = false;
     let invalidRequestAuthor = false;
     let totalReturns = 0;
+
+    let result = null;
 
     await prismaClient.$transaction(async (tx) => {
       //2. get the previous transfer and inventory From
@@ -41,6 +44,39 @@ export async function updateTransfer(req, res) {
         throw new Error("deleted transfer")
       }
 
+      //2.1 if no inventoryFrom it's a return from author
+      if (!inputs.inventoryFromId) {
+        const inventoryTo = await tx.inventory.findUnique({
+          where: {
+            id: inputs.inventoryToId
+          }
+        })
+
+        const valid = await validateAuthorReturn(tx, inventoryTo.bookId, inventoryTo.bookstoreId, inputs.quantity)
+        if (!valid) {
+          throw new Error("cannot return more books than were delivered to author")
+        }
+
+        const editedTransfer = await tx.transfer.update({
+          where: {
+            id: inputs.id
+          },
+          data: {
+            quantity: inputs.quantity,
+            dateStr: inputs.dateStrOptional,
+            note: inputs.note,
+          }
+        })
+
+        // return res.status(200).json({message:"successfully edited the return from author"})
+        result = {
+          status: 200,
+          message: "successfully edited the return from author"
+        }
+        return
+      }
+
+      // back to any other cases
       const inventoryFrom = await tx.inventory.findUnique({
         where: {
           id: transferToBeEdited.fromInventoryId
@@ -66,7 +102,11 @@ export async function updateTransfer(req, res) {
       const derived = getInventoryDerived(inventoryFrom)
       const quantityUpdate = transferToBeEdited.quantity - inputs.quantity
       if ((derived.disponibles + quantityUpdate) < 0) {
-        return res.status(400).json({message: `No hay suficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`})
+        result = {
+          status: 400,
+          message: `No hay suficientes libros en el inventario. Libros disponibles: ${derived.disponibles}`
+        }
+        return
       }
 
       //4. Check that you can't have less sends than returns
@@ -150,10 +190,6 @@ export async function updateTransfer(req, res) {
       })
     })
 
-    console.log("invalidrequestLibreria", invalidRequestLibreria)
-    console.log("invalidRequestAuthor", invalidRequestAuthor)
-    console.log("totalReturns", totalReturns)
-
     if (invalidRequestLibreria) {
       res.status(400).json({error: `Quedan ${totalReturns} devoluciones de esta librería. No se puede tener menos libros en ingresos que en devoluciones. Por favor edite o elimine las devoluciones.`})
       return
@@ -164,6 +200,10 @@ export async function updateTransfer(req, res) {
       return
     }
 
+    if (result) {
+      res.status(result.status).json({message: result.message})
+      return
+    }
     res.status(200).json({message: "successfully edited the transfer"})
     
   } catch(error) {
@@ -172,5 +212,6 @@ export async function updateTransfer(req, res) {
   }
 }
 router.patch('/transfer/:id', updateTransfer)
+
 
 export default router;

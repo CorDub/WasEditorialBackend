@@ -12,7 +12,8 @@ export async function updateBookstore(req, res) {
       "contactName": req.body.contactName,
       "phoneBookstore" : req.body.contactPhone,
       "phonePrefixBookstore": req.body.contactPhonePrefix,
-      "emailBookstore": req.body.contactEmail
+      "emailBookstore": req.body.contactEmail,
+      "wasRed": req.body.wasRed
     }
     validateInputs(inputs);
 
@@ -31,6 +32,7 @@ export async function updateBookstore(req, res) {
           contact_phone: inputs.phoneBookstore,
           contact_phone_prefix: inputs.phonePrefixBookstore,
           contact_email: inputs.emailBookstore,
+          wasRed: inputs.wasRed
         }
       });
 

@@ -19,7 +19,8 @@ export async function getTransfers(req, res) {
         },
         toInventory: {
           include: {
-            bookstore: true
+            bookstore: true,
+            book: true
           }
         }
       }

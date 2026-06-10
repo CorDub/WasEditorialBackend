@@ -5,6 +5,7 @@ import {
   getTotalWasImpressions, 
   getTotalSales,
   getGivenToAuthor,
+  getReturnsFromAuthor,
 } from "./inventoryHelpers.js";
 
 export async function getInventoriesByBook(req, res) {
@@ -64,6 +65,17 @@ export async function getInventoriesByBook(req, res) {
             quantity: true
           }
         },
+        transfersTo: {
+          where: {
+            isDeleted: false
+          },
+          select: {
+            isDeleted: true,
+            fromInventoryId: true,
+            id: true,
+            quantity: true
+          }
+        }
       }
     })
 
@@ -98,6 +110,10 @@ export async function getInventoriesByBook(req, res) {
       //2.3 entregadosAlAutor
       const givenToAuthor = getGivenToAuthor(inventory)
       scaffold.entregadosAlAutor += givenToAuthor
+
+      //2.4 entregadosDelAutor
+      const returnsFromAuthor = getReturnsFromAuthor(inventory)
+      scaffold.entregadosDelAutor += returnsFromAuthor
       
       //2.5 triage
       if (resMap.has(inventory.bookId)) {

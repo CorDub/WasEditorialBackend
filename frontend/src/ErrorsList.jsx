@@ -7,7 +7,7 @@ function ErrorsList({ errors, setErrors }) {
   }, [])
 
   return (
-    <div className="general-errors">
+    <div className="general-error">
       {errors.flat().length === 0 ?
         null :
         errors.flat().map((error, index) => (

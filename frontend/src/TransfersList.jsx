@@ -51,14 +51,14 @@ function TransfersList() {
     },
     {
       header: "De",
-      accessorKey: "fromInventory.bookstore.name",
+      // accessorKey: "fromInventory.bookstore.name",
       Cell: ({row}) => row.original.fromInventory
         ? row.original.fromInventory.bookstore.name
         : "Autor"
     },
     {
       header: "A",
-      accessorKey: "toInventory.bookstore.name",
+      // accessorKey: "toInventory.bookstore.name",
       Cell: ({row}) => row.original.toInventory
         ? row.original.toInventory.bookstore.name
         : row.original.fromInventory

@@ -251,6 +251,8 @@ export function getOtherInventory(inventory) {
     inicial: 0,
     extraTransfers: 0,
     returns: 0,
+    entregadosAlAutor: 0,
+    entregadosDelAutor: 0,
     ventas: 0,
     disponibles: 0,
   }
@@ -259,6 +261,8 @@ export function getOtherInventory(inventory) {
   scaffold.inicial += transferRes.transferInicial
   scaffold.extraTransfers += transferRes.extraTransfers
   scaffold.returns += transferRes.returns
+  scaffold.entregadosAlAutor += transferRes.transfersToAuthors
+  scaffold.entregadosDelAutor += transferRes.returnsFromAuthors
 
   const salesRes = getTotalSales(inventory)
   scaffold.ventas += salesRes
@@ -268,7 +272,9 @@ export function getOtherInventory(inventory) {
   scaffold.disponibles = 
     scaffold.copias - 
     scaffold.returns -
-    scaffold.ventas
+    scaffold.ventas -
+    scaffold.transfersToAuthor +
+    scaffold.returnsFromAuthors
   
   return scaffold
 }

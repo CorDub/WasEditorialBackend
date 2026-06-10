@@ -24,5 +24,6 @@ export async function validateAuthorReturn(tx, bookId, bookstoreId, quantity) {
   if ((derived.entregadosDelAutor + quantity) > derived.entregadosAlAutor) {
     return false
   }
+
   return returnInventory
 }

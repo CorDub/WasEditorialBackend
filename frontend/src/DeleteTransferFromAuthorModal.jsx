@@ -4,9 +4,18 @@ function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
 
+  console.log("clickedRow", clickedRow)
+
   async function deleteTransfer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}?authorDelivery=true`, {
+      // const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}?authorDelivery=true`, {
+      //   method: "DELETE",
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   credentials: "include",
+      // });
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer/${clickedRow.id}`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json'
@@ -18,6 +27,14 @@ function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         const alertMessage = `El movimiento ha sido eliminada con exito`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       } else {
+        if (response.status === 400) {
+          console.log("400")
+          const decodedRes = await response.json()
+          const alertMessage = decodedRes.message;
+          closeModal(pageIndex, globalFilter, false, alertMessage, "error")
+          return
+        }
+
         const alertMessage = `No se pudó eliminar el movimiento.`;
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       }
@@ -30,7 +47,7 @@ function DeleteTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
   return(
     <div className="modal-proper">
       <div className="delmod-confirm">
-        <p>{`¿Está seguro que quiere eliminar el movimiento de ${clickedRow.quantity} libros de ${clickedRow.book.title} del ${clickedRow.dateStr}?`}</p>
+        <p>{`¿Está seguro que quiere eliminar el movimiento de ${clickedRow.quantity} libros de ${clickedRow.toInventory.book.title} del ${clickedRow.dateStr}?`}</p>
       </div>
       <div className="modal-actions">
         <button className='blue-button modal-button'

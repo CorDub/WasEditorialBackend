@@ -20,7 +20,7 @@ function DeleteTransferModal({clickedRow, closeModal, pageIndex, globalFilter}) 
       } else {
         if (response.status === 400) {
           const decodedResponse = await response.json()
-          const alertMessage = decodedResponse.error;
+          const alertMessage = decodedResponse.message;
           closeModal(pageIndex, globalFilter, false, alertMessage, "error");
         } else {
           const alertMessage = `No se pudó eliminar el movimiento.`;

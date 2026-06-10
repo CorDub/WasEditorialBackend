@@ -13,8 +13,8 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactPhonePrefix, setContactPhonePrefix] = useState('+52');
-  // const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [wasRed, setWasRed] = useState(false);
   const [errors, setErrors] = useState([]);
   const nameRef = useRef();
   const dealPercentageRef = useRef();
@@ -22,10 +22,6 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
   const contactPhoneRef = useRef();
   const contactPhonePrefixRef = useRef();
   const contactEmailRef = useRef();
-
-  // useEffect(() => {
-  //   setFullPhoneNumber(phonePrefix + contactPhone)
-  // }, [contactPhone, phonePrefix])
 
   async function sendToServer() {
     try {
@@ -42,6 +38,7 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
           contactPhone: contactPhone,
           contactPhonePrefix: contactPhonePrefix,
           contactEmail: contactEmail,
+          wasRed: wasRed
         }),
       });
 
@@ -123,6 +120,12 @@ function AddingBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter 
         <p>*Campos obligatorios</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
+        <div className="modal-from-line"
+          style={{"marginBottom":"0.5rem"}}>
+          <label className="modal-form-label">¿Librería WAS?</label>
+          <input type="checkbox" onChange={() => setWasRed(!wasRed)}/>
+        </div>
+        
         <input type='text' placeholder="Nombre de la librería*"
           className="global-input" id="adding-bookstore-name"
           ref={nameRef}

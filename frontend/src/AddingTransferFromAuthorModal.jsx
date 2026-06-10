@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import checkForErrors from "./customHooks/checkForErrors";
 import ErrorsList from "./ErrorsList";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
-// import { DateTime } from "luxon";
 import { today } from "../../backend/utils.js";
 
 function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalFilter}) {
@@ -78,7 +77,21 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impressions/impression`, {
+      // const response = await fetch(`${baseURL}/api/admin/impressions/impression`, {
+      //   method: "POST",
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   credentials: "include",
+      //   body: JSON.stringify({
+      //     quantity: quantity,
+      //     id: clickedRow.bookId,
+      //     note: "- Devolución del autor - " + note,
+      //     dateStr: dateStr,
+      //     authorDelivery: true,
+      //   }),
+      // });
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -86,12 +99,14 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         credentials: "include",
         body: JSON.stringify({
           quantity: quantity,
-          id: clickedRow.bookId,
+          type: "return",
+          bookId: clickedRow.bookId,
+          bookstoreToId: clickedRow.bookstoreId,
           note: "- Devolución del autor - " + note,
           dateStr: dateStr,
-          authorDelivery: true
-        }),
-      });
+          wasRed: true
+        })
+      })
 
       if (response.ok === false) {
         const error = await response.json();
@@ -116,7 +131,6 @@ function AddingTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globa
         <p>Nueva devolución del autor</p>
         <p className="form-subtitle">{clickedRow && clickedRow.title }</p>
       </div>
-      {/* <p style={{ fontSize: '0.9em', fontStyle: 'italic', textAlign: "center" }}>Una devolución del autor está considerada como una impresión y sera visible en las impresiónes.</p> */}
       <form
         onSubmit={handleSubmit}
         className="global-form">

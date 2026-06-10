@@ -13,8 +13,8 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const [contactName, setContactName] = useState(clickedRow.contact_name);
   const [contactPhone, setContactPhone] = useState(clickedRow.contact_phone);
   const [contactPhonePrefix, setContactPhonePrefix] = useState(clickedRow.contact_phone_prefix);
-  // const [fullPhoneNumber, setFullPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState(clickedRow.contact_email);
+  const [wasRed, setWasRed] = useState(clickedRow.wasRed);
   const [errors, setErrors] = useState([]);
   const [sortedCountryCodes, setSortedCountryCodes] = useState([]);
   const nameRef = useRef();
@@ -23,10 +23,6 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
   const contactPhoneRef = useRef();
   const contactPhonePrefixRef = useRef();
   const contactEmailRef = useRef();
-
-  // useEffect(() => {
-  //   setFullPhoneNumber(phonePrefix + contactPhone)
-  // }, [contactPhone, phonePrefix])
 
   // Get the prefix and sort the list based on this
   useEffect(() => {
@@ -163,6 +159,12 @@ function EditBookstoreModal({ clickedRow, closeModal, pageIndex, globalFilter })
         <p>*Campos obligatorios</p>
       </div>
       <form onSubmit={handleSubmit} className="global-form">
+        <div className="modal-from-line"
+          style={{"marginBottom":"0.5rem"}}>
+          <label className="modal-form-label">¿Librería WAS?</label>
+          <input type="checkbox" checked={wasRed} onChange={() => setWasRed(!wasRed)}/>
+        </div>
+
         <div className="modal-form-line">
             <label className="modal-form-label">Nombre *</label>
             <input type='text' placeholder="Nombre" value={name}

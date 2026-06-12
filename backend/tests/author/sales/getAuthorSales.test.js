@@ -157,7 +157,7 @@ describe(`get author sales with valid parameters`, () => {
 
 
 
-describe(`get author sale without being logged in`, async() => {
+describe(`get author sale without being logged in`, () => {
   let mockReq, mockRes, jsonRes, mute;
   let category1;
   let author;
@@ -227,7 +227,7 @@ describe(`get author sale without being logged in`, async() => {
 
 
 
-describe(`get author sale with invalid parameters`, async() => {
+describe(`get author sale with invalid parameters`, () => {
   let mockReq, mockRes, jsonRes, mute;
   let category1;
   let author;

@@ -52,6 +52,7 @@ describe("adding a valid bookstore", () => {
         "contactPhonePrefix": "+52",
         "contactPhone": "5544809021",
         "contactEmail": "bookstore.owner@gmail.com",
+        "wasRed": false
       },
       prisma: prisma
     }; 

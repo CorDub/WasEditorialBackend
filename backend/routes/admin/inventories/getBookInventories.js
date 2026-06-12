@@ -169,7 +169,7 @@ export function getWasInventoryForThisBook(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   scaffold.inicial += impressionsRes.impressionInicial
   scaffold.extraImpressions += impressionsRes.extraImpressions
-  scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
+  // scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   let thatBookImpressions = []
   for (const impression of inventory.book.impressions) {
@@ -229,6 +229,7 @@ export function getOtherInventoryForThisBook(inventory) {
 
   //2.transfers
   const transferRes = getNonWasTransfers(inventory)
+  console.log("transferRes", transferRes)
   scaffold.inicial += transferRes.transferInicial
   scaffold.extraTransfers += transferRes.extraTransfers
   scaffold.returns += transferRes.returns

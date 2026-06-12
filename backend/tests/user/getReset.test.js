@@ -2,7 +2,7 @@ import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
 import { 
   getReset
 } from "../../routes/user/getReset.js";
-import { changePassword } from "../../routes/author/password/changePassword.js";
+import { changePassword } from "../../routes/user/changePassword.js";
 import {
   createCategory,
   createAuthor,
@@ -37,7 +37,7 @@ afterAll(async() => {
   dropTestDB(testDBName);
 })
 
-describe(`getting passsword reset email with valid parameters`, async() => {
+describe(`getting password reset email with valid parameters`, async() => {
   let mockReq, mockRes, mailSpy, jsonResponse;
   let newUser;
 
@@ -56,7 +56,7 @@ describe(`getting passsword reset email with valid parameters`, async() => {
       status: vi.fn().mockReturnThis()
     }
 
-    mailSpy = vi.spyOn(mailer, "sendResetPasswordMail").mockResolvedValue();
+    mailSpy = vi.spyOn(mailer, "sendTokenResetPasswordMail").mockResolvedValue();
   })
 
   afterAll(async() => {
@@ -68,12 +68,12 @@ describe(`getting passsword reset email with valid parameters`, async() => {
     expect(mockRes.status).toHaveBeenCalledWith(200)
   })
 
-  it(`should send the reset password email`, async() => {
-    expect(mailSpy).toHaveBeenCalledExactlyOnceWith(newUser.email, newUser.first_name)
+  it(`should send the reset password email with a random string token`, async() => {
+    expect(mailSpy).toHaveBeenCalledExactlyOnceWith(newUser.email, newUser.first_name, expect.stringMatching(/^[0-9a-f]{64}$/))
   })
 
-  it(`should pass you the userId`, async() => {
-    jsonResponse = mockRes.json.mock.calls[0][0]
-    expect(jsonResponse.id).toBe(newUser.id)
-  })
+  // it(`should pass you the userId`, async() => {
+  //   jsonResponse = mockRes.json.mock.calls[0][0]
+  //   expect(jsonResponse.id).toBe(newUser.id)
+  // })
 })

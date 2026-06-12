@@ -203,8 +203,10 @@ describe(`getWasInventories returns the correct values`, async() => {
     impression2 = await createImpression(prisma, book.id, {quantity: 100})
     impression3 = await createImpression(prisma, book.id, {quantity: 50})
     deletedImpression = await createImpression(prisma, book.id, {quantity: 500, isDeleted: true})
-    entregadoDelAutor = await createImpression(prisma, book.id, {quantity: 10, authorDelivery: true})
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    // entregadoDelAutor = await createImpression(prisma, book.id, {quantity: 10, authorDelivery: true})
+    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
     transferTo = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 100})
     transferTo2 = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 50})
     transferTo3 = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 20})
@@ -220,8 +222,10 @@ describe(`getWasInventories returns the correct values`, async() => {
     impression5 = await createImpression(prisma, book2.id, {quantity: 50})
     impression6 = await createImpression(prisma, book2.id, {quantity: 25})
     deletedImpression2 = await createImpression(prisma, book2.id, {quantity: 500, isDeleted: true})
-    entregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 15, authorDelivery: true})
-    deletedEntregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    // entregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 15, authorDelivery: true})
+    // deletedEntregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherWasInventory.id, quantity: 2})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherWasInventory.id, quantity: 10, isDeleted: true})
     transferTo4 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 100})
     transferTo5 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 50})
     transferTo6 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 20})
@@ -233,6 +237,38 @@ describe(`getWasInventories returns the correct values`, async() => {
     sale4 = await createSale(prisma, otherWasInventory.id, [payment.id], {quantity: 9})
     deletedSale2 = await createSale(prisma, otherWasInventory.id, [payment.id], {quantity: 4, isDeleted: true})
   })
+
+  // STATE
+  // WAS INVENTORY
+  // Impressions inicial: 500
+  // extra impressions: 150
+  // Transfers out : 170
+  // Given to author: 2
+  // Entregados del autor: 1
+  // Return : +20
+  // Sales: 3
+  // Copias: 481
+  // Disponibles: 496
+
+  // THIRD INVENTORY
+  // Inicial: 100
+  // Extra transfers: 70
+  // Return: -20
+
+  // OTHER WAS INVENTORY
+  // Impression inicial: 250
+  // extra impressions: 75
+  // Tranbsfers out: 170
+  // Given to author: 5
+  // Return: +30
+  // Sales: 14
+  // Copias: 157
+  // Disponibles: 168
+
+  // FOURTH INVENTORY
+  // Inicial: 100
+  // Extra transfers: 70
+  // Return: -30
 
   afterAll(async() => {
     await prisma.$executeRawUnsafe(`
@@ -257,45 +293,45 @@ describe(`getWasInventories returns the correct values`, async() => {
   it(`should return the correct values for the first book inventory`, async() => {
     const firstWas = results.specifics.find(el => el.bookId === book.id)
     expect(firstWas.name).toBe(book.title)
-    expect(firstWas.copias).toBe(490)
+    expect(firstWas.copias).toBe(481)
     expect(firstWas.inicial).toBe(500)
     expect(firstWas.extraImpressions).toBe(150)
     expect(firstWas.returns).toBe(20)
     expect(firstWas.transfers).toBe(170)
-    expect(firstWas.entregadosDelAutor).toBe(10)
+    expect(firstWas.entregadosDelAutor).toBe(1)
     expect(firstWas.entregadosAlAutor).toBe(2)
     expect(firstWas.ventas).toBe(3)
-    expect(firstWas.disponibles).toBe(505)
+    expect(firstWas.disponibles).toBe(496)
     expect(firstWas.bookId).toBe(book.id)
   })
 
   it(`should return the correct values for the second book inventory`, async() => {
     const secondWas = results.specifics.find(el => el.bookId === book2.id)
     expect(secondWas.name).toBe(book2.title)
-    expect(secondWas.copias).toBe(170)
+    expect(secondWas.copias).toBe(157)
     expect(secondWas.inicial).toBe(250)
     expect(secondWas.extraImpressions).toBe(75)
     expect(secondWas.returns).toBe(30)
     expect(secondWas.transfers).toBe(170)
-    expect(secondWas.entregadosDelAutor).toBe(15)
+    expect(secondWas.entregadosDelAutor).toBe(2)
     expect(secondWas.entregadosAlAutor).toBe(5)
     expect(secondWas.ventas).toBe(14)
-    expect(secondWas.disponibles).toBe(181)
+    expect(secondWas.disponibles).toBe(168)
     expect(secondWas.bookId).toBe(book2.id)
   })
 
   it(`should return correct values for the total`, async() => {
     const total = results.total
     expect(total.name).toBe(wasBookstore.name)
-    expect(total.copias).toBe(660)
+    expect(total.copias).toBe(638)
     expect(total.inicial).toBe(750)
     expect(total.extraImpressions).toBe(225)
     expect(total.returns).toBe(50)
     expect(total.transfers).toBe(340)
-    expect(total.entregadosDelAutor).toBe(25)
+    expect(total.entregadosDelAutor).toBe(3)
     expect(total.entregadosAlAutor).toBe(7)
     expect(total.ventas).toBe(17)
-    expect(total.disponibles).toBe(686)
+    expect(total.disponibles).toBe(664)
     expect(total.bookstoreId).toBe(wasBookstore.id)
   })
 
@@ -311,8 +347,8 @@ describe(`getWasInventories returns the correct values`, async() => {
       - total.ventas
       + total.returns
       - total.entregadosAlAutor
-    expect(expectedCopias).toBe(660)
-    expect(expectedDisponibles).toBe(686)
+    expect(expectedCopias).toBe(638)
+    expect(expectedDisponibles).toBe(664)
   })
 })
 
@@ -366,8 +402,10 @@ describe(`getBookstoreInventories returns the correct values when querying for w
     impression2 = await createImpression(prisma, book.id, {quantity: 100})
     impression3 = await createImpression(prisma, book.id, {quantity: 50})
     deletedImpression = await createImpression(prisma, book.id, {quantity: 500, isDeleted: true})
-    entregadoDelAutor = await createImpression(prisma, book.id, {quantity: 10, authorDelivery: true})
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    // entregadoDelAutor = await createImpression(prisma, book.id, {quantity: 10, authorDelivery: true})
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1, isDeleted: true})
+    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 5, authorDelivery: true, isDeleted: true})
     transferTo = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 100})
     transferTo2 = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 50})
     transferTo3 = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 20})
@@ -383,8 +421,10 @@ describe(`getBookstoreInventories returns the correct values when querying for w
     impression5 = await createImpression(prisma, book2.id, {quantity: 50})
     impression6 = await createImpression(prisma, book2.id, {quantity: 25})
     deletedImpression2 = await createImpression(prisma, book2.id, {quantity: 500, isDeleted: true})
-    entregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 15, authorDelivery: true})
-    deletedEntregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    // entregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 15, authorDelivery: true})
+    // deletedEntregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true, isDeleted: true})
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherWasInventory.id, quantity: 2})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherWasInventory.id, quantity: 10, isDeleted: true})
     transferTo4 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 100})
     transferTo5 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 50})
     transferTo6 = await createTransfer(prisma, otherWasInventory.id, {toInventoryId: fourthInventory.id, quantity: 20})
@@ -417,6 +457,38 @@ describe(`getBookstoreInventories returns the correct values when querying for w
     }
   })
 
+  // STATE
+  // WAS INVENTORY
+  // Impressions inicial: 500
+  // extra impressions: 150
+  // Transfers out : 170
+  // Given to author: 2
+  // Entregados del autor: 1
+  // Return : +20
+  // Sales: 3
+  // Copias: 481
+  // Disponibles: 496
+
+  // THIRD INVENTORY
+  // Inicial: 100
+  // Extra transfers: 70
+  // Return: -20
+
+  // OTHER WAS INVENTORY
+  // Impression inicial: 250
+  // extra impressions: 75
+  // Tranbsfers out: 170
+  // Given to author: 5
+  // Return: +30
+  // Sales: 14
+  // Copias: 157
+  // Disponibles: 168
+
+  // FOURTH INVENTORY
+  // Inicial: 100
+  // Extra transfers: 70
+  // Return: -30
+
   afterAll(async() => {
     await prisma.$executeRawUnsafe(`
       TRUNCATE TABLE
@@ -441,41 +513,41 @@ describe(`getBookstoreInventories returns the correct values when querying for w
   it(`should return the correct values for specific inventories and totals`, async() => {
     const firstWas = results.specifics.find(el => el.bookId === book.id)
     expect(firstWas.name).toBe(book.title)
-    expect(firstWas.copias).toBe(490)
+    expect(firstWas.copias).toBe(481)
     expect(firstWas.inicial).toBe(500)
     expect(firstWas.extraImpressions).toBe(150)
     expect(firstWas.returns).toBe(20)
     expect(firstWas.transfers).toBe(170)
-    expect(firstWas.entregadosDelAutor).toBe(10)
+    expect(firstWas.entregadosDelAutor).toBe(1)
     expect(firstWas.entregadosAlAutor).toBe(2)
     expect(firstWas.ventas).toBe(3)
-    expect(firstWas.disponibles).toBe(505)
+    expect(firstWas.disponibles).toBe(496)
     expect(firstWas.bookId).toBe(book.id)
 
     const secondWas = results.specifics.find(el => el.bookId === book2.id)
     expect(secondWas.name).toBe(book2.title)
-    expect(secondWas.copias).toBe(170)
+    expect(secondWas.copias).toBe(157)
     expect(secondWas.inicial).toBe(250)
     expect(secondWas.extraImpressions).toBe(75)
     expect(secondWas.returns).toBe(30)
     expect(secondWas.transfers).toBe(170)
-    expect(secondWas.entregadosDelAutor).toBe(15)
+    expect(secondWas.entregadosDelAutor).toBe(2)
     expect(secondWas.entregadosAlAutor).toBe(5)
     expect(secondWas.ventas).toBe(14)
-    expect(secondWas.disponibles).toBe(181)
+    expect(secondWas.disponibles).toBe(168)
     expect(secondWas.bookId).toBe(book2.id)
 
     const total = results.total
     expect(total.name).toBe(wasBookstore.name)
-    expect(total.copias).toBe(660)
+    expect(total.copias).toBe(638)
     expect(total.inicial).toBe(750)
     expect(total.extraImpressions).toBe(225)
     expect(total.returns).toBe(50)
     expect(total.transfers).toBe(340)
-    expect(total.entregadosDelAutor).toBe(25)
+    expect(total.entregadosDelAutor).toBe(3)
     expect(total.entregadosAlAutor).toBe(7)
     expect(total.ventas).toBe(17)
-    expect(total.disponibles).toBe(686)
+    expect(total.disponibles).toBe(664)
     expect(total.bookstoreId).toBe(wasBookstore.id)
   })
 })

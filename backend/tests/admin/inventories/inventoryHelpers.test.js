@@ -146,9 +146,9 @@ describe("gets the impressions for a WAS inventory correctly", async() => {
     impression2 = await createImpression(prisma, book.id, {quantity: 50, date: new Date()});
     impression3 = await createImpression(prisma, book.id, {quantity: 25, date: new Date()});
     deletedImpression = await createImpression(prisma, book.id, {quantity: 100, date: new Date("2024-01-01"), isDeleted: true});
-    entregadoDelAutor1 = await createImpression(prisma, book.id, {quantity: 2, date: new Date(), authorDelivery: true});
-    entregadoDelAutor2 = await createImpression(prisma, book.id, {quantity: 4, date: new Date(), authorDelivery: true});
-    entregadoDelAutor3 = await createImpression(prisma, book.id, {quantity: 6, date: new Date(), authorDelivery: true});
+    // entregadoDelAutor1 = await createImpression(prisma, book.id, {quantity: 2, date: new Date(), authorDelivery: true});
+    // entregadoDelAutor2 = await createImpression(prisma, book.id, {quantity: 4, date: new Date(), authorDelivery: true});
+    // entregadoDelAutor3 = await createImpression(prisma, book.id, {quantity: 6, date: new Date(), authorDelivery: true});
     deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 2, date: new Date(), isDeleted: true, authorDelivery: true});
   })
 
@@ -181,7 +181,7 @@ describe("gets the impressions for a WAS inventory correctly", async() => {
     const res = getTotalWasImpressions(inventory);
     expect(res.impressionInicial).toEqual(100)
     expect(res.extraImpressions).toEqual(75)
-    expect(res.entregadosDelAutor).toEqual(12)
+    // expect(res.entregadosDelAutor).toEqual(12)
   })
 
   it(`correctly prints an error when there are no impressions`, async() => {
@@ -200,7 +200,7 @@ describe("gets the impressions for a WAS inventory correctly", async() => {
     const res = getTotalWasImpressions(inventory);
     expect(res.impressionInicial).toEqual(0)
     expect(res.extraImpressions).toEqual(0)
-    expect(res.entregadosDelAutor).toEqual(0)
+    // expect(res.entregadosDelAutor).toEqual(0)
   })
 })
 
@@ -435,8 +435,8 @@ describe("getWasInventory returns the correct values", async () => {
     impression2 = await createImpression(prisma, book.id, { quantity: 100 });
     impression3 = await createImpression(prisma, book.id, { quantity: 50 });
     deletedImpression = await createImpression(prisma, book.id, { quantity: 500, isDeleted: true });
-    entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
+    // entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
+    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
 
     // transfers out
     transferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 100 });
@@ -446,6 +446,10 @@ describe("getWasInventory returns the correct values", async () => {
     // entregado al autor
     entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2 });
     deletedEntregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2, isDeleted: true });
+
+    //entregadosDelAutor
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
+    deletedEntregadoAlAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
 
     // return from other back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });
@@ -470,11 +474,11 @@ describe("getWasInventory returns the correct values", async () => {
     `);
   });
 
-  // impressionInicial = 500, extraImpressions = 150, entregadosDelAutor = 10
+  // impressionInicial = 500, extraImpressions = 150, entregadosDelAutor = 1
   // transfers = 150, entregadosAlAutor = 2, returns = 20
   // ventas = 3
-  // copias = 500 + 150 + 10 - 150 = 510
-  // disponibles = 510 - 3 + 20 - 2 = 525
+  // copias = 500 + 150 + 1 - 150 = 501
+  // disponibles = 501 - 3 + 20 - 2 = 516
 
   let results;
 
@@ -514,7 +518,7 @@ describe("getWasInventory returns the correct values", async () => {
   });
 
   it("should return the correct entregadosDelAutor", () => {
-    expect(results.entregadosDelAutor).toBe(10);
+    expect(results.entregadosDelAutor).toBe(1);
   });
 
   it("should return the correct transfers", () => {
@@ -534,11 +538,11 @@ describe("getWasInventory returns the correct values", async () => {
   });
 
   it("should return the correct copias", () => {
-    expect(results.copias).toBe(510);
+    expect(results.copias).toBe(501);
   });
 
   it("should return the correct disponibles", () => {
-    expect(results.disponibles).toBe(525);
+    expect(results.disponibles).toBe(516);
   });
 
   it("copias should be internally consistent", () => {

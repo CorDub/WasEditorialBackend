@@ -86,8 +86,10 @@ describe("getCompleteInventory returns the correct values", async () => {
     // entregados al autor
     entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 12 });
     deletedEntregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2, isDeleted: true });
-    entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
+    // entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
+    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 10})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 5, isDeleted: true})
 
     // return from other back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });

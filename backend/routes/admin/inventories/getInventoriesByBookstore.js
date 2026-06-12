@@ -151,7 +151,7 @@ export function handleWasInventories(wasInventories) {
     const impressionsRes = getTotalWasImpressions(inventory) 
     wasTotal.impressionInicial += impressionsRes.impressionInicial
     wasTotal.extraImpressions += impressionsRes.extraImpressions
-    wasTotal.entregadosDelAutor += impressionsRes.entregadosDelAutor
+    // wasTotal.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
     //step 2: sales
     wasTotal.ventas += getTotalSales(inventory)

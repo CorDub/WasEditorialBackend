@@ -25,5 +25,5 @@ export async function validateAuthorReturn(tx, bookId, bookstoreId, quantity) {
     return false
   }
 
-  return returnInventory
+  return true
 }

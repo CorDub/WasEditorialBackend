@@ -1,7 +1,7 @@
 export function getTotalWasImpressions(inventory) {
   let res = {
     impressionInicial: 0,
-    entregadosDelAutor: 0,
+    // entregadosDelAutor: 0,
     extraImpressions: 0,
   }
   
@@ -23,11 +23,11 @@ export function getTotalWasImpressions(inventory) {
       res.impressionInicial += impressions[i].quantity
       inicialImpressionAssigned = true
     } else {
-      if (impressions[i].authorDelivery) {
-        res.entregadosDelAutor += impressions[i].quantity
-      } else {
-        res.extraImpressions += impressions[i].quantity
-      }
+      // if (impressions[i].authorDelivery) {
+      //   res.entregadosDelAutor += impressions[i].quantity
+      // } else {
+      res.extraImpressions += impressions[i].quantity
+      // }
     }
   }
 
@@ -41,6 +41,7 @@ export function getTotalWasTransfers(inventory) {
     entregadosDelAutor: 0,
     returns: 0
   }
+  
 
   if (inventory.transfersFrom.length > 0) {
     for (const transfer of inventory.transfersFrom) {
@@ -53,18 +54,18 @@ export function getTotalWasTransfers(inventory) {
       } else {
         res.entregadosAlAutor += transfer.quantity
       }
-      
     }
   }
   
   if (inventory.transfersTo.length > 0) {
     for (const transfer of inventory.transfersTo) {
+      
       if (transfer.isDeleted) {
         console.error(`Transfer is deleted`)
         continue
       }
 
-      if (transfer.fromInventoryId == null) {
+      if (transfer.fromInventoryId === null || transfer.fromInventoryId === undefined) {
         res.entregadosDelAutor += transfer.quantity
         continue
       }
@@ -216,7 +217,7 @@ export function getWasInventory(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   res.impressionInicial += impressionsRes.impressionInicial
   res.extraImpressions += impressionsRes.extraImpressions
-  res.entregadosDelAutor += impressionsRes.entregadosDelAutor
+  // res.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   //step 2: sales
   res.ventas += getTotalSales(inventory)
@@ -226,6 +227,7 @@ export function getWasInventory(inventory) {
   res.transfers += transfersRes.transfers
   res.entregadosAlAutor += transfersRes.entregadosAlAutor
   res.returns += transfersRes.returns
+  res.entregadosDelAutor += transfersRes.entregadosDelAutor
 
   //step 4: copias
   res.copias = 
@@ -273,8 +275,8 @@ export function getOtherInventory(inventory) {
     scaffold.copias - 
     scaffold.returns -
     scaffold.ventas -
-    scaffold.transfersToAuthor +
-    scaffold.returnsFromAuthors
+    scaffold.entregadosAlAutor +
+    scaffold.entregadosDelAutor
   
   return scaffold
 }

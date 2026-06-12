@@ -1,5 +1,5 @@
 import { describe, expect, vi, it, beforeAll, afterAll } from "vitest";
-import { changePassword } from "../../../routes/author/password/changePassword.js";
+import { changePassword } from "../../routes/user/changePassword.js";
 import {
   createCategory,
   createAuthor,
@@ -14,7 +14,7 @@ import {
   createTestDB,
   dropTestDB,
   deleteFromDB
-} from "../../../testUtils.js";
+} from "../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from "bcrypt";
 
@@ -44,18 +44,20 @@ describe(`change password with valid credentials`, () => {
         font_size: 1.1,
         name_bank_account: "Corentin Pierre Jean-Philippe Dubois",
         bank: "Inbursa",
-        reset_password_code: 124586,
+        reset_password_token: "52401bb2b5cde0fe71b5057a503ea489055b6bec60aa385c7fd5330ddc1ab9c0",
+        reset_password_expires: new Date(Date.now() + 60 * 60 * 1000),
         isDeleted: true
       }
     );
 
     mockReq = {
       body: {
-        password: "newPasswordLetsGo7!"
+        password: "newPasswordLetsGo7!",
+        token: "52401bb2b5cde0fe71b5057a503ea489055b6bec60aa385c7fd5330ddc1ab9c0"
       },
-      session: {
-        user_id: newUser.id
-      },
+      // session: {
+      //   user_id: newUser.id
+      // },
       prisma: prisma
     }
 

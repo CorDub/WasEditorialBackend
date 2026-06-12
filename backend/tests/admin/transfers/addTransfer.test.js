@@ -622,7 +622,7 @@ describe(`addDeliveryToAuthor wrong bookstore Id`, async() => {
   })
 
   it(`return an object with a message`, async() => {
-    expect(res).toStrictEqual({message: "Entregas a autores solo se pueden hacer desde el inventario de la bodega Was"})
+    expect(res).toStrictEqual({message: "Entregas a autores solo se pueden hacer desde un inventario Was"})
   })
 })
 

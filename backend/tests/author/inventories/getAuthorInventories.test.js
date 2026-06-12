@@ -73,8 +73,8 @@ describe("getAuthorInventories returns the correct values", async () => {
     impression = await createImpression(prisma, book.id, { quantity: 500, date: new Date("2025-01-01") });
     impression2 = await createImpression(prisma, book.id, { quantity: 100 });
     deletedImpression = await createImpression(prisma, book.id, { quantity: 999, isDeleted: true });
-    entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
-    deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
+    // entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
+    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
 
     // book transfers out of WAS
     transferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 100 });
@@ -84,6 +84,10 @@ describe("getAuthorInventories returns the correct values", async () => {
     // entregado al autor
     entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2 });
     deletedEntregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2, isDeleted: true });
+
+    // entregado del autor
+    entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1, isDeleted: true})
 
     // return from other back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });
@@ -210,7 +214,7 @@ describe("getAuthorInventories returns the correct values", async () => {
     });
 
     it("should compute correct WAS disponibles", () => {
-      expect(bookResult.summary.was).toBe(475);
+      expect(bookResult.summary.was).toBe(466);
     });
 
     it("should compute correct bookstores disponibles", () => {
@@ -218,7 +222,7 @@ describe("getAuthorInventories returns the correct values", async () => {
     });
 
     it("should compute correct total remaining", () => {
-      expect(bookResult.summary.total).toBe(602);
+      expect(bookResult.summary.total).toBe(593);
     });
 
     it("should compute correct sold count (WAS + other, deleted excluded)", () => {
@@ -235,7 +239,7 @@ describe("getAuthorInventories returns the correct values", async () => {
 
     it("should not count deleted impressions", () => {
       // deletedImpression quantity was 999 — WAS would be 1474 if counted
-      expect(bookResult.summary.was).toBe(475);
+      expect(bookResult.summary.was).toBe(466);
     });
 
     it("should not count deleted sales", () => {

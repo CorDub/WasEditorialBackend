@@ -58,6 +58,7 @@ describe("updating a bookstore with valid parameters", () => {
         "contactPhone": "5544809021",
         "contactPhonePrefix": "+44",
         "contactEmail": "bookstore.owner@gmail.com",
+        "wasRed": false
       },
       prisma: prisma
     }; 

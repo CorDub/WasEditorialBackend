@@ -21,6 +21,7 @@ import {
   createTestDB,
   dropTestDB,
   createTransfer,
+  truncateAll,
 } from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 
@@ -205,6 +206,7 @@ describe("gets the impressions for a WAS inventory correctly", async() => {
 })
 
 
+
 describe("get the transfers for a was inventory", async() => {
   let category;
   let author;
@@ -214,6 +216,7 @@ describe("get the transfers for a was inventory", async() => {
   let transfer1, transfer2, transfer3, deletedTransfer;
   let return1, return2, return3, deletedReturn;
   let entregaAlAutor1, entregaAlAutor2, entregaAlAutor3, deletedEntregaAlAutor;
+  let entregaDelAutor1, entregaDelAutor2, entregaDelAutor3, deletedEntregaDelAutor;
 
   beforeAll(async() => {
     category = await createCategory(prisma);
@@ -238,6 +241,10 @@ describe("get the transfers for a was inventory", async() => {
     entregaAlAutor2 = await createTransfer(prisma, wasInventory.id, {quantity: 9})
     entregaAlAutor3 = await createTransfer(prisma, wasInventory.id, {quantity: 8})
     deletedEntregaAlAutor = await createTransfer(prisma, wasInventory.id, {quantity: 10, isDeleted: true})
+    entregaDelAutor1 = await  createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 3})
+    entregaDelAutor2 = await  createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 2})
+    entregaDelAutor3 = await  createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
+    deletedEntregaDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 3, isDeleted: true})
   })
 
   afterAll(async() => {
@@ -266,6 +273,7 @@ describe("get the transfers for a was inventory", async() => {
     const res = getTotalWasTransfers(inventory)
     expect(res.transfers).toBe(17)
     expect(res.entregadosAlAutor).toBe(27)
+    expect(res.entregadosDelAutor).toBe(6)
     expect(res.returns).toBe(20)
   })
 
@@ -300,6 +308,11 @@ describe(`getNonWasTransfers return the correct values`, async() => {
   let deletedTransferTo;
   let transferFrom;
 
+  let entregadoAlAutor1, entregadoAlAutor2, entregadoAlAutor3;
+  let deletedEntregadoAlAutor;
+  let entregadoDelAutor1, entregadoDelAutor2, entregadoDelAutor3;
+  let deletedEntregadoDelAutor;
+
   beforeAll(async() => {
     category = await createCategory(prisma);
     author = await createAuthor(prisma);
@@ -314,6 +327,15 @@ describe(`getNonWasTransfers return the correct values`, async() => {
     transferTo3 = await createTransfer(prisma, wasInventory.id, {toInventoryId: otherInventory.id, quantity: 2})
     deletedTransferTo = await createTransfer(prisma, wasInventory.id, {toInventoryId: otherInventory.id, quantity: 5, isDeleted: true})
     transferFrom = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 2})
+
+    entregadoAlAutor1 = await createTransfer(prisma, otherInventory.id, {toInventoryId: null, quantity: 4})
+    entregadoAlAutor2 = await createTransfer(prisma, otherInventory.id, {toInventoryId: null, quantity: 3})
+    entregadoAlAutor3 = await createTransfer(prisma, otherInventory.id, {toInventoryId: null, quantity: 2})
+    deletedEntregadoAlAutor = await createTransfer(prisma, otherInventory.id, {quantity: 10, isDeleted: true})
+    entregadoDelAutor1 = await  createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3})
+    entregadoDelAutor2 = await  createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 2})
+    entregadoDelAutor3 = await  createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 1})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3, isDeleted: true})
   })
 
   afterAll(async() => {
@@ -338,9 +360,12 @@ describe(`getNonWasTransfers return the correct values`, async() => {
       }
     })
     const results = getNonWasTransfers(inventory)
+    console.log("results", results)
     expect(results.transferInicial).toBe(10)
     expect(results.extraTransfers).toBe(7)
     expect(results.returns).toBe(2)
+    expect(results.transfersToAuthors).toBe(9)
+    expect(results.returnsFromAuthors).toBe(6)
   })
 })
 

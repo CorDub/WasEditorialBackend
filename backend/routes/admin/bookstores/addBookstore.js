@@ -21,6 +21,7 @@ export async function addBookstore(req, res) {
     //Check if bookstore still exists as deleted first
     const existingBookstore = await prismaClient.bookstore.findUnique({where:{name: inputs.name}})
     if (existingBookstore && existingBookstore.isDeleted) {
+      console.log("correct route")
       const updatedDeletedBookstore = await prismaClient.bookstore.update({
         where: {
           id: existingBookstore.id

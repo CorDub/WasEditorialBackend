@@ -21,6 +21,7 @@ export async function updateBookstore(req, res) {
 
     const existingBookstore = await prismaClient.bookstore.findUnique({where: {id: inputs.id}});
     if (existingBookstore.isDeleted) {throw new Error("this bookstore is deleted")};
+    if (!existingBookstore) {throw new Error("wrong id - could not find the bookstore")};
 
     await prismaClient.$transaction(async (tx) => {
       const updatedBookstore = await tx.bookstore.update({

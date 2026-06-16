@@ -16,19 +16,19 @@ export async function getReset(req, res) {
 
     const user = await prismaClient.user.findUnique({where: {email: inputs.email,}});
     if (user && user.isDeleted) {
-      return res.status(204).json("Error retrieving the user");
+      return res.status(400).json("Error retrieving the user");
     }
     if (!user) {
-      return res.status(204).json("Error retrieving the user");
+      return res.status(400).json("Error retrieving the user");
     }
 
     const token = crypto.randomBytes(32).toString("hex");
 
     await sendTokenResetPasswordMail(inputs.email, user.first_name, token)
-    const user_send = {
-      id: user.id,
-    }
-    res.status(200).json(user_send);
+    // const user_send = {
+    //   id: user.id,
+    // }
+    res.status(200).json({message: "reset password sent"});
   } catch (error) {
     console.error("Error retrieving the user:", error)
     return res.status(500).json("Error retrieving the user");

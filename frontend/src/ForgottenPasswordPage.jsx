@@ -41,7 +41,7 @@ function ForgottenPasswordPage() {
         return console.error(response.status);
       };
 
-      if (response.status === 204) {
+      if (response.status === 400) {
         const alertMessage = "No cuenta con este correo fue encontrada.";
         setAlertMessage(alertMessage);
         setAlertType("error");

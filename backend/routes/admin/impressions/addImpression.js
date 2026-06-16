@@ -12,7 +12,7 @@ export async function addImpression(req, res) {
       id: parseInt(req.body.id),
       note: req.body.note,
       dateStr: req.body.dateStr,
-      authorDelivery: req.body.authorDelivery ? true : false
+      // authorDelivery: req.body.authorDelivery ? true : false
     }
     validateInputs(inputs);
 

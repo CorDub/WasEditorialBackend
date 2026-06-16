@@ -7,6 +7,7 @@ import {
   createBookstore,
   createTestDB,
   dropTestDB,
+  truncateAll
 } from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 
@@ -58,7 +59,7 @@ describe("updating a bookstore with valid parameters", () => {
         "contactPhone": "5544809021",
         "contactPhonePrefix": "+44",
         "contactEmail": "bookstore.owner@gmail.com",
-        "wasRed": false
+        "wasRed": true
       },
       prisma: prisma
     }; 
@@ -83,6 +84,7 @@ describe("updating a bookstore with valid parameters", () => {
     expect(updatedBookstore.contact_phone).toBe("5544809021");
     expect(updatedBookstore.contact_phone_prefix).toBe("+44");
     expect(updatedBookstore.contact_email).toBe("bookstore.owner@gmail.com");
+    expect(updatedBookstore.wasRed).toBe(true)
   })
 })
 
@@ -179,5 +181,46 @@ describe("updating a deleted bookstore", async() => {
     notUpdatedBookstore = await prisma.bookstore.findUnique({where: {id: newBookstore.id}})
     expect(notUpdatedBookstore).toBeTruthy();
     expect(notUpdatedBookstore.name).toBe(newBookstore.name);
+  })
+})
+
+
+
+describe(`updating a bookstore that doesn't exist`, () => {
+  let newBookstore, mockReq, mockRes, mute;
+  let notUpdatedBookstore;
+
+  beforeAll(async() => {
+    mockReq = {
+      params: {
+        "id": 47
+      },
+      body: {
+        "name": "Updated Bookstore",
+        "dealPercentage": "50",
+        "contactName": "Bookstore Owner Updated",
+        "contactPhone": "5544809021",
+        "contactPhonePrefix": "+44",
+        "contactEmail": "bookstore.owner@gmail.com",
+      },
+      prisma: prisma
+    }
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    };
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {})
+
+    await updateBookstore(mockReq, mockRes)
+  });
+
+  afterAll(async() => {
+    mute.mockRestore()
+  });
+
+  it(`should return a 500`, async() => {
+    expect(mockRes.status).toHaveBeenCalledWith(500);
   })
 })

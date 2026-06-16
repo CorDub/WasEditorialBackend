@@ -31,9 +31,11 @@ export function getMailtrap() {
   return mailtrap
 }
 
-async function sendEmail({ to, subject, text, html, attachments }) {
+export async function sendEmail({ to, subject, text, html, attachments }) {
   try {
-    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "staging") {
+    if (process.env.NODE_ENV === "development" || 
+      process.env.NODE_ENV === "staging" 
+    ) {
       const finalTo = process.env.STAGING_EMAIL_REDIRECT
 
       const transport = getMailtrap()
@@ -65,6 +67,8 @@ async function sendEmail({ to, subject, text, html, attachments }) {
       }
 
       return data;
+    } else if (process.env.NODE_ENV === "test") {
+      console.log("no mail sent for test")
     } else {
       throw new Error("missing invalid node_env")
     }
@@ -139,37 +143,39 @@ export async function sendResetPasswordMail(to, name) {
   }
 };
 
-export async function sendTokenResetPasswordMail(to, name, token) {
-  const user = await prisma.user.findUnique({where: {email: to}});
-    if (!user) throw new Error(`User not found for email: ${to}`);
-    const updatedUser  = await prisma.user.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        reset_password_token: token,
-        reset_password_expires: new Date(Date.now() + 60* 60 * 1000)
-      }
-    })
+export async function sendTokenResetPasswordMail(to, name, token, prismaClient) {
+  const actualPrisma = prismaClient || prisma
 
-    let link;
-    if (process.env.NODE_ENV === "development") {
-      link = `http://localhost:5173/change-password?token=${token}`
-    } else if (process.env.NODE_ENV === "staging") {
-      link = `https://plataformawaseditorialstaging.onrender.com/change-password?token=${token}`
-    } else {
-      link = `https://distribucionwas.com/change-password?token=${token}`
+  const user = await actualPrisma.user.findUnique({where: {email: to}});
+  if (!user) throw new Error(`User not found for email: ${to}`);
+  const updatedUser  = await actualPrisma.user.update({
+    where: {
+      id: user.id
+    },
+    data: {
+      reset_password_token: token,
+      reset_password_expires: new Date(Date.now() + 60* 60 * 1000)
     }
+  })
 
-    await sendEmail({
-      to,
-      subject: 'Restablecimiento de su contraseña para su cuenta de WAS Editorial',
-      text: `Hola ${name}, \n
-      Por favor haga clic en el siguiente enlace para restablecer (o establecer si es su primera visita) la contraseña de su cuenta de WAS Editorial:\n
-      ${link}
-      \n
-      Este enlace estará válido por 1 hora.`
-    });
+  let link;
+  if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+    link = `http://localhost:5173/change-password?token=${token}`
+  } else if (process.env.NODE_ENV === "staging") {
+    link = `https://plataformawaseditorialstaging.onrender.com/change-password?token=${token}`
+  } else {
+    link = `https://distribucionwas.com/change-password?token=${token}`
+  }
+
+  await sendEmail({
+    to,
+    subject: 'Restablecimiento de su contraseña para su cuenta de WAS Editorial',
+    text: `Hola ${name}, \n
+    Por favor haga clic en el siguiente enlace para restablecer (o establecer si es su primera visita) la contraseña de su cuenta de WAS Editorial:\n
+    ${link}
+    \n
+    Este enlace estará válido por 1 hora.`
+  });
 }
 
 export async function sendEmailWithInvoice(name, month, amount, factura, constancia, correo) {

@@ -7,6 +7,7 @@ import {
   createBookstore,
   createTestDB,
   dropTestDB,
+  truncateAll,
 } from "../../../testUtils.js";
 import { PrismaClient } from '@prisma/client';
 
@@ -165,5 +166,95 @@ describe("adding a duplicate bookstore", async() => {
   it("should not create a new bookstore in the database", async() => {
     addedBookstore = await prisma.bookstore.findUnique({where: {name: "Ye Olde Bookstore"}})
     expect(addedBookstore.id).toBe(previousBookstore.id);
+  })
+})
+
+
+
+describe(`add a bookstore that was previously deleted`, async() => {
+  let deletedBookstore, updatedDeletedBookstore, newBookstore, mute, mockReq, mockRes;
+
+  beforeAll(async() => {
+    deletedBookstore = await createBookstore(prisma, {name:"Deleted Bookstore", isDeleted: true});
+
+    mockReq = {
+      body: {
+        "name": "Deleted Bookstore",
+        "dealPercentage": "50",
+        "comissions": "true",
+        "contactName": "Bookstore Owner",
+        "contactPhone": "5544809021",
+        "contactPhonePrefix": "+52",
+        "contactEmail": "bookstore.owner@gmail.com",
+        "wasRed": false
+      },
+      prisma: prisma
+    }; 
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    };
+
+    mute = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await addBookstore(mockReq, mockRes);
+  })
+
+  afterAll(async() => { 
+    mute.mockRestore() 
+    await truncateAll(prisma)
+  })
+
+  it(`should return a 201`, async() => {
+    expect(mockRes.status).toHaveBeenCalledWith(201);
+  })
+
+  it(`should rename the previous bookstore as _deleted`, async() => {
+    updatedDeletedBookstore = await prisma.bookstore.findUnique({ where: {id: deletedBookstore.id }})
+    expect(updatedDeletedBookstore.name).toBe("Deleted Bookstore_deleted")
+  })
+
+  it(`should return a new bookstore`, async() => {
+    newBookstore = await prisma.bookstore.findUnique({where: { name: "Deleted Bookstore"}})
+    expect(newBookstore.id).not.toEqual(deletedBookstore.id)
+  })
+})
+
+
+
+describe(`wasRed is taken into account correctly`, async() => {
+  let newBookstore, mockReq, mockRes;
+
+  beforeAll(async() => {
+    mockReq = {
+      body: {
+        "name": "New Was Bookstore",
+        "dealPercentage": "50",
+        "comissions": "true",
+        "contactName": "Bookstore Owner",
+        "contactPhone": "5544809021",
+        "contactPhonePrefix": "+52",
+        "contactEmail": "bookstore.owner@gmail.com",
+        "wasRed": true
+      },
+      prisma: prisma
+    }; 
+
+    mockRes = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis()
+    };
+
+    await addBookstore(mockReq, mockRes);
+  })
+
+  afterAll(async() => { 
+    await truncateAll(prisma)
+  })
+
+  it(`should create a bookstore with wasRed true`, async() => {
+    newBookstore = await prisma.bookstore.findUnique({where: {name: "New Was Bookstore"}})
+    expect(newBookstore.wasRed).toBe(true)
   })
 })

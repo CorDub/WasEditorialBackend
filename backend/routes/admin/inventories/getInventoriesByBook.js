@@ -101,7 +101,6 @@ export async function getInventoriesByBook(req, res) {
       const impressions = getTotalWasImpressions(inventory);
       scaffold.impressionInicial += impressions.impressionInicial
       scaffold.extraImpressions += impressions.extraImpressions
-      // scaffold.entregadosDelAutor += impressions.entregadosDelAutor
 
       //2.2 ventas
       const ventas = getTotalSales(inventory)

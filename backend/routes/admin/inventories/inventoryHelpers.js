@@ -157,7 +157,11 @@ export function getNonWasTransfers(inventory) {
 export function getGivenToAuthor(inventory) {
   let res = 0
 
-  if (!inventory.transfersFrom || inventory.transfersFrom.length === 0) {
+  if (!inventory.transfersFrom) {
+    throw new Error("Transfers From were not provided")
+  }
+
+  if (inventory.transfersFrom.length === 0) {
     return res
   }
 
@@ -180,7 +184,11 @@ export function getGivenToAuthor(inventory) {
 export function getReturnsFromAuthor(inventory) {
   let res = 0
 
-  if (!inventory.transfersTo || inventory.transfersTo.length === 0) {
+  if (!inventory.transfersTo) {
+    throw new Error("Transfers to were not provided")
+  }
+
+  if (inventory.transfersTo.length === 0) {
     return res
   }
 

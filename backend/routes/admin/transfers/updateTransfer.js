@@ -2,7 +2,7 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
-import { findEarliestDeliveryToAuthor, findEarliestReturnFromAuthor } from "./transferHelpers.js";
+import { findEarliestDeliveryToAuthor } from "./transferHelpers.js";
 
 const router = express.Router();
 

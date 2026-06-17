@@ -1,6 +1,6 @@
 export function findEarliestDeliveryToAuthor(inventory) {
   if (!inventory.transfersFrom || inventory.transfersFrom.length === 0) {
-    throw new Error("Could not parse inventory provided to find earliest delivery to author")
+    throw new Error("No transfers From in inventory provided.")
   }
 
   let earliest = null;
@@ -68,11 +68,15 @@ export function findEarliestReturnFromAuthor(inventory) {
 
 
 
-function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
+export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
   //get all relevant trnasfers and impressions
   let allTransfers = []
 
   for (const transfer of inventory.transfersTo) {
+    if (transfer.isDeleted) {
+      continue
+    }
+
     if (transfer.id === transferToBeEdited.id) {
       continue
     }
@@ -86,6 +90,10 @@ function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
   }
 
   for (const transfer of inventory.transfersFrom) {
+    if (transfer.isDeleted) {
+      continue
+    }
+
     if (transfer.id === transferToBeEdited.id) {
       continue
     }
@@ -105,6 +113,7 @@ function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
   }
 
   allTransfers.push({...transferToBeEdited, type: typeTBE})
+  console.log("allTransfers", allTransfers)
 
   //sort
   allTransfers.sort((a, b) => {
@@ -123,7 +132,7 @@ function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
         to: 2,
       } 
     } else {
-      precendence = {
+      precedence = {
         to: 0,
         from: 1
       }
@@ -131,10 +140,12 @@ function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
     
     return precedence[a.type] - precedence[b.type]
   })
+  console.log("sorted allTransfers", allTransfers)
 
   // check
   let current = 0;
   for (const transfer of allTransfers) {
+    console.log("current", current)
     if (transfer.type === "impression" || transfer.type === "to") {
       current += transfer.quantity
     }

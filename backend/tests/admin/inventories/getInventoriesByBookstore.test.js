@@ -90,10 +90,6 @@ describe("handleWasInventories works correctly", async() => {
     impression2 = await createImpression(prisma, book.id, {quantity: 50, date: new Date()});
     impression3 = await createImpression(prisma, book.id, {quantity: 25, date: new Date()});
     deletedImpression = await createImpression(prisma, book.id, {quantity: 100, date: new Date("2024-01-01"), isDeleted: true});
-    // entregadoDelAutor1 = await createImpression(prisma, book.id, {quantity: 2, date: new Date(), authorDelivery: true});
-    // entregadoDelAutor2 = await createImpression(prisma, book.id, {quantity: 4, date: new Date(), authorDelivery: true});
-    // entregadoDelAutor3 = await createImpression(prisma, book.id, {quantity: 6, date: new Date(), authorDelivery: true});
-    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, {quantity: 2, date: new Date(), isDeleted: true, authorDelivery: true});
     entregadoDelAutor1 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 2})
     entregadoDelAutor2 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 4})
     entregadoDelAutor3 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 6})
@@ -125,10 +121,6 @@ describe("handleWasInventories works correctly", async() => {
     impression5 = await createImpression(prisma, book2.id, {quantity: 50, date: new Date()});
     impression6 = await createImpression(prisma, book2.id, {quantity: 25, date: new Date()});
     deletedImpression2 = await createImpression(prisma, book2.id, {quantity: 100, date: new Date("2024-01-01"), isDeleted: true});
-    // entregadoDelAutor4 = await createImpression(prisma, book2.id, {quantity: 2, date: new Date(), authorDelivery: true});
-    // entregadoDelAutor5 = await createImpression(prisma, book2.id, {quantity: 4, date: new Date(), authorDelivery: true});
-    // entregadoDelAutor6 = await createImpression(prisma, book2.id, {quantity: 6, date: new Date(), authorDelivery: true});
-    // deletedEntregadoDelAutor2 = await createImpression(prisma, book2.id, {quantity: 2, date: new Date(), isDeleted: true, authorDelivery: true});
     entregadoDelAutor4 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 2})
     entregadoDelAutor5 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 4})
     entregadoDelAutor6 = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 6})
@@ -188,6 +180,7 @@ describe("handleWasInventories works correctly", async() => {
 })
 
 
+
 describe(`transfersOthers works correctly`, async() => {
   let category;
   let author;
@@ -198,6 +191,8 @@ describe(`transfersOthers works correctly`, async() => {
   let return1, return2, return3, deletedReturn;
   let transfer4, transfer5, transfer6, deletedTransfer2;
   let return4, return5, return6, deletedReturn2;
+  let entregaAlAutor1, entregaAlAutor2, deletedEntregaAlAutor1, deletedEntregaAlAutor2;
+  let devolucionDelAutor1, devolucionDelAutor2, deletedDevolucionDelAutor1, deletedDevolucionDelAutor2;
 
   beforeAll(async() => {
     category = await createCategory(prisma);
@@ -216,6 +211,10 @@ describe(`transfersOthers works correctly`, async() => {
     return2 = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 1})
     return3 = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 3})
     deletedReturn = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
+    entregaAlAutor1 = await createTransfer(prisma, otherInventory.id, {quantity: 5})
+    deletedEntregaAlAutor1 = await createTransfer(prisma, otherInventory.id, {quantity: 5, isDeleted: true})
+    devolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3})
+    deletedDevolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3, isDeleted: true})
 
     thirdBookstore = await createBookstore(prisma);
     thirdInventory = await createInventory(prisma, book.id, thirdBookstore.id);
@@ -227,6 +226,10 @@ describe(`transfersOthers works correctly`, async() => {
     return5 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 1})
     return6 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 3})
     deletedReturn2 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
+    entregaAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity: 3})
+    deletedEntregaAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity: 3, isDeleted: true})
+    devolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 1})
+    deletedDevolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3, isDeleted: true})
   })
 
   afterAll(async() => {
@@ -256,6 +259,8 @@ describe(`transfersOthers works correctly`, async() => {
     expect(res.transferInicial).toBe(20)
     expect(res.extraTransfers).toBe(14)
     expect(res.returns).toBe(12)
+    expect(res.entregadosAlAutor).toBe(8)
+    expect(res.entregadosDelAutor).toBe(4)
   })
 })
 
@@ -275,6 +280,11 @@ describe(`handleOtherInventories works correctly`, async() => {
   let otherSale1, otherSale2, otherSale3, deletedOtherSale;
   let thirdSale1, thirdSale2, thirdSale3, deletedThirdSale;
 
+  let entregaAlAutor1, entregaAlAutor2, deletedEntregaAlAutor1;
+  let entregaAlAutor3, entregaAlAutor4, deletedEntregaAlAutor2;
+  let devolucionDelAutor1, devolucionDelAutor2, deletedDevolucionDelAutor1;
+  let devolucionDelAutor3, devolucionDelAutor4, deletedDevolucionDelAutor2;
+
   beforeAll(async() => {
     category = await createCategory(prisma);
     author = await createAuthor(prisma);
@@ -292,7 +302,13 @@ describe(`handleOtherInventories works correctly`, async() => {
     return2 = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 1})
     return3 = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 3})
     deletedReturn = await createTransfer(prisma, otherInventory.id, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
-
+    entregaAlAutor1 = await createTransfer(prisma, otherInventory.id, {quantity:3})
+    entregaAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity:2})
+    deletedEntregaAlAutor1 = await createTransfer(prisma, otherInventory.id, {quantity:3, isDeleted: true})
+    devolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity:2})
+    devolucionDelAutor2 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity:1})
+    deletedDevolucionDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity:3, isDeleted: true})
+    
     thirdBookstore = await createBookstore(prisma);
     thirdInventory = await createInventory(prisma, book.id, thirdBookstore.id);
     transfer4 = await createTransfer(prisma, wasInventory.id, {toInventoryId: thirdInventory.id, quantity: 100, deliveryDate: new Date("2025-01-01")})
@@ -303,6 +319,12 @@ describe(`handleOtherInventories works correctly`, async() => {
     return5 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 10})
     return6 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 30})
     deletedReturn2 = await createTransfer(prisma, thirdInventory.id, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
+    entregaAlAutor3 = await createTransfer(prisma, thirdInventory.id, {quantity:10})
+    entregaAlAutor4 = await createTransfer(prisma, thirdInventory.id, {quantity:5})
+    deletedEntregaAlAutor2 = await createTransfer(prisma, thirdInventory.id, {quantity:3, isDeleted: true})
+    devolucionDelAutor3 = await createTransfer(prisma, null, {toInventoryId: thirdInventory.id, quantity:7})
+    devolucionDelAutor4 = await createTransfer(prisma, null, {toInventoryId: thirdInventory.id, quantity:3})
+    deletedDevolucionDelAutor2 = await createTransfer(prisma, null, {toInventoryId: thirdInventory.id, quantity:3, isDeleted: true})
 
     payment = await createPayment(prisma, author.id, getForMonth(new Date()));
     otherSale1 = await createSale(prisma, otherInventory.id, [payment.id], {quantity: 1})
@@ -350,16 +372,20 @@ describe(`handleOtherInventories works correctly`, async() => {
     expect(res[0].transferInicial).toBe(10)
     expect(res[0].extraTransfers).toBe(7)
     expect(res[0].returns).toBe(6)
+    expect(res[0].entregadosAlAutor).toBe(5)
+    expect(res[0].entregadosDelAutor).toBe(3)
     expect(res[0].ventas).toBe(4)
-    expect(res[0].disponibles).toBe(7)
+    expect(res[0].disponibles).toBe(5)
 
     expect(res[1].name).toBe(thirdBookstore.name)
     expect(res[1].copias).toBe(170)
     expect(res[1].transferInicial).toBe(100)
     expect(res[1].extraTransfers).toBe(70)
     expect(res[1].returns).toBe(60)
+    expect(res[1].entregadosAlAutor).toBe(15)
+    expect(res[1].entregadosDelAutor).toBe(10)
     expect(res[1].ventas).toBe(40)
-    expect(res[1].disponibles).toBe(70)
+    expect(res[1].disponibles).toBe(65)
   })
 })
 
@@ -483,6 +509,14 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
     returnThirdBookstore = await createTransfer(prisma, thirdInventory.id, {toInventoryId: otherWasInventory.id, quantity: 3})
     returnOtherThirdBookstore = createTransfer(prisma, otherThirdBookstoreInventory.id, {toInventoryId: wasInventory.id, quantity: 2})
 
+    entregadosAlAutorOther = await createTransfer(prisma, otherInventory.id, {quantity: 3})
+    entregadosAlAutorThird = await createTransfer(prisma, thirdInventory.id, {quantity: 2})
+    deletedEntregadosAlAutorOther = await createTransfer(prisma, otherInventory.id, {quantity: 3, isDeleted: true})
+
+    entregadosDelAutorOther = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 2})
+    entregadosDelAutorThird = await createTransfer(prisma, null, {toInventoryId: thirdInventory.id, quantity: 1})
+    deletedEntregadosDelAutorOther = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 3, isDeleted: true})
+
     mockReq = {
       prisma: prisma
     }
@@ -537,8 +571,10 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
     expect(otherInventoryProcessed.extraTransfers).toBe(50)
     expect(otherInventoryProcessed.copias).toBe(150)
     expect(otherInventoryProcessed.returns).toBe(3)
+    expect(wasCondensed.entregadosAlAutor).toBe(3)
+    expect(wasCondensed.entregadosDelAutor).toBe(2)
     expect(otherInventoryProcessed.ventas).toBe(15)
-    expect(otherInventoryProcessed.disponibles).toBe(132)
+    expect(otherInventoryProcessed.disponibles).toBe(130)
     expect(otherInventoryProcessed.id).not.toBe(1)
   })
 
@@ -549,8 +585,10 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
     expect(thirdInventoryProcessed.extraTransfers).toBe(55)
     expect(thirdInventoryProcessed.copias).toBe(165)
     expect(thirdInventoryProcessed.returns).toBe(5)
+    expect(wasCondensed.entregadosAlAutor).toBe(2)
+    expect(wasCondensed.entregadosDelAutor).toBe(1)
     expect(thirdInventoryProcessed.ventas).toBe(16)
-    expect(thirdInventoryProcessed.disponibles).toBe(144)
+    expect(thirdInventoryProcessed.disponibles).toBe(143)
     expect(thirdInventoryProcessed.id).not.toBe(1)
   })
 })

@@ -381,9 +381,9 @@ describe("getBookInventory returns the correct values", async() => {
   let payment;
 
   let impression, impression2, impression3, deletedImpression;
-  let entregadoDelAutor, deletedEntregadoDelAutor;
   let transferTo, transferTo2, transferTo3, deletedTransferTo;
-  let entregadoAlAutor, deletedEntregadoAlAutor;
+  let entregadoAlAutor, entregadoAlAutor2, entregadoAlAutor3, deletedEntregadoAlAutor, deletedEntregadoAlAutor2;
+  let entregadoDelAutor, entregadoDelAutor2, entregadoDelAutor3, deletedEntregadoDelAutor, deletedEntregadoDelAutor2;
   let transferFrom;
   let sale1, sale2, deletedSale;
   let sale3, sale4, deletedSale2;
@@ -403,20 +403,21 @@ describe("getBookInventory returns the correct values", async() => {
     impression2 = await createImpression(prisma, book.id, { quantity: 100 });
     impression3 = await createImpression(prisma, book.id, { quantity: 50 });
     deletedImpression = await createImpression(prisma, book.id, { quantity: 500, isDeleted: true });
-    // entregadoDelAutor = await createImpression(prisma, book.id, { quantity: 10, authorDelivery: true });
-    // deletedEntregadoDelAutor = await createImpression(prisma, book.id, { quantity: 5, authorDelivery: true, isDeleted: true });
 
     // WAS transfers out to otherInventory
     transferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 100 });
     transferTo2 = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 50 });
     transferTo3 = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 20 });
     deletedTransferTo = await createTransfer(prisma, wasInventory.id, { toInventoryId: otherInventory.id, quantity: 5, isDeleted: true });
+    
     // entregado al autor (no toInventoryId)
     entregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2 });
     deletedEntregadoAlAutor = await createTransfer(prisma, wasInventory.id, { quantity: 2, isDeleted: true });
+    
     // entregado del autor 
     entregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 1})
     deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: wasInventory.id, quantity: 10, isDeleted: true})
+    
     // return from otherInventory back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });
 
@@ -429,6 +430,16 @@ describe("getBookInventory returns the correct values", async() => {
     sale3 = await createSale(prisma, otherInventory.id, [payment.id], { quantity: 2 });
     sale4 = await createSale(prisma, otherInventory.id, [payment.id], { quantity: 1 });
     deletedSale2 = await createSale(prisma, otherInventory.id, [payment.id], { quantity: 4, isDeleted: true });
+
+    //otherInventory entregadoAlAutor
+    entregadoAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity: 10})
+    entregadoAlAutor3 = await createTransfer(prisma, otherInventory.id, {quantity: 5})
+    deletedEntregadoAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity: 5, isDeleted: true})
+
+    //otherInventory entregadoDelAutor
+    entregadoDelAutor2 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 5})
+    entregadoDelAutor3 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 2})
+    deletedEntregadoDelAutor2 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 5, isDeleted: true})
 
     mockReq = {
       params: { id: book.id },
@@ -499,8 +510,10 @@ describe("getBookInventory returns the correct values", async() => {
     expect(other.extraTransfers).toBe(70);
     expect(other.copias).toBe(170);
     expect(other.returns).toBe(20);
+    expect(other.entregadosAlAutor).toBe(15);
+    expect(other.entregadosDelAutor).toBe(7);
     expect(other.ventas).toBe(3);
-    expect(other.disponibles).toBe(147);
+    expect(other.disponibles).toBe(139);
   })
 
   it(`should return the correct values for total`, () => {
@@ -510,10 +523,10 @@ describe("getBookInventory returns the correct values", async() => {
     expect(total.copias).toBe(651);
     expect(total.impressionInicial).toBe(500);
     expect(total.extraImpressions).toBe(150);
-    expect(total.entregadosDelAutor).toBe(1);
-    expect(total.entregadosAlAutor).toBe(2);
+    expect(total.entregadosDelAutor).toBe(8);
+    expect(total.entregadosAlAutor).toBe(17);
     expect(total.ventas).toBe(6);
-    expect(total.disponibles).toBe(643);
+    expect(total.disponibles).toBe(635);
   })
 
   it(`total values should be internally consistent`, () => {

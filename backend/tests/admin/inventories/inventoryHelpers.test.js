@@ -6,6 +6,7 @@ import {
   getTotalWasTransfers,
   getNonWasTransfers,
   getGivenToAuthor,
+  getReturnsFromAuthor,
   getWasInventory,
   getOtherInventory
 } from "../../../routes/admin/inventories/inventoryHelpers.js";
@@ -360,7 +361,6 @@ describe(`getNonWasTransfers return the correct values`, async() => {
       }
     })
     const results = getNonWasTransfers(inventory)
-    console.log("results", results)
     expect(results.transferInicial).toBe(10)
     expect(results.extraTransfers).toBe(7)
     expect(results.returns).toBe(2)
@@ -373,9 +373,9 @@ describe(`getNonWasTransfers return the correct values`, async() => {
 describe("getGivenToAuthor returns the correct number", async() => {
   let category;
   let author;
-  let book, book2;
+  let book, book2, book3;
   let bookstore;
-  let inventory1, inventory2;
+  let inventory1, inventory2, inventory3;
 
   let transfer, deletedTransfer, transfer2;
   let transfer3, transfer4, transfer5, deletedTransfer2;
@@ -385,9 +385,11 @@ describe("getGivenToAuthor returns the correct number", async() => {
     author = await createAuthor(prisma);
     book = await createBook(prisma, [author.id])
     book2 = await createBook(prisma, [author.id])
+    book3 = await createBook(prisma, [author.id])
     bookstore = await createBookstore(prisma)
     inventory1 = await createInventory(prisma, book.id, bookstore.id)
     inventory2 = await createInventory(prisma, book2.id, bookstore.id)
+    inventory3 = await createInventory(prisma, book3.id, bookstore.id)
 
     transfer = await createTransfer(prisma, inventory1.id, {quantity: 10})
     deletedTransfer = await createTransfer(prisma, inventory1.id, {quantity: 10, isDeleted: true})
@@ -429,7 +431,114 @@ describe("getGivenToAuthor returns the correct number", async() => {
     const res = getGivenToAuthor(inventory)
     expect(res).toBe(14)
   })
+
+  it(`should return the correct value of given to author for inventory3 - no givenToAuthor`, async() => {
+    const inventory = await prisma.inventory.findUnique({
+      where: {id: inventory3.id},
+      include: {transfersFrom: true}
+    })
+    const res = getGivenToAuthor(inventory)
+    expect(res).toBe(0)
+  })
+
+  it(`should throw if transfers from are not included`, async() => {
+    const inventory = await prisma.inventory.findUnique({
+      where: {id: inventory2.id},
+    })
+    expect(() => getGivenToAuthor(inventory)).toThrow()
+  })
 })
+
+
+
+describe("getReturnsFromAuthor returns the correct values", () => {
+  let category;
+  let author;
+  let book, book2, book3;
+  let bookstore;
+  let inventory1, inventory2, inventory3;
+
+  let transfer, deletedTransfer, transfer2;
+  let transfer3, transfer4, transfer5, deletedTransfer2;
+
+  let return1, return2, return3;
+
+  beforeAll(async() => {
+    category = await createCategory(prisma);
+    author = await createAuthor(prisma);
+    book = await createBook(prisma, [author.id])
+    book2 = await createBook(prisma, [author.id])
+    book3 = await createBook(prisma, [author.id])
+    bookstore = await createBookstore(prisma)
+    inventory1 = await createInventory(prisma, book.id, bookstore.id)
+    inventory2 = await createInventory(prisma, book2.id, bookstore.id)
+    inventory3 = await createInventory(prisma, book3.id, bookstore.id)
+
+    transfer = await createTransfer(prisma, inventory1.id, {quantity: 10})
+    deletedTransfer = await createTransfer(prisma, inventory1.id, {quantity: 10, isDeleted: true})
+    transfer2 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10})
+
+    transfer3 = await createTransfer(prisma, inventory2.id, {quantity: 7})
+    transfer4 = await createTransfer(prisma, inventory2.id, {quantity: 7})
+    transfer5 = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10})
+    deletedTransfer2 = await createTransfer(prisma, inventory2.id, {quantity: 7, isDeleted: true})
+
+    return1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 5})
+    return2 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 2})
+    return3 = await createTransfer(prisma, null, {toInventoryId: inventory2.id, quantity: 5})
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return the correct values for inventory1", async() => {
+    const inventory1WithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    const res = getReturnsFromAuthor(inventory1WithTransfers)
+    expect(res).toBe(7)
+  })
+
+  it("should return the correct values for inventory2", async() => {
+    const inventory2WithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory2.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    const res = getReturnsFromAuthor(inventory2WithTransfers)
+    expect(res).toBe(5)
+  })
+
+  it("should return the 0 when no transfers", async() => {
+    const inventory3WithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory3.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    const res = getReturnsFromAuthor(inventory3WithTransfers)
+    expect(res).toBe(0)
+  })
+
+  it("should throw if transfersTo are not provided", async() => {
+    expect(() => getReturnsFromAuthor(inventory3)).toThrow()
+  })
+})
+
 
 
 describe("getWasInventory returns the correct values", async () => {
@@ -600,6 +709,9 @@ describe("getOtherInventory returns the correct values", async () => {
   let transferFrom;
   let sale1, sale2, deletedSale;
 
+  let entregadoAlAutor1, entregadoAlAutor2, deletedEntregadoAlAutor;
+  let entregadoDelAutor1, entregadoDelAutor2, deletedEntregadoDelAutor;
+
   beforeAll(async () => {
     category = await createCategory(prisma);
     author = await createAuthor(prisma);
@@ -618,6 +730,16 @@ describe("getOtherInventory returns the correct values", async () => {
 
     // return back to WAS
     transferFrom = await createTransfer(prisma, otherInventory.id, { toInventoryId: wasInventory.id, quantity: 20 });
+
+    // entregadosAlAutor
+    entregadoAlAutor1 = await createTransfer(prisma, otherInventory.id, {quantity: 10})
+    entregadoAlAutor2 = await createTransfer(prisma, otherInventory.id, {quantity: 5})
+    deletedEntregadoAlAutor = await createTransfer(prisma, otherInventory.id, {quantity: 10, isDeleted: true})
+
+    // entregadosDelAutor
+    entregadoDelAutor1 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 5})
+    entregadoDelAutor2 = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 2})
+    deletedEntregadoDelAutor = await createTransfer(prisma, null, {toInventoryId: otherInventory.id, quantity: 5, isDeleted: true})
 
     // sales
     sale1 = await createSale(prisma, otherInventory.id, [payment.id], { quantity: 2 });
@@ -676,6 +798,14 @@ describe("getOtherInventory returns the correct values", async () => {
     expect(results.returns).toBe(20);
   });
 
+  it("should return the correct entregadosAlAutor", () => {
+    expect(results.entregadosAlAutor).toBe(15)
+  })
+
+  it("should return the correct entregadosDelAutor", () => {
+    expect(results.entregadosDelAutor).toBe(7)
+  })
+
   it("should return the correct ventas (deleted excluded)", () => {
     expect(results.ventas).toBe(3);
   });
@@ -685,7 +815,7 @@ describe("getOtherInventory returns the correct values", async () => {
   });
 
   it("should return the correct disponibles", () => {
-    expect(results.disponibles).toBe(147);
+    expect(results.disponibles).toBe(139);
   });
 
   it("copias should be internally consistent", () => {
@@ -693,6 +823,12 @@ describe("getOtherInventory returns the correct values", async () => {
   });
 
   it("disponibles should be internally consistent", () => {
-    expect(results.disponibles).toBe(results.copias - results.returns - results.ventas);
+    expect(results.disponibles).toBe(
+      results.copias - 
+      results.returns - 
+      results.ventas -
+      results.entregadosAlAutor +
+      results.entregadosDelAutor
+    );
   });
 });

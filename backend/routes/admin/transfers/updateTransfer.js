@@ -2,7 +2,11 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
-import { findEarliestDeliveryToAuthor } from "./transferHelpers.js";
+import { 
+  findEarliestDeliveryToAuthor,
+  checkDeliveryReturnOrder,
+  checkSendReturnOrder,
+} from "./transferHelpers.js";
 
 const router = express.Router();
 
@@ -11,7 +15,7 @@ export async function updateTransfer(req, res) {
     //1. validate inputs
     const inputs = {
       id: parseInt(req.params.id),
-      inventoryToId: req.body.inventoryToId ? parseInt(req.body.inventoryToId) : null,
+      inventoryToId: req.body.toInventoryId ? parseInt(req.body.toInventoryId) : null,
       quantity: parseInt(req.body.quantity),
       inventoryFromId: req.body.fromInventoryId ? parseInt(req.body.inventoryFromId) : null,
       type: req.body.type,
@@ -33,10 +37,22 @@ export async function updateTransfer(req, res) {
           id: inputs.id
         },
         include: {
-          toInventory: true,
-          fromInventory: true
+          toInventory: {
+            include: {
+              bookstore: true
+            }
+          },
+          fromInventory: {
+            include: {
+              bookstore: true
+            }
+          }
         }
       })
+
+      if (!transferToBeEdited) {
+        throw new Error("transferToBeEdited doesn't exist")
+      }
 
       if (transferToBeEdited.isDeleted) {
         throw new Error("deleted transfer")
@@ -45,27 +61,35 @@ export async function updateTransfer(req, res) {
       // routing from here
       // return from author path
       if (!transferToBeEdited.fromInventoryId) {
-        console.log("return from author")
+        if (transferToBeEdited.toInventory.bookstoreId !== 1 &&
+          !transferToBeEdited.toInventory.bookstore.wasRed
+        ) {
+          throw new Error("invalid inventoryFrom bookstore - not a was bookstore")
+        }
+
         result = await editReturnFromAuthor(tx, transferToBeEdited, inputs)
         return
       }
 
       // send to author
       if (!transferToBeEdited.toInventoryId) {
-        console.log("send to author")
+        if (transferToBeEdited.fromInventory.bookstoreId !== 1 &&
+          !transferToBeEdited.fromInventory.bookstore.wasRed
+        ) {
+          throw new Error("invalid inventoryFrom bookstore - not a was bookstore")
+        }
+
         result = await editSendToAuthor(tx, transferToBeEdited, inputs)
         return
       }
       
       // send to library
       if (transferToBeEdited.fromInventory.bookstoreId === 1) {
-        console.log("send to library")
         result = await editSendToLibrary(tx, transferToBeEdited, inputs)
         return
       } 
 
       // return to library
-      console.log("return to library")
       result = await editReturnToLibrary(tx, transferToBeEdited, inputs)
     });
 
@@ -79,14 +103,18 @@ router.patch('/transfer/:id', updateTransfer)
 
 
 
-async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
+export async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
   // check quantity is valid
   const inventoryTo = await tx.inventory.findUnique({
     where: {
       id: transferToBeEdited.toInventoryId
     },
     include:{
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: {
@@ -104,10 +132,10 @@ async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
 
   const diff = transferToBeEdited.quantity - inputs.quantity
   const derived = getInventoryDerived(inventoryTo)
-  if ((derived.entregadosDelAutor + diff) > derived.entregadosAlAutor) {
+  if ((derived.entregadosDelAutor - diff) > derived.entregadosAlAutor) {
     const res = {
       status: 400,
-      message: `No se puede regresar mas libros que han estado entregados al autor`
+      message: `No se puede devolver mas libros que han estado entregados al autor`
     }
     return res
   }
@@ -123,7 +151,13 @@ async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
       return res
     }
 
-    const validOrder = checkSendReturnOrder(inventoryTo, transferToBeEdited, "to")
+    const potentialEdit = {
+      id: inputs.id,
+      quantity: inputs.quantity,
+      dateStr: inputs.dateStrOptional
+    }
+
+    const validOrder = checkDeliveryReturnOrder(inventoryTo, potentialEdit, "return")
     if (!validOrder) {
       const res = {
         status: 400,
@@ -154,14 +188,18 @@ async function editReturnFromAuthor(tx, transferToBeEdited, inputs) {
 
 
 
-async function editSendToAuthor(tx, transferToBeEdited, inputs) {
+export async function editSendToAuthor(tx, transferToBeEdited, inputs) {
   // check quantity is valid - both from disponibles upstream and entregados downstream
   const inventoryFrom = await tx.inventory.findUnique({
     where: {
       id: transferToBeEdited.fromInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: {
@@ -180,6 +218,14 @@ async function editSendToAuthor(tx, transferToBeEdited, inputs) {
   // upstream - check enough disponibles
   const diff = transferToBeEdited.quantity - inputs.quantity
   const derived = getInventoryDerived(inventoryFrom)
+  if((derived.disponibles - diff) > derived.copias) {
+    const res = {
+      status: 400,
+      message: `No hay suficientes libros imprimidos para hacer este entrega al autor.`
+    }
+    return res
+  }
+
   if ((derived.disponibles + diff) < 0) {
     const res = {
       status: 400,
@@ -198,8 +244,14 @@ async function editSendToAuthor(tx, transferToBeEdited, inputs) {
   }
 
   // check date is valid
-  const validOrder = checkDeliveryReturnOrder(inventoryFrom, transferToBeEdited, "from")
-  if (!valid) {
+  const potentialEdit = {
+    id: inputs.id,
+    dateStr: inputs.dateStrOptional,
+    quantity: inputs.quantity
+  }
+
+  const validOrder = checkDeliveryReturnOrder(inventoryFrom, potentialEdit, "send")
+  if (!validOrder) {
     const res = {
       status: 400,
       message: `No se puede poner una entrega del autor después de sus devoluciones.`
@@ -232,17 +284,20 @@ async function editSendToAuthor(tx, transferToBeEdited, inputs) {
 
 
 
-async function editSendToLibrary(tx, transferToBeEdited, inputs) {
+export async function editSendToLibrary(tx, transferToBeEdited, inputs) {
   // check quantity is valid - both from disponibles upstream and downstream
   const inventoryFrom = await tx.inventory.findUnique({
     where: {
       id: transferToBeEdited.fromInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
-      impressions: true,
       transfersFrom: {
         orderBy: {
           dateStr: 'asc'
@@ -261,7 +316,11 @@ async function editSendToLibrary(tx, transferToBeEdited, inputs) {
       id: transferToBeEdited.toInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: {
@@ -280,6 +339,14 @@ async function editSendToLibrary(tx, transferToBeEdited, inputs) {
   // upstream
   const diff = transferToBeEdited.quantity - inputs.quantity
   const derived = getInventoryDerived(inventoryFrom)
+  if((derived.transfers - diff) > derived.copias) {
+    const res = {
+      status: 400,
+      message: `No hay suficientes libros imprimidos para hacer este ingreso a otra librería.`
+    }
+    return res
+  }
+
   if ((derived.disponibles + diff) < 0) {
     const res = {
       status: 400,
@@ -290,7 +357,7 @@ async function editSendToLibrary(tx, transferToBeEdited, inputs) {
 
   // downstream
   const derivedTo = getInventoryDerived(inventoryTo)
-  if ((derivedTo.disponibles + diff) < 0) {
+  if ((derivedTo.disponibles - diff) < 0) {
     const res = {
       status: 400,
       message: `No se quedan suficiente libros disponibles en el inventario de destinación para hacer este cambio.`
@@ -298,8 +365,14 @@ async function editSendToLibrary(tx, transferToBeEdited, inputs) {
     return res
   }
 
+  const potentialEdit = {
+    id: inputs.id,
+    quantity: inputs.quantity,
+    dateStr: inputs.dateStrOptional
+  }
+
   //date check
-  const valid = checkSendReturnOrder(inventoryFrom, transferToBeEdited, "from")
+  const valid = checkSendReturnOrder(inventoryFrom, potentialEdit, inputs.type)
   if (!valid) {
     const res = {
       status: 400,
@@ -329,14 +402,18 @@ async function editSendToLibrary(tx, transferToBeEdited, inputs) {
 
 
 
-async function editReturnToLibrary(tx, transferToBeEdited, inputs) {
+export async function editReturnToLibrary(tx, transferToBeEdited, inputs) {
   // check quantity is valid - both from disponibles upstream and downstream
   const inventoryFrom = await tx.inventory.findUnique({
     where: {
       id: transferToBeEdited.fromInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: {
@@ -357,7 +434,11 @@ async function editReturnToLibrary(tx, transferToBeEdited, inputs) {
       id: transferToBeEdited.toInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: {
@@ -385,17 +466,23 @@ async function editReturnToLibrary(tx, transferToBeEdited, inputs) {
   }
 
   // downstream
-  const derivedTo = getInventoryDerived(inventoryTo)
-  if ((derivedTo.disponibles + diff) < 0) {
-    const res = {
-      status: 400,
-      message: `No se quedan suficiente libros disponibles en el inventario de destinación para hacer este cambio.`
-    }
-    return res
+  // const derivedTo = getInventoryDerived(inventoryTo)
+  // if ((derivedTo.disponibles + diff) < 0) {
+  //   const res = {
+  //     status: 400,
+  //     message: `No se quedan suficiente libros disponibles en el inventario de destinación para hacer este cambio.`
+  //   }
+  //   return res
+  // }
+
+  const potentialEdit = {
+    id: inputs.id,
+    quantity: inputs.quantity,
+    dateStr: inputs.dateStrOptional
   }
 
   //date
-  const valid = checkSendReturnOrder(inventoryFrom, transferToBeEdited, "from")
+  const valid = checkSendReturnOrder(inventoryFrom, potentialEdit, "return")
   if (!valid) {
     const res = {
       status: 400,

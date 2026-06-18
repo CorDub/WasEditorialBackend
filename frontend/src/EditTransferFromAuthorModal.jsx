@@ -103,7 +103,7 @@ function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalF
         },
         credentials: "include",
         body: JSON.stringify({
-          inventoryToId: clickedRow.toInventoryId,
+          toInventoryId: clickedRow.toInventoryId,
           quantity: quantity,
           type: "return",
           note: "- Devolución del autor - " + note,

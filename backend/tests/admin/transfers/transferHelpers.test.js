@@ -184,6 +184,7 @@ describe(`checkSendReturnOrder - send - happy path`, () => {
     bookstore2 = await createBookstore(prisma);
     inventory1 = await createInventory(prisma, book.id, bookstore1.id);
     inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    
     impression = await createImpression(prisma, book.id);
 
     send1 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-15"})
@@ -194,7 +195,66 @@ describe(`checkSendReturnOrder - send - happy path`, () => {
 
     const transferToBeEdited = {
       id: send1.id,
-      dateStrOptional: "2026-06-14"
+      dateStr: "2026-06-14",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true,
+      }
+    })
+    res = checkSendReturnOrder(inventoryWithTransfers, transferToBeEdited, "send")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return true", async() => {
+    expect(res).toBe(true);
+  })
+})
+
+
+
+describe(`checkSendReturnOrder - send - wrong order`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let send1;
+  let deletedSend;
+  let return1; 
+  let deletedReturn;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    send1 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-15"})
+    deletedSend = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    return1 = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedReturn = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: send1.id,
+      dateStr: "2026-06-17",
+      quantity: 10
     }
 
     const inventoryWithTransfers = await prisma.inventory.findUnique({
@@ -206,7 +266,65 @@ describe(`checkSendReturnOrder - send - happy path`, () => {
         transfersFrom: true
       }
     })
-    res = checkSendReturnOrder(inventoryWithTransfers, transferToBeEdited, "from")
+    res = checkSendReturnOrder(inventoryWithTransfers, transferToBeEdited, "send")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return false", async() => {
+    expect(res).toBe(false);
+  })
+})
+
+
+
+describe(`checkSendReturnOrder - return - happy path`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let send1;
+  let deletedSend;
+  let return1; 
+  let deletedReturn;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    send1 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-15"})
+    deletedSend = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    return1 = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedReturn = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: return1.id,
+      dateStr: "2026-06-17",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkSendReturnOrder(inventoryWithTransfers, transferToBeEdited, "return")
   })
 
   afterAll(async() => {
@@ -215,5 +333,295 @@ describe(`checkSendReturnOrder - send - happy path`, () => {
 
   it("should return true", async() => {
     expect(res).toBe(true);
+  })
+})
+
+
+
+describe(`checkSendReturnOrder - return - wrong order`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let send1;
+  let deletedSend;
+  let return1; 
+  let deletedReturn;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    send1 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-15"})
+    deletedSend = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    return1 = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedReturn = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: return1.id,
+      dateStr: "2026-06-14",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkSendReturnOrder(inventoryWithTransfers, transferToBeEdited, "return")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return false", async() => {
+    expect(res).toBe(false);
+  })
+})
+
+
+
+describe(`checkDeliveryReturnOrder - delivery - happy path`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let delivery1;
+  let deletedDelivery;
+  let devolucion1; 
+  let deletedDevolucion;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    delivery1 = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-15"})
+    deletedDelivery = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    devolucion1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedDevolucion = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: delivery1.id,
+      dateStr: "2026-06-14",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkDeliveryReturnOrder(inventoryWithTransfers, transferToBeEdited, "send")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return true", async() => {
+    expect(res).toBe(true);
+  })
+})
+
+
+
+describe(`checkDeliveryReturnOrder - delivery - wrong order`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let delivery1;
+  let deletedDelivery;
+  let devolucion1; 
+  let deletedDevolucion;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    delivery1 = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-15"})
+    deletedDelivery = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    devolucion1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedDevolucion = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: delivery1.id,
+      dateStr: "2026-06-17",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkDeliveryReturnOrder(inventoryWithTransfers, transferToBeEdited, "send")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return false", async() => {
+    expect(res).toBe(false);
+  })
+})
+
+
+
+describe(`checkDeliveryReturnOrder - devolucion - happy path`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let delivery1;
+  let deletedDelivery;
+  let devolucion1; 
+  let deletedDevolucion;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    delivery1 = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-15"})
+    deletedDelivery = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    devolucion1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedDevolucion = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: devolucion1.id,
+      dateStr: "2026-06-17",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkDeliveryReturnOrder(inventoryWithTransfers, transferToBeEdited, "return")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return true", async() => {
+    expect(res).toBe(true);
+  })
+})
+
+
+
+describe(`checkDeliveryReturnOrder - devolucion - wrong order`, () => {
+  let res;
+  let author;
+  let category;
+  let book;
+  let bookstore1, bookstore2;
+  let inventory1, inventory2;
+  let impression;
+  let delivery1;
+  let deletedDelivery;
+  let devolucion1; 
+  let deletedDevolucion;
+
+  beforeAll(async() => {
+    author = await createAuthor(prisma)
+    category = await createCategory(prisma);
+    book = await createBook(prisma, [author.id]);
+    bookstore1 = await createBookstore(prisma);
+    bookstore2 = await createBookstore(prisma);
+    inventory1 = await createInventory(prisma, book.id, bookstore1.id);
+    inventory2 = await createInventory(prisma, book.id, bookstore2.id);
+    impression = await createImpression(prisma, book.id);
+
+    delivery1 = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-15"})
+    deletedDelivery = await createTransfer(prisma, inventory1.id, {quantity: 10, dateStr: "2026-06-11", isDeleted: true})
+
+    devolucion1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-16"})
+    deletedDevolucion = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 10, dateStr: "2026-06-10", isDeleted: true})
+
+    const transferToBeEdited = {
+      id: devolucion1.id,
+      dateStr: "2026-06-14",
+      quantity: 10
+    }
+
+    const inventoryWithTransfers = await prisma.inventory.findUnique({
+      where: {
+        id: inventory1.id
+      },
+      include: {
+        transfersTo: true,
+        transfersFrom: true
+      }
+    })
+    res = checkDeliveryReturnOrder(inventoryWithTransfers, transferToBeEdited, "return")
+  })
+
+  afterAll(async() => {
+    await truncateAll(prisma)
+  })
+
+  it("should return false", async() => {
+    expect(res).toBe(false);
   })
 })

@@ -148,7 +148,8 @@ export async function createBookstore(
       contact_name: contact_name,
       contact_phone: contact_phone,
       contact_email: contact_email,
-      createdAt : createdAt
+      createdAt : createdAt,
+      wasRed: wasRed
     }
   })
 

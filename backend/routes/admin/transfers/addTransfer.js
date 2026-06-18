@@ -83,10 +83,10 @@ router.post('/transfer', addTransfer);
 
 
 export async function addDeliveryToAuthor(tx, inventoryFrom, inputs, res) {
-  if (!inputs.wasRed && inventoryFrom.bookstoreId !== 1) {
+  if (!inventoryFrom.bookstore.wasRed && inventoryFrom.bookstoreId !== 1) {
     return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde un inventario Was"})
   }
-
+  
   const newTransferToAuthor = await tx.transfer.create({
     data: {
       fromInventoryId: inputs.inventoryFromId,
@@ -98,21 +98,45 @@ export async function addDeliveryToAuthor(tx, inventoryFrom, inputs, res) {
     }
   });
 
-  res.status(200).json(newTransferToAuthor)
+  res.status(200).json(newTransferToAuthor);
 }
 
 
 
 export async function addReturnFromAuthor(tx, inputs, res) {
-  const valid = await validateAuthorReturn(tx, inputs.bookId, inputs.bookstoreToId, inputs.quantity)
-  if (!valid) {
-    res.status(400).json({message: "No se puede regresar mas libros que han estados entregados al autor"})
+  const returnInventory = await tx.inventory.findUnique({
+    where: {
+      bookId_bookstoreId: {
+        bookId: inputs.bookId,
+        bookstoreId: inputs.bookstoreToId,
+      }
+    },
+    include: {
+      book: {
+        include: {
+          impressions: true
+        }
+      },
+      bookstore: true,
+      sales: true,
+      transfersFrom: true,
+      transfersTo: true
+    }
+  });
+
+  if (!returnInventory.bookstore.wasRed) {
+    throw new Error("Return inventory specified is not part of the WAS network")
+  }
+
+  const derived = getInventoryDerived(returnInventory)
+  if ((derived.entregadosDelAutor + inputs.quantity) > derived.entregadosAlAutor) {
+    res.status(400).json({message: "No se puede devolver mas libros que han estado entregados al autor."})
     return;
   }
 
   const newReturnFromAuthor = await tx.transfer.create({
     data: {
-      toInventoryId: valid.id,
+      toInventoryId: returnInventory.id,
       quantity: inputs.quantity,
       type: inputs.type,
       note: inputs.note,

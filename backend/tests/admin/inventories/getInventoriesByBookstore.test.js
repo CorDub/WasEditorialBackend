@@ -428,6 +428,14 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
   let entregadosAlAutorWas;
   let entregadosAlAutorOtherWas;
 
+  let entregadosAlAutorOther;
+  let entregadosAlAutorThird;
+  let deletedEntregadosAlAutorOther;
+
+  let entregadosDelAutorOther;
+  let entregadosDelAutorThird;
+  let deletedEntregadosDelAutorOther;
+
   let saleWas;
   let saleOtherWas;
 
@@ -571,10 +579,10 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
     expect(otherInventoryProcessed.extraTransfers).toBe(50)
     expect(otherInventoryProcessed.copias).toBe(150)
     expect(otherInventoryProcessed.returns).toBe(3)
-    expect(wasCondensed.entregadosAlAutor).toBe(3)
-    expect(wasCondensed.entregadosDelAutor).toBe(2)
+    expect(otherInventoryProcessed.entregadosAlAutor).toBe(3)
+    expect(otherInventoryProcessed.entregadosDelAutor).toBe(2)
     expect(otherInventoryProcessed.ventas).toBe(15)
-    expect(otherInventoryProcessed.disponibles).toBe(130)
+    expect(otherInventoryProcessed.disponibles).toBe(131)
     expect(otherInventoryProcessed.id).not.toBe(1)
   })
 
@@ -585,8 +593,8 @@ describe(`getInventoriesByBookstores works correctly`, async() => {
     expect(thirdInventoryProcessed.extraTransfers).toBe(55)
     expect(thirdInventoryProcessed.copias).toBe(165)
     expect(thirdInventoryProcessed.returns).toBe(5)
-    expect(wasCondensed.entregadosAlAutor).toBe(2)
-    expect(wasCondensed.entregadosDelAutor).toBe(1)
+    expect(thirdInventoryProcessed.entregadosAlAutor).toBe(2)
+    expect(thirdInventoryProcessed.entregadosDelAutor).toBe(1)
     expect(thirdInventoryProcessed.ventas).toBe(16)
     expect(thirdInventoryProcessed.disponibles).toBe(143)
     expect(thirdInventoryProcessed.id).not.toBe(1)

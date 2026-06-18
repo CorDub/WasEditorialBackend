@@ -86,7 +86,11 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "return" })
+    if (inventory.bookstoreId === 1) {
+      allTransfers.push({...transfer, type: "return" })
+    } else {
+      allTransfers.push({...transfer, type: "send" })
+    }
   }
 
   for (const transfer of inventory.transfersFrom) {
@@ -103,7 +107,11 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "send" })
+    if (inventory.bookstoreId === 1) {
+      allTransfers.push({...transfer, type: "send" })
+    } else {
+      allTransfers.push({...transfer, type: "return" })
+    }
   }
 
   // console.log("inventory.bookstoreId", inventory.bookstoreId)
@@ -124,18 +132,22 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
     }
 
     // if equals
-    let precedence;
-    if (a.type === "send") {
-      precedence = {
-        impression: 0,
-        from: 1,
-        to: 2,
-      } 
-    } else {
-      precedence = {
-        to: 0,
-        from: 1
-      }
+    // let precedence;
+    // if (inventory.bookstoreId === 1) {
+    //   precedence = {
+    //     // impression: 0,
+    //     send: 0,
+    //     return: 1,
+    //   } 
+    // } else {
+    //   precedence = {
+    //     return: 0,
+    //     send: 1
+    //   }
+    // }
+    let precedence = {
+      send: 0,
+      return: 1
     }
     
     return precedence[a.type] - precedence[b.type]
@@ -211,17 +223,21 @@ export function checkDeliveryReturnOrder(inventory, transferToBeEdited, typeTBE)
     }
 
     // if equals
-    let precedence;
-    if (a.type === "send") {
-      precedence = {
-        from: 0,
-        to: 1,
-      } 
-    } else {
-      precedence = {
-        to: 0,
-        from: 1
-      }
+    // let precedence;
+    // if (a.type === "send") {
+    //   precedence = {
+    //     send: 0,
+    //     return: 1,
+    //   } 
+    // } else {
+    //   precedence = {
+    //     return: 0,
+    //     send: 1
+    //   }
+    // }
+    let precedence = {
+      send: 0,
+      return: 1
     }
 
     return precedence[a.type] - precedence[b.type]

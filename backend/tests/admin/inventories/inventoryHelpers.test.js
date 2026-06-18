@@ -672,7 +672,7 @@ describe("getWasInventory returns the correct values", async () => {
   });
 
   it("should return the correct copias", () => {
-    expect(results.copias).toBe(501);
+    expect(results.copias).toBe(650);
   });
 
   it("should return the correct disponibles", () => {
@@ -682,18 +682,18 @@ describe("getWasInventory returns the correct values", async () => {
   it("copias should be internally consistent", () => {
     expect(results.copias).toBe(
       results.impressionInicial +
-      results.extraImpressions +
-      results.entregadosDelAutor -
-      results.transfers
+      results.extraImpressions
     );
   });
 
   it("disponibles should be internally consistent", () => {
     expect(results.disponibles).toBe(
       results.copias -
+      results.transfers -
       results.ventas +
       results.returns -
-      results.entregadosAlAutor
+      results.entregadosAlAutor +
+      results.entregadosDelAutor
     );
   });
 });

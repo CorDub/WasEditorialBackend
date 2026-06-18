@@ -240,16 +240,16 @@ export function getWasInventory(inventory) {
   //step 4: copias
   res.copias = 
     res.impressionInicial +
-    res.extraImpressions +
-    res.entregadosDelAutor -
-    res.transfers
+    res.extraImpressions
 
   //step5: disponible
   res.disponibles = 
     res.copias -
+    res.transfers -
     res.ventas +
     res.returns -
-    res.entregadosAlAutor
+    res.entregadosAlAutor +
+    res.entregadosDelAutor
 
   return res
 }

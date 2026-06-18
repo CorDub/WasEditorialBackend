@@ -29,6 +29,10 @@ export async function deleteTransfer(req, res) {
         }
       })
 
+      if (!transferToBeDeleted) {
+        throw new Error("transfer doesn't exist")
+      }
+
       if (transferToBeDeleted.isDeleted) {
         throw new Error("deleted transfer")
       }
@@ -36,41 +40,41 @@ export async function deleteTransfer(req, res) {
       // routing from here
       // return from author path
       if (!transferToBeDeleted.fromInventoryId) {
-        console.log("return from author")
         result = await deleteReturnFromAuthor(tx, transferToBeDeleted)
         return
       }
 
       // send to author
       if (!transferToBeDeleted.toInventoryId) {
-        console.log("send to author")
         result = await deleteSendToAuthor(tx, transferToBeDeleted)
         return
       }
       
       // send to library
       if (transferToBeDeleted.fromInventory.bookstoreId === 1) {
-        console.log("send to library")
         result = await deleteSendToLibrary(tx, transferToBeDeleted)
         return
       } 
 
       // return to library
-      console.log("return to library")
       result = await deleteReturnToLibrary(tx, transferToBeDeleted)
     });
 
     res.status(result.status).json({message: result.message})
   } catch(error) {
     console.error(error);
-    res.status(500).json({error: 'A server error occurred while deleting the sale'});
+    res.status(500).json({error: 'A server error occurred while deleting the transfer'});
   }
 }
 router.delete('/transfer/:id', deleteTransfer)
 
 
 
-async function deleteReturnFromAuthor(tx, transferToBeDeleted) {
+export async function deleteReturnFromAuthor(tx, transferToBeDeleted) {
+  if (!transferToBeDeleted) {
+    throw new Error("No transfer to be deleted was provided")
+  }
+
   const deletedReturnFromAuthor = await tx.transfer.update({
     where: {
       id: transferToBeDeleted.id
@@ -89,14 +93,18 @@ async function deleteReturnFromAuthor(tx, transferToBeDeleted) {
 
 
 
-async function deleteSendToLibrary(tx, transferToBeDeleted) {
+export async function deleteSendToLibrary(tx, transferToBeDeleted) {
   // check if there are any returns or delivery to author from the inventory being sent to
   const inventoryTo = await tx.inventory.findUnique({
     where: {
       id: transferToBeDeleted.toInventoryId
     },
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: true,
@@ -132,8 +140,12 @@ async function deleteSendToLibrary(tx, transferToBeDeleted) {
 
 
 
-async function deleteReturnToLibrary(tx, transferToBeDeleted) {
+export async function deleteReturnToLibrary(tx, transferToBeDeleted) {
   // can delete straight away if it's a return
+  if (!transferToBeDeleted) {
+    throw new Error("No transfer to be deleted was provided")
+  }
+
   const deletedReturn = await tx.transfer.update({
     where: {
       id: transferToBeDeleted.id
@@ -153,14 +165,22 @@ async function deleteReturnToLibrary(tx, transferToBeDeleted) {
 
 
 
-async function deleteSendToAuthor(tx, transferToBeDeleted) {
+export async function deleteSendToAuthor(tx, transferToBeDeleted) {
   // check if there's more or equal sent to author left than returned
+  if (!transferToBeDeleted) {
+    throw new Error("No transfer to be deleted was provided")
+  }
+
   const inventoryFrom = await tx.inventory.findUnique({
     where: {
       id: transferToBeDeleted.fromInventoryId
     }, 
     include: {
-      book: true,
+      book: {
+        include: {
+          impressions: true
+        }
+      },
       bookstore: true,
       sales: true,
       transfersFrom: true,

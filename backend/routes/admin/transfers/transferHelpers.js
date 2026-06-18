@@ -86,7 +86,7 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "to" })
+    allTransfers.push({...transfer, type: "return" })
   }
 
   for (const transfer of inventory.transfersFrom) {
@@ -103,17 +103,17 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "from" })
+    allTransfers.push({...transfer, type: "send" })
   }
 
-  if (inventory.impressions) {
-    for (const impression of inventory.impressions) {
-      allTransfers.push({...impression, type: "impression" })
-    }
-  }
+  // console.log("inventory.bookstoreId", inventory.bookstoreId)
+  // if (inventory.bookstoreId === 1 && inventory.book.impressions) {
+  //   for (const impression of inventory.book.impressions) {
+  //     allTransfers.push({...impression, type: "impression" })
+  //   }
+  // }
 
   allTransfers.push({...transferToBeEdited, type: typeTBE})
-  console.log("allTransfers", allTransfers)
 
   //sort
   allTransfers.sort((a, b) => {
@@ -125,7 +125,7 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
 
     // if equals
     let precedence;
-    if (inventory.impressions) {
+    if (a.type === "send") {
       precedence = {
         impression: 0,
         from: 1,
@@ -140,17 +140,15 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
     
     return precedence[a.type] - precedence[b.type]
   })
-  console.log("sorted allTransfers", allTransfers)
 
   // check
   let current = 0;
   for (const transfer of allTransfers) {
-    console.log("current", current)
-    if (transfer.type === "impression" || transfer.type === "to") {
+    if (transfer.type === "impression" || transfer.type === "send") {
       current += transfer.quantity
     }
 
-    if (transfer.type === "from") {
+    if (transfer.type === "return") {
       current -= transfer.quantity
     }
 
@@ -164,11 +162,15 @@ export function checkSendReturnOrder(inventory, transferToBeEdited, typeTBE) {
 
 
 
-function checkDeliveryReturnOrder(inventory, transferToBeEdited, type) {
+export function checkDeliveryReturnOrder(inventory, transferToBeEdited, typeTBE) {
   //get all relevant transfers
   let allTransfers = []
 
   for (const transfer of inventory.transfersTo) {
+    if (transfer.isDeleted) {
+      continue
+    }
+
     if (transfer.id === transferToBeEdited.id) {
       continue
     }
@@ -178,10 +180,14 @@ function checkDeliveryReturnOrder(inventory, transferToBeEdited, type) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "to" })
+    allTransfers.push({...transfer, type: "return" })
   }
 
   for (const transfer of inventory.transfersFrom) {
+    if (transfer.isDeleted) {
+      continue
+    }
+
     if (transfer.id === transferToBeEdited.id) {
       continue
     }
@@ -191,7 +197,7 @@ function checkDeliveryReturnOrder(inventory, transferToBeEdited, type) {
       continue
     }
 
-    allTransfers.push({...transfer, type: "from" })
+    allTransfers.push({...transfer, type: "send" })
   }
 
   allTransfers.push({...transferToBeEdited, type: typeTBE})
@@ -205,9 +211,17 @@ function checkDeliveryReturnOrder(inventory, transferToBeEdited, type) {
     }
 
     // if equals
-    const precedence = {
-      from: 0,
-      to: 1
+    let precedence;
+    if (a.type === "send") {
+      precedence = {
+        from: 0,
+        to: 1,
+      } 
+    } else {
+      precedence = {
+        to: 0,
+        from: 1
+      }
     }
 
     return precedence[a.type] - precedence[b.type]
@@ -216,11 +230,11 @@ function checkDeliveryReturnOrder(inventory, transferToBeEdited, type) {
   // check
   let current = 0;
   for (const transfer of allTransfers) {
-    if (transfer.type === "from") {
+    if (transfer.type === "send") {
       current += transfer.quantity
     }
 
-    if (transfer.type === "to") {
+    if (transfer.type === "return") {
       current -= transfer.quantity
     }
 

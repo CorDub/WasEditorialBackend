@@ -14,7 +14,7 @@ export async function getCurrentCosts(req, res) {
       where: {
         isDeleted: false,
         payment: {
-          status: "created",
+          // status: "created",
           isDeleted: false
         }
       },
@@ -27,6 +27,7 @@ export async function getCurrentCosts(req, res) {
         payment: {
           select: {
             forMonth: true,
+            status: true,
             user: {
               select: {
                 first_name: true,

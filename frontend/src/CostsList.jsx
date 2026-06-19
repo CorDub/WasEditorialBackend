@@ -62,6 +62,12 @@ function CostsLists() {
             )
         },
         {
+            header: "Estatus del pago",
+            Cell: ({row}) => (
+                <div>{`${row.original.payment.status}`}</div>
+            )
+        },
+        {
             header: "Nota",
             accessorKey: "note" 
         },

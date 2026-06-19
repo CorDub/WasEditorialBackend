@@ -206,7 +206,7 @@ function TableActions ({
                 <div className="ta-tooltip">Marcar pagado</div>)}
               </>
             )}
-            {status === "created" && (
+            {/* {status === "created" && (
               <>
               <FontAwesomeIcon icon={faDollarSign}
                 className='ta-button ta-delete'
@@ -217,7 +217,7 @@ function TableActions ({
               {isCostTooltipOpen && (
                 <div className="ta-tooltip">Añadir costo addicional</div>)}
               </>
-            )}
+            )} */}
             </>}
 
         {type && type === "inventory" &&

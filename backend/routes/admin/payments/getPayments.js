@@ -143,7 +143,7 @@ export async function getPayments(req, res) {
     const paymentsSent = [];
     const promises = selectedPayments.map(payment => updateAmount(payment));
     for (const payment of selectedPayments) {
-      if (payment.amount > 0) {
+      if (payment.amount) {
         paymentsSent.push(payment)
       }
     }

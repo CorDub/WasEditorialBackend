@@ -82,20 +82,35 @@ function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalF
 
   async function sendToServer() {
     try {
-      const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}`, {
+      // const response = await fetch(`${baseURL}/api/admin/impressions/impression/${clickedRow.id}`, {
+      //   method: "PATCH",
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   credentials: "include",
+      //   body: JSON.stringify({
+      //     quantity: quantity,
+      //     book_id: clickedRow.bookId,
+      //     note: "- Devolución del autor - " + note,
+      //     dateStr: dateStr,
+      //     authorDelivery: true
+      //   }),
+      // });
+      const response = await fetch(`${baseURL}/api/admin/transfers/transfer/${clickedRow.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
         body: JSON.stringify({
+          toInventoryId: clickedRow.toInventoryId,
           quantity: quantity,
-          book_id: clickedRow.bookId,
+          type: "return",
           note: "- Devolución del autor - " + note,
           dateStr: dateStr,
-          authorDelivery: true
-        }),
-      });
+          wasRed: true
+        })
+      })
 
       if (response.ok === false) {
         const error = await response.json();
@@ -103,10 +118,10 @@ function EditTransferFromAuthorModal({clickedRow, closeModal, pageIndex, globalF
           setErrors(prev => [...prev, error.message]);
           return;
         }
-        const alertMessage = 'No se pudó registrar una nueva entrega del autor.';
+        const alertMessage = 'No se pudó editar la entrega del autor.';
         closeModal(pageIndex, globalFilter, false, alertMessage, "error");
       } else {
-        const alertMessage = `Una nueva entrega del autor ha sido registrada.`;
+        const alertMessage = `Una nueva entrega del autor ha sido editada.`;
         closeModal(pageIndex, globalFilter, true, alertMessage, "confirmation");
       }
     } catch(error) {

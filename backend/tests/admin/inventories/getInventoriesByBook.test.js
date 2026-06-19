@@ -46,14 +46,16 @@ describe("getInventoriesByBook returns the correct results", async() => {
   let transfer, deletedTransfer, transfer2;
   let transfer3, transfer4, transfer5, deletedTransfer2;
 
-  let impression1, impression2, deletedImpression, entregadosDelAutor;
+  let impression1, impression2, deletedImpression;
   let sale1, sale2, deletedSale;
 
-  let impression3, impression4, impression5, deletedImpression2, entregadosDelAutor2;
+  let impression3, impression4, impression5, deletedImpression2;
   let sale3, sale4, deletedSale2;
 
-  let entregadosDelAutor3;
   let sale5, sale6, deletedSale3;
+
+  let devolucionAutor1, devolucionAutor2, devolucionAutor3, devolucionAutor4;
+  let deletedDevolucionAutor1, deletedDevolucionAutor2;
 
   beforeAll(async() => {
     category = await createCategory(prisma);
@@ -70,16 +72,21 @@ describe("getInventoriesByBook returns the correct results", async() => {
     transfer = await createTransfer(prisma, inventory1.id, {quantity: 10})
     deletedTransfer = await createTransfer(prisma, inventory1.id, {quantity: 10, isDeleted: true})
     transfer2 = await createTransfer(prisma, inventory1.id, {toInventoryId: inventory2.id, quantity: 10})
+    devolucionAutor1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 5})
+    devolucionAutor2 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 2})
+    deletedDevolucionAutor1 = await createTransfer(prisma, null, {toInventoryId: inventory1.id, quantity: 2, isDeleted: true})
 
     transfer3 = await createTransfer(prisma, inventory2.id, {quantity: 7})
     transfer4 = await createTransfer(prisma, inventory2.id, {quantity: 7})
     transfer5 = await createTransfer(prisma, inventory2.id, {toInventoryId: inventory1.id, quantity: 10})
     deletedTransfer2 = await createTransfer(prisma, inventory2.id, {quantity: 7, isDeleted: true})
+    devolucionAutor3 = await createTransfer(prisma, null, {toInventoryId: inventory2.id, quantity: 5})
+    devolucionAutor4 = await createTransfer(prisma, null, {toInventoryId: inventory2.id, quantity: 1})
+    deletedDevolucionAutor2 = await createTransfer(prisma, null, {toInventoryId: inventory2.id, quantity: 2, isDeleted: true})
 
     impression1 = await createImpression(prisma, book.id, {quantity: 200, date: new Date("2025-01-01")})
     impression2 = await createImpression(prisma, book.id, {quantity: 100})
     deletedImpression = await createImpression(prisma, book.id, {quantity: 100, isDeleted: true})
-    entregadosDelAutor = await createImpression(prisma, book.id, {quantity: 5, authorDelivery: true})
     sale1 = await createSale(prisma, inventory1.id, [payment.id], {quantity: 3})
     sale2 = await createSale(prisma, inventory1.id, [payment.id], {quantity: 4})
     deletedSale = await createSale(prisma, inventory1.id, [payment.id], {quantity: 3, isDeleted: true})
@@ -88,12 +95,10 @@ describe("getInventoriesByBook returns the correct results", async() => {
     impression4 = await createImpression(prisma, book2.id, {quantity: 100})
     impression5 = await createImpression(prisma, book2.id, {quantity: 50})
     deletedImpression2 = await createImpression(prisma, book2.id, {quantity: 100, isDeleted: true})
-    entregadosDelAutor2 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true})
     sale3 = await createSale(prisma, inventory2.id, [payment.id], {quantity: 3})
     sale4 = await createSale(prisma, inventory2.id, [payment.id], {quantity: 4})
     deletedSale2 = await createSale(prisma, inventory1.id, [payment.id], {quantity: 3, isDeleted: true})
 
-    entregadosDelAutor3 = await createImpression(prisma, book2.id, {quantity: 5, authorDelivery: true})
     sale5 = await createSale(prisma, inventory3.id, [payment.id], {quantity: 3})
     sale6 = await createSale(prisma, inventory3.id, [payment.id], {quantity: 4})
     deletedSale3 = await createSale(prisma, inventory3.id, [payment.id], {quantity: 3, isDeleted: true})
@@ -138,9 +143,9 @@ describe("getInventoriesByBook returns the correct results", async() => {
     expect(book1Res.impressionInicial).toBe(200)
     expect(book1Res.extraImpressions).toBe(100)
     expect(book1Res.ventas).toBe(7)
-    expect(book1Res.entregadosDelAutor).toBe(5)
+    expect(book1Res.entregadosDelAutor).toBe(7)
     expect(book1Res.entregadosAlAutor).toBe(10)
-    expect(book1Res.disponibles).toBe(288)
+    expect(book1Res.disponibles).toBe(290)
   })
 
   it(`should return the correct aggregate values for book2`, async() => {
@@ -151,8 +156,8 @@ describe("getInventoriesByBook returns the correct results", async() => {
     expect(book2Res.impressionInicial).toBe(200)
     expect(book2Res.extraImpressions).toBe(150)
     expect(book2Res.ventas).toBe(14)
-    expect(book2Res.entregadosDelAutor).toBe(10)
+    expect(book2Res.entregadosDelAutor).toBe(6)
     expect(book2Res.entregadosAlAutor).toBe(14)
-    expect(book2Res.disponibles).toBe(332)
+    expect(book2Res.disponibles).toBe(328)
   })
 })

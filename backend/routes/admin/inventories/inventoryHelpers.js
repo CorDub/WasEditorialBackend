@@ -1,7 +1,7 @@
 export function getTotalWasImpressions(inventory) {
   let res = {
     impressionInicial: 0,
-    entregadosDelAutor: 0,
+    // entregadosDelAutor: 0,
     extraImpressions: 0,
   }
   
@@ -23,11 +23,11 @@ export function getTotalWasImpressions(inventory) {
       res.impressionInicial += impressions[i].quantity
       inicialImpressionAssigned = true
     } else {
-      if (impressions[i].authorDelivery) {
-        res.entregadosDelAutor += impressions[i].quantity
-      } else {
-        res.extraImpressions += impressions[i].quantity
-      }
+      // if (impressions[i].authorDelivery) {
+      //   res.entregadosDelAutor += impressions[i].quantity
+      // } else {
+      res.extraImpressions += impressions[i].quantity
+      // }
     }
   }
 
@@ -38,8 +38,10 @@ export function getTotalWasTransfers(inventory) {
   let res = {
     transfers: 0,
     entregadosAlAutor: 0,
+    entregadosDelAutor: 0,
     returns: 0
   }
+  
 
   if (inventory.transfersFrom.length > 0) {
     for (const transfer of inventory.transfersFrom) {
@@ -52,20 +54,26 @@ export function getTotalWasTransfers(inventory) {
       } else {
         res.entregadosAlAutor += transfer.quantity
       }
-      
     }
   }
   
   if (inventory.transfersTo.length > 0) {
     for (const transfer of inventory.transfersTo) {
+      
       if (transfer.isDeleted) {
         console.error(`Transfer is deleted`)
+        continue
+      }
+
+      if (transfer.fromInventoryId === null || transfer.fromInventoryId === undefined) {
+        res.entregadosDelAutor += transfer.quantity
         continue
       }
 
       res.returns += transfer.quantity
     }
   }
+
   return res
 }
 
@@ -94,7 +102,9 @@ export function getNonWasTransfers(inventory) {
   let res = {
     transferInicial: 0,
     extraTransfers: 0,
-    returns: 0
+    returns: 0,
+    transfersToAuthors: 0,
+    returnsFromAuthors: 0
   }
 
   if (!inventory.transfersTo || inventory.transfersTo.length === 0) {
@@ -118,7 +128,11 @@ export function getNonWasTransfers(inventory) {
       res.transferInicial += transfer.quantity
       transferInicialAssigned = true
     } else {
-      res.extraTransfers += transfer.quantity
+      if (transfer.fromInventoryId) {
+        res.extraTransfers += transfer.quantity
+      } else {
+        res.returnsFromAuthors += transfer.quantity
+      }
     }
   }
 
@@ -129,7 +143,11 @@ export function getNonWasTransfers(inventory) {
       continue
     }
 
-    res.returns += transfer.quantity
+    if (transfer.toInventoryId) {
+      res.returns += transfer.quantity
+    } else {
+      res.transfersToAuthors += transfer.quantity
+    }
   }
 
   return res
@@ -139,7 +157,11 @@ export function getNonWasTransfers(inventory) {
 export function getGivenToAuthor(inventory) {
   let res = 0
 
-  if (!inventory.transfersFrom || inventory.transfersFrom.length === 0) {
+  if (!inventory.transfersFrom) {
+    throw new Error("Transfers From were not provided")
+  }
+
+  if (inventory.transfersFrom.length === 0) {
     return res
   }
 
@@ -156,6 +178,34 @@ export function getGivenToAuthor(inventory) {
 
   return res
 }
+
+
+
+export function getReturnsFromAuthor(inventory) {
+  let res = 0
+
+  if (!inventory.transfersTo) {
+    throw new Error("Transfers to were not provided")
+  }
+
+  if (inventory.transfersTo.length === 0) {
+    return res
+  }
+
+  for (const transfer of inventory.transfersTo) {
+    if (transfer.isDeleted) {
+      console.error("Deleted transfer here that shouldn't happen")
+      continue
+    }
+
+    if (transfer.fromInventoryId === null) {
+      res += transfer.quantity
+    }
+  }
+
+  return res
+}
+
 
 
 export function getWasInventory(inventory) {
@@ -175,7 +225,7 @@ export function getWasInventory(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   res.impressionInicial += impressionsRes.impressionInicial
   res.extraImpressions += impressionsRes.extraImpressions
-  res.entregadosDelAutor += impressionsRes.entregadosDelAutor
+  // res.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   //step 2: sales
   res.ventas += getTotalSales(inventory)
@@ -185,20 +235,21 @@ export function getWasInventory(inventory) {
   res.transfers += transfersRes.transfers
   res.entregadosAlAutor += transfersRes.entregadosAlAutor
   res.returns += transfersRes.returns
+  res.entregadosDelAutor += transfersRes.entregadosDelAutor
 
   //step 4: copias
   res.copias = 
     res.impressionInicial +
-    res.extraImpressions +
-    res.entregadosDelAutor -
-    res.transfers
+    res.extraImpressions
 
   //step5: disponible
   res.disponibles = 
     res.copias -
+    res.transfers -
     res.ventas +
     res.returns -
-    res.entregadosAlAutor
+    res.entregadosAlAutor +
+    res.entregadosDelAutor
 
   return res
 }
@@ -210,6 +261,8 @@ export function getOtherInventory(inventory) {
     inicial: 0,
     extraTransfers: 0,
     returns: 0,
+    entregadosAlAutor: 0,
+    entregadosDelAutor: 0,
     ventas: 0,
     disponibles: 0,
   }
@@ -218,6 +271,8 @@ export function getOtherInventory(inventory) {
   scaffold.inicial += transferRes.transferInicial
   scaffold.extraTransfers += transferRes.extraTransfers
   scaffold.returns += transferRes.returns
+  scaffold.entregadosAlAutor += transferRes.transfersToAuthors
+  scaffold.entregadosDelAutor += transferRes.returnsFromAuthors
 
   const salesRes = getTotalSales(inventory)
   scaffold.ventas += salesRes
@@ -227,7 +282,9 @@ export function getOtherInventory(inventory) {
   scaffold.disponibles = 
     scaffold.copias - 
     scaffold.returns -
-    scaffold.ventas
+    scaffold.ventas -
+    scaffold.entregadosAlAutor +
+    scaffold.entregadosDelAutor
   
   return scaffold
 }

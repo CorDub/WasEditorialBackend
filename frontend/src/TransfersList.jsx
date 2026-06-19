@@ -26,6 +26,7 @@ function TransfersList() {
     pageIndex: 0,
     pageSize: 15
   });
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -43,21 +44,21 @@ function TransfersList() {
     },
     {
       header: "Libro",
-      accessorKey:'fromInventory.book.title',
+      // accessorKey:'fromInventory.book.title',
       Cell: ({row}) => row.original.fromInventory
         ? row.original.fromInventory.book.title
-        : row.original.book.title
+        : row.original.toInventory.book.title
     },
     {
       header: "De",
-      accessorKey: "fromInventory.bookstore.name",
+      // accessorKey: "fromInventory.bookstore.name",
       Cell: ({row}) => row.original.fromInventory
         ? row.original.fromInventory.bookstore.name
         : "Autor"
     },
     {
       header: "A",
-      accessorKey: "toInventory.bookstore.name",
+      // accessorKey: "toInventory.bookstore.name",
       Cell: ({row}) => row.original.toInventory
         ? row.original.toInventory.bookstore.name
         : row.original.fromInventory
@@ -143,7 +144,7 @@ function TransfersList() {
   });
 
   function chooseCorrectModalType(clickedRow) {
-    if (!clickedRow.toInventory && !clickedRow.fromInventory) {
+    if (clickedRow.toInventory && !clickedRow.fromInventory) {
       setModalType("transferFromAuthor")
       return
     }

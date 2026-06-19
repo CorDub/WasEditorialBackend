@@ -56,6 +56,8 @@ function BookstoreInventory({
     pageSize: 30
   })
 
+  console.log("data", data)
+
   const columns = useMemo(() => [
     {
       header: "Acciones",
@@ -104,11 +106,6 @@ function BookstoreInventory({
       size: specificBookstore.total.bookstoreId === 1 ? 50 : null
     },
     {
-      header: "Entregados del autor",
-      accessorKey: "entregadosDelAutor",
-      size: 50
-    },
-    {
       header: "Ingresados a otra librerías",
       accessorKey: "transfers",
       size: 50
@@ -134,6 +131,11 @@ function BookstoreInventory({
       Cell: ({row}) => (
         <div>{row.original.entregadosAlAutor}</div>
       ),
+    },
+    {
+      header: "Devoluciones del autor",
+      accessorKey: "entregadosDelAutor",
+      size: 50
     },
     {
       id: "disponibles",
@@ -255,8 +257,8 @@ function BookstoreInventory({
             "extraTransfers": true,
             "copias": false,
             "returns": true,
-            "entregadosDelAutor": false,
-            "entregadosAlAutor": false,
+            "entregadosDelAutor": true,
+            "entregadosAlAutor": true,
             "transfers": false,
             "ventas": true,
           }

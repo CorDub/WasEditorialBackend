@@ -12,7 +12,8 @@ export async function updateBookstore(req, res) {
       "contactName": req.body.contactName,
       "phoneBookstore" : req.body.contactPhone,
       "phonePrefixBookstore": req.body.contactPhonePrefix,
-      "emailBookstore": req.body.contactEmail
+      "emailBookstore": req.body.contactEmail,
+      "wasRed": req.body.wasRed
     }
     validateInputs(inputs);
 
@@ -20,6 +21,7 @@ export async function updateBookstore(req, res) {
 
     const existingBookstore = await prismaClient.bookstore.findUnique({where: {id: inputs.id}});
     if (existingBookstore.isDeleted) {throw new Error("this bookstore is deleted")};
+    if (!existingBookstore) {throw new Error("wrong id - could not find the bookstore")};
 
     await prismaClient.$transaction(async (tx) => {
       const updatedBookstore = await tx.bookstore.update({
@@ -31,6 +33,7 @@ export async function updateBookstore(req, res) {
           contact_phone: inputs.phoneBookstore,
           contact_phone_prefix: inputs.phonePrefixBookstore,
           contact_email: inputs.emailBookstore,
+          wasRed: inputs.wasRed
         }
       });
 

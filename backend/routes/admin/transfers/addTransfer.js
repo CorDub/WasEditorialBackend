@@ -2,19 +2,23 @@ import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
 import { getInventoryDerived } from "../inventories/inventoryHelpers.js";
+import { validateAuthorReturn } from "../impressions/impressionHelpers.js";
+
 const router = express.Router();
 
 export async function addTransfer(req, res) {
   try {
     const inputs = {
       bookstoreToId: req.body.bookstoreToId ? parseInt(req.body.bookstoreToId) : null,
+      bookId: req.body.bookId ? parseInt(req.body.bookId) : null,
       quantity: parseInt(req.body.quantity),
-      inventoryFromId: parseInt(req.body.inventoryFromId),
+      inventoryFromId: req.body.inventoryFromId ? parseInt(req.body.inventoryFromId) : null,
       type: req.body.type,
       note: req.body.note || null,
       dateStrOptional: req.body.dateStr || null,
       place: req.body.place || null,
-      person: req.body.person || null
+      person: req.body.person || null,
+      wasRed: req.body.wasRed || null,
     }
     validateInputs(inputs);
 
@@ -22,6 +26,13 @@ export async function addTransfer(req, res) {
 
     //1. transaction start, first checks
     await prismaClient.$transaction(async (tx) => {
+      // return to author first cause we don't have an InventoryFromId
+      if (!inputs.inventoryFromId) {
+        await addReturnFromAuthor(tx, inputs, res)
+        return
+      }
+
+      // any other cases, get the inventory from
       const inventoryFrom = await tx.inventory.findUnique({
         where: {
           id: inputs.inventoryFromId,
@@ -52,7 +63,7 @@ export async function addTransfer(req, res) {
       if (!inputs.bookstoreToId) {
         await addDeliveryToAuthor(tx, inventoryFrom, inputs, res)
         return
-      } 
+      }
 
       if (inputs.bookstoreToId === 1) {
         await addReturn(tx, inventoryFrom, inputs, res)
@@ -70,11 +81,12 @@ export async function addTransfer(req, res) {
 router.post('/transfer', addTransfer);
 
 
-export async function addDeliveryToAuthor(tx, inventoryFrom, inputs, res) {
-  if (inventoryFrom.bookstoreId !== 1) {
-    return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde el inventario de la bodega Was"})
-  }
 
+export async function addDeliveryToAuthor(tx, inventoryFrom, inputs, res) {
+  if (!inventoryFrom.bookstore.wasRed && inventoryFrom.bookstoreId !== 1) {
+    return res.status(400).json({message: "Entregas a autores solo se pueden hacer desde un inventario Was"})
+  }
+  
   const newTransferToAuthor = await tx.transfer.create({
     data: {
       fromInventoryId: inputs.inventoryFromId,
@@ -86,8 +98,55 @@ export async function addDeliveryToAuthor(tx, inventoryFrom, inputs, res) {
     }
   });
 
-  res.status(200).json(newTransferToAuthor)
+  res.status(200).json(newTransferToAuthor);
 }
+
+
+
+export async function addReturnFromAuthor(tx, inputs, res) {
+  const returnInventory = await tx.inventory.findUnique({
+    where: {
+      bookId_bookstoreId: {
+        bookId: inputs.bookId,
+        bookstoreId: inputs.bookstoreToId,
+      }
+    },
+    include: {
+      book: {
+        include: {
+          impressions: true
+        }
+      },
+      bookstore: true,
+      sales: true,
+      transfersFrom: true,
+      transfersTo: true
+    }
+  });
+
+  if (!returnInventory.bookstore.wasRed) {
+    throw new Error("Return inventory specified is not part of the WAS network")
+  }
+
+  const derived = getInventoryDerived(returnInventory)
+  if ((derived.entregadosDelAutor + inputs.quantity) > derived.entregadosAlAutor) {
+    res.status(400).json({message: "No se puede devolver mas libros que han estado entregados al autor."})
+    return;
+  }
+
+  const newReturnFromAuthor = await tx.transfer.create({
+    data: {
+      toInventoryId: returnInventory.id,
+      quantity: inputs.quantity,
+      type: inputs.type,
+      note: inputs.note,
+      dateStr: inputs.dateStrOptional,
+    }
+  })
+
+  res.status(200).json(newReturnFromAuthor)
+}
+
 
 
 export async function addReturn(tx, inventoryFrom, inputs, res) {
@@ -111,6 +170,7 @@ export async function addReturn(tx, inventoryFrom, inputs, res) {
 }
 
 
+
 export async function addDeliveryToBookstore(tx, inventoryFrom, inputs, res) {
   if (inventoryFrom.bookstoreId !== 1) {
     throw new Error("bookstoreId can't be other than 1 for a delivery to other bookstores")
@@ -130,6 +190,8 @@ export async function addDeliveryToBookstore(tx, inventoryFrom, inputs, res) {
 
   res.status(200).json(newTransfer)
 }
+
+
 
 export async function getInventoryTo(tx, inventoryFrom, inputs) {
   //1. get inventoryTo

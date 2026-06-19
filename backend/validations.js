@@ -121,8 +121,7 @@ export function validateInput(inputName, inputValue) {
       ["type", "number"],
     ],
     "bookId": [
-      ["presence", "not empty"],
-      ["type", "number"],
+      ["type", "number or null"],
     ],
     "bookstoreId": [
       ["presence", "not empty"],
@@ -266,8 +265,7 @@ export function validateInput(inputName, inputValue) {
       ['type', 'number']
     ],
     'inventoryFromId': [
-      ['presence', 'not empty'],
-      ['type', 'number']
+      ['type', 'number or null']
     ],
     'inventoryToId': [
       ['type', 'number or null']
@@ -331,6 +329,9 @@ export function validateInput(inputName, inputValue) {
       ["maximum", 100]
     ],
     "authorDelivery": [
+      ["type", "boolean"]
+    ],
+    "wasRed": [
       ["type", "boolean"]
     ]
   }

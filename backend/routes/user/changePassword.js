@@ -56,7 +56,7 @@ export async function changePassword(req, res) {
       }
     });
 
-    if (!current_user) {
+    if (!current_user || current_user.isDeleted) {
       return res.status(401).json({error: "Invalid token"});
     }
 

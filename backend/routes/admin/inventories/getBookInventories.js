@@ -28,7 +28,8 @@ export async function getBookInventory(req, res) {
         id: true,
         bookstore: {
           select: {
-            name: true
+            name: true,
+            wasRed: true
           }
         },
         bookstoreId: true,
@@ -68,7 +69,8 @@ export async function getBookInventory(req, res) {
           }, 
           select: {
             quantity: true,
-            toInventoryId: true
+            toInventoryId: true,
+            fromInventoryId: true,
           }
         },
         transfersTo: {
@@ -77,7 +79,8 @@ export async function getBookInventory(req, res) {
           },
           select: {
             quantity: true,
-            toInventoryId: true
+            toInventoryId: true,
+            fromInventoryId: true,
           }
         }
       }
@@ -121,6 +124,8 @@ export async function getBookInventory(req, res) {
         total.copias += results.copias
         total.ventas += results.ventas
         total.disponibles += results.disponibles
+        total.entregadosAlAutor += results.entregadosAlAutor
+        total.entregadosDelAutor += results.entregadosDelAutor
       }
     }
 
@@ -164,8 +169,7 @@ export function getWasInventoryForThisBook(inventory) {
   const impressionsRes = getTotalWasImpressions(inventory) 
   scaffold.inicial += impressionsRes.impressionInicial
   scaffold.extraImpressions += impressionsRes.extraImpressions
-  // scaffold.entregados += impressionsRes.entregadosDelAutor
-  scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
+  // scaffold.entregadosDelAutor += impressionsRes.entregadosDelAutor
 
   let thatBookImpressions = []
   for (const impression of inventory.book.impressions) {
@@ -184,6 +188,7 @@ export function getWasInventoryForThisBook(inventory) {
   const transfersRes = getTotalWasTransfers(inventory)
   scaffold.transfers += transfersRes.transfers
   scaffold.entregadosAlAutor += transfersRes.entregadosAlAutor
+  scaffold.entregadosDelAutor += transfersRes.entregadosDelAutor
   scaffold.returns += transfersRes.returns
 
   //5: copias
@@ -212,18 +217,24 @@ export function getOtherInventoryForThisBook(inventory) {
     inicial: 0,
     extraTransfers: 0,
     returns: 0,
+    entregadosAlAutor: 0,
+    entregadosDelAutor: 0,
     ventas: 0,
     disponibles: 0,
     bookstoreId: inventory.bookstoreId,
     bookId: inventory.bookId,
-    id: inventory.id
+    id: inventory.id,
+    wasRed: inventory.bookstore.wasRed
   }
 
   //2.transfers
   const transferRes = getNonWasTransfers(inventory)
+  console.log("transferRes", transferRes)
   scaffold.inicial += transferRes.transferInicial
   scaffold.extraTransfers += transferRes.extraTransfers
   scaffold.returns += transferRes.returns
+  scaffold.entregadosAlAutor += transferRes.transfersToAuthors
+  scaffold.entregadosDelAutor += transferRes.returnsFromAuthors
 
   //3.sales
   const salesRes = getTotalSales(inventory)
@@ -236,7 +247,9 @@ export function getOtherInventoryForThisBook(inventory) {
   scaffold.disponibles = 
     scaffold.copias - 
     scaffold.returns -
-    scaffold.ventas
+    scaffold.ventas -
+    scaffold.entregadosAlAutor +
+    scaffold.entregadosDelAutor
   
   if (scaffold.disponibles < 0) {
     console.error("Number of available book is below zero for this bookstore inventories")

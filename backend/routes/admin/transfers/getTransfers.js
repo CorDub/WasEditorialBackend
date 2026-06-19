@@ -19,30 +19,35 @@ export async function getTransfers(req, res) {
         },
         toInventory: {
           include: {
-            bookstore: true
+            bookstore: true,
+            book: true
           }
         }
-      }
-    })
-
-    const allAuthorDeliveries = await prismaClient.impression.findMany({
-      where: {
-        isDeleted: false,
-        authorDelivery: true
       },
-      include: {
-        book: true
-      }
+      orderBy: [
+        { dateStr: "desc" },
+        { updatedAt: "desc"}
+      ]
     })
 
-    const combined = [...allTransfers, ...allAuthorDeliveries].sort((a, b) => {
-      if (a.dateStr !== b.dateStr) {
-        return b.dateStr > a.dateStr ? 1 : -1;
-      }
-      return b.updatedAt > a.updatedAt ? 1 : -1;
-    });
+    // const allAuthorDeliveries = await prismaClient.impression.findMany({
+    //   where: {
+    //     isDeleted: false,
+    //     authorDelivery: true
+    //   },
+    //   include: {
+    //     book: true
+    //   }
+    // })
 
-    res.status(200).json(combined)
+    // const combined = [...allTransfers, ...allAuthorDeliveries].sort((a, b) => {
+    //   if (a.dateStr !== b.dateStr) {
+    //     return b.dateStr > a.dateStr ? 1 : -1;
+    //   }
+    //   return b.updatedAt > a.updatedAt ? 1 : -1;
+    // });
+
+    res.status(200).json(allTransfers)
   } catch (error) {
     console.error(error);
     res.status(500).json({error: "Server error at users route"});

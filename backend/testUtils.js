@@ -20,7 +20,8 @@ export async function createAuthor(
     swift = null,
     password = "ThisIsValidPassword71!",
     font_size = 1.0,
-    reset_password_code = null,
+    reset_password_token = null,
+    reset_password_expires = null,
     createdAt = new Date()
   } = {}
 ) {
@@ -44,7 +45,8 @@ export async function createAuthor(
       swift: swift,
       password: password,
       font_size: font_size,
-      reset_password_code: reset_password_code,
+      reset_password_token: reset_password_token,
+      reset_password_expires: reset_password_expires,
       createdAt : createdAt
     }
   });
@@ -133,6 +135,7 @@ export async function createBookstore(
     contact_phone = "",
     contact_email = "",
     createdAt = new Date(),
+    wasRed = false
   } = {}
 ) {
   const uniqueName = name === null ? `name_${crypto.randomUUID()}` : name
@@ -145,7 +148,8 @@ export async function createBookstore(
       contact_name: contact_name,
       contact_phone: contact_phone,
       contact_email: contact_email,
-      createdAt : createdAt
+      createdAt : createdAt,
+      wasRed: wasRed
     }
   })
 

@@ -110,6 +110,7 @@ model Bookstore {
   isDeleted            Boolean     @default(false)
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
+  wasRed               Boolean     @default(false)
 }
 
 model Inventory {
@@ -180,8 +181,8 @@ model Impression {
 
 model Transfer {
   id              Int          @id @default(autoincrement())
-  fromInventory   Inventory    @relation("TransfersFrom", fields: [fromInventoryId], references: [id])
-  fromInventoryId Int
+  fromInventory   Inventory?   @relation("TransfersFrom", fields: [fromInventoryId], references: [id])
+  fromInventoryId Int?
   toInventory     Inventory?   @relation("TransfersTo", fields: [toInventoryId], references: [id])
   toInventoryId   Int?
   quantity        Int

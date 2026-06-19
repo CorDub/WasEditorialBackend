@@ -1,7 +1,7 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
 import { validateInputs } from "../../../utils.js" 
-import { validateAuthorReturn } from "./impressionHelpers.js";
+// import { validateAuthorReturn } from "../../../unused/routes/impressionHelpers.js";
 const router = express.Router();
 
 
@@ -12,20 +12,20 @@ export async function addImpression(req, res) {
       id: parseInt(req.body.id),
       note: req.body.note,
       dateStr: req.body.dateStr,
-      authorDelivery: req.body.authorDelivery ? true : false
+      // authorDelivery: req.body.authorDelivery ? true : false
     }
     validateInputs(inputs);
 
     const prismaClient = req.prisma || prisma
 
     await prismaClient.$transaction(async (tx) => {
-      if (inputs.authorDelivery) {
-        const valid = validateAuthorReturn(tx, inputs.id, inputs.quantity)
-        if (!valid) {
-          res.status(400).json({message: "No se puede regresar mas libros que han estados entregados al autor"})
-          return;
-        }
-      }
+      // if (inputs.authorDelivery) {
+      //   const valid = validateAuthorReturn(tx, inputs.id, inputs.quantity)
+      //   if (!valid) {
+      //     res.status(400).json({message: "No se puede regresar mas libros que han estados entregados al autor"})
+      //     return;
+      //   }
+      // }
 
       const createdImpression = await tx.impression.create({
         data: {

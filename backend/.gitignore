@@ -2,7 +2,7 @@
 # Keep environment variables out of version control
 .env
 amazonAPI.js
-staging_dump.sql
+db_dumps
 
 prisma/finalAuthorList.json
 prisma/finalBooksList.json

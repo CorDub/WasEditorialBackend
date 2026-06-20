@@ -5,6 +5,7 @@ import {
   calculateAuthorRevenue,
   generateMonthKeysForRange,
 } from "../../../utils.js"
+import { resolveAuthorId } from "../resolveAuthorId.js";
 const router = express.Router();
 
 export async function getMonthlySalesByPayments (req, res) {
@@ -12,6 +13,8 @@ export async function getMonthlySalesByPayments (req, res) {
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
+
+    const authorId = await resolveAuthorId(req);
 
     const prismaClient = req.prisma || prisma
 
@@ -22,7 +25,7 @@ export async function getMonthlySalesByPayments (req, res) {
     // Get all existing payments and tied sales for that author
     const allAuthorPayments = await prismaClient.payment.findMany({
       where: {
-        userId: req.session.user_id,
+        userId: authorId,
         createdAt: {
           gte: ltm
         }

@@ -6,11 +6,14 @@ import ShowInventories from "./ShowInventories";
 import './AuthorInventory.scss';
 import BookSelector from "./BookSelector";
 import InventoryGraph from "./InventoryGraph"
+import useViewAsAuthor from "./customHooks/useViewAsAuthor";
+import ViewAsAuthorBanner from "./ViewAsAuthorBanner";
 
 function AuthorInventory(){
   useCheckUser();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
+  const { isViewingAsAuthor, authorName, appendAuthorParam } = useViewAsAuthor();
   const [inventories, setInventories] = useState("")
   const [booksInventories, setBooksInventories] = useState([])
   const [selectedBookId, setSelectedBookId] = useState("");
@@ -48,7 +51,7 @@ function AuthorInventory(){
       //   return
       // }
 
-      const response = await fetch(`${baseURL}/api/author/inventories/authorInventories`, {
+      const response = await fetch(appendAuthorParam(`${baseURL}/api/author/inventories/authorInventories`), {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -89,6 +92,7 @@ function AuthorInventory(){
     <div className="author-inventory"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
     <Navbar subNav={user && user.role} active={"inventario"} />
+    {isViewingAsAuthor && <ViewAsAuthorBanner authorName={authorName} />}
     <div id="author-page-container">
       <div id="author-page-content">
         <div id="author-inventory-container">

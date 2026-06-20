@@ -9,11 +9,14 @@ import Alert from "./Alert";
 import TableBookstores from "./TableBookstores";
 import { isForMonthNextMonth } from "../../backend/utils";
 import DemandPaymentButton from "./DemandPaymentButton";
+import useViewAsAuthor from "./customHooks/useViewAsAuthor";
+import ViewAsAuthorBanner from "./ViewAsAuthorBanner";
 
 function AuthorCommissions() {
   useCheckUser();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
+  const { isViewingAsAuthor, authorName, appendAuthorParam } = useViewAsAuthor();
   const [dataByMonths, setDataByMonths] = useState(null);
   const [activeMonth, setActiveMonth] = useState(0);
   const [payments, setPayments] = useState(null);
@@ -76,7 +79,7 @@ function AuthorCommissions() {
       //   return
       // }
 
-      const response = await fetch(`${baseURL}/api/author/commissions/payments`, {
+      const response = await fetch(appendAuthorParam(`${baseURL}/api/author/commissions/payments`), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +115,7 @@ function AuthorCommissions() {
 
   async function fetchSalesByPayments() {
     try {
-      const response = await fetch(`${baseURL}/api/author/commissions/monthlySalesByPayments`, {
+      const response = await fetch(appendAuthorParam(`${baseURL}/api/author/commissions/monthlySalesByPayments`), {
         method: "GET",
         headers: {
           "Content-Type":"application/json"
@@ -139,6 +142,7 @@ function AuthorCommissions() {
       <Navbar
         subNav={user && user.role}
         active={"comisiones"} />
+      {isViewingAsAuthor && <ViewAsAuthorBanner authorName={authorName} />}
       <div className="contain">
         <div className="author-comissions-left-side">
           <CommissionMonthSelector

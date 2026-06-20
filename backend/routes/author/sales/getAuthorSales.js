@@ -1,17 +1,19 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { 
+import {
   localISODateTwelveMonthsAgo,
   today,
   validateInputs,
-  calculateAuthorRevenue 
+  calculateAuthorRevenue
 } from "../../../utils.js";
+import { resolveAuthorId } from "../resolveAuthorId.js";
 const router = express.Router();
 
 export async function getAuthorSales (req, res) {
   try {
     // Validate all inputs
     if (!req.session.user_id) {return res.status(401).json({message: "Unauthorized"});}
+    const authorId = await resolveAuthorId(req);
     const inputs = {
       startDateStr: req.query.startDateStr ? req.query.startDateStr : localISODateTwelveMonthsAgo(),
       endDateStr: req.query.endDateStr ? req.query.endDateStr : today()
@@ -29,7 +31,7 @@ export async function getAuthorSales (req, res) {
       where: {
         payments: {
           some: {
-            userId: req.session.user_id
+            userId: authorId
           }
         },
         isDeleted: false,
@@ -60,7 +62,7 @@ export async function getAuthorSales (req, res) {
       where: {
         payments: {
           some: {
-            userId: req.session.user_id
+            userId: authorId
           }
         },
         isDeleted: false,

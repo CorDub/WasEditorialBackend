@@ -13,11 +13,14 @@ import {
   localISODateTwelveMonthsAgo
 } from '../../backend/utils';
 import Alert from "./Alert";
+import useViewAsAuthor from "./customHooks/useViewAsAuthor";
+import ViewAsAuthorBanner from "./ViewAsAuthorBanner";
 
 function AuthorSales() {
   useCheckUser();
   const baseURL = import.meta.env.VITE_API_URL || '';
   const { user } = useContext(UserContext);
+  const { isViewingAsAuthor, authorName, appendAuthorParam } = useViewAsAuthor();
   const [salesData, setSalesData] = useState(null);
   const [monthlyData, setMonthlyData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -128,7 +131,7 @@ function processMonthlyData(sales, bookId = 'total') {
         endDateStr: dateRange.endDateStr
       });
 
-      const response = await fetch(`${baseURL}/api/author/sales/sales?${queryParams}`, {
+      const response = await fetch(appendAuthorParam(`${baseURL}/api/author/sales/sales?${queryParams}`), {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
@@ -211,6 +214,7 @@ function processMonthlyData(sales, bookId = 'total') {
     <div className="author-sales"
       style={{ fontSize: `clamp(0.8rem, ${user.font_size}rem, 1.5rem)`}}>
       <Navbar subNav={user.role} active={"ventas"} />
+      {isViewingAsAuthor && <ViewAsAuthorBanner authorName={authorName} />}
       <div id="author-sales-container">
         <div className="date-range-selector">
           <div className="date-input">

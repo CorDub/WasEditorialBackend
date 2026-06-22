@@ -1,6 +1,9 @@
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import { useEffect, useState, useMemo, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import UserContext from "./UserContext";
 import Navbar from "./Navbar";
 import Alert from "./Alert";
@@ -13,7 +16,17 @@ import formatNumber from "./customHooks/formatNumber";
 function PaymentsList() {
   useCheckAdmin();
   const baseURL = import.meta.env.VITE_API_URL || '';
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
+
+  // Abre las pantallas del autor (modo "ver como autor") para verificar su desglose.
+  function viewAsAuthor(row) {
+    const authorId = row.original.userId;
+    const authorName = encodeURIComponent(
+      `${row.original.user?.first_name ?? ""} ${row.original.user?.last_name ?? ""}`.trim()
+    );
+    navigate(`/author/commissions?authorId=${authorId}&authorName=${authorName}`);
+  }
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [chosenPaymentStatus, setChosenPaymentStatus] = useState("solicited");
@@ -51,6 +64,17 @@ function PaymentsList() {
           overflow: "visible"
         }
       }
+    },
+    {
+      header: "Desglose",
+      Cell: ({row}) => (
+        <button
+          className="view-as-author-btn"
+          title="Ver el desglose como lo ve el autor"
+          onClick={() => viewAsAuthor(row)}>
+          <FontAwesomeIcon icon={faEye} /> Ver desglose
+        </button>
+      )
     },
     {
       header: "Monto",

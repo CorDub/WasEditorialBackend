@@ -1,0 +1,46 @@
+.vaa-banner {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: #4E6CB3;
+  color: #fff;
+  padding: 0.5rem 1.25rem;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.vaa-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+
+  svg { opacity: 0.9; }
+  strong { font-weight: 700; }
+}
+
+.vaa-banner-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #fff;
+  color: #4E5981;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+
+  &:hover { background: #eef0f6; }
+  &:active { transform: translateY(1px); }
+}

@@ -16,3 +16,23 @@
 .payment-type-label {
     margin-bottom: 0.5rem;
 }
+// Botón "Ver desglose" (modo ver como autor)
+.view-as-author-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #4E6CB3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+
+  &:hover { background: #3f5a99; }
+  &:active { transform: translateY(1px); }
+}

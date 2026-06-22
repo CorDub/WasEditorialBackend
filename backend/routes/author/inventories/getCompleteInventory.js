@@ -4,6 +4,7 @@ import {
   getOtherInventory,
   getWasInventory
 } from "../../admin/inventories/inventoryHelpers.js"
+import { resolveAuthorId } from "../resolveAuthorId.js";
 const router = express.Router();
 
 export async function getCompleteInventory(req, res) {
@@ -11,6 +12,8 @@ export async function getCompleteInventory(req, res) {
     if (!req.session.user_id) {
       return res.status(401).json({message: "Unauthorized"})
     }
+
+    const authorId = await resolveAuthorId(req);
 
     const prismaClient = req.prisma || prisma
 
@@ -20,7 +23,7 @@ export async function getCompleteInventory(req, res) {
         book: {
           users: {
             some: {
-              id: req.session.user_id
+              id: authorId
             }
           }
         }

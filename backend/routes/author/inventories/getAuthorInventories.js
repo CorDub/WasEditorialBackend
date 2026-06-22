@@ -1,9 +1,10 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { 
+import {
   getWasInventoryForThisBook,
   getOtherInventoryForThisBook,
 } from "../../admin/inventories/getBookInventories.js";
+import { resolveAuthorId } from "../resolveAuthorId.js";
 const router = express.Router();
 
 export async function getAuthorInventories (req, res) {
@@ -13,12 +14,14 @@ export async function getAuthorInventories (req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const authorId = await resolveAuthorId(req);
+
     const prismaClient = req.prisma || prisma
 
     // Fetch all necessary data
     const data = await prismaClient.user.findUnique({
       where: {
-        id: req.session.user_id
+        id: authorId
       },
       select: {
         first_name: true,

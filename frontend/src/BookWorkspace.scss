@@ -26,7 +26,8 @@ $bw-track: #eef0f6;
   width: 100%;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem 2.5rem;
+  // 60px despeja el navbar fijo (alto ~50px) para que el buscador no quede tapado
+  padding: 70px 1.5rem 2.5rem;
   box-sizing: border-box;
   overflow-y: auto;
 }

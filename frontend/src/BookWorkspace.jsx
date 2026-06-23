@@ -69,9 +69,11 @@ function BookWorkspace() {
   }, [baseURL]);
 
   // --- Búsqueda de libros ---
+  // Sin texto: muestra los primeros libros (para que sea obvio cómo elegir).
+  // Con texto: filtra por título.
   const bookResults = useMemo(() => {
-    if (!query.trim()) return [];
     const q = query.trim().toLowerCase();
+    if (!q) return books.slice(0, 8);
     return books.filter((b) => b.name.toLowerCase().includes(q)).slice(0, 8);
   }, [books, query]);
 
@@ -159,6 +161,7 @@ function BookWorkspace() {
               value={query}
               onChange={(e) => { setQuery(e.target.value); setShowResults(true); }}
               onFocus={() => setShowResults(true)}
+              onBlur={() => setTimeout(() => setShowResults(false), 150)}
             />
             {showResults && bookResults.length > 0 && (
               <div className="bw-book-results">

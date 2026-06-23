@@ -208,6 +208,7 @@ function InventoriesList() {
           const data = await response.json();
           setSpecificBookstore(data);
           setSpecificBookstoreOpen(true);
+          sessionStorage.setItem("lastOpenedInventory", JSON.stringify({ type: "bookstore", id }));
         }
       } else if (type === "book") {
         const response = await fetch(`${baseURL}/api/admin/inventories/inventoriesByBook/${id}`, {
@@ -222,6 +223,8 @@ function InventoriesList() {
           const data = await response.json();
           setSpecificBook(data);
           setSpecificBookOpen(true);
+          // Recordar el libro abierto para volver a él al regresar de otra pestaña
+          sessionStorage.setItem("lastOpenedInventory", JSON.stringify({ type: "book", id }));
         }
       }
 
@@ -251,6 +254,31 @@ function InventoriesList() {
 
   useEffect(() => {
     getBookstoreInventories();
+  }, []);
+
+  // Al volver a esta pantalla, reabrir el último inventario que estaba abierto
+  // (para no tener que volver a buscar el libro tras pasar por otra pestaña).
+  useEffect(() => {
+    const saved = sessionStorage.getItem("lastOpenedInventory");
+    if (!saved) return;
+    try {
+      const { type, id } = JSON.parse(saved);
+      if (type === "book") {
+        // activar la vista "por libro" (ajusta columnas) y reabrir el libro
+        setInventoryType(true);
+        setColumnVisibility({
+          "name": true, "initial": true, "extraImpressions": true,
+          "copias": false, "returns": false, "entregadosAlAutor": true,
+          "transfers": false, "ventas": true,
+        });
+        getBookInventories();
+        openSpecifics("book", id);
+      } else if (type === "bookstore") {
+        openSpecifics("bookstore", id);
+      }
+    } catch (e) {
+      console.error("No se pudo restaurar el inventario abierto:", e);
+    }
   }, []);
 
   async function getBookInventories() {

@@ -23,6 +23,7 @@ import InventoriesList from "./InventoriesList.jsx";
 import SalesListPerMonths from './SalesListPerMonths.jsx';
 import KindleSalesListPerMonth from './KindleSalesListPerMonth.jsx';
 import TransfersList from "./TransfersList.jsx";
+import BookWorkspace from "./BookWorkspace.jsx";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path='/admin/costs' element={<CostsList />} />
           <Route path='/admin/transfers' element={<TransfersList />} />
           <Route path='/admin/inventories-list' element={<InventoriesList/>} />
+          <Route path='/admin/libro' element={<BookWorkspace/>} />
           <Route path='/forgotten-password' element={<ForgottenPasswordPage />} />
           {/* <Route path='/confirmation-code' element={<ConfirmationCodePage />} /> */}
           <Route path='/profile-page' element={<ProfilePage/>} />

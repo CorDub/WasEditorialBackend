@@ -80,6 +80,11 @@ function AdminNavbar({
       buttons[9].classList.add("active-button");
       return;
     }
+
+    if (active === "libro") {
+      buttons[10].classList.add("active-button");
+      return;
+    }
   }
 
   useEffect(() => {
@@ -153,6 +158,7 @@ function AdminNavbar({
       <Link to='/admin/kindle' className="navbar-button">Kindle</Link>
       <Link to='/admin/payments' className="navbar-button">Pagos</Link>
       <Link to='/admin/costs' className="navbar-button">Costos</Link>
+      <Link to='/admin/libro' className="navbar-button">Centro de trabajo</Link>
     </div>
   )
 }

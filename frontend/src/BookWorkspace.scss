@@ -1,0 +1,288 @@
+// ============================================
+//  Centro de trabajo por libro (v2)
+//  Paleta del sistema (Global.scss)
+// ============================================
+
+$bw-prim: #4E5981;
+$bw-second: #4E6CB3;
+$bw-bg: #ffffff;
+$bw-muted: #8a90a6;
+$bw-border: #e6e8f0;
+$bw-track: #eef0f6;
+
+.bw-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.bw-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 2.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+// --- Encabezado con selector de libro ---
+.bw-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bw-title {
+  font-family: "Roboto Slab", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $bw-prim;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bw-book-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid $bw-border;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  min-width: 320px;
+  flex: 1;
+  max-width: 520px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: $bw-second;
+    box-shadow: 0 0 0 3px rgba(78, 108, 179, 0.12);
+  }
+
+  svg { color: $bw-muted; margin-right: 0.55rem; }
+
+  input {
+    border: none;
+    outline: none;
+    font-family: "Roboto", sans-serif;
+    font-size: 0.98rem;
+    width: 100%;
+    color: #333;
+    background: transparent;
+    &::placeholder { color: $bw-muted; }
+  }
+}
+
+// Dropdown de resultados de búsqueda de libros
+.bw-book-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid $bw-border;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(78, 89, 129, 0.16);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 60;
+}
+
+.bw-book-result {
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid $bw-track;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f6f7fb; }
+
+  .bw-result-name { color: #2f3550; font-weight: 500; }
+  .bw-result-meta { color: $bw-muted; font-size: 0.85rem; white-space: nowrap; }
+}
+
+// --- Estado vacío (sin libro elegido) ---
+.bw-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: $bw-muted;
+  text-align: center;
+  padding: 5rem 1rem;
+
+  svg { font-size: 2.5rem; opacity: 0.5; }
+  p { margin: 0; font-size: 1.05rem; }
+}
+
+// --- Tarjeta del libro seleccionado + resumen ---
+.bw-book-card {
+  background: linear-gradient(135deg, $bw-prim, $bw-second);
+  color: #fff;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.bw-book-card-title {
+  font-family: "Roboto Slab", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.bw-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.bw-summary-item {
+  text-align: center;
+  .bw-summary-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .bw-summary-label { font-size: 0.78rem; opacity: 0.85; margin-top: 0.2rem; }
+}
+
+// --- Pestañas internas ---
+.bw-tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid $bw-border;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.bw-tab {
+  background: none;
+  border: none;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: $bw-muted;
+  padding: 0.7rem 1.15rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  &:hover { color: $bw-prim; }
+
+  &.bw-tab-active {
+    color: $bw-prim;
+    border-bottom-color: $bw-second;
+  }
+}
+
+// --- Contenido de pestaña ---
+.bw-tab-content {
+  background: #fff;
+  border: 1px solid $bw-border;
+  border-radius: 14px;
+  padding: 1.25rem;
+  min-height: 200px;
+}
+
+// Tablas dentro de las pestañas
+.bw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Roboto", sans-serif;
+}
+
+.bw-table th {
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $bw-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid $bw-border;
+  white-space: nowrap;
+}
+
+.bw-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid $bw-track;
+  color: #2f3550;
+  font-size: 0.95rem;
+}
+
+.bw-table tbody tr:hover { background: #f9fafc; }
+
+.bw-table .bw-num { text-align: right; font-variant-numeric: tabular-nums; }
+.bw-table .bw-pos { color: #2e7d4f; font-weight: 600; }
+.bw-table .bw-neg { color: #b3402e; font-weight: 600; }
+
+.bw-tab-empty {
+  text-align: center;
+  color: $bw-muted;
+  padding: 2.5rem 1rem;
+  font-style: italic;
+}
+
+// Botón de acción (registrar venta / movimiento) dentro de una fila
+.bw-row-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: $bw-second;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+
+  &:hover { background: #3f5a99; }
+  &:active { transform: translateY(1px); }
+}
+
+.bw-row-action--ghost {
+  background: #fff;
+  color: $bw-second;
+  border: 1px solid $bw-second;
+  &:hover { background: #eef2fb; }
+}
+
+// Barra de acciones arriba de una tabla
+.bw-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+// Badge para tipo de evento en el historial
+.bw-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.bw-badge--venta { background: #e7f0ff; color: $bw-second; }
+.bw-badge--mov { background: #fff0e2; color: #b9701f; }

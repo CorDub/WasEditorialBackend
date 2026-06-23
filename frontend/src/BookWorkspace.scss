@@ -277,6 +277,60 @@ $bw-track: #eef0f6;
   margin-bottom: 1rem;
 }
 
+// --- Pestaña Inventario: tarjetas por librería (concepto v2) ---
+.bw-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.1rem;
+}
+
+.bw-inv-card {
+  background: #fff;
+  border: 1px solid $bw-border;
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.12s, border-color 0.12s;
+
+  &:hover { box-shadow: 0 6px 18px rgba(78, 89, 129, 0.1); }
+}
+
+.bw-inv-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+
+  svg { color: $bw-second; }
+  .bw-inv-card-name { font-weight: 700; color: #2f3550; font-size: 1.02rem; }
+}
+
+.bw-inv-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bw-inv-stat {
+  text-align: center;
+  flex: 1;
+  .bw-inv-stat-value { font-size: 1.3rem; font-weight: 700; color: $bw-prim; line-height: 1; }
+  .bw-inv-stat-label { font-size: 0.72rem; color: $bw-muted; margin-top: 0.25rem; }
+}
+
+.bw-inv-stat--highlight .bw-inv-stat-value { color: $bw-second; }
+
+.bw-inv-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+  border-top: 1px solid $bw-track;
+}
+
 // Badge para tipo de evento en el historial
 .bw-badge {
   display: inline-block;

@@ -2,12 +2,13 @@ import { useState, useEffect, useContext, useMemo } from "react";
 import Navbar from "./Navbar";
 import useCheckAdmin from "./customHooks/useCheckAdmin";
 import UserContext from "./UserContext";
-import BookInventory from "./BookInventory";
+import Modal from "./Modal";
+import Alert from "./Alert";
 import "./BookWorkspace.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook, faMagnifyingGlass, faBoxesStacked,
-  faDollarSign, faRightLeft, faClockRotateLeft
+  faDollarSign, faRightLeft, faClockRotateLeft, faStore
 } from "@fortawesome/free-solid-svg-icons";
 
 const nf = new Intl.NumberFormat("es-MX");
@@ -25,14 +26,21 @@ function BookWorkspace() {
 
   // libro seleccionado
   const [selectedBook, setSelectedBook] = useState(null); // {id, name, disponibles, ...}
-  const [specificBook, setSpecificBook] = useState(null); // detalle para BookInventory
-  const [specificBookOpen, setSpecificBookOpen] = useState(false);
+  const [inventoryRows, setInventoryRows] = useState([]); // filas por librería del libro
+  const [bookTotal, setBookTotal] = useState(null);       // totales del libro
 
   // datos para pestañas
   const [allSales, setAllSales] = useState([]);     // ventas aplanadas
   const [allTransfers, setAllTransfers] = useState([]);
 
   const [activeTab, setActiveTab] = useState("inventario");
+
+  // modal de acciones (registrar venta / movimiento)
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("sale");
+  const [clickedRow, setClickedRow] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   // --- Carga inicial: catálogo de libros + ventas + movimientos ---
   useEffect(() => {
@@ -77,24 +85,45 @@ function BookWorkspace() {
     return books.filter((b) => b.name.toLowerCase().includes(q)).slice(0, 8);
   }, [books, query]);
 
+  async function loadBookInventory(bookId) {
+    try {
+      const res = await fetch(
+        `${baseURL}/api/admin/inventories/inventoriesByBook/${bookId}`,
+        { credentials: "include" }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        // el endpoint devuelve { specifics: [...filas por librería], total: {...} }
+        setInventoryRows(data.specifics || []);
+        setBookTotal(data.total || null);
+      }
+    } catch (e) {
+      console.error("Error cargando inventario del libro:", e);
+    }
+  }
+
   async function chooseBook(book) {
     setSelectedBook(book);
     setQuery(book.name);
     setShowResults(false);
     setActiveTab("inventario");
-    // cargar el detalle del inventario del libro (para la pestaña Inventario)
-    try {
-      const res = await fetch(
-        `${baseURL}/api/admin/inventories/inventoriesByBook/${book.id}`,
-        { credentials: "include" }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        setSpecificBook(data);
-        setSpecificBookOpen(true);
-      }
-    } catch (e) {
-      console.error("Error cargando inventario del libro:", e);
+    await loadBookInventory(book.id);
+  }
+
+  function openAction(type, row) {
+    setModalType(type);          // "sale" | "transfer"
+    setClickedRow(row);
+    setModalOpen(true);
+  }
+
+  async function closeActionModal(globalFilter, reload, message, type) {
+    setModalOpen(false);
+    if (reload === true && selectedBook) {
+      await loadBookInventory(selectedBook.id);
+    }
+    if (message) {
+      setAlertMessage(message);
+      setAlertType(type);
     }
   }
 
@@ -217,18 +246,50 @@ function BookWorkspace() {
 
             {/* Contenido */}
             {activeTab === "inventario" && (
-              <div>
-                {specificBookOpen && specificBook && (
-                  <BookInventory
-                    specificBook={specificBook}
-                    setSpecificBookOpen={setSpecificBookOpen}
-                    isBookInventoryOpen={true}
-                    setBookInventoryOpen={() => {}}
-                    setRetreat={() => {}}
-                    preferredFontSize={user.font_size}
-                  />
-                )}
-              </div>
+              inventoryRows.length === 0 ? (
+                <div className="bw-tab-content">
+                  <div className="bw-tab-empty">Este libro no tiene inventario en ninguna librería.</div>
+                </div>
+              ) : (
+                <div className="bw-inv-grid">
+                  {inventoryRows.map((row) => (
+                    <div key={row.id} className="bw-inv-card">
+                      <div className="bw-inv-card-head">
+                        <FontAwesomeIcon icon={faStore} />
+                        <span className="bw-inv-card-name">{row.name}</span>
+                      </div>
+                      <div className="bw-inv-stats">
+                        <div className="bw-inv-stat">
+                          <div className="bw-inv-stat-value">{nf.format(row.inicial ?? 0)}</div>
+                          <div className="bw-inv-stat-label">Inicial</div>
+                        </div>
+                        <div className="bw-inv-stat">
+                          <div className="bw-inv-stat-value">{nf.format(row.ventas ?? 0)}</div>
+                          <div className="bw-inv-stat-label">Vendidos</div>
+                        </div>
+                        <div className="bw-inv-stat bw-inv-stat--highlight">
+                          <div className="bw-inv-stat-value">{nf.format(row.disponibles ?? 0)}</div>
+                          <div className="bw-inv-stat-label">Disponibles</div>
+                        </div>
+                      </div>
+                      <div className="bw-inv-actions">
+                        <button
+                          className="bw-row-action"
+                          onClick={() => openAction("sale", row)}
+                        >
+                          <FontAwesomeIcon icon={faDollarSign} /> Registrar venta
+                        </button>
+                        <button
+                          className="bw-row-action bw-row-action--ghost"
+                          onClick={() => openAction("transfer", row)}
+                        >
+                          <FontAwesomeIcon icon={faRightLeft} /> Movimiento
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
 
             {activeTab === "ventas" && (
@@ -322,6 +383,22 @@ function BookWorkspace() {
           </>
         )}
       </div>
+
+      {isModalOpen && (
+        <Modal
+          modalType={modalType}
+          modalAction={"adding"}
+          clickedRow={clickedRow}
+          closeModal={closeActionModal}
+          globalFilter={""}
+        />
+      )}
+      <Alert
+        message={alertMessage}
+        type={alertType}
+        setAlertMessage={setAlertMessage}
+        setAlertType={setAlertType}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   generateMonthKeysForRange,
 } from "../../../utils.js"
 import { resolveAuthorId } from "../resolveAuthorId.js";
+import { applyCarryOver } from "../../admin/payments/carryOverBalance.js";
 const router = express.Router();
 
 export async function getAuthorPayments (req, res) {
@@ -153,7 +154,16 @@ export async function getAuthorPayments (req, res) {
       }
     }
 
-    res.status(200).json(paymentsPerMonth);
+    // Aplicar el arrastre de saldo negativo: un mes en negativo se muestra en
+    // negativo (displayAmount) y se acumula hasta volverse positivo.
+    const withCarry = applyCarryOver(paymentsPerMonth);
+    const finalPayments = withCarry.map((m) => ({
+      ...m,
+      amount: m.displayAmount,        // lo que se muestra al autor (acumulado)
+      payableAmount: m.payableAmount, // lo que efectivamente se le pagaría
+    }));
+
+    res.status(200).json(finalPayments);
   } catch (error) {
     console.log("\n ERROR WHILE FETCHING PAYMENTS FROM SERVER \n", error);
     res.status(500).json({error: "a server error occurred"})

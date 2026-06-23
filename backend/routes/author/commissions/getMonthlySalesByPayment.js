@@ -6,6 +6,7 @@ import {
   generateMonthKeysForRange,
 } from "../../../utils.js"
 import { resolveAuthorId } from "../resolveAuthorId.js";
+import { applyCarryOver } from "../../admin/payments/carryOverBalance.js";
 const router = express.Router();
 
 export async function getMonthlySalesByPayments (req, res) {
@@ -344,6 +345,27 @@ export async function getMonthlySalesByPayments (req, res) {
             "costs": []
           })
         }
+      }
+    } else {
+      paddedMonthlySales = monthlySales
+    }
+
+    // Aplicar el arrastre de saldo negativo sobre el total de cada mes.
+    // displayValue = saldo acumulado a mostrar (puede ser negativo).
+    const carry = applyCarryOver(
+      paddedMonthlySales.map((m) => ({
+        forMonth: m.forMonth,
+        amount: m.totalValue ?? 0,
+      }))
+    );
+    const carryByMonth = Object.fromEntries(carry.map((m) => [m.forMonth, m]));
+    for (const month of paddedMonthlySales) {
+      const c = carryByMonth[month.forMonth];
+      if (c) {
+        month.monthValue = month.totalValue ?? 0;  // valor solo de ese mes
+        month.totalValue = c.displayAmount;         // valor acumulado con arrastre
+        month.payableAmount = c.payableAmount;      // lo que se pagaría
+        month.carriedIn = c.carriedIn;              // saldo que venía arrastrado
       }
     }
 

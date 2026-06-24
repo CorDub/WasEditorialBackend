@@ -5,7 +5,9 @@ function formatNumber(total) {
     return;
   }
 
-  const strTotal = total.toString();
+  // Separar el signo para no descuadrar los grupos de miles en negativos
+  const sign = total < 0 ? "-" : "";
+  const strTotal = Math.abs(total).toString();
   const splitTotal = strTotal.split(".");
   let firstPart = '';
   for (let i = 0; i < splitTotal[0].length; i++) {
@@ -17,14 +19,14 @@ function formatNumber(total) {
   }
 
   if (splitTotal.length < 2) {
-    return "$ " + firstPart + ".00";
+    return "$ " + sign + firstPart + ".00";
   };
 
   let secondPart = splitTotal[1].substring(0,2);
   if (secondPart.length === 1) {
     secondPart += "0"
   }
-  return "$ " + firstPart + "." + secondPart;
+  return "$ " + sign + firstPart + "." + secondPart;
 }
 
 export default formatNumber;

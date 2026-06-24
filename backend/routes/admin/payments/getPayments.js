@@ -1,9 +1,10 @@
 import express from "express";
 import { prisma } from "../../../prisma/client.js";
-import { 
+import {
   validateInputs,
-  calculateAuthorRevenue 
+  calculateAuthorRevenue
 } from "../../../utils.js";
+import { applyCarryOver } from "./carryOverBalance.js";
 const router = express.Router();
 
 export async function getPayments(req, res) {
@@ -15,10 +16,12 @@ export async function getPayments(req, res) {
 
     const prismaClient = req.prisma || prisma
 
+    // Traemos TODOS los pagos no borrados (no solo el estado pedido) porque el
+    // arrastre de saldo negativo necesita ver el historial completo de cada
+    // autor en orden cronológico para acumular correctamente.
     const selectedPayments = await prismaClient.payment.findMany({
       where: {
-        isDeleted: false,
-        status: inputs.status
+        isDeleted: false
       },
       select: {
         id: true,
@@ -140,19 +143,39 @@ export async function getPayments(req, res) {
       ])
     }
 
-    const paymentsSent = [];
-    const promises = selectedPayments.map(payment => updateAmount(payment));
-    for (const payment of selectedPayments) {
-      if (payment.amount) {
-        paymentsSent.push(payment)
-      }
-    }
-    const results = await Promise.all(promises)
+    // 1) Calcular el balance crudo de cada mes
+    await Promise.all(selectedPayments.map(payment => updateAmount(payment)));
 
-    // get a total
-    let totalAmount = 0;
+    // 2) Agrupar por autor y aplicar el arrastre de saldo negativo por autor
+    const byUser = new Map();
     for (const payment of selectedPayments) {
-      totalAmount += payment.amount
+      if (!byUser.has(payment.userId)) byUser.set(payment.userId, []);
+      byUser.get(payment.userId).push(payment);
+    }
+    for (const [, userPayments] of byUser) {
+      const withCarry = applyCarryOver(userPayments);
+      // applyCarryOver preserva el orden, así que mapeamos por índice
+      withCarry.forEach((m, i) => {
+        userPayments[i].rawAmount = m.rawAmount;
+        userPayments[i].displayAmount = m.displayAmount;   // saldo acumulado (puede ser negativo)
+        userPayments[i].payableAmount = m.payableAmount;   // lo que se paga (0 si negativo)
+        // 'amount' = lo que efectivamente se paga, para no romper el frontend existente
+        userPayments[i].amount = m.payableAmount;
+      });
+    }
+
+    // 3) Devolver solo los pagos del estado pedido.
+    //    Mostramos los que tienen un monto a pagar (payableAmount > 0) o un
+    //    saldo arrastrado distinto de 0 (para que el negativo sea visible).
+    const paymentsSent = selectedPayments.filter(
+      (p) => p.status === inputs.status &&
+             (p.payableAmount > 0 || p.displayAmount !== 0)
+    );
+
+    // total = suma de lo efectivamente pagable de los mostrados
+    let totalAmount = 0;
+    for (const payment of paymentsSent) {
+      totalAmount += payment.payableAmount;
     }
 
     const finalPayload = {

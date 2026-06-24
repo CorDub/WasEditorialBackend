@@ -64,6 +64,9 @@ function InventoryTotal({
   }, [selectedBookstore, selectedBook, impressions])
 
   function returnToInventoriesAreaDashboard() {
+    // El usuario cierra el detalle a propósito: olvidar el inventario recordado
+    // para no reabrirlo automáticamente la próxima vez.
+    sessionStorage.removeItem("lastOpenedInventory");
     if (type === "book") {
       setSpecificBookOpen(false);
     } else {
